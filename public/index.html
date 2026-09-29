@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0F172A"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230F172A%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27monospace%27 font-size=%2713%27 font-weight=%27700%27 fill=%27white%27 text-anchor=%27middle%27%3EHS%3C/text%3E%3C/svg%3E"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Nepal HS Code Finder</title>
 <meta name="description" content="Search Nepal Customs Tariff 2026/27 by HS code, product name or material. Import duty, SAARC rates and a landed-cost estimator.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 /* Layout: Swiss-minimal single column (max 760px). Sticky search app-bar, 4-tab bottom nav on phones,
    full-height detail sheet with sticky action bar. Understand -> trust -> act on every code. */
@@ -12,7 +12,7 @@
   --seg-goods:#94A3B8; --seg-duty:#0369A1; --seg-excise:#A15C07; --seg-vat:#7C3AED; --seg-other:#475569;
   --imp:#5470C6; --exp:#EE8A4B; --rev:#5FB365; --track:#EEF2F6; --grid:#E5E9EE;
   --scrim:rgba(2,6,23,.5); --shadow:0 12px 32px rgba(15,23,42,.16);
-  --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --r-sm:8px; --r:12px; --r-lg:16px;
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
@@ -37,7 +37,7 @@
 input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
 [hidden]{display:none!important}
 html,body{background:var(--bg)}
-body{color:var(--fg);font:15.5px/1.5 var(--f-body);letter-spacing:-.005em;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{color:var(--fg);font:15.5px/1.5 var(--f-body);letter-spacing:0;font-feature-settings:'cv11','ss01';-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -365,7 +365,7 @@ table.bk tr.total td{font-size:1.08rem;font-weight:700;border-top:2px solid var(
 .tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3) var(--s4);min-width:0}
 #v-stats .tile{background:none;border:0;border-left:3px solid var(--grid);border-radius:0;padding:4px 0 4px var(--s3)}
 .tile span{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-.tile b{display:block;font-size:1.35rem;font-weight:800;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.15}
+.tile b{display:block;font-size:1.35rem;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.15}
 .tile small{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:999px}
 .tile small.up{background:var(--free-bg);color:var(--free)} .tile small.down{background:var(--hi-bg);color:var(--hi)}
 .tile small.neutral{background:var(--muted-bg);color:var(--muted)}
@@ -436,6 +436,11 @@ button.br:hover{background:var(--muted-bg)}
 .yoy.up{background:var(--free-bg);color:var(--free)} .yoy.down{background:var(--hi-bg);color:var(--hi)}
 .ytd{display:flex;gap:var(--s3);align-items:center;background:var(--accent-bg);border-radius:var(--r);padding:var(--s3) var(--s4);margin-top:var(--s3);font-size:.9rem}
 .ytd b{font-variant-numeric:tabular-nums}
+.facts-box{margin-top:var(--s4);padding:var(--s4);border-radius:var(--r-lg);background:var(--card);border:1px solid var(--border)}
+.facts-box h3{margin:0 0 var(--s2);font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts-box ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:.95rem;line-height:1.5;max-width:65ch}
+.facts-box b{font-variant-numeric:tabular-nums}
+.tiles b,.big b,.glance b,.row2 b,.tile b{font-variant-numeric:tabular-nums}
 
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--on-primary);padding:10px 18px;border-radius:999px;font-size:.88rem;font-weight:700;z-index:60;box-shadow:var(--shadow)}
 footer{color:var(--muted);font-size:.8rem;padding-block:var(--s5) var(--s6);margin-top:var(--s6);border-top:1px solid var(--border)}
@@ -578,7 +583,7 @@ footer p{margin:0 0 6px;max-width:70ch}
       <button role="tab" data-sv="duty" aria-selected="false">Duty bands</button>
     </div>
     <div id="st-body"></div>
-    <p class="fine" id="st-src" style="margin-top:var(--s4)"></p>
+    <div class="fine" id="st-src" style="margin-top:var(--s4);display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;align-items:center"><span id="st-src-t"></span><span class="seg" style="padding:2px"><button id="u-np" style="min-height:32px;padding:0 10px;font-size:.78rem">Arab · Crore</button><button id="u-intl" style="min-height:32px;padding:0 10px;font-size:.78rem">Billion · Million</button></span></div>
   </section>
 
   <!-- BROWSE -->
@@ -1198,8 +1203,16 @@ $('#ai-out').addEventListener('click', e => { const b = e.target.closest('button
 
 /* ---------- trade statistics ---------- */
 const K = 1000; // stats values are Rs. thousand
+let UNITS = store.get('units', 'np'); // 'np' = Arab/Crore/Lakh, 'intl' = billion/million
 function rs(th, short){
   const v = th * K, a = Math.abs(v);
+  if (UNITS === 'intl'){
+    const g = (x, d) => x.toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: 0 });
+    if (a >= 1e9) return (short ? '' : 'NPR ') + g(v / 1e9, a >= 1e11 ? 0 : 1) + ' bn';
+    if (a >= 1e6) return (short ? '' : 'NPR ') + g(v / 1e6, a >= 1e8 ? 0 : 1) + ' mn';
+    if (a >= 1e3) return (short ? '' : 'NPR ') + g(v / 1e3, 0) + ' k';
+    return (short ? '' : 'NPR ') + g(v, 0);
+  }
   const f = (x, d) => x.toLocaleString('en-IN', { maximumFractionDigits: d, minimumFractionDigits: 0 });
   if (a >= 1e9) return (short ? '' : 'NPR ') + f(v / 1e9, a >= 1e11 ? 0 : 1) + ' Arab';
   if (a >= 1e7) return (short ? '' : 'NPR ') + f(v / 1e7, a >= 1e9 ? 0 : 1) + ' Cr';
@@ -1241,7 +1254,7 @@ function ecClear(){ while (charts.length){ const c = charts.pop(); try{ c.dispos
 window.addEventListener('resize', () => charts.forEach(c => c.resize()));
 const tip = { trigger: 'axis', backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, confine: true,
   valueFormatter: v => rs(v) };
-const axisBase = () => ({ axisLine: { lineStyle: { color: tok('--grid') } }, axisTick: { show: false }, axisLabel: { color: tok('--muted'), fontSize: 11 }, splitLine: { lineStyle: { color: tok('--grid') } } });
+const axisBase = () => ({ axisLine: { show: false }, axisTick: { show: false }, axisLabel: { color: tok('--muted'), fontSize: 11 }, splitLine: { lineStyle: { color: tok('--grid'), type: 'dashed' } } });
 const FY = ST.history.years, H = ST.history;
 const yoy = (arr, i) => { const a = arr[i], b = arr[i-1]; return b ? (a - b) / b * 100 : null; };
 function sparkHTML(vals, cur, cls){
@@ -1254,7 +1267,7 @@ function yearBars(el, series, names){
   return ecInit(el, { grid: { left: 8, right: 8, top: 28, bottom: 24, containLabel: true }, tooltip: tip, legend: names.length > 1 ? { top: 0, textStyle: { color: tok('--fg-2') } } : undefined,
     xAxis: Object.assign(axisBase(), { type: 'category', data: FY.map(y => y.slice(0, 4) + '/' + y.slice(5)) }),
     yAxis: Object.assign(axisBase(), { type: 'value', axisLabel: { color: tok('--muted'), fontSize: 11, formatter: v => rs(v, true) } }),
-    series: series.map((sr, k) => ({ name: sr.name, type: 'bar', data: sr.data, itemStyle: { color: [tok('--imp'), tok('--exp'), tok('--rev')][k], borderRadius: [3, 3, 0, 0] }, barMaxWidth: 28 })) });
+    series: series.map((sr, k) => ({ name: sr.name, type: 'bar', data: sr.data, itemStyle: { color: [tok('--imp'), tok('--exp'), tok('--rev')][k], borderRadius: [2, 2, 0, 0] }, barMaxWidth: 22, barGap: '25%' })) });
 }
 function monthlyLine(el, key){
   const idx = key === 'exp' ? 1 : 0, yrs = Object.keys(ST.monthly);
@@ -1270,8 +1283,8 @@ function treemapChart(el){
   ST.chapters.forEach(c => { const s = sectionOf(c[0]); if (!s) return; (secs[s.n] = secs[s.n] || { name: 'Section ' + s.n + ' · ' + s.t.split(';')[0].slice(0, 40), children: [] }).children.push({ name: chapName(c[0]), value: c[2], ch: c[0] }); });
   const pal = ['#1D81A2', '#2E9E6B', '#E8722E', '#7C5CBF', '#B8860B', '#C0392B', '#3A7CA5', '#5B8C5A', '#8E44AD', '#D35400', '#16A085', '#7F8C8D', '#2C3E50', '#27AE60', '#E67E22', '#2980B9', '#8D6E63', '#00838F', '#AD1457', '#6D4C41', '#455A64'];
   return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => `${esc(p.name)}<br><b>${rs(p.value)}</b> · ${(p.value / ST.overview.imports[1] * 100).toFixed(1)}% of imports` },
-    series: [{ type: 'treemap', roam: false, nodeClick: 'zoomToNode', breadcrumb: { show: true, top: 0, itemStyle: { color: tok('--muted-bg'), textStyle: { color: tok('--fg') } } }, label: { fontSize: 11, color: '#fff', formatter: p => p.name.replace(/^Section [IVX]+ · /, '') },
-      upperLabel: { show: true, height: 20, fontSize: 11, color: '#fff' }, itemStyle: { borderColor: tok('--card'), borderWidth: 2, gapWidth: 2 },
+    series: [{ type: 'treemap', roam: false, nodeClick: 'zoomToNode', breadcrumb: { show: false }, label: { fontSize: 11, color: '#fff', formatter: p => p.name.replace(/^Section [IVX]+ · /, '') },
+      upperLabel: { show: true, height: 20, fontSize: 11, color: '#fff' }, itemStyle: { borderColor: tok('--card'), borderWidth: 1, gapWidth: 1 },
       levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }, { colorSaturation: [.35, .6], itemStyle: { gapWidth: 2, borderColorSaturation: .5 } }],
       data: Object.values(secs).map((x, i) => ({ name: x.name, children: x.children, itemStyle: { color: pal[i % pal.length] } })) }] });
 }
@@ -1305,7 +1318,7 @@ function tradeCard(code8){
 }
 function renderStats(){
   $('#st-sub').textContent = `Fiscal year ${ST.fy} (mid-July 2025 to mid-July 2026) with history from ${FY[0]} · NPR`;
-  $('#st-src').textContent = `1 Arab = 100 Crore = NPR 1 billion. Values as published by the Department of Customs.`;
+  $('#st-src-t').textContent = UNITS === 'intl' ? 'NPR 1 bn = 1 Arab = 100 Crore. Values as published by the Department of Customs.' : '1 Arab = 100 Crore = NPR 1 billion. Values as published by the Department of Customs.'; $('#u-np').setAttribute('aria-pressed', UNITS === 'np'); $('#u-intl').setAttribute('aria-pressed', UNITS === 'intl');
   $$('[data-sv]').forEach(b => b.setAttribute('aria-selected', b.dataset.sv === stView));
   ecClear();
   const body = $('#st-body'); let h = '';
@@ -1313,6 +1326,13 @@ function renderStats(){
   if (stView === 'overview'){
     const ch = ST.chapters, co = ST.countries;
     h += `<div class="tiles">${kpiTiles(false)}</div>`;
+    { const topCh = topN(ch, 2, 1)[0], topCo = topN(co, 1, 1)[0], topEx = topN(co, 2, 1)[0], topExCh = topN(ch, 3, 1)[0];
+      const gi = pctc(ST.overview.imports[1], ST.overview.imports[0]), ge = pctc(ST.overview.exports[1], ST.overview.exports[0]);
+      h += `<div class="facts-box"><h3>In plain words</h3><ul>
+        <li>Nepal imported <b>${rs(ST.overview.imports[1])}</b> of goods in FY ${ST.fy}, ${gi >= 0 ? 'up' : 'down'} ${Math.abs(gi).toFixed(1)}% on the year before, and exported <b>${rs(ST.overview.exports[1])}</b> (${ge >= 0 ? 'up' : 'down'} ${Math.abs(ge).toFixed(1)}%).</li>
+        <li>For every NPR 100 exported, NPR ${(ST.overview.imports_exports_ratio[1] * 100).toFixed(0)} was imported: a trade deficit of <b>${rs(ST.overview.trade_deficit[1])}</b>.</li>
+        <li><b>${esc(topCo[0])}</b> supplied ${(topCo[1] / ST.overview.imports[1] * 100).toFixed(0)}% of all imports; <b>${esc(chapName(topCh[0]))}</b> was the largest import category (${(topCh[2] / ST.overview.imports[1] * 100).toFixed(0)}%).</li>
+        <li>The biggest export market was <b>${esc(topEx[0])}</b> (${(topEx[2] / ST.overview.exports[1] * 100).toFixed(0)}% of exports); the top export category was <b>${esc(chapName(topExCh[0]))}</b>.</li></ul></div>`; }
     if (ST.current) h += `<div class="ytd">${ic('i-info')}<div>FY ${ST.current.fy} so far (${ST.current.months} month${ST.current.months > 1 ? 's' : ''}): imports <b>${rs(ST.current.overview.imports[1], true)}</b> (${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]) >= 0 ? '+' : ''}${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]).toFixed(1)}% on the same months last year), exports <b>${rs(ST.current.overview.exports[1], true)}</b>.</div></div>`;
     h += fig('Seven years of trade', 'Annual imports and exports, FY ' + FY[0] + ' to ' + FY[FY.length-1], `<div class="ech" id="ec-years"></div>`);
     h += fig('Map of imports', 'Every chapter sized by import value; tap a block to zoom', `<div class="ech tall" id="ec-tree"></div>`);
@@ -1401,6 +1421,7 @@ function renderStats(){
 }
 $('#v-stats').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'u-np' || b.id === 'u-intl'){ UNITS = b.id === 'u-np' ? 'np' : 'intl'; store.set('units', UNITS); renderStats(); return; }
   if (b.dataset.sv){ stView = b.dataset.sv; stQ = ''; stCountry = null; stChapter = null; renderStats(); return; }
   if (b.dataset.sort){ stSort = b.dataset.sort; renderStats(); return; }
   if (b.dataset.back){ if (b.dataset.back === 'co') stCountry = null; else stChapter = null; renderStats(); window.scrollTo({top:0}); return; }
