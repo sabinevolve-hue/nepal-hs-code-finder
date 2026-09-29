@@ -10,7 +10,7 @@
   --primary:#0F172A; --on-primary:#FFFFFF; --accent:#0369A1; --accent-bg:#E0F0FA; --brand:#C21E2F;
   --free:#15803D; --free-bg:#DCFCE7; --low:#0369A1; --low-bg:#E0F0FA; --mid:#A15C07; --mid-bg:#FEF3C7; --hi:#B91C1C; --hi-bg:#FEE2E2;
   --seg-goods:#94A3B8; --seg-duty:#0369A1; --seg-excise:#A15C07; --seg-vat:#7C3AED; --seg-other:#475569;
-  --imp:#2a78d6; --exp:#eb6834; --rev:#1baf7a; --track:#E8ECF1;
+  --imp:#1D81A2; --exp:#E8722E; --rev:#2E9E6B; --track:#EEF2F6; --grid:#E5E9EE;
   --scrim:rgba(2,6,23,.5); --shadow:0 12px 32px rgba(15,23,42,.16);
   --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -23,14 +23,14 @@
   --primary:#F1F5F9; --on-primary:#0B1120; --accent:#38BDF8; --accent-bg:#0C2A40; --brand:#F2606E;
   --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
   --seg-goods:#64748B; --seg-duty:#38BDF8; --seg-excise:#FBBF24; --seg-vat:#A78BFA; --seg-other:#94A3B8;
-  --imp:#3987e5; --exp:#d95926; --rev:#199e70; --track:#243047;
+  --imp:#4FB1D3; --exp:#F08A4B; --rev:#5CC494; --track:#1A2436; --grid:#2A3648;
   --scrim:rgba(0,0,0,.62); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
   --primary:#F1F5F9; --on-primary:#0B1120; --accent:#38BDF8; --accent-bg:#0C2A40; --brand:#F2606E;
   --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
   --seg-goods:#64748B; --seg-duty:#38BDF8; --seg-excise:#FBBF24; --seg-vat:#A78BFA; --seg-other:#94A3B8;
-  --imp:#3987e5; --exp:#d95926; --rev:#199e70; --track:#243047;
+  --imp:#4FB1D3; --exp:#F08A4B; --rev:#5CC494; --track:#1A2436; --grid:#2A3648;
   --scrim:rgba(0,0,0,.62); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -336,32 +336,35 @@ table.bk tr.total td{font-size:1.08rem;font-weight:700;border-top:2px solid var(
 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
 @media (min-width:640px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3) var(--s4);min-width:0}
+#v-stats .tile{background:none;border:0;border-left:3px solid var(--grid);border-radius:0;padding:4px 0 4px var(--s3)}
 .tile span{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .tile b{display:block;font-size:1.35rem;font-weight:800;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.15}
 .tile small{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:999px}
 .tile small.up{background:var(--free-bg);color:var(--free)} .tile small.down{background:var(--hi-bg);color:var(--hi)}
 .tile small.neutral{background:var(--muted-bg);color:var(--muted)}
-.fig{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4);margin-top:var(--s3)}
-.fig header{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s3);margin-bottom:var(--s3);flex-wrap:wrap}
-.fig h3{margin:0;font-size:.98rem;font-weight:700}
-.fig .cap{font-size:.78rem;color:var(--muted)}
-.legend2{display:flex;gap:14px;font-size:.78rem;color:var(--fg-2);flex-wrap:wrap}
+.fig{padding:var(--s5) 0 var(--s4);border-top:1px solid var(--grid);margin-top:var(--s2)}
+.fig:first-child{border-top:0;padding-top:var(--s3)}
+.fig header{display:block;margin-bottom:var(--s3)}
+.fig h3{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
+.fig .cap{display:block;font-size:.84rem;color:var(--muted);margin-top:2px}
+.fig .src{font-size:.74rem;color:var(--muted);margin:var(--s3) 0 0}
+.legend2{display:flex;gap:14px;font-size:.8rem;color:var(--fg-2);flex-wrap:wrap;margin-top:6px}
 .legend2 span{display:inline-flex;align-items:center;gap:6px}
-.legend2 i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.bars{display:grid;gap:6px}
-.br{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) auto;gap:var(--s2);align-items:center;min-height:32px;width:100%;text-align:left;border-radius:8px;padding:2px 4px;transition:background var(--t)}
+.legend2 i{width:12px;height:12px;display:inline-block}
+.bars{display:grid;gap:2px}
+.br{display:grid;grid-template-columns:minmax(0,34%) minmax(0,1fr);gap:var(--s3);align-items:center;min-height:30px;width:100%;text-align:left;padding:3px 4px;border-radius:6px;transition:background var(--t)}
+@media (min-width:640px){.br{grid-template-columns:minmax(0,28%) minmax(0,1fr)}}
 button.br:hover{background:var(--muted-bg)}
-.br .l{font-size:.84rem;overflow:hidden;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
+.br .l{font-size:.86rem;overflow:hidden;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25;color:var(--fg)}
 .br .l small{display:block;color:var(--muted);font-family:var(--f-mono);font-size:.72rem}
-.br .l:has(small:not(.in)){-webkit-line-clamp:3}
 .br .l small.in{display:inline;margin-right:6px}
-.br .t{position:relative;height:14px;background:var(--track);border-radius:4px;overflow:hidden;min-width:0}
-.br .t i{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0;background:var(--imp)}
-.br .t i.e{background:var(--exp)} .br .t i.r{background:var(--rev)}
-.br .t.two{display:grid;grid-template-rows:1fr 1fr;gap:2px;height:22px;background:none}
-.br .t.two i{position:static;height:100%;display:block;border-radius:0 4px 4px 0}
-.br .v{font-family:var(--f-mono);font-size:.8rem;font-weight:600;color:var(--fg-2);white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
-.br .v small{display:block;color:var(--muted);font-size:.68rem;font-weight:500}
+.br .l:has(small:not(.in)){-webkit-line-clamp:3}
+.br .t{display:grid;gap:3px;min-width:0}
+.br .t .s{display:flex;align-items:center;gap:6px;min-width:0;height:14px}
+.br .t .s i{display:block;height:100%;background:var(--imp);flex:0 0 auto}
+.br .t .s i.e{background:var(--exp)} .br .t .s i.r{background:var(--rev)}
+.br .t .s b{font-family:var(--f-mono);font-size:.78rem;font-weight:600;color:var(--fg-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.br .t .s.two b{color:var(--muted)}
 .tbl{width:100%;border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums}
 .tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
 .tbl th:first-child,.tbl td:first-child{text-align:left;white-space:normal}
@@ -518,7 +521,7 @@ footer p{margin:0 0 6px;max-width:70ch}
       <button role="tab" data-sv="duty" aria-selected="false">Duty bands</button>
     </div>
     <div id="st-body"></div>
-    <p class="fine" id="st-src"></p>
+    <p class="fine" id="st-src" style="margin-top:var(--s4)"></p>
   </section>
 
   <!-- BROWSE -->
@@ -1127,17 +1130,16 @@ function kpiTiles(compact){
   return t('Imports', 'imports') + t('Exports', 'exports') + t('Trade deficit', 'trade_deficit', true) + (compact ? '' : `<div class="tile"><span>Imports per NPR 1 exported</span><b>NPR ${o.imports_exports_ratio[1].toFixed(1)}</b><small class="${o.imports_exports_ratio[1] < o.imports_exports_ratio[0] ? 'up' : 'down'}">was ${o.imports_exports_ratio[0].toFixed(1)}</small></div>`);
 }
 function barRows(items, opts){
-  // items: [{k, label, sub, a, b?}] ; single series a (imports) or two series a/b
   const max = Math.max(...items.map(x => Math.max(x.a || 0, x.b || 0)), 1);
   const two = items.some(x => x.b !== undefined);
+  const seg = (v, cls) => `<span class="s ${two ? 'two' : ''}"><i class="${cls}" style="width:${(v / max * 68).toFixed(1)}%"></i><b>${v ? rs(v, true) : ''}</b></span>`;
   return `<div class="bars">${items.map(x => {
     const tag = x.k !== undefined ? 'button' : 'div';
     return `<${tag} class="br" ${x.k !== undefined ? `data-k="${esc(String(x.k))}"` : ''} title="${esc(x.label)}: ${rs(x.a)}${two ? ' imports · ' + rs(x.b) + ' exports' : ''}">
       <span class="l">${x.sub ? `<small class="${x.sub.length <= 2 ? 'in' : ''}">${esc(x.sub)}</small>` : ''}${esc(x.label)}</span>
-      <span class="t ${two ? 'two' : ''}"><i class="${opts && opts.cls || ''}" style="width:${(x.a / max * 100).toFixed(1)}%"></i>${two ? `<i class="e" style="width:${(x.b / max * 100).toFixed(1)}%"></i>` : ''}</span>
-      <span class="v">${rs(x.a, true)}${two && x.b ? `<small>${rs(x.b, true)}</small>` : ''}</span></${tag}>`; }).join('')}</div>`;
+      <span class="t">${seg(x.a, opts && opts.cls || '')}${two ? seg(x.b, 'e') : ''}</span></${tag}>`; }).join('')}</div>`;
 }
-const fig = (title, cap, body, legend) => `<div class="fig"><header><h3>${title}</h3>${legend ? `<div class="legend2">${legend}</div>` : `<span class="cap">${cap || ''}</span>`}</header>${body}</div>`;
+const fig = (title, cap, body, legend) => `<div class="fig"><header>${title ? `<h3>${title}</h3>` : ''}${cap ? `<span class="cap">${cap}</span>` : ''}${legend ? `<div class="legend2">${legend}</div>` : ''}</header>${body}<p class="src">Source: Department of Customs, Nepal · FY ${ST.fy} · NPR</p></div>`;
 const LEG2 = `<span><i style="background:var(--imp)"></i>Imports</span><span><i style="background:var(--exp)"></i>Exports</span>`;
 const chapName = c => CHSHORT[c] || (ST.chapters.find(x => x[0] === c) || [0, ''])[1];
 let stView = 'overview', stSort = 'imp', stCountry = null, stChapter = null, stQ = '';
@@ -1155,18 +1157,18 @@ function tradeCard(code8){
 }
 function renderStats(){
   $('#st-sub').textContent = `Fiscal year ${ST.fy} · mid-July 2024 to mid-July 2025 · NPR`;
-  $('#st-src').textContent = `Source: ${ST.source}. Values as published (Rs. thousand), shown in Arab / Crore / Lakh.`;
+  $('#st-src').textContent = `1 Arab = 100 Crore = NPR 1 billion. Values as published by the Department of Customs.`;
   $$('[data-sv]').forEach(b => b.setAttribute('aria-selected', b.dataset.sv === stView));
   const body = $('#st-body'); let h = '';
   const topN = (arr, key, n) => [...arr].sort((a, b) => b[key] - a[key]).slice(0, n);
   if (stView === 'overview'){
     const ch = ST.chapters, co = ST.countries;
     h += `<div class="tiles">${kpiTiles(false)}</div>`;
-    h += fig('Top import categories', '', barRows(topN(ch, 2, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[2] }))), '');
-    h += fig('Top export categories', '', barRows(topN(ch, 3, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[3] })), { cls: 'e' }), '');
-    h += fig('Where imports come from', '', barRows(topN(co, 1, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1] }))), '');
-    h += fig('Where exports go', '', barRows(topN(co, 2, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[2] })), { cls: 'e' }), '');
-    h += fig('Busiest customs points', '', barRows(topN(ST.customs, 1, 8).map(x => ({ k: 'cu', label: x[0], a: x[1], b: x[2] }))), LEG2);
+    h += fig('Top import categories', 'Import value by tariff chapter, 10 largest', barRows(topN(ch, 2, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[2] }))), '');
+    h += fig('Top export categories', 'Export value by tariff chapter, 10 largest', barRows(topN(ch, 3, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[3] })), { cls: 'e' }), '');
+    h += fig('Where imports come from', 'Import value by partner country', barRows(topN(co, 1, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1] }))), '');
+    h += fig('Where exports go', 'Export value by destination', barRows(topN(co, 2, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[2] })), { cls: 'e' }), '');
+    h += fig('Busiest customs points', 'Import and export value cleared per customs office', barRows(topN(ST.customs, 1, 8).map(x => ({ k: 'cu', label: x[0], a: x[1], b: x[2] }))), LEG2);
   }
   if (stView === 'products'){
     const q = stQ.trim();
