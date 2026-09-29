@@ -41,6 +41,7 @@ data/
   nepal-customs-tariff-2026-27.csv   flat CSV of every line (for Excel / other tools)
   fts/<fy>/*.xlsx              Department of Customs FTS workbooks by fiscal year (not in git; see data/sources)
   stats.json                   compact multi-year trade statistics inlined into the page
+  offices.json                 40 customs offices + department info (English), inlined into the page
 scripts/
   parse.py     PDF text → parsed.json (handles the PDF's scrambled table columns)
   aliases.py   everyday names → HS prefixes used by search hints

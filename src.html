@@ -183,6 +183,25 @@ h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppe
 .empty .suggest{justify-content:center}
 
 /* ---------- browse ---------- */
+
+/* offices */
+.off{display:grid;gap:var(--s2)}
+.off .card{padding:var(--s3) var(--s4)}
+.off h3{margin:0;font-size:1rem;line-height:1.3}
+.off .np{font-size:.8rem;color:var(--muted);margin-top:2px}
+.off .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.off .meta span{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--muted-bg);color:var(--fg-2)}
+.off .meta .b-india{background:var(--low-bg);color:var(--low)} .off .meta .b-china{background:var(--accent-bg);color:var(--accent)} .off .meta .b-airport{background:var(--free-bg);color:var(--free)}
+.off .ct{display:flex;flex-wrap:wrap;gap:6px var(--s3);margin-top:10px;font-size:.86rem}
+.off .ct a{display:inline-flex;align-items:center;gap:5px;color:var(--fg);text-decoration:none;font-weight:600;min-height:32px}
+.off .ct a:hover{color:var(--accent)}
+.off .ct svg{width:15px;height:15px;color:var(--muted)}
+.off .chief{margin-top:8px;font-size:.82rem;color:var(--muted)}
+.off .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.off .links button,.off .links a{min-height:34px;padding:0 12px;border-radius:999px;background:var(--accent-bg);color:var(--accent);font-weight:700;font-size:.82rem;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px var(--s3);font-size:.9rem;margin:0}
+.kv dt{color:var(--muted);font-weight:600}.kv dd{margin:0;word-break:break-word}.kv a{color:var(--fg);font-weight:600;text-decoration:none}.kv a:hover{color:var(--accent)}
+.vals{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.vals span{font-size:.8rem;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--muted-bg);color:var(--fg-2)}
 .page-h{padding-block:var(--s5) var(--s3)}
 .page-h h1{margin:0;font-size:1.5rem;letter-spacing:-.02em}
 .page-h p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
@@ -471,6 +490,8 @@ footer p{margin:0 0 6px;max-width:70ch}
   <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
   <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
@@ -666,10 +687,12 @@ footer p{margin:0 0 6px;max-width:70ch}
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script id="data" type="application/json">/*DATA*/</script>
 <script id="stats" type="application/json">/*STATS*/</script>
+<script id="offices" type="application/json">/*OFFICES*/</script>
 <script>
 (function(){
 const D = JSON.parse(document.getElementById('data').textContent);
 const ST = JSON.parse(document.getElementById('stats').textContent);
+const OF = JSON.parse(document.getElementById('offices').textContent);
 const CHSHORT = {"1": "Live animals", "2": "Meat", "3": "Fish & seafood", "4": "Dairy, eggs & honey", "5": "Other animal products", "6": "Live plants & flowers", "7": "Vegetables", "8": "Fruit & nuts", "9": "Coffee, tea & spices", "10": "Cereals", "11": "Flour, malt & starch", "12": "Oil seeds & medicinal plants", "13": "Gums & resins", "14": "Vegetable materials", "15": "Edible oils & fats", "16": "Meat & fish preparations", "17": "Sugar & confectionery", "18": "Cocoa & chocolate", "19": "Cereal & bakery products", "20": "Processed fruit & vegetables", "21": "Misc. food preparations", "22": "Beverages & spirits", "23": "Animal feed & residues", "24": "Tobacco", "25": "Salt, stone, cement & lime", "26": "Ores & ash", "27": "Fuels, oils & gas", "28": "Inorganic chemicals", "29": "Organic chemicals", "30": "Pharmaceuticals", "31": "Fertilisers", "32": "Dyes, paints & inks", "33": "Cosmetics & perfumery", "34": "Soap & cleaning products", "35": "Glues & enzymes", "36": "Explosives & matches", "37": "Photographic goods", "38": "Misc. chemicals", "39": "Plastics", "40": "Rubber", "41": "Raw hides & leather", "42": "Leather goods & bags", "43": "Furskins", "44": "Wood & timber", "45": "Cork", "46": "Straw & basketware", "47": "Wood pulp", "48": "Paper & paperboard", "49": "Books & printed matter", "50": "Silk", "51": "Wool & animal hair", "52": "Cotton", "53": "Jute & other fibres", "54": "Synthetic filaments", "55": "Synthetic staple fibres", "56": "Wadding, felt & rope", "57": "Carpets", "58": "Special fabrics & lace", "59": "Coated & industrial textiles", "60": "Knitted fabrics", "61": "Knitted garments", "62": "Woven garments", "63": "Textile articles & rags", "64": "Footwear", "65": "Headgear", "66": "Umbrellas & sticks", "67": "Feathers & artificial flowers", "68": "Stone & cement articles", "69": "Ceramics", "70": "Glass", "71": "Gems, gold & jewellery", "72": "Iron & steel", "73": "Iron & steel articles", "74": "Copper", "75": "Nickel", "76": "Aluminium", "77": "Reserved", "78": "Lead", "79": "Zinc", "80": "Tin", "81": "Other base metals", "82": "Tools & cutlery", "83": "Misc. metal articles", "84": "Machinery & mechanical", "85": "Electrical & electronics", "86": "Railway", "87": "Vehicles & parts", "88": "Aircraft & drones", "89": "Ships & boats", "90": "Optical, medical & precision", "91": "Clocks & watches", "92": "Musical instruments", "93": "Arms & ammunition", "94": "Furniture & lighting", "95": "Toys, games & sports", "96": "Misc. manufactured", "97": "Art & antiques"};
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -958,7 +981,7 @@ function copy(text, msg){
 }
 
 /* ---------- browse ---------- */
-let browseChap = null, openSec = null, browseQ = '', browsePage = '';
+let browseChap = null, openSec = null, browseQ = '', browsePage = '', offType = 'all', offProv = 'all';
 const bmatch = r => { const q = browseQ.toLowerCase(); return r.digits.startsWith(q.replace(/\D/g,'')) && /\d/.test(q) || r.own.includes(q) || r.ctx.includes(q); };
 function renderBrowse(){
   const v = $('#v-browse');
@@ -979,22 +1002,49 @@ function renderBrowse(){
   }
   const sq = browseQ.toLowerCase();
   if (browsePage === 'gri'){ v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">Rules of classification</h1><p>The six General Rules for the Interpretation of the Harmonized System, as printed in the Customs Tariff 2026/27. Customs applies them in order.</p></div><div class="card"><pre style="white-space:pre-wrap;font:inherit;font-size:.92rem;line-height:1.6;margin:0">${esc(reflow(D.gri))}</pre></div><details class="notes" style="margin-top:var(--s3)"><summary>Abbreviations and symbols used in the tariff</summary><pre>${esc(D.abbr)}</pre></details>`; return; }
+  if (browsePage === 'offices'){ const q = browseQ.toLowerCase(); const TY = { india: 'India border', china: 'China border', airport: 'Airport', dryport: 'Dry port', office: 'Head office' };
+    const list = OF.offices.filter(o => (offType === 'all' || o.type === offType) && (offProv === 'all' || o.province === offProv) && (!q || [o.name, o.location, o.district, o.province, o.border, o.np].join(' ').toLowerCase().includes(q)));
+    const provs = [...new Set(OF.offices.map(o => o.province))].sort();
+    const chief = o => o.chief ? o.chief.replace(/^(\S+\.)\s*/, (m, r) => (OF.roles[r] ? OF.roles[r] + ' · ' : '')).replace(/श्री\s*/, '') : '';
+    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">Customs offices</h1><p>${OF.offices.length} customs offices and border points of the Department of Customs, with addresses and contacts in English.</p></div>
+      <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Find an office: Birgunj, Kerung, airport…" aria-label="Find a customs office" value="${esc(browseQ)}"></div>
+      <div class="toolbar" style="padding-top:var(--s2)">${[['all', 'All'], ['india', 'India border'], ['china', 'China border'], ['airport', 'Airports'], ['dryport', 'Dry port']].map(([k, l]) => `<button class="chip" data-otype="${k}" aria-pressed="${offType === k}">${l}</button>`).join('')}
+        <select class="chip" id="oprov" aria-label="Province">${['all', ...provs].map(p => `<option value="${p}" ${offProv === p ? 'selected' : ''}>${p === 'all' ? 'All provinces' : p + ' Province'}</option>`).join('')}</select></div>
+      <p style="margin:var(--s2) 0 var(--s3);color:var(--muted);font-size:.86rem">${list.length} office${list.length === 1 ? '' : 's'}</p>
+      <div class="off">${list.map(o => `<div class="card"><h3>${esc(o.name)}</h3><div class="np">${esc(o.np)}</div>
+        <div class="meta"><span class="b-${o.type}">${TY[o.type]}</span><span>${esc(o.location)}${o.district && !o.location.includes(o.district) ? ', ' + esc(o.district) : ''}</span><span>${esc(o.province)}</span></div>
+        ${o.border && o.type !== 'office' ? `<div class="chief">${esc(o.border)}</div>` : ''}
+        <div class="ct">${o.phone ? `<a href="tel:${o.phone.replace(/[^\d+]/g, '')}">${ic('i-phone')}${esc(o.phone)}</a>` : ''}${o.mobile ? `<a href="tel:${o.mobile.replace(/[^\d+]/g, '')}">${ic('i-phone')}${esc(o.mobile)}</a>` : ''}${o.email ? `<a href="mailto:${o.email}">${ic('i-mail')}${esc(o.email)}</a>` : ''}</div>
+        ${o.chief ? `<div class="chief">Head: ${esc(chief(o))}</div>` : ''}
+        <div class="links">${o.stat && H.customs[o.stat] ? `<button data-cu="${esc(o.stat)}">${ic('i-chart')}Trade data</button>` : ''}${o.web ? `<a href="https://${o.web}" target="_blank" rel="noopener">${ic('i-up')}${esc(o.web)}</a>` : ''}</div></div>`).join('')}
+      ${!list.length ? '<div class="empty"><b>No office matches</b><p>Try another name or clear the filters.</p></div>' : ''}</div>
+      <p style="margin-top:var(--s4);font-size:.78rem;color:var(--muted)">Source: ${esc(OF.source)}. Office heads change on transfer; call ahead to confirm.</p>`; return; }
+  if (browsePage === 'about'){ const d = OF.department;
+    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">About Nepal Customs</h1><p>${esc(d.name)}</p></div>
+      <div class="card"><h3 style="margin:0 0 var(--s3);font-size:1rem">Contact the department</h3><dl class="kv"><dt>Address</dt><dd>${esc(d.address)}</dd><dt>Phone</dt><dd><a href="tel:${d.phone.replace(/\D/g, '')}">${esc(d.phone)}</a></dd><dt>Toll-free</dt><dd><a href="tel:${d.toll_free.replace(/\D/g, '')}">${esc(d.toll_free)}</a></dd><dt>Email</dt><dd><a href="mailto:${d.email}">${esc(d.email)}</a></dd><dt>Website</dt><dd><a href="https://${d.website}" target="_blank" rel="noopener">${esc(d.website)}</a></dd><dt>Hours</dt><dd>${esc(d.hours)}</dd></dl></div>
+      <div class="card"><h3 style="margin:0 0 6px;font-size:1rem">What the department does</h3><p style="margin:0;font-size:.92rem;line-height:1.6;color:var(--fg-2)">${esc(d.about)}</p></div>
+      <div class="card"><h3 style="margin:0 0 6px;font-size:1rem">Vision</h3><p style="margin:0;font-size:.92rem;color:var(--fg-2)">${esc(d.vision)}</p><div class="vals">${d.values.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>
+      <div class="card"><h3 style="margin:0 0 6px;font-size:1rem">How import clearance works</h3><ol style="margin:0;padding-left:20px;font-size:.92rem;line-height:1.6;color:var(--fg-2)"><li>Goods arrive at a customs point (border, airport or dry port).</li><li>The importer or a licensed customs agent files a declaration in NECAS with the HS code, value, origin and invoices.</li><li>NECAS assesses customs duty, excise and VAT and assigns a risk lane (green, yellow or red).</li><li>Duty is paid electronically or at the bank counter; documents and goods are checked according to the lane.</li><li>Goods are released. Declarations can be audited after clearance.</li></ol><div class="suggest"><button data-page="offices">${ic('i-list')}Customs offices</button><button data-page="gri">${ic('i-info')}Rules of classification</button></div></div>
+      <p style="margin-top:var(--s4);font-size:.78rem;color:var(--muted)">Source: ${esc(OF.source)}. Summarised in English from the department's Nepali pages.</p>`; return; }
   if (browsePage === 'export'){ const ks = Object.keys(D.export).sort(); const q = browseQ.toLowerCase();
     v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">Export duty schedule</h1><p>${ks.length} lines carry export customs duty. No export duty applies to goods not listed here.</p></div>
       <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Filter export lines" aria-label="Filter export lines" value="${esc(browseQ)}"></div>
       <div class="group">${ks.filter(k => !q || k.includes(q) || D.export[k][0].toLowerCase().includes(q) || (BY[k] && BY[k].own.includes(q))).map(k => `<button class="row" data-code="${k}"><span class="code">${k}</span><span class="d">${esc(BY[k] ? label(BY[k]) : D.export[k][0])}</span><span class="end"><span class="duty d-spec"><b>${esc(D.export[k][1])}</b></span></span></button>`).join('')}</div>`; return; }
   v.innerHTML = `<div class="page-h"><h1>Browse the tariff</h1><p>21 sections and 97 chapters. Open a section, pick a chapter, then open a heading to see its codes.</p></div>
     <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Find a chapter: textiles, machinery, 85…" aria-label="Find a chapter" value="${esc(browseQ)}"></div>
-    ${browseQ ? '' : `<div class="cats" style="margin-bottom:var(--s3)"><button class="cat" data-page="gri"><span class="ic">${ic('i-info')}</span><span>Rules of classification<small>General Rules 1–6</small></span></button><button class="cat" data-page="export"><span class="ic">${ic('i-up')}</span><span>Export duty schedule<small>${Object.keys(D.export).length} lines</small></span></button></div>`}` +
+    ${browseQ ? '' : `<div class="cats" style="margin-bottom:var(--s3)"><button class="cat" data-page="gri"><span class="ic">${ic('i-info')}</span><span>Rules of classification<small>General Rules 1–6</small></span></button><button class="cat" data-page="export"><span class="ic">${ic('i-up')}</span><span>Export duty schedule<small>${Object.keys(D.export).length} lines</small></span></button><button class="cat" data-page="offices"><span class="ic">${ic('i-list')}</span><span>Customs offices<small>${OF.offices.length} offices · contacts</small></span></button><button class="cat" data-page="about"><span class="ic">${ic('i-info')}</span><span>About Nepal Customs<small>Department, hours, NECAS</small></span></button></div>`}` +
     D.sections.filter(s => !sq || s.t.toLowerCase().includes(sq) || Object.keys(D.chapters).some(c => sectionOf(+c) === s && (D.chapters[c].t.toLowerCase().includes(sq) || c === sq))).map(s => { const chs = Object.keys(D.chapters).map(Number).filter(c => sectionOf(c) === s).sort((a,b)=>a-b); const open = openSec === s.n;
       const sh = (SECT.find(x => x[0] === s.n) || [0, 0, s.t])[2];
       return `<div class="acc"><button data-sec="${s.n}" aria-expanded="${open}"><span class="num">${s.n}</span><span class="t">${esc(sh)}<small>${chs[0] === chs[chs.length-1] ? 'Chapter ' + chs[0] : 'Chapters ' + chs[0] + '–' + chs[chs.length-1]} · ${esc(s.t.length > 90 ? s.t.slice(0, 88) + '…' : s.t)}</small></span>${ic('i-chev')}</button>
       <div class="body" ${open ? '' : 'hidden'}>${s.n && s.n !== undefined && s.notes ? `<details class="notes" style="margin:var(--s2)"><summary>Section ${s.n} notes</summary><pre>${esc(reflow(s.notes))}</pre></details>` : ''}${chs.filter(c => !sq || D.chapters[c].t.toLowerCase().includes(sq) || String(c) === sq || s.t.toLowerCase().includes(sq)).map(c => `<button class="chap" data-chapter="${c}"><span class="num">${String(c).padStart(2,'0')}</span><span><b style="font-weight:700">${esc(CHSHORT[c] || D.chapters[c].t)}</b><small style="display:block;color:var(--muted);font-size:.78rem;line-height:1.3">${esc(D.chapters[c].t.length > 80 ? D.chapters[c].t.slice(0, 78) + '…' : D.chapters[c].t)}</small></span><span class="c">${CHCOUNT[c] || 0}</span></button>`).join('')}</div></div>`; }).join('');
 }
+$('#v-browse').addEventListener('change', e => { if (e.target.id === 'oprov'){ offProv = e.target.value; renderBrowse(); } });
 $('#v-browse').addEventListener('input', e => { if (e.target.id === 'bq'){ browseQ = e.target.value.trim(); const pos = e.target.selectionStart; renderBrowse(); const el = $('#bq'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
 $('#v-browse').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.page !== undefined){ browsePage = b.dataset.page; browseQ = ''; renderBrowse(); window.scrollTo({top:0}); return; }
+  if (b.dataset.otype){ offType = b.dataset.otype; renderBrowse(); return; }
+  if (b.dataset.cu){ stView = 'customs'; go('stats'); window.scrollTo({top:0}); return; }
   if (b.id === 'b-back'){ browseChap = null; browseQ = ''; renderBrowse(); window.scrollTo({top:0}); return; }
   if (b.dataset.sec){ openSec = openSec === b.dataset.sec ? null : b.dataset.sec; renderBrowse(); return; }
   if (b.dataset.chapter){ browseChap = +b.dataset.chapter; browseQ = ''; openSec = sectionOf(browseChap).n; renderBrowse(); window.scrollTo({top:0}); return; }
@@ -1451,6 +1501,7 @@ function renderStats(){
   if (stView === 'customs'){
     const cu = CU(), ti = cu.reduce((a, x) => a + x[1], 0), te = cu.reduce((a, x) => a + x[2], 0);
     h += fig('Imports and exports by customs office', 'FY ' + yFY(), barRows([...cu].sort((a, b) => b[1] - a[1]).map(x => ({ label: x[0], a: x[1], b: x[2] }))), LEG2);
+    h += `<div class="suggest" style="margin:0 0 var(--s3)"><button data-k="offices">${ic('i-list')}Office addresses and contacts</button></div>`;
     h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Customs office</th><th>Imports</th><th>Share</th><th>Exports</th><th>Share</th></tr></thead><tbody>${[...cu].sort((a, b) => b[1] - a[1]).map(x => `<tr><td>${esc(x[0])}</td><td>${rs(x[1], true)}</td><td>${(x[1] / ti * 100).toFixed(1)}%</td><td>${rs(x[2], true)}</td><td>${(x[2] / te * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
   }
   if (stView === 'duty'){
@@ -1496,6 +1547,7 @@ $('#v-stats').addEventListener('click', e => {
   if (k.startsWith('ch:')){ stView = 'chapters'; stChapter = +k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
   if (k.startsWith('co:')){ stView = 'countries'; stCountry = k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
   if (k === 'cu'){ stView = 'customs'; renderStats(); window.scrollTo({top:0}); }
+  if (k === 'offices'){ browsePage = 'offices'; browseChap = null; browseQ = ''; go('browse'); renderBrowse(); window.scrollTo({top:0}); }
 });
 $('#v-stats').addEventListener('change', e => { if (e.target.id === 'cmp-a'){ cmpA = +e.target.value; renderStats(); } if (e.target.id === 'cmp-b'){ cmpB = +e.target.value; renderStats(); } });
 $('#v-stats').addEventListener('input', e => { if (e.target.id === 'cmp-q'){ cmpQ = e.target.value; clearTimeout(window._cq); window._cq = setTimeout(() => { const pos = e.target.selectionStart; renderStats(); const el = $('#cmp-q'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } }, 250); return; }
