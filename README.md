@@ -67,6 +67,11 @@ To rebuild the data from the PDF text: `npm run build:data` then `npm run build`
 
 Inside claude.ai the same page uses the viewer's own Claude account instead of the API key.
 
+## Monthly refresh of trade statistics
+
+`python3 scripts/refresh.py` crawls the Department of Customs statistics pages, downloads any new monthly or
+annual workbook into `data/fts/<fy>/`, rebuilds `data/stats.json` and `public/index.html`. Commit and push to deploy.
+
 ## Updating for a new fiscal year
 
 1. Extract the text layer of the new Customs Tariff PDF (e.g. `pdftotext -layout`) to `data/customs-tariff-2026-27.txt`

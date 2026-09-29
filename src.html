@@ -133,6 +133,7 @@ select.chip{appearance:none;padding-right:34px;max-width:210px;background:var(--
 /* home */
 h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:var(--s6) 0 var(--s3)}
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2)}
+.cats.sec21{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
 .cat{display:flex;align-items:center;gap:var(--s3);min-height:60px;padding:var(--s3);border-radius:var(--r);background:var(--card);border:1px solid var(--border);text-align:left;font-weight:700;font-size:.9rem;transition:border-color var(--t),transform var(--t)}
 .cat:hover{border-color:var(--accent)}
 .cat:active{transform:scale(.98)}
@@ -476,6 +477,20 @@ footer p{margin:0 0 6px;max-width:70ch}
   <symbol id="c-drop" viewBox="0 0 24 24"><path d="M12 2.7s-6 6.3-6 11.3a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/></symbol>
   <symbol id="c-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.9 4.9 0 1 0-7-7l-10 10a4.9 4.9 0 1 0 7 7zM8.5 8.5l7 7"/></symbol>
   <symbol id="c-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="c-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 20 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10z"/><path d="M2 21c0-3 1.9-5.5 5-7"/></symbol>
+  <symbol id="c-cow" viewBox="0 0 24 24"><path d="M4 9V6l3 2h10l3-2v3"/><rect x="5" y="8" width="14" height="9" rx="4"/><path d="M9 17v4M15 17v4M9 12h.01M15 12h.01"/></symbol>
+  <symbol id="c-oil" viewBox="0 0 24 24"><path d="M8 3h8l1 5H7z"/><rect x="6" y="8" width="12" height="13" rx="2"/><path d="M10 13h4"/></symbol>
+  <symbol id="c-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-6 9a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3l-6-9V3"/></symbol>
+  <symbol id="c-leather" viewBox="0 0 24 24"><path d="M4 9a8 5 0 0 1 16 0v6a8 5 0 0 1-16 0z"/><path d="M4 9a8 5 0 0 0 16 0"/></symbol>
+  <symbol id="c-wood" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M3 12h18M8 7v10M14 7v10"/></symbol>
+  <symbol id="c-paper" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/></symbol>
+  <symbol id="c-shoe" viewBox="0 0 24 24"><path d="M2 16h20v3H2z"/><path d="M2 16c0-3 3-4 5-7l3 2 4-1c3 1 6 3 8 6"/></symbol>
+  <symbol id="c-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M10 3l2 6 2-6M6 3l4 6M18 3l-4 6"/></symbol>
+  <symbol id="c-metal" viewBox="0 0 24 24"><path d="M3 17l4-8h10l4 8z"/><path d="M7 9V5h10v4M3 17v3h18v-3"/></symbol>
+  <symbol id="c-plane" viewBox="0 0 24 24"><path d="M2 14l8-2 4-8 2 1-2 7 7 2-1 2-7-1-3 5-2-1 1-5-7-1z"/></symbol>
+  <symbol id="c-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="c-gun" viewBox="0 0 24 24"><path d="M2 9h18l2 3H12l-1 5H7l1-5H2z"/></symbol>
+  <symbol id="c-art" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 5M17 8h.01"/></symbol>
   <symbol id="c-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 0 20M2 12h20"/></symbol>
 </svg>
 
@@ -740,9 +755,11 @@ function hl(text, words){
 let dutyF = 'all', chapF = '', shown = 40;
 const passDuty = r => { if (dutyF === 'all') return true; const n = num(rateOf(r)); if (isNaN(n)) return false;
   return dutyF === 'free' ? n === 0 : dutyF === 'hi' ? n > 20 : n <= +dutyF; };
-const CATS = [['c-chip','Electronics',85],['c-gear','Machinery',84],['c-car','Vehicles & parts',87],['c-sun','Solar & lighting',null,'solar panel'],
-  ['c-shirt','Clothing',62],['c-sofa','Furniture',94],['c-food','Food & drinks',null,'food'],['c-brick','Building materials',68],
-  ['c-drop','Cosmetics',33],['c-pill','Medicines',30],['c-box','Plastics',39],['c-ball','Toys & sports',95]];
+// Home "Browse by category": one card per HS section, consumer names, with import value and code count
+const SECT = [['I','c-cow','Live animals & animal products'],['II','c-leaf','Vegetables, fruit, grains & spices'],['III','c-oil','Edible oils & fats'],['IV','c-food','Food, drinks & tobacco'],['V','c-brick','Fuels, minerals, cement & salt'],['VI','c-flask','Chemicals, medicines & cosmetics'],['VII','c-box','Plastics & rubber'],['VIII','c-leather','Leather, bags & furskins'],['IX','c-wood','Wood, cork & basketware'],['X','c-paper','Paper, books & printing'],['XI','c-shirt','Textiles & clothing'],['XII','c-shoe','Footwear, hats & umbrellas'],['XIII','c-brick','Stone, ceramics & glass'],['XIV','c-gem','Gold, gems & jewellery'],['XV','c-metal','Iron, steel & metals'],['XVI','c-chip','Machinery, electrical & electronics'],['XVII','c-car','Vehicles, aircraft & ships'],['XVIII','c-eye','Optical, medical & precision'],['XIX','c-gun','Arms & ammunition'],['XX','c-sofa','Furniture, toys & misc. goods'],['XXI','c-art','Art & antiques']];
+const secImports = {}; ST.chapters.forEach(c => { const sn = sectionOf(c[0]); if (sn) secImports[sn.n] = (secImports[sn.n] || 0) + c[2]; });
+const secCodes = {}; ROWS.forEach(r => { const sn = sectionOf(r.ch); if (sn) secCodes[sn.n] = (secCodes[sn.n] || 0) + 1; });
+const QUICK = [['LED display','8528 · 8531'],['Mobile phone','8517.13'],['Solar panel','8541.43'],['CCTV camera','8525'],['Laptop','8471.30'],['Electric vehicle','8703.80'],['Cement','2523'],['Cosmetics','3304'],['Medicine','3004'],['Rice','1006'],['Steel rod','7214'],['Furniture','94']];
 function rowHTML(r, words, showHead){
   const ctx = r.path.length ? `<span class="p">${esc(r.path[r.path.length-1])} › </span>` : '';
   return `<button class="row" data-code="${r.code}">
@@ -772,8 +789,10 @@ function renderHome(){
       <div class="ech short" id="ec-home"></div>
     </div>
     ${recent.length ? `<h2 class="sec">Recent searches</h2><div class="recent">${recent.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
+    <h2 class="sec">Popular searches</h2>
+    <div class="cats">${QUICK.map(([t, c]) => `<button class="cat" data-q="${esc(t)}"><span>${esc(t)}<small>${c}</small></span></button>`).join('')}</div>
     <h2 class="sec">Browse by category</h2>
-    <div class="cats">${CATS.map(([i, t, ch, q]) => `<button class="cat" ${ch ? `data-chap="${ch}"` : `data-q="${q}"`}><span class="ic">${ic(i)}</span><span>${t}<small>${ch ? 'Chapter ' + ch + ' · ' + CHCOUNT[ch] + ' codes' : 'Search'}</small></span></button>`).join('')}</div>
+    <div class="cats sec21">${SECT.map(([n, i, t]) => { const secs = D.sections.find(x => x.n === n); const chs = Object.keys(D.chapters).map(Number).filter(c => sectionOf(c) === secs); return `<button class="cat" data-sec="${n}"><span class="ic">${ic(i)}</span><span>${t}<small>${chs[0] === chs[chs.length-1] ? 'Ch ' + chs[0] : 'Ch ' + chs[0] + '–' + chs[chs.length-1]} · ${(secCodes[n] || 0).toLocaleString()} codes · imports ${rs(secImports[n] || 0, true)}</small></span></button>`; }).join('')}</div>
     <h2 class="sec">How to find the right code</h2>
     <div class="steps">
       <div class="step"><span class="n">1</span><b>Search what it is</b><p>Type the product, its material or its use. Codes work too: 85, 8528 or 8528.52.10.</p></div>
@@ -835,6 +854,7 @@ document.addEventListener('click', e => {
     if (b.dataset.q !== undefined){ runQuery(b.dataset.q); return; }
     if (b.dataset.go){ go(b.dataset.go); return; }
     if (b.dataset.chap && b.classList.contains('cat')){ browseChap = +b.dataset.chap; go('browse'); return; }
+    if (b.dataset.sec && b.classList.contains('cat')){ browseChap = null; browsePage = ''; browseQ = ''; openSec = b.dataset.sec; go('browse'); setTimeout(() => { const el = document.querySelector(`[data-sec="${b.dataset.sec}"][aria-expanded]`); if (el) el.scrollIntoView({ block: 'start' }); }, 50); return; }
     if (b.dataset.duty){ dutyF = b.dataset.duty; $$('[data-duty]').forEach(x => x.setAttribute('aria-pressed', x === b)); shown = 40; renderResults(); return; }
     if (b.dataset.code){ remember($('#q').value.trim()); openDetail(b.dataset.code); }
   }
@@ -931,7 +951,7 @@ function renderBrowse(){
     const c = browseChap, chap = D.chapters[c], sec = sectionOf(c);
     const heads = Object.keys(D.heads).filter(h => +h.slice(0,2) === c).sort();
     v.innerHTML = `<div class="page-h"><button class="back" id="b-back">${ic('i-left')}All chapters</button>
-      <p style="margin-top:8px">Section ${sec.n} · Chapter ${c}</p><h1 style="text-wrap:balance;font-size:1.15rem;line-height:1.4;font-weight:700">${esc(chap.t)}</h1></div>
+      <p style="margin-top:8px">Section ${sec.n} · Chapter ${c}</p><h1 style="text-wrap:balance;font-size:1.35rem;line-height:1.25;font-weight:800">${esc(CHSHORT[c] || chap.t)}</h1><p style="font-size:.88rem">${esc(chap.t)}</p></div>
       <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Filter within chapter ${c}…" aria-label="Filter codes in this chapter" value="${esc(browseQ)}"></div>
       ${chap.n && !browseQ ? `<details class="notes"><summary>Chapter notes</summary><pre>${esc(reflow(chap.n))}</pre></details>` : ''}
       ${heads.filter(h => !browseQ || (BYHEAD[h] || []).some(r => bmatch(r))).map(h => { const rs = BYHEAD[h] || []; let lastG = null;
@@ -952,8 +972,9 @@ function renderBrowse(){
     <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Find a chapter: textiles, machinery, 85…" aria-label="Find a chapter" value="${esc(browseQ)}"></div>
     ${browseQ ? '' : `<div class="cats" style="margin-bottom:var(--s3)"><button class="cat" data-page="gri"><span class="ic">${ic('i-info')}</span><span>Rules of classification<small>General Rules 1–6</small></span></button><button class="cat" data-page="export"><span class="ic">${ic('i-up')}</span><span>Export duty schedule<small>${Object.keys(D.export).length} lines</small></span></button></div>`}` +
     D.sections.filter(s => !sq || s.t.toLowerCase().includes(sq) || Object.keys(D.chapters).some(c => sectionOf(+c) === s && (D.chapters[c].t.toLowerCase().includes(sq) || c === sq))).map(s => { const chs = Object.keys(D.chapters).map(Number).filter(c => sectionOf(c) === s).sort((a,b)=>a-b); const open = openSec === s.n;
-      return `<div class="acc"><button data-sec="${s.n}" aria-expanded="${open}"><span class="num">${s.n}</span><span class="t">${esc(s.t)}<small>Chapters ${chs[0]}–${chs[chs.length-1]}</small></span>${ic('i-chev')}</button>
-      <div class="body" ${open ? '' : 'hidden'}>${s.n && s.n !== undefined && s.notes ? `<details class="notes" style="margin:var(--s2)"><summary>Section ${s.n} notes</summary><pre>${esc(reflow(s.notes))}</pre></details>` : ''}${chs.filter(c => !sq || D.chapters[c].t.toLowerCase().includes(sq) || String(c) === sq || s.t.toLowerCase().includes(sq)).map(c => `<button class="chap" data-chapter="${c}"><span class="num">${String(c).padStart(2,'0')}</span><span>${esc(D.chapters[c].t)}</span><span class="c">${CHCOUNT[c] || 0}</span></button>`).join('')}</div></div>`; }).join('');
+      const sh = (SECT.find(x => x[0] === s.n) || [0, 0, s.t])[2];
+      return `<div class="acc"><button data-sec="${s.n}" aria-expanded="${open}"><span class="num">${s.n}</span><span class="t">${esc(sh)}<small>${chs[0] === chs[chs.length-1] ? 'Chapter ' + chs[0] : 'Chapters ' + chs[0] + '–' + chs[chs.length-1]} · ${esc(s.t.length > 90 ? s.t.slice(0, 88) + '…' : s.t)}</small></span>${ic('i-chev')}</button>
+      <div class="body" ${open ? '' : 'hidden'}>${s.n && s.n !== undefined && s.notes ? `<details class="notes" style="margin:var(--s2)"><summary>Section ${s.n} notes</summary><pre>${esc(reflow(s.notes))}</pre></details>` : ''}${chs.filter(c => !sq || D.chapters[c].t.toLowerCase().includes(sq) || String(c) === sq || s.t.toLowerCase().includes(sq)).map(c => `<button class="chap" data-chapter="${c}"><span class="num">${String(c).padStart(2,'0')}</span><span><b style="font-weight:700">${esc(CHSHORT[c] || D.chapters[c].t)}</b><small style="display:block;color:var(--muted);font-size:.78rem;line-height:1.3">${esc(D.chapters[c].t.length > 80 ? D.chapters[c].t.slice(0, 78) + '…' : D.chapters[c].t)}</small></span><span class="c">${CHCOUNT[c] || 0}</span></button>`).join('')}</div></div>`; }).join('');
 }
 $('#v-browse').addEventListener('input', e => { if (e.target.id === 'bq'){ browseQ = e.target.value.trim(); const pos = e.target.selectionStart; renderBrowse(); const el = $('#bq'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
 $('#v-browse').addEventListener('click', e => {

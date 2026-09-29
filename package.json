@@ -6,6 +6,7 @@
   "scripts": {
     "build:data": "python3 scripts/parse.py && python3 scripts/build.py && python3 scripts/stats.py",
     "build": "python3 scripts/assemble.py",
+    "refresh": "python3 scripts/refresh.py",
     "dev": "python3 -m http.server 8080 --directory public"
   },
   "engines": { "node": ">=18" }
