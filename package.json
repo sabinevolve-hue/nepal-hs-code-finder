@@ -4,7 +4,7 @@
   "private": true,
   "description": "Mobile-first search of Nepal Customs Tariff 2026/27: HS codes, import duty, SAARC rates, landed-cost calculator and an AI classification assistant.",
   "scripts": {
-    "build:data": "python3 scripts/parse.py && python3 scripts/build.py",
+    "build:data": "python3 scripts/parse.py && python3 scripts/build.py && python3 scripts/stats.py",
     "build": "python3 scripts/assemble.py",
     "dev": "python3 -m http.server 8080 --directory public"
   },
