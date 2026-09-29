@@ -3,7 +3,8 @@ import pathlib, re
 root = pathlib.Path(__file__).resolve().parents[1]
 src = (root / 'src.html').read_text(encoding='utf-8')
 data = (root / 'data' / 'tariff.json').read_text(encoding='utf-8').replace('</', '<\\/')
-page = src.replace('/*DATA*/', data)
+stats = (root / 'data' / 'stats.json').read_text(encoding='utf-8').replace('</', '<\\/')
+page = src.replace('/*DATA*/', data).replace('/*STATS*/', stats)
 # standalone page: add the doctype + head the artifact host normally supplies
 head = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
         '<meta name="theme-color" content="#0F172A">'

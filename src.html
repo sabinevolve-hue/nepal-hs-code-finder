@@ -1,7 +1,7 @@
 <title>Nepal HS Code Finder</title>
 <meta name="description" content="Search Nepal Customs Tariff 2026/27 by HS code, product name or material. Import duty, SAARC rates and a landed-cost estimator.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 /* Layout: Swiss-minimal single column (max 760px). Sticky search app-bar, 4-tab bottom nav on phones,
    full-height detail sheet with sticky action bar. Understand -> trust -> act on every code. */
@@ -10,9 +10,10 @@
   --primary:#0F172A; --on-primary:#FFFFFF; --accent:#0369A1; --accent-bg:#E0F0FA; --brand:#C21E2F;
   --free:#15803D; --free-bg:#DCFCE7; --low:#0369A1; --low-bg:#E0F0FA; --mid:#A15C07; --mid-bg:#FEF3C7; --hi:#B91C1C; --hi-bg:#FEE2E2;
   --seg-goods:#94A3B8; --seg-duty:#0369A1; --seg-excise:#A15C07; --seg-vat:#7C3AED; --seg-other:#475569;
+  --imp:#2a78d6; --exp:#eb6834; --rev:#1baf7a; --track:#E8ECF1;
   --scrim:rgba(2,6,23,.5); --shadow:0 12px 32px rgba(15,23,42,.16);
-  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --r-sm:8px; --r:12px; --r-lg:16px;
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
   --t:180ms cubic-bezier(.2,.7,.2,1);
@@ -22,19 +23,21 @@
   --primary:#F1F5F9; --on-primary:#0B1120; --accent:#38BDF8; --accent-bg:#0C2A40; --brand:#F2606E;
   --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
   --seg-goods:#64748B; --seg-duty:#38BDF8; --seg-excise:#FBBF24; --seg-vat:#A78BFA; --seg-other:#94A3B8;
+  --imp:#3987e5; --exp:#d95926; --rev:#199e70; --track:#243047;
   --scrim:rgba(0,0,0,.62); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
   --primary:#F1F5F9; --on-primary:#0B1120; --accent:#38BDF8; --accent-bg:#0C2A40; --brand:#F2606E;
   --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
   --seg-goods:#64748B; --seg-duty:#38BDF8; --seg-excise:#FBBF24; --seg-vat:#A78BFA; --seg-other:#94A3B8;
+  --imp:#3987e5; --exp:#d95926; --rev:#199e70; --track:#243047;
   --scrim:rgba(0,0,0,.62); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark}
 
 *{box-sizing:border-box}
 input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
 [hidden]{display:none!important}
 html,body{background:var(--bg)}
-body{color:var(--fg);font:16px/1.5 var(--f-body);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{color:var(--fg);font:15.5px/1.5 var(--f-body);letter-spacing:-.005em;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -67,7 +70,7 @@ nav.tabbar{display:none}
 
 /* ---------- search ---------- */
 .hero{padding-block:var(--s6) var(--s4)}
-.hero h1{margin:0 0 var(--s2);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.12;letter-spacing:-.025em;font-weight:700;text-wrap:balance;max-width:20ch}
+.hero h1{margin:0 0 var(--s2);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.12;letter-spacing:-.03em;font-weight:800;text-wrap:balance;max-width:20ch}
 .hero p{margin:0;color:var(--muted);max-width:56ch}
 .hero.compact{padding-block:var(--s3) 0}
 .hero.compact h1,.hero.compact p{display:none}
@@ -325,6 +328,72 @@ table.bk tr.total td{font-size:1.08rem;font-weight:700;border-top:2px solid var(
 .bfilter svg{position:absolute;left:14px;top:14px;color:var(--muted);pointer-events:none}
 .aibtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:12px;background:var(--accent-bg);color:var(--accent);font-weight:700;font-size:.9rem;margin-top:var(--s3)}
 
+/* ---------- trade statistics ---------- */
+.subnav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:0 16px var(--s3)}
+.subnav::-webkit-scrollbar{display:none}
+.subnav button{flex-shrink:0;min-height:40px;padding:0 14px;border-radius:999px;font-weight:700;font-size:.86rem;color:var(--fg-2);background:var(--card);border:1px solid var(--border);transition:all var(--t);white-space:nowrap}
+.subnav button[aria-selected="true"]{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+@media (min-width:640px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3) var(--s4);min-width:0}
+.tile span{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tile b{display:block;font-size:1.35rem;font-weight:800;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.15}
+.tile small{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.tile small.up{background:var(--free-bg);color:var(--free)} .tile small.down{background:var(--hi-bg);color:var(--hi)}
+.tile small.neutral{background:var(--muted-bg);color:var(--muted)}
+.fig{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4);margin-top:var(--s3)}
+.fig header{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s3);margin-bottom:var(--s3);flex-wrap:wrap}
+.fig h3{margin:0;font-size:.98rem;font-weight:700}
+.fig .cap{font-size:.78rem;color:var(--muted)}
+.legend2{display:flex;gap:14px;font-size:.78rem;color:var(--fg-2);flex-wrap:wrap}
+.legend2 span{display:inline-flex;align-items:center;gap:6px}
+.legend2 i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.bars{display:grid;gap:6px}
+.br{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) auto;gap:var(--s2);align-items:center;min-height:32px;width:100%;text-align:left;border-radius:8px;padding:2px 4px;transition:background var(--t)}
+button.br:hover{background:var(--muted-bg)}
+.br .l{font-size:.84rem;overflow:hidden;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
+.br .l small{display:block;color:var(--muted);font-family:var(--f-mono);font-size:.72rem}
+.br .l:has(small:not(.in)){-webkit-line-clamp:3}
+.br .l small.in{display:inline;margin-right:6px}
+.br .t{position:relative;height:14px;background:var(--track);border-radius:4px;overflow:hidden;min-width:0}
+.br .t i{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0;background:var(--imp)}
+.br .t i.e{background:var(--exp)} .br .t i.r{background:var(--rev)}
+.br .t.two{display:grid;grid-template-rows:1fr 1fr;gap:2px;height:22px;background:none}
+.br .t.two i{position:static;height:100%;display:block;border-radius:0 4px 4px 0}
+.br .v{font-family:var(--f-mono);font-size:.8rem;font-weight:600;color:var(--fg-2);white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.br .v small{display:block;color:var(--muted);font-size:.68rem;font-weight:500}
+.tbl{width:100%;border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.tbl th:first-child,.tbl td:first-child{text-align:left;white-space:normal}
+.tbl th{font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--muted-bg)}
+.tbl-wrap{overflow-x:auto}
+.sortbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.82rem;color:var(--muted)}
+.sortbar button{min-height:34px;padding:0 10px;border-radius:8px;font-weight:700;font-size:.8rem;color:var(--fg-2);background:var(--muted-bg)}
+.sortbar button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.trade{margin-top:var(--s4);background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4)}
+.trade .row2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2);margin:var(--s3) 0}
+.trade .row2 div{background:var(--muted-bg);border-radius:10px;padding:8px 10px;min-width:0}
+.trade .row2 span{display:block;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.trade .row2 b{display:block;font-size:.98rem;font-weight:800;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini{display:grid;gap:4px;margin-top:var(--s2)}
+.mini div{display:grid;grid-template-columns:minmax(0,40%) 1fr auto;gap:8px;align-items:center;font-size:.82rem}
+.mini div i{display:block;height:10px;border-radius:3px;background:var(--imp)}
+.mini div i.e{background:var(--exp)}
+.mini div b{font-family:var(--f-mono);font-size:.76rem;font-weight:600;color:var(--fg-2)}
+.mini .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tsearch{position:relative;margin-bottom:var(--s3)}
+.tsearch input{width:100%;height:48px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);padding:0 14px 0 44px;font-size:.98rem;outline:none}
+.tsearch input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+.tsearch svg{position:absolute;left:14px;top:14px;color:var(--muted);pointer-events:none}
+.pillrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:var(--s2)}
+.pillrow button{min-height:34px;padding:0 12px;border-radius:999px;background:var(--muted-bg);font-size:.82rem;font-weight:700;color:var(--fg-2)}
+.pillrow button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.hdrbtn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--fg-2);transition:background var(--t)}
+.hdrbtn:hover{background:var(--muted-bg)}
+.hdrbtn[aria-selected="true"]{background:var(--primary);color:var(--on-primary)}
+
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--on-primary);padding:10px 18px;border-radius:999px;font-size:.88rem;font-weight:700;z-index:60;box-shadow:var(--shadow)}
 footer{color:var(--muted);font-size:.8rem;padding-block:var(--s5) var(--s6);margin-top:var(--s6);border-top:1px solid var(--border)}
 footer p{margin:0 0 6px;max-width:70ch}
@@ -350,6 +419,9 @@ footer p{margin:0 0 6px;max-width:70ch}
   <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v-4M12 15V7M17 15v-6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M7 7l10 10M17 9v8H9"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
   <symbol id="c-chip" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
   <symbol id="c-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
@@ -368,12 +440,15 @@ footer p{margin:0 0 6px;max-width:70ch}
 <header class="bar">
   <div class="wrap bar-row">
     <div class="logo"><span class="mark">HS</span><span>Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></div>
+    <div style="display:flex;align-items:center;gap:6px">
     <div class="nav-desk" role="tablist" aria-label="Sections">
       <button role="tab" data-tab="search" aria-selected="true">Search</button>
       <button role="tab" data-tab="ai" aria-selected="false">Ask AI</button>
+      <button role="tab" data-tab="stats" aria-selected="false">Trade data</button>
       <button role="tab" data-tab="browse" aria-selected="false">Browse</button>
-      <button role="tab" data-tab="calc" aria-selected="false">Tax calculator</button>
-      <button role="tab" data-tab="saved" aria-selected="false">Saved</button>
+      <button role="tab" data-tab="calc" aria-selected="false">Calculator</button>
+    </div>
+    <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
   </div>
 </header>
@@ -431,6 +506,21 @@ footer p{margin:0 0 6px;max-width:70ch}
     <p class="ai-note">Suggestions come from an AI reading the tariff text and are not an official classification. Uses your Claude account for each question. Final codes are decided by the customs office.</p>
   </section>
 
+  <!-- TRADE STATISTICS -->
+  <section id="v-stats" hidden>
+    <div class="page-h"><h1 id="st-title">Nepal foreign trade</h1><p id="st-sub"></p></div>
+    <div class="subnav" role="tablist" aria-label="Trade views">
+      <button role="tab" data-sv="overview" aria-selected="true">Overview</button>
+      <button role="tab" data-sv="products" aria-selected="false">Products</button>
+      <button role="tab" data-sv="chapters" aria-selected="false">Chapters</button>
+      <button role="tab" data-sv="countries" aria-selected="false">Countries</button>
+      <button role="tab" data-sv="customs" aria-selected="false">Customs points</button>
+      <button role="tab" data-sv="duty" aria-selected="false">Duty bands</button>
+    </div>
+    <div id="st-body"></div>
+    <p class="fine" id="st-src"></p>
+  </section>
+
   <!-- BROWSE -->
   <section id="v-browse" hidden></section>
 
@@ -481,9 +571,9 @@ footer p{margin:0 0 6px;max-width:70ch}
 <nav class="tabbar" role="tablist" aria-label="Sections">
   <button role="tab" data-tab="search" aria-selected="true"><svg class="i"><use href="#i-search"/></svg>Search</button>
   <button role="tab" data-tab="ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</button>
+  <button role="tab" data-tab="stats" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Trade</button>
   <button role="tab" data-tab="browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</button>
   <button role="tab" data-tab="calc" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calculator</button>
-  <button role="tab" data-tab="saved" aria-selected="false"><svg class="i"><use href="#i-bookmark"/></svg>Saved</button>
 </nav>
 
 <div class="scrim" id="scrim" hidden></div>
@@ -499,9 +589,13 @@ footer p{margin:0 0 6px;max-width:70ch}
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script id="data" type="application/json">/*DATA*/</script>
+<script id="stats" type="application/json">/*STATS*/</script>
 <script>
 (function(){
 const D = JSON.parse(document.getElementById('data').textContent);
+const ST = JSON.parse(document.getElementById('stats').textContent);
+const CHSHORT = {"1": "Live animals", "2": "Meat", "3": "Fish & seafood", "4": "Dairy, eggs & honey", "5": "Other animal products", "6": "Live plants & flowers", "7": "Vegetables", "8": "Fruit & nuts", "9": "Coffee, tea & spices", "10": "Cereals", "11": "Flour, malt & starch", "12": "Oil seeds & medicinal plants", "13": "Gums & resins", "14": "Vegetable materials", "15": "Edible oils & fats", "16": "Meat & fish preparations", "17": "Sugar & confectionery", "18": "Cocoa & chocolate", "19": "Cereal & bakery products", "20": "Processed fruit & vegetables", "21": "Misc. food preparations", "22": "Beverages & spirits", "23": "Animal feed & residues", "24": "Tobacco", "25": "Salt, stone, cement & lime", "26": "Ores & ash", "27": "Fuels, oils & gas", "28": "Inorganic chemicals", "29": "Organic chemicals", "30": "Pharmaceuticals", "31": "Fertilisers", "32": "Dyes, paints & inks", "33": "Cosmetics & perfumery", "34": "Soap & cleaning products", "35": "Glues & enzymes", "36": "Explosives & matches", "37": "Photographic goods", "38": "Misc. chemicals", "39": "Plastics", "40": "Rubber", "41": "Raw hides & leather", "42": "Leather goods & bags", "43": "Furskins", "44": "Wood & timber", "45": "Cork", "46": "Straw & basketware", "47": "Wood pulp", "48": "Paper & paperboard", "49": "Books & printed matter", "50": "Silk", "51": "Wool & animal hair", "52": "Cotton", "53": "Jute & other fibres", "54": "Synthetic filaments", "55": "Synthetic staple fibres", "56": "Wadding, felt & rope", "57": "Carpets", "58": "Special fabrics & lace", "59": "Coated & industrial textiles", "60": "Knitted fabrics", "61": "Knitted garments", "62": "Woven garments", "63": "Textile articles & rags", "64": "Footwear", "65": "Headgear", "66": "Umbrellas & sticks", "67": "Feathers & artificial flowers", "68": "Stone & cement articles", "69": "Ceramics", "70": "Glass", "71": "Gems, gold & jewellery", "72": "Iron & steel", "73": "Iron & steel articles", "74": "Copper", "75": "Nickel", "76": "Aluminium", "77": "Reserved", "78": "Lead", "79": "Zinc", "80": "Tin", "81": "Other base metals", "82": "Tools & cutlery", "83": "Misc. metal articles", "84": "Machinery & mechanical", "85": "Electrical & electronics", "86": "Railway", "87": "Vehicles & parts", "88": "Aircraft & drones", "89": "Ships & boats", "90": "Optical, medical & precision", "91": "Clocks & watches", "92": "Musical instruments", "93": "Arms & ammunition", "94": "Furniture & lighting", "95": "Toys, games & sports", "96": "Misc. manufactured", "97": "Art & antiques"};
+
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ic = (id, cls='i') => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
@@ -621,6 +715,9 @@ function renderHome(){
     <h2 class="sec">Browse by category</h2>
     <div class="cats">${CATS.map(([i, t, ch, q]) => `<button class="cat" ${ch ? `data-chap="${ch}"` : `data-q="${q}"`}><span class="ic">${ic(i)}</span><span>${t}<small>${ch ? 'Chapter ' + ch + ' · ' + CHCOUNT[ch] + ' codes' : 'Search'}</small></span></button>`).join('')}</div>
     <button class="aibtn" data-go="ai">${ic('i-spark')}Not sure what to search? Describe your product to the assistant</button>
+    <h2 class="sec">Nepal trade, FY ${ST.fy}</h2>
+    <div class="tiles">${kpiTiles(true)}</div>
+    <button class="aibtn" data-go="stats" style="margin-top:var(--s2)">${ic('i-chart')}See imports, exports, countries and customs points</button>
     <h2 class="sec">How to find the right code</h2>
     <div class="steps">
       <div class="step"><span class="n">1</span><b>Search what it is</b><p>Type the product, its material or its use. Codes work too: 85, 8528 or 8528.52.10.</p></div>
@@ -684,7 +781,7 @@ document.addEventListener('click', e => {
   }
 });
 const fchap = $('#fchap');
-Object.keys(CHCOUNT).map(Number).sort((a,b)=>a-b).forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = `Ch ${c} · ${D.chapters[c].t.split(/[;,]/)[0]}`; fchap.appendChild(o); });
+Object.keys(CHCOUNT).map(Number).sort((a,b)=>a-b).forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = `Ch ${c} · ${CHSHORT[c] || D.chapters[c].t.split(/[;,]/)[0]}`; fchap.appendChild(o); });
 fchap.addEventListener('change', () => { chapF = fchap.value; shown = 40; renderResults(); });
 
 function setOrigin(o){
@@ -721,6 +818,7 @@ function openDetail(code, keep){
     ${combined !== null ? `<div class="outcome">${ic('i-info')}<div>Every <b>NPR 1,00,000</b> of goods (CIF) pays about <b>${npr(combined * 1000)}</b> in customs duty and VAT, or <b>${combined.toFixed(1)}%</b>, before any excise.</div></div>`
       : `<div class="outcome">${ic('i-info')}<div>This line has a specific or special rate: <b>${esc(v || 'not stated in the tariff')}</b>. The calculator applies it from your quantity.</div></div>`}
     ${r.ldc ? `<p class="fine">Imports from Least Developed Countries: ${r.ldc}% duty.</p>` : ''}
+    ${tradeCard(r.digits)}
     ${exp ? `<p class="fine">Export duty on this line: <b style="color:var(--fg)">${esc(exp[1])}</b>.</p>` : ''}
     <h3 class="h">Where it sits in the tariff</h3>
     <ol class="tree">
@@ -1010,11 +1108,140 @@ function renderAI(d){
 }
 $('#ai-out').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.code) openDetail(b.dataset.code); else if (b.dataset.calc){ pickCalc(b.dataset.calc); go('calc'); } });
 
+
+/* ---------- trade statistics ---------- */
+const K = 1000; // stats values are Rs. thousand
+function rs(th, short){
+  const v = th * K, a = Math.abs(v);
+  const f = (x, d) => x.toLocaleString('en-IN', { maximumFractionDigits: d, minimumFractionDigits: 0 });
+  if (a >= 1e9) return (short ? '' : 'NPR ') + f(v / 1e9, a >= 1e11 ? 0 : 1) + ' Arab';
+  if (a >= 1e7) return (short ? '' : 'NPR ') + f(v / 1e7, a >= 1e9 ? 0 : 1) + ' Cr';
+  if (a >= 1e5) return (short ? '' : 'NPR ') + f(v / 1e5, 1) + ' Lakh';
+  return (short ? '' : 'NPR ') + f(v, 0);
+}
+const pctc = (a, b) => b ? ((a - b) / b * 100) : 0;
+const qty = (q, u) => (q >= 1e6 ? (q / 1e6).toLocaleString('en-IN', { maximumFractionDigits: 1 }) + ' M' : q.toLocaleString('en-IN', { maximumFractionDigits: q < 100 ? 1 : 0 })) + ' ' + (u || '').toLowerCase();
+function kpiTiles(compact){
+  const o = ST.overview, t = (label, key, inverse) => { const [p, c] = o[key]; const ch = pctc(c, p); const good = inverse ? ch < 0 : ch > 0;
+    return `<div class="tile"><span>${label}</span><b>${rs(c, true)}</b><small class="${Math.abs(ch) < .05 ? 'neutral' : good ? 'up' : 'down'}">${ic(ch >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:14px;height:14px"')}${Math.abs(ch).toFixed(1)}%&nbsp;vs&nbsp;${ST.fy_prev}</small></div>`; };
+  return t('Imports', 'imports') + t('Exports', 'exports') + t('Trade deficit', 'trade_deficit', true) + (compact ? '' : `<div class="tile"><span>Imports per NPR 1 exported</span><b>NPR ${o.imports_exports_ratio[1].toFixed(1)}</b><small class="${o.imports_exports_ratio[1] < o.imports_exports_ratio[0] ? 'up' : 'down'}">was ${o.imports_exports_ratio[0].toFixed(1)}</small></div>`);
+}
+function barRows(items, opts){
+  // items: [{k, label, sub, a, b?}] ; single series a (imports) or two series a/b
+  const max = Math.max(...items.map(x => Math.max(x.a || 0, x.b || 0)), 1);
+  const two = items.some(x => x.b !== undefined);
+  return `<div class="bars">${items.map(x => {
+    const tag = x.k !== undefined ? 'button' : 'div';
+    return `<${tag} class="br" ${x.k !== undefined ? `data-k="${esc(String(x.k))}"` : ''} title="${esc(x.label)}: ${rs(x.a)}${two ? ' imports · ' + rs(x.b) + ' exports' : ''}">
+      <span class="l">${x.sub ? `<small class="${x.sub.length <= 2 ? 'in' : ''}">${esc(x.sub)}</small>` : ''}${esc(x.label)}</span>
+      <span class="t ${two ? 'two' : ''}"><i class="${opts && opts.cls || ''}" style="width:${(x.a / max * 100).toFixed(1)}%"></i>${two ? `<i class="e" style="width:${(x.b / max * 100).toFixed(1)}%"></i>` : ''}</span>
+      <span class="v">${rs(x.a, true)}${two && x.b ? `<small>${rs(x.b, true)}</small>` : ''}</span></${tag}>`; }).join('')}</div>`;
+}
+const fig = (title, cap, body, legend) => `<div class="fig"><header><h3>${title}</h3>${legend ? `<div class="legend2">${legend}</div>` : `<span class="cap">${cap || ''}</span>`}</header>${body}</div>`;
+const LEG2 = `<span><i style="background:var(--imp)"></i>Imports</span><span><i style="background:var(--exp)"></i>Exports</span>`;
+const chapName = c => CHSHORT[c] || (ST.chapters.find(x => x[0] === c) || [0, ''])[1];
+let stView = 'overview', stSort = 'imp', stCountry = null, stChapter = null, stQ = '';
+const impRow = c => ST.imports[c], expRow = c => ST.exports[c];
+function tradeCard(code8){
+  const im = impRow(code8), ex = expRow(code8);
+  if (!im && !ex) return `<div class="trade"><h3 class="h" style="margin:0 0 6px">Nepal trade, FY ${ST.fy}</h3><p class="fine" style="margin:0">No recorded imports or exports under this code last year.</p></div>`;
+  const part = (p, cls) => { const m = Math.max(...p.map(x => x[1]), 1); return `<div class="mini">${p.map(x => `<div><span class="n">${esc(x[0])}</span><i class="${cls}" style="width:${(x[1] / m * 100).toFixed(0)}%"></i><b>${rs(x[1], true)}</b></div>`).join('')}</div>`; };
+  let h = `<div class="trade"><h3 class="h" style="margin:0">Nepal trade, FY ${ST.fy}</h3>`;
+  if (im){ const eff = im[3] ? (im[4] / im[3] * 100) : 0;
+    h += `<div class="row2"><div><span>Imported</span><b>${rs(im[3], true)}</b></div><div><span>Quantity</span><b>${esc(qty(im[2], im[1]))}</b></div><div><span>Duty collected</span><b>${rs(im[4], true)}</b></div></div>
+      <p class="fine" style="margin:0 0 4px">Import sources${im[6] > 6 ? ` (top 6 of ${im[6]})` : ''} · effective duty ${eff.toFixed(1)}% of value</p>${part(im[5], '')}`; }
+  if (ex){ h += `<div class="row2" style="margin-top:var(--s4)"><div><span>Exported</span><b>${rs(ex[3], true)}</b></div><div><span>Quantity</span><b>${esc(qty(ex[2], ex[1]))}</b></div><div><span>Markets</span><b>${ex[5]}</b></div></div>${part(ex[4], 'e')}`; }
+  return h + '</div>';
+}
+function renderStats(){
+  $('#st-sub').textContent = `Fiscal year ${ST.fy} · mid-July 2024 to mid-July 2025 · NPR`;
+  $('#st-src').textContent = `Source: ${ST.source}. Values as published (Rs. thousand), shown in Arab / Crore / Lakh.`;
+  $$('[data-sv]').forEach(b => b.setAttribute('aria-selected', b.dataset.sv === stView));
+  const body = $('#st-body'); let h = '';
+  const topN = (arr, key, n) => [...arr].sort((a, b) => b[key] - a[key]).slice(0, n);
+  if (stView === 'overview'){
+    const ch = ST.chapters, co = ST.countries;
+    h += `<div class="tiles">${kpiTiles(false)}</div>`;
+    h += fig('Top import categories', '', barRows(topN(ch, 2, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[2] }))), '');
+    h += fig('Top export categories', '', barRows(topN(ch, 3, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[3] })), { cls: 'e' }), '');
+    h += fig('Where imports come from', '', barRows(topN(co, 1, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1] }))), '');
+    h += fig('Where exports go', '', barRows(topN(co, 2, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[2] })), { cls: 'e' }), '');
+    h += fig('Busiest customs points', '', barRows(topN(ST.customs, 1, 8).map(x => ({ k: 'cu', label: x[0], a: x[1], b: x[2] }))), LEG2);
+  }
+  if (stView === 'products'){
+    const q = stQ.trim();
+    h += `<div class="tsearch">${ic('i-search')}<input id="st-q" type="search" placeholder="Product or HS code: cement, 8703, solar…" aria-label="Search traded products" value="${esc(stQ)}"></div>`;
+    let list;
+    if (q){ list = search(q).rows.map(r => r.digits).filter(c => ST.imports[c] || ST.exports[c]).slice(0, 40); }
+    else { list = Object.keys(ST.imports).sort((a, b) => ST.imports[b][3] - ST.imports[a][3]).slice(0, 25); h += `<h3 class="h" style="margin-top:var(--s2)">Top 25 imported products</h3>`; }
+    if (!list.length) h += `<div class="empty"><b>No traded products match</b><p>Try another word or a 4-digit heading.</p></div>`;
+    else h += fig(q ? `${list.length} matching products` : '', '', barRows(list.map(c => { const im = ST.imports[c], ex = ST.exports[c]; const r = BY[c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6)];
+      return { k: 'hs:' + c, sub: c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6), label: r ? label(r) : (im || ex)[0], a: im ? im[3] : 0, b: ex ? ex[3] : 0 }; })), LEG2);
+  }
+  if (stView === 'chapters'){
+    if (stChapter){
+      const c = stChapter, codes = Object.keys(ST.imports).filter(k => +k.slice(0,2) === c).sort((a, b) => ST.imports[b][3] - ST.imports[a][3]).slice(0, 20);
+      const ecodes = Object.keys(ST.exports).filter(k => +k.slice(0,2) === c).sort((a, b) => ST.exports[b][3] - ST.exports[a][3]).slice(0, 10);
+      const row = ST.chapters.find(x => x[0] === c) || [c, '', 0, 0, 0];
+      h += `<button class="back" data-back="ch">${ic('i-left')}All chapters</button><h2 style="font-size:1.1rem;margin:8px 0 4px">Chapter ${c} · ${esc(chapName(c))}</h2>
+        <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports</span><b>${rs(row[2], true)}</b></div><div class="tile"><span>Exports</span><b>${rs(row[3], true)}</b></div><div class="tile"><span>Duty collected</span><b>${rs(row[4], true)}</b></div><div class="tile"><span>Effective duty</span><b>${row[2] ? (row[4] / row[2] * 100).toFixed(1) : 0}%</b></div></div>`;
+      if (codes.length) h += fig('Most imported lines', '', barRows(codes.map(k => { const r = BY[k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6)]; return { k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: r ? label(r) : ST.imports[k][0], a: ST.imports[k][3] }; })));
+      if (ecodes.length) h += fig('Most exported lines', '', barRows(ecodes.map(k => { const r = BY[k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6)]; return { k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: r ? label(r) : ST.exports[k][0], a: ST.exports[k][3] }; }), { cls: 'e' }));
+    } else {
+      const key = { imp: 2, exp: 3, rev: 4 }[stSort];
+      const rows = [...ST.chapters].sort((a, b) => b[key] - a[key]);
+      h += `<div class="sortbar">Sort by ${['imp','exp','rev'].map(k => `<button data-sort="${k}" aria-pressed="${stSort === k}">${{ imp: 'Imports', exp: 'Exports', rev: 'Duty collected' }[k]}</button>`).join('')}</div>`;
+      h += fig('All 96 chapters', '', barRows(rows.map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[key] })), { cls: stSort === 'exp' ? 'e' : stSort === 'rev' ? 'r' : '' }));
+    }
+  }
+  if (stView === 'countries'){
+    if (stCountry){
+      const row = ST.countries.find(x => x[0] === stCountry) || [stCountry, 0, 0], top = ST.country_top[stCountry] || [[], []];
+      h += `<button class="back" data-back="co">${ic('i-left')}All countries</button><h2 style="font-size:1.1rem;margin:8px 0 4px">${esc(stCountry)}</h2>
+        <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports from</span><b>${rs(row[1], true)}</b></div><div class="tile"><span>Exports to</span><b>${rs(row[2], true)}</b></div></div>`;
+      if (top[0].length) h += fig('What Nepal buys from ' + esc(stCountry), '', barRows(top[0].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] }))));
+      if (top[1].length) h += fig('What Nepal sells to ' + esc(stCountry), '', barRows(top[1].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] })), { cls: 'e' }));
+    } else {
+      const q = stQ.trim().toLowerCase();
+      h += `<div class="tsearch">${ic('i-search')}<input id="st-q" type="search" placeholder="Find a country" aria-label="Find a country" value="${esc(stQ)}"></div>`;
+      const key = stSort === 'exp' ? 2 : 1;
+      h += `<div class="sortbar">Sort by ${['imp','exp'].map(k => `<button data-sort="${k}" aria-pressed="${stSort === k}">${{ imp: 'Imports', exp: 'Exports' }[k]}</button>`).join('')}</div>`;
+      const rows = ST.countries.filter(x => !q || x[0].toLowerCase().includes(q)).sort((a, b) => b[key] - a[key]).slice(0, q ? 200 : 40);
+      h += fig(q ? `${rows.length} countries` : 'Top 40 trading partners', '', barRows(rows.map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1], b: x[2] }))), LEG2);
+    }
+  }
+  if (stView === 'customs'){
+    const ti = ST.customs.reduce((a, x) => a + x[1], 0), te = ST.customs.reduce((a, x) => a + x[2], 0);
+    h += fig('Imports and exports by customs office', '', barRows([...ST.customs].sort((a, b) => b[1] - a[1]).map(x => ({ label: x[0], a: x[1], b: x[2] }))), LEG2);
+    h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Customs office</th><th>Imports</th><th>Share</th><th>Exports</th><th>Share</th></tr></thead><tbody>${[...ST.customs].sort((a, b) => b[1] - a[1]).map(x => `<tr><td>${esc(x[0])}</td><td>${rs(x[1], true)}</td><td>${(x[1] / ti * 100).toFixed(1)}%</td><td>${rs(x[2], true)}</td><td>${(x[2] / te * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  if (stView === 'duty'){
+    const tv = ST.bands.reduce((a, x) => a + x[2], 0), td = ST.bands.reduce((a, x) => a + x[1], 0);
+    h += fig('Import value by customs duty rate', 'How much of what Nepal imports falls in each duty band', barRows(ST.bands.map(x => ({ label: (x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? x[0].replace(/^./, c => c.toUpperCase()) : +x[0] + '% duty'), a: x[2] }))));
+    h += fig('Duty collected by rate', '', barRows(ST.bands.map(x => ({ label: (x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? x[0].replace(/^./, c => c.toUpperCase()) : +x[0] + '% duty'), a: x[1] })), { cls: 'r' }));
+    h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Duty rate</th><th>Import value</th><th>Share</th><th>Duty collected</th><th>Share</th></tr></thead><tbody>${ST.bands.map(x => `<tr><td>${x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? esc(x[0]) : +x[0] + '%'}</td><td>${rs(x[2], true)}</td><td>${(x[2] / tv * 100).toFixed(1)}%</td><td>${rs(x[1], true)}</td><td>${(x[1] / td * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  body.innerHTML = h;
+}
+$('#v-stats').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.sv){ stView = b.dataset.sv; stQ = ''; stCountry = null; stChapter = null; renderStats(); return; }
+  if (b.dataset.sort){ stSort = b.dataset.sort; renderStats(); return; }
+  if (b.dataset.back){ if (b.dataset.back === 'co') stCountry = null; else stChapter = null; renderStats(); window.scrollTo({top:0}); return; }
+  const k = b.dataset.k; if (!k) return;
+  if (k.startsWith('hs:')){ const c = k.slice(3); const code = c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6); if (BY[code]) openDetail(code); else toast('Code not in the 2026/27 tariff'); return; }
+  if (k.startsWith('ch:')){ stView = 'chapters'; stChapter = +k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
+  if (k.startsWith('co:')){ stView = 'countries'; stCountry = k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
+  if (k === 'cu'){ stView = 'customs'; renderStats(); window.scrollTo({top:0}); }
+});
+$('#v-stats').addEventListener('input', e => { if (e.target.id === 'st-q'){ stQ = e.target.value; const pos = e.target.selectionStart; renderStats(); const el = $('#st-q'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
+
 /* ---------- tabs ---------- */
 let curTab = 'search';
 function go(t){
   curTab = t;
-  ['search','ai','browse','calc','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
+  ['search','ai','stats','browse','calc','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
+  if (t === 'stats') renderStats();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc();
@@ -1028,6 +1255,6 @@ initCalc();
 renderResults();
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (['ai','browse','calc','saved'].includes(h)) go(h);
+else if (['ai','stats','browse','calc','saved'].includes(h)) go(h);
 })();
 </script>
