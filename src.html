@@ -7,10 +7,10 @@
    full-height detail sheet with sticky action bar. Understand -> trust -> act on every code. */
 :root{
   --bg:#F8FAFC; --card:#FFFFFF; --muted-bg:#EEF2F6; --fg:#0B1220; --fg-2:#334155; --muted:#5B6878; --border:#E2E8F0;
-  --primary:#0F172A; --on-primary:#FFFFFF; --accent:#0369A1; --accent-bg:#E0F0FA; --brand:#C21E2F;
+  --primary:#293C55; --on-primary:#FFFFFF; --accent:#5470C6; --accent-bg:#E8EDFA; --brand:#EE6666; --hero1:#1B2A45; --hero2:#2F4E7A; --hero3:#5470C6;
   --free:#15803D; --free-bg:#DCFCE7; --low:#0369A1; --low-bg:#E0F0FA; --mid:#A15C07; --mid-bg:#FEF3C7; --hi:#B91C1C; --hi-bg:#FEE2E2;
   --seg-goods:#94A3B8; --seg-duty:#0369A1; --seg-excise:#A15C07; --seg-vat:#7C3AED; --seg-other:#475569;
-  --imp:#1D81A2; --exp:#E8722E; --rev:#2E9E6B; --track:#EEF2F6; --grid:#E5E9EE;
+  --imp:#5470C6; --exp:#EE8A4B; --rev:#5FB365; --track:#EEF2F6; --grid:#E5E9EE;
   --scrim:rgba(2,6,23,.5); --shadow:0 12px 32px rgba(15,23,42,.16);
   --f-body:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -20,17 +20,17 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
-  --primary:#F1F5F9; --on-primary:#0B1120; --accent:#38BDF8; --accent-bg:#0C2A40; --brand:#F2606E;
+  --primary:#E2E8F0; --on-primary:#0B1120; --accent:#7A93E6; --accent-bg:#1C2743; --brand:#F2606E; --hero1:#0B1428; --hero2:#16294A; --hero3:#3F5CB0;
   --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
   --seg-goods:#64748B; --seg-duty:#38BDF8; --seg-excise:#FBBF24; --seg-vat:#A78BFA; --seg-other:#94A3B8;
-  --imp:#4FB1D3; --exp:#F08A4B; --rev:#5CC494; --track:#1A2436; --grid:#2A3648;
+  --imp:#7A93E6; --exp:#F5A06B; --rev:#7FD08A; --track:#1A2436; --grid:#2A3648;
   --scrim:rgba(0,0,0,.62); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
-  --primary:#F1F5F9; --on-primary:#0B1120; --accent:#38BDF8; --accent-bg:#0C2A40; --brand:#F2606E;
+  --primary:#E2E8F0; --on-primary:#0B1120; --accent:#7A93E6; --accent-bg:#1C2743; --brand:#F2606E; --hero1:#0B1428; --hero2:#16294A; --hero3:#3F5CB0;
   --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
   --seg-goods:#64748B; --seg-duty:#38BDF8; --seg-excise:#FBBF24; --seg-vat:#A78BFA; --seg-other:#94A3B8;
-  --imp:#4FB1D3; --exp:#F08A4B; --rev:#5CC494; --track:#1A2436; --grid:#2A3648;
+  --imp:#7A93E6; --exp:#F5A06B; --rev:#7FD08A; --track:#1A2436; --grid:#2A3648;
   --scrim:rgba(0,0,0,.62); --shadow:0 12px 32px rgba(0,0,0,.5); color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -47,16 +47,18 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ---------- app bar ---------- */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero1);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
+.bar .logo,.bar .logo small{color:#fff}
+.bar .logo small{color:rgba(255,255,255,.65)}
 .bar-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);min-height:56px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;white-space:nowrap}
-.logo .mark{width:32px;height:32px;border-radius:9px;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font:700 .72rem var(--f-mono);position:relative}
-.logo .mark::after{content:"";position:absolute;right:-3px;top:-3px;width:10px;height:10px;border-radius:50%;background:var(--brand);border:2px solid var(--bg)}
+.logo .mark{width:32px;height:32px;border-radius:9px;background:var(--hero3);color:#fff;display:grid;place-items:center;font:700 .72rem var(--f-mono);position:relative}
+.logo .mark::after{content:"";position:absolute;right:-3px;top:-3px;width:10px;height:10px;border-radius:50%;background:var(--brand);border:2px solid var(--hero1)}
 .logo small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);letter-spacing:0}
 .nav-desk{display:flex;gap:2px}
-.nav-desk button{height:40px;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:var(--muted);transition:background var(--t),color var(--t)}
-.nav-desk button:hover{background:var(--muted-bg);color:var(--fg)}
-.nav-desk button[aria-selected="true"]{background:var(--primary);color:var(--on-primary)}
+.nav-desk button{height:40px;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t)}
+.nav-desk button:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav-desk button[aria-selected="true"]{background:var(--hero3);color:#fff}
 @media (max-width:720px){.nav-desk{display:none}}
 
 nav.tabbar{display:none}
@@ -70,6 +72,30 @@ nav.tabbar{display:none}
 
 /* ---------- search ---------- */
 .hero{padding-block:var(--s6) var(--s4)}
+.hero:not(.compact){position:relative;margin-inline:-16px;padding:var(--s7) 16px var(--s6);background:linear-gradient(135deg,var(--hero1) 0%,var(--hero2) 55%,var(--hero3) 130%);color:#fff;overflow:hidden}
+.hero:not(.compact)::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 240px at 85% -10%,rgba(255,255,255,.18),transparent 60%),radial-gradient(400px 200px at 10% 110%,rgba(84,112,198,.5),transparent 60%);pointer-events:none}
+.hero:not(.compact)>*{position:relative}
+.hero:not(.compact) h1{color:#fff;font-size:clamp(1.8rem,7vw,2.8rem);max-width:16ch}
+.hero:not(.compact) p{color:rgba(255,255,255,.78)}
+.hero:not(.compact) .sbox input{border-color:transparent;box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.hero:not(.compact) .origin>span,.hero:not(.compact) .origin .info{color:rgba(255,255,255,.75)}
+.hero:not(.compact) .seg{background:rgba(255,255,255,.14)}
+.hero:not(.compact) .seg button{color:rgba(255,255,255,.75)}
+.hero:not(.compact) .seg button[aria-pressed="true"]{background:#fff;color:var(--hero1)}
+.hero:not(.compact) .suggest button{background:rgba(255,255,255,.14);color:#fff}
+.hero-stats{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s5);font-size:.8rem;color:rgba(255,255,255,.7)}
+.hero-stats b{display:block;color:#fff;font-size:1.05rem;font-variant-numeric:tabular-nums}
+@media (min-width:760px){.hero:not(.compact){border-radius:0 0 var(--r-lg) var(--r-lg);margin-inline:0;padding-inline:var(--s6)}}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s3);margin-top:var(--s5)}
+.feat button{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s4);transition:transform var(--t),box-shadow var(--t),border-color var(--t);min-height:120px;display:flex;flex-direction:column;gap:8px}
+.feat button:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(41,60,85,.12);border-color:var(--accent)}
+.feat .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff}
+.feat b{font-size:.98rem}
+.feat small{color:var(--muted);font-size:.8rem;line-height:1.35}
+.live{margin-top:var(--s5);background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s4);display:grid;gap:var(--s3)}
+.live .lt{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s2);flex-wrap:wrap}
+.live .lt h2{margin:0;font-size:1.05rem}
+.live .lt a,.live .lt button{font-size:.84rem;font-weight:700;color:var(--accent)}
 .hero h1{margin:0 0 var(--s2);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.12;letter-spacing:-.03em;font-weight:800;text-wrap:balance;max-width:20ch}
 .hero p{margin:0;color:var(--muted);max-width:56ch}
 .hero.compact{padding-block:var(--s3) 0}
@@ -393,9 +419,22 @@ button.br:hover{background:var(--muted-bg)}
 .pillrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:var(--s2)}
 .pillrow button{min-height:34px;padding:0 12px;border-radius:999px;background:var(--muted-bg);font-size:.82rem;font-weight:700;color:var(--fg-2)}
 .pillrow button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
-.hdrbtn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--fg-2);transition:background var(--t)}
-.hdrbtn:hover{background:var(--muted-bg)}
-.hdrbtn[aria-selected="true"]{background:var(--primary);color:var(--on-primary)}
+.hdrbtn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:rgba(255,255,255,.8);transition:background var(--t)}
+.hdrbtn:hover{background:rgba(255,255,255,.1)}
+.hdrbtn[aria-selected="true"]{background:var(--hero3);color:#fff}
+
+.ech{width:100%;height:280px;min-width:0}
+.ech.tall{height:360px}
+.ech.short{height:200px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:44px;margin-top:6px}
+.spark i{flex:1;display:block;background:var(--imp);border-radius:2px 2px 0 0;min-height:2px;position:relative}
+.spark i.e{background:var(--exp)}
+.spark i.cur{opacity:.55}
+.spark-l{display:flex;justify-content:space-between;font-size:.66rem;color:var(--muted);font-family:var(--f-mono);margin-top:2px}
+.yoy{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.yoy.up{background:var(--free-bg);color:var(--free)} .yoy.down{background:var(--hi-bg);color:var(--hi)}
+.ytd{display:flex;gap:var(--s3);align-items:center;background:var(--accent-bg);border-radius:var(--r);padding:var(--s3) var(--s4);margin-top:var(--s3);font-size:.9rem}
+.ytd b{font-variant-numeric:tabular-nums}
 
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--on-primary);padding:10px 18px;border-radius:999px;font-size:.88rem;font-weight:700;z-index:60;box-shadow:var(--shadow)}
 footer{color:var(--muted);font-size:.8rem;padding-block:var(--s5) var(--s6);margin-top:var(--s6);border-top:1px solid var(--border)}
@@ -475,6 +514,7 @@ footer p{margin:0 0 6px;max-width:70ch}
         </div>
       </div>
       <div class="suggest" id="suggest"></div>
+      <div class="hero-stats" id="hero-stats"></div>
     </div>
     <div class="toolbar" id="toolbar" hidden>
       <button class="chip" data-duty="all" aria-pressed="true">Any duty</button>
@@ -514,9 +554,11 @@ footer p{margin:0 0 6px;max-width:70ch}
     <div class="page-h"><h1 id="st-title">Nepal foreign trade</h1><p id="st-sub"></p></div>
     <div class="subnav" role="tablist" aria-label="Trade views">
       <button role="tab" data-sv="overview" aria-selected="true">Overview</button>
+      <button role="tab" data-sv="trends" aria-selected="false">Trends</button>
       <button role="tab" data-sv="products" aria-selected="false">Products</button>
       <button role="tab" data-sv="chapters" aria-selected="false">Chapters</button>
       <button role="tab" data-sv="countries" aria-selected="false">Countries</button>
+      <button role="tab" data-sv="flows" aria-selected="false">Flows</button>
       <button role="tab" data-sv="customs" aria-selected="false">Customs points</button>
       <button role="tab" data-sv="duty" aria-selected="false">Duty bands</button>
     </div>
@@ -591,6 +633,7 @@ footer p{margin:0 0 6px;max-width:70ch}
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script id="data" type="application/json">/*DATA*/</script>
 <script id="stats" type="application/json">/*STATS*/</script>
 <script>
@@ -714,20 +757,31 @@ function groupedHTML(rows, words){
 }
 function renderHome(){
   const recent = store.get('recent', []);
+  const cur = ST.current, ov = ST.overview;
+  $('#hero-stats').innerHTML = `<div><b>${ROWS.length.toLocaleString()}</b>tariff lines</div><div><b>${rs(ov.imports[1], true)}</b>imports FY ${ST.fy}</div><div><b>${FY.length + (cur ? 1 : 0)}</b>years of trade data</div>`;
   $('#results').innerHTML = `
+    <div class="feat">
+      <button data-go="ai"><span class="ic" style="background:#5470C6">${ic('i-spark')}</span><b>Ask AI</b><small>Describe a product, get ranked HS codes with reasons</small></button>
+      <button data-go="stats"><span class="ic" style="background:#EE8A4B">${ic('i-chart')}</span><b>Trade data</b><small>Imports, exports, countries and trends since ${FY[0]}</small></button>
+      <button data-go="calc"><span class="ic" style="background:#5FB365">${ic('i-calc')}</span><b>Tax calculator</b><small>Duty, VAT and landed cost in NPR</small></button>
+      <button data-go="browse"><span class="ic" style="background:#9A60B4">${ic('i-list')}</span><b>Browse tariff</b><small>Sections, chapters, notes and rules</small></button>
+    </div>
+    <div class="live"><div class="lt"><h2>Nepal trade now</h2><button data-go="stats">All trade data ›</button></div>
+      <div class="tiles">${kpiTiles(true)}</div>
+      ${cur ? `<div class="ytd" style="margin-top:0">${ic('i-info')}<div>FY ${cur.fy}, first ${cur.months} month${cur.months > 1 ? 's' : ''}: imports <b>${rs(cur.overview.imports[1], true)}</b>, ${pctc(cur.overview.imports[1], cur.overview.imports[0]) >= 0 ? 'up' : 'down'} ${Math.abs(pctc(cur.overview.imports[1], cur.overview.imports[0])).toFixed(1)}% on last year.</div></div>` : ''}
+      <div class="ech short" id="ec-home"></div>
+    </div>
     ${recent.length ? `<h2 class="sec">Recent searches</h2><div class="recent">${recent.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
     <h2 class="sec">Browse by category</h2>
     <div class="cats">${CATS.map(([i, t, ch, q]) => `<button class="cat" ${ch ? `data-chap="${ch}"` : `data-q="${q}"`}><span class="ic">${ic(i)}</span><span>${t}<small>${ch ? 'Chapter ' + ch + ' · ' + CHCOUNT[ch] + ' codes' : 'Search'}</small></span></button>`).join('')}</div>
-    <button class="aibtn" data-go="ai">${ic('i-spark')}Not sure what to search? Describe your product to the assistant</button>
-    <h2 class="sec">Nepal trade, FY ${ST.fy}</h2>
-    <div class="tiles">${kpiTiles(true)}</div>
-    <button class="aibtn" data-go="stats" style="margin-top:var(--s2)">${ic('i-chart')}See imports, exports, countries and customs points</button>
     <h2 class="sec">How to find the right code</h2>
     <div class="steps">
       <div class="step"><span class="n">1</span><b>Search what it is</b><p>Type the product, its material or its use. Codes work too: 85, 8528 or 8528.52.10.</p></div>
       <div class="step"><span class="n">2</span><b>Compare nearby lines</b><p>Open a result to see every line under the same heading and pick the one that fits exactly.</p></div>
       <div class="step"><span class="n">3</span><b>Estimate the tax</b><p>Send the code to the calculator for duty, VAT and landed cost in NPR.</p></div>
     </div>`;
+  ecClear();
+  if (HAS_EC) monthlyLine($('#ec-home'), 'imp');
 }
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
@@ -737,6 +791,7 @@ function renderResults(){
   const sug = has ? termSuggest(q) : [];
   $('#suggest').innerHTML = sug.map(t => `<button data-q="${esc(t)}">${ic('i-search')}${esc(t)}</button>`).join('');
   if (!has){ renderHome(); return; }
+  $('#hero-stats').innerHTML = '';
   const res = search(q);
   const rows = res.rows.filter(r => passDuty(r) && (!chapF || r.ch === +chapF));
   let html = '';
@@ -1135,7 +1190,7 @@ const qty = (q, u) => (q >= 1e6 ? (q / 1e6).toLocaleString('en-IN', { maximumFra
 function kpiTiles(compact){
   const o = ST.overview, t = (label, key, inverse) => { const [p, c] = o[key]; const ch = pctc(c, p); const good = inverse ? ch < 0 : ch > 0;
     return `<div class="tile"><span>${label}</span><b>${rs(c, true)}</b><small class="${Math.abs(ch) < .05 ? 'neutral' : good ? 'up' : 'down'}">${ic(ch >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:14px;height:14px"')}${Math.abs(ch).toFixed(1)}%&nbsp;vs&nbsp;${ST.fy_prev}</small></div>`; };
-  return t('Imports', 'imports') + t('Exports', 'exports') + t('Trade deficit', 'trade_deficit', true) + (compact ? '' : `<div class="tile"><span>Imports per NPR 1 exported</span><b>NPR ${o.imports_exports_ratio[1].toFixed(1)}</b><small class="${o.imports_exports_ratio[1] < o.imports_exports_ratio[0] ? 'up' : 'down'}">was ${o.imports_exports_ratio[0].toFixed(1)}</small></div>`);
+  return t('Imports', 'imports') + t('Exports', 'exports') + t('Trade deficit', 'trade_deficit', true) + (compact ? `<div class="tile"><span>Exports cover</span><b>${(o.exports[1] / o.imports[1] * 100).toFixed(1)}%</b><small class="neutral">of imports</small></div>` : `<div class="tile"><span>Imports per NPR 1 exported</span><b>NPR ${o.imports_exports_ratio[1].toFixed(1)}</b><small class="${o.imports_exports_ratio[1] < o.imports_exports_ratio[0] ? 'up' : 'down'}">was ${o.imports_exports_ratio[0].toFixed(1)}</small></div>`);
 }
 function barRows(items, opts){
   const max = Math.max(...items.map(x => Math.max(x.a || 0, x.b || 0)), 1);
@@ -1150,33 +1205,112 @@ function barRows(items, opts){
 const fig = (title, cap, body, legend) => `<div class="fig"><header>${title ? `<h3>${title}</h3>` : ''}${cap ? `<span class="cap">${cap}</span>` : ''}${legend ? `<div class="legend2">${legend}</div>` : ''}</header>${body}<p class="src">Source: Department of Customs, Nepal · FY ${ST.fy} · NPR</p></div>`;
 const LEG2 = `<span><i style="background:var(--imp)"></i>Imports</span><span><i style="background:var(--exp)"></i>Exports</span>`;
 const chapName = c => CHSHORT[c] || (ST.chapters.find(x => x[0] === c) || [0, ''])[1];
+
+/* ---------- ECharts helpers (theme from tokens) ---------- */
+const HAS_EC = typeof echarts !== 'undefined';
+const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const charts = [];
+function ecInit(el, opt){
+  if (!HAS_EC || !el) return null;
+  const c = echarts.init(el, null, { renderer: 'canvas' });
+  c.setOption(Object.assign({ textStyle: { fontFamily: tok('--f-body'), color: tok('--fg-2') }, animationDuration: 300 }, opt));
+  charts.push(c); return c;
+}
+function ecClear(){ while (charts.length){ const c = charts.pop(); try{ c.dispose(); }catch(e){} } }
+window.addEventListener('resize', () => charts.forEach(c => c.resize()));
+const tip = { trigger: 'axis', backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, confine: true,
+  valueFormatter: v => rs(v) };
+const axisBase = () => ({ axisLine: { lineStyle: { color: tok('--grid') } }, axisTick: { show: false }, axisLabel: { color: tok('--muted'), fontSize: 11 }, splitLine: { lineStyle: { color: tok('--grid') } } });
+const FY = ST.history.years, H = ST.history;
+const yoy = (arr, i) => { const a = arr[i], b = arr[i-1]; return b ? (a - b) / b * 100 : null; };
+function sparkHTML(vals, cur, cls){
+  const max = Math.max(...vals.map(Math.abs), cur || 0, 1);
+  return `<div class="spark">${vals.map((v, i) => `<i class="${cls || ''}" style="height:${Math.max(2, v / max * 100)}%" title="${FY[i]}: ${rs(v)}"></i>`).join('')}${cur ? `<i class="${cls || ''} cur" style="height:${Math.max(2, cur / max * 100)}%" title="${ST.current.fy} (${ST.current.months} months): ${rs(cur)}"></i>` : ''}</div><div class="spark-l"><span>${FY[0]}</span><span>${cur ? ST.current.fy + ' YTD' : FY[FY.length-1]}</span></div>`;
+}
+function yoyTag(arr){ const i = arr.length - 1, p = yoy(arr, i); if (p === null || !isFinite(p)) return ''; return `<span class="yoy ${p >= 0 ? 'up' : 'down'}">${ic(p >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:12px;height:12px"')}${Math.abs(p).toFixed(0)}% vs ${FY[i-1]}</span>`; }
+function yearBars(el, series, names){
+  // series: [{name, data:[...per FY]}]
+  return ecInit(el, { grid: { left: 8, right: 8, top: 28, bottom: 24, containLabel: true }, tooltip: tip, legend: names.length > 1 ? { top: 0, textStyle: { color: tok('--fg-2') } } : undefined,
+    xAxis: Object.assign(axisBase(), { type: 'category', data: FY.map(y => y.slice(0, 4) + '/' + y.slice(5)) }),
+    yAxis: Object.assign(axisBase(), { type: 'value', axisLabel: { color: tok('--muted'), fontSize: 11, formatter: v => rs(v, true) } }),
+    series: series.map((sr, k) => ({ name: sr.name, type: 'bar', data: sr.data, itemStyle: { color: [tok('--imp'), tok('--exp'), tok('--rev')][k], borderRadius: [3, 3, 0, 0] }, barMaxWidth: 28 })) });
+}
+function monthlyLine(el, key){
+  const idx = key === 'exp' ? 1 : 0, yrs = Object.keys(ST.monthly);
+  const cols = [tok('--muted'), tok('--imp'), tok('--exp'), tok('--rev')];
+  const series = yrs.map((fy, k) => ({ name: fy.slice(2, 4) + '/' + fy.slice(5), type: 'line', smooth: .25, showSymbol: false, lineStyle: { width: k === yrs.length - 1 ? 3 : 2, color: k === yrs.length - 1 ? tok('--imp') : k === yrs.length - 2 ? tok('--exp') : cols[0] }, itemStyle: { color: k === yrs.length - 1 ? tok('--imp') : k === yrs.length - 2 ? tok('--exp') : cols[0] },
+    data: ST.monthly[fy].map(x => x ? x.val[idx] : null), connectNulls: false }));
+  return ecInit(el, { grid: { left: 8, right: 12, top: 40, bottom: 24, containLabel: true }, tooltip: tip, legend: { top: 0, left: 'center', textStyle: { color: tok('--fg-2'), fontSize: 11 }, itemWidth: 12, itemGap: 8 },
+    xAxis: Object.assign(axisBase(), { type: 'category', boundaryGap: false, data: ST.month_names.map(m => m.slice(0, 3)) }),
+    yAxis: Object.assign(axisBase(), { type: 'value', axisLabel: { color: tok('--muted'), fontSize: 11, formatter: v => rs(v, true) } }), series });
+}
+function treemapChart(el){
+  const secs = {};
+  ST.chapters.forEach(c => { const s = sectionOf(c[0]); if (!s) return; (secs[s.n] = secs[s.n] || { name: 'Section ' + s.n + ' · ' + s.t.split(';')[0].slice(0, 40), children: [] }).children.push({ name: chapName(c[0]), value: c[2], ch: c[0] }); });
+  const pal = ['#1D81A2', '#2E9E6B', '#E8722E', '#7C5CBF', '#B8860B', '#C0392B', '#3A7CA5', '#5B8C5A', '#8E44AD', '#D35400', '#16A085', '#7F8C8D', '#2C3E50', '#27AE60', '#E67E22', '#2980B9', '#8D6E63', '#00838F', '#AD1457', '#6D4C41', '#455A64'];
+  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => `${esc(p.name)}<br><b>${rs(p.value)}</b> · ${(p.value / ST.overview.imports[1] * 100).toFixed(1)}% of imports` },
+    series: [{ type: 'treemap', roam: false, nodeClick: 'zoomToNode', breadcrumb: { show: true, top: 0, itemStyle: { color: tok('--muted-bg'), textStyle: { color: tok('--fg') } } }, label: { fontSize: 11, color: '#fff', formatter: p => p.name.replace(/^Section [IVX]+ · /, '') },
+      upperLabel: { show: true, height: 20, fontSize: 11, color: '#fff' }, itemStyle: { borderColor: tok('--card'), borderWidth: 2, gapWidth: 2 },
+      levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }, { colorSaturation: [.35, .6], itemStyle: { gapWidth: 2, borderColorSaturation: .5 } }],
+      data: Object.values(secs).map((x, i) => ({ name: x.name, children: x.children, itemStyle: { color: pal[i % pal.length] } })) }] });
+}
+function sankeyChart(el){
+  const mob = window.innerWidth < 640, N = mob ? 8 : 12;
+  const cos = Object.keys(ST.flow).slice(0, N);
+  const chTot = {}; cos.forEach(c => ST.flow[c].forEach(([ch, v]) => chTot[ch] = (chTot[ch] || 0) + v));
+  const topCh = Object.entries(chTot).sort((a, b) => b[1] - a[1]).slice(0, N).map(x => +x[0]);
+  const links = []; cos.forEach(c => { let other = 0; ST.flow[c].forEach(([ch, v]) => { if (topCh.includes(ch)) links.push({ source: c, target: chapName(ch), value: v }); else other += v; }); if (other) links.push({ source: c, target: 'Other goods', value: other }); });
+  const nodes = [...cos.map(c => ({ name: c, itemStyle: { color: tok('--imp') }, label: { position: 'right' } })), ...topCh.map(ch => ({ name: chapName(ch), itemStyle: { color: tok('--exp') }, label: { position: 'left' } })), { name: 'Other goods', itemStyle: { color: tok('--muted') }, label: { position: 'left' } }];
+  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => p.data.source ? `${esc(p.data.source)} → ${esc(p.data.target)}<br><b>${rs(p.data.value)}</b>` : `${esc(p.name)}<br><b>${rs(p.value)}</b>` },
+    series: [{ type: 'sankey', left: 4, right: 4, top: 8, bottom: 8, nodeWidth: 10, nodeGap: mob ? 10 : 8, orient: 'horizontal', nodeAlign: 'justify', draggable: false, emphasis: { focus: 'adjacency' }, lineStyle: { color: 'gradient', opacity: .35, curveness: .5 },
+      label: { fontSize: mob ? 9 : 11, color: tok('--fg') }, data: nodes, links }] });
+}
+
 let stView = 'overview', stSort = 'imp', stCountry = null, stChapter = null, stQ = '';
 const impRow = c => ST.imports[c], expRow = c => ST.exports[c];
 function tradeCard(code8){
   const im = impRow(code8), ex = expRow(code8);
   if (!im && !ex) return `<div class="trade"><h3 class="h" style="margin:0 0 6px">Nepal trade, FY ${ST.fy}</h3><p class="fine" style="margin:0">No recorded imports or exports under this code last year.</p></div>`;
   const part = (p, cls) => { const m = Math.max(...p.map(x => x[1]), 1); return `<div class="mini">${p.map(x => `<div><span class="n">${esc(x[0])}</span><i class="${cls}" style="width:${(x[1] / m * 100).toFixed(0)}%"></i><b>${rs(x[1], true)}</b></div>`).join('')}</div>`; };
+  const hist = H.codes[code8];
   let h = `<div class="trade"><h3 class="h" style="margin:0">Nepal trade, FY ${ST.fy}</h3>`;
+  if (hist && hist.some(x => x[0])) h += `<div style="margin-top:var(--s2);font-size:.8rem;color:var(--muted)">Imports by year ${yoyTag(hist.map(x => x[0]))}</div>${sparkHTML(hist.map(x => x[0]), 0, '')}`;
   if (im){ const eff = im[3] ? (im[4] / im[3] * 100) : 0;
     h += `<div class="row2"><div><span>Imported</span><b>${rs(im[3], true)}</b></div><div><span>Quantity</span><b>${esc(qty(im[2], im[1]))}</b></div><div><span>Duty collected</span><b>${rs(im[4], true)}</b></div></div>
       <p class="fine" style="margin:0 0 4px">Import sources${im[6] > 6 ? ` (top 6 of ${im[6]})` : ''} · effective duty ${eff.toFixed(1)}% of value</p>${part(im[5], '')}`; }
-  if (ex){ h += `<div class="row2" style="margin-top:var(--s4)"><div><span>Exported</span><b>${rs(ex[3], true)}</b></div><div><span>Quantity</span><b>${esc(qty(ex[2], ex[1]))}</b></div><div><span>Markets</span><b>${ex[5]}</b></div></div>${part(ex[4], 'e')}`; }
+  if (ex && hist && hist.some(x => x[1])) h += `<div style="margin-top:var(--s4);font-size:.8rem;color:var(--muted)">Exports by year ${yoyTag(hist.map(x => x[1]))}</div>${sparkHTML(hist.map(x => x[1]), 0, 'e')}`;
+  if (ex){ h += `<div class="row2" style="margin-top:var(--s3)"><div><span>Exported</span><b>${rs(ex[3], true)}</b></div><div><span>Quantity</span><b>${esc(qty(ex[2], ex[1]))}</b></div><div><span>Markets</span><b>${ex[5]}</b></div></div>${part(ex[4], 'e')}`; }
   return h + '</div>';
 }
 function renderStats(){
-  $('#st-sub').textContent = `Fiscal year ${ST.fy} · mid-July 2024 to mid-July 2025 · NPR`;
+  $('#st-sub').textContent = `Fiscal year ${ST.fy} (mid-July 2025 to mid-July 2026) with history from ${FY[0]} · NPR`;
   $('#st-src').textContent = `1 Arab = 100 Crore = NPR 1 billion. Values as published by the Department of Customs.`;
   $$('[data-sv]').forEach(b => b.setAttribute('aria-selected', b.dataset.sv === stView));
+  ecClear();
   const body = $('#st-body'); let h = '';
   const topN = (arr, key, n) => [...arr].sort((a, b) => b[key] - a[key]).slice(0, n);
   if (stView === 'overview'){
     const ch = ST.chapters, co = ST.countries;
     h += `<div class="tiles">${kpiTiles(false)}</div>`;
+    if (ST.current) h += `<div class="ytd">${ic('i-info')}<div>FY ${ST.current.fy} so far (${ST.current.months} month${ST.current.months > 1 ? 's' : ''}): imports <b>${rs(ST.current.overview.imports[1], true)}</b> (${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]) >= 0 ? '+' : ''}${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]).toFixed(1)}% on the same months last year), exports <b>${rs(ST.current.overview.exports[1], true)}</b>.</div></div>`;
+    h += fig('Seven years of trade', 'Annual imports and exports, FY ' + FY[0] + ' to ' + FY[FY.length-1], `<div class="ech" id="ec-years"></div>`);
+    h += fig('Map of imports', 'Every chapter sized by import value; tap a block to zoom', `<div class="ech tall" id="ec-tree"></div>`);
     h += fig('Top import categories', 'Import value by tariff chapter, 10 largest', barRows(topN(ch, 2, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[2] }))), '');
     h += fig('Top export categories', 'Export value by tariff chapter, 10 largest', barRows(topN(ch, 3, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[3] })), { cls: 'e' }), '');
     h += fig('Where imports come from', 'Import value by partner country', barRows(topN(co, 1, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1] }))), '');
     h += fig('Where exports go', 'Export value by destination', barRows(topN(co, 2, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[2] })), { cls: 'e' }), '');
     h += fig('Busiest customs points', 'Import and export value cleared per customs office', barRows(topN(ST.customs, 1, 8).map(x => ({ k: 'cu', label: x[0], a: x[1], b: x[2] }))), LEG2);
+  }
+  if (stView === 'trends'){
+    h += fig('Imports by month', 'Monthly import value, last three fiscal years and ' + (ST.current ? ST.current.fy + ' so far' : ''), `<div class="ech" id="ec-mimp"></div>`);
+    h += fig('Exports by month', 'Monthly export value', `<div class="ech" id="ec-mexp"></div>`);
+    h += fig('Trade deficit by year', 'Imports minus exports', `<div class="ech short" id="ec-def"></div>`);
+    const gr = [...ST.chapters].filter(c => H.chapters[c[0]] && H.chapters[c[0]][0][0] > 0).map(c => [c[0], H.chapters[c[0]][FY.length-1][0] / H.chapters[c[0]][0][0]]).sort((a, b) => b[1] - a[1]);
+    h += fig('Fastest growing import categories', `Import value FY ${FY[FY.length-1]} compared with FY ${FY[0]}, chapters over NPR 5 Arab`, barRows(gr.filter(x => H.chapters[x[0]][FY.length-1][0] > 5e6).slice(0, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]) + ' · ×' + x[1].toFixed(1), a: H.chapters[x[0]][FY.length-1][0] }))));
+  }
+  if (stView === 'flows'){
+    h += fig('Where imports come from, and what they are', 'Largest source countries (left) flowing into the largest import categories (right), FY ' + ST.fy, `<div class="ech tall" id="ec-sankey" style="height:${window.innerWidth < 640 ? 520 : 460}px"></div>`);
+    h += fig('Import sources over time', 'Top 6 sources by year', `<div class="ech" id="ec-co"></div>`);
   }
   if (stView === 'products'){
     const q = stQ.trim();
@@ -1195,6 +1329,7 @@ function renderStats(){
       const row = ST.chapters.find(x => x[0] === c) || [c, '', 0, 0, 0];
       h += `<button class="back" data-back="ch">${ic('i-left')}All chapters</button><h2 style="font-size:1.1rem;margin:8px 0 4px">Chapter ${c} · ${esc(chapName(c))}</h2>
         <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports</span><b>${rs(row[2], true)}</b></div><div class="tile"><span>Exports</span><b>${rs(row[3], true)}</b></div><div class="tile"><span>Duty collected</span><b>${rs(row[4], true)}</b></div><div class="tile"><span>Effective duty</span><b>${row[2] ? (row[4] / row[2] * 100).toFixed(1) : 0}%</b></div></div>`;
+      if (H.chapters[c]) h += fig('Seven-year trend', 'Imports, exports and duty collected by year', `<div class="ech short" id="ec-chap"></div>`);
       if (codes.length) h += fig('Most imported lines', '', barRows(codes.map(k => { const r = BY[k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6)]; return { k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: r ? label(r) : ST.imports[k][0], a: ST.imports[k][3] }; })));
       if (ecodes.length) h += fig('Most exported lines', '', barRows(ecodes.map(k => { const r = BY[k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6)]; return { k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: r ? label(r) : ST.exports[k][0], a: ST.exports[k][3] }; }), { cls: 'e' }));
     } else {
@@ -1209,6 +1344,7 @@ function renderStats(){
       const row = ST.countries.find(x => x[0] === stCountry) || [stCountry, 0, 0], top = ST.country_top[stCountry] || [[], []];
       h += `<button class="back" data-back="co">${ic('i-left')}All countries</button><h2 style="font-size:1.1rem;margin:8px 0 4px">${esc(stCountry)}</h2>
         <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports from</span><b>${rs(row[1], true)}</b></div><div class="tile"><span>Exports to</span><b>${rs(row[2], true)}</b></div></div>`;
+      if (H.countries[stCountry]) h += fig('Seven-year trend', 'Imports from and exports to ' + esc(stCountry), `<div class="ech short" id="ec-cty"></div>`);
       if (top[0].length) h += fig('What Nepal buys from ' + esc(stCountry), '', barRows(top[0].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] }))));
       if (top[1].length) h += fig('What Nepal sells to ' + esc(stCountry), '', barRows(top[1].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] })), { cls: 'e' }));
     } else {
@@ -1232,6 +1368,15 @@ function renderStats(){
     h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Duty rate</th><th>Import value</th><th>Share</th><th>Duty collected</th><th>Share</th></tr></thead><tbody>${ST.bands.map(x => `<tr><td>${x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? esc(x[0]) : +x[0] + '%'}</td><td>${rs(x[2], true)}</td><td>${(x[2] / tv * 100).toFixed(1)}%</td><td>${rs(x[1], true)}</td><td>${(x[1] / td * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
   }
   body.innerHTML = h;
+  if (!HAS_EC) return;
+  if (stView === 'overview'){ yearBars($('#ec-years'), [{ name: 'Imports', data: H.totals.map(t => t[0]) }, { name: 'Exports', data: H.totals.map(t => t[1]) }], ['Imports', 'Exports']); treemapChart($('#ec-tree')); const tc = charts[charts.length-1]; if (tc) tc.on('click', p => { if (p.data && p.data.ch){ stView = 'chapters'; stChapter = p.data.ch; renderStats(); window.scrollTo({top:0}); } }); }
+  if (stView === 'trends'){ monthlyLine($('#ec-mimp'), 'imp'); monthlyLine($('#ec-mexp'), 'exp'); yearBars($('#ec-def'), [{ name: 'Trade deficit', data: H.totals.map(t => t[0] - t[1]) }], ['Trade deficit']); }
+  if (stView === 'flows'){ sankeyChart($('#ec-sankey')); const top6 = [...ST.countries].sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0]);
+    ecInit($('#ec-co'), { grid: { left: 8, right: 12, top: 34, bottom: 24, containLabel: true }, tooltip: tip, legend: { top: 0, textStyle: { color: tok('--fg-2') }, itemWidth: 14 },
+      xAxis: Object.assign(axisBase(), { type: 'category', data: FY }), yAxis: Object.assign(axisBase(), { type: 'value', axisLabel: { color: tok('--muted'), fontSize: 11, formatter: v => rs(v, true) } }),
+      series: top6.map((nm, k) => ({ name: nm, type: 'line', smooth: .2, showSymbol: false, lineStyle: { width: 2 }, data: (H.countries[nm] || []).map(x => x[0]) })), color: ['#1D81A2', '#E8722E', '#2E9E6B', '#7C5CBF', '#B8860B', '#7F8C8D'] }); }
+  if (stView === 'chapters' && stChapter && H.chapters[stChapter]) yearBars($('#ec-chap'), [{ name: 'Imports', data: H.chapters[stChapter].map(x => x[0]) }, { name: 'Exports', data: H.chapters[stChapter].map(x => x[1]) }, { name: 'Duty collected', data: H.chapters[stChapter].map(x => x[2]) }], ['Imports', 'Exports', 'Duty collected']);
+  if (stView === 'countries' && stCountry && H.countries[stCountry]) yearBars($('#ec-cty'), [{ name: 'Imports from', data: H.countries[stCountry].map(x => x[0]) }, { name: 'Exports to', data: H.countries[stCountry].map(x => x[1]) }], ['Imports from', 'Exports to']);
 }
 $('#v-stats').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -1251,7 +1396,7 @@ let curTab = 'search';
 function go(t){
   curTab = t;
   ['search','ai','stats','browse','calc','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
-  if (t === 'stats') renderStats();
+  if (t === 'stats') renderStats(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc();

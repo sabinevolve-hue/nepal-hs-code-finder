@@ -4,7 +4,7 @@ Mobile-first search of the **Nepal Customs Tariff 2026/27** (FY 2083/84): all 6,
 general and SAARC duty rates, the export duty schedule, chapter legal notes, an import-tax / landed-cost calculator,
 and an AI assistant that classifies a plain-language product description into likely HS codes.
 
-Single self-contained page (`public/index.html`, ~1 MB, ~200 KB gzipped). No framework, no build step beyond a Python script.
+Single self-contained page (`public/index.html`, ~2.7 MB, ~600 KB gzipped) plus Apache ECharts from jsDelivr. No framework, no build step beyond a Python script.
 
 ## Features
 
@@ -20,9 +20,10 @@ Single self-contained page (`public/index.html`, ~1 MB, ~200 KB gzipped). No fra
   including specific per-unit duties (e.g. "Rs. 300 per litre or 80 %, whichever is higher").
 - **Ask AI**: describe the product (English or Nepali, optional photo when supported); the assistant searches the
   tariff with tools, returns ranked candidates with reasons and confidence, and asks clarifying questions.
-- **Trade data**: FY 2081/82 foreign trade statistics from the Department of Customs — imports, exports, deficit,
-  top chapters, partner countries, customs points, duty-rate bands, and per-product import/export figures with
-  top source/destination countries (also shown inside every code's detail view).
+- **Trade data**: Department of Customs foreign trade statistics — latest full year (FY 2082/83) in detail, seven
+  years of history (FY 2076/77 →), monthly series for the last three years, and the current year to date. Overview,
+  Trends, Products, Chapters, Countries, Flows (sankey), Customs points and Duty bands, with per-product import/export
+  figures, source countries and a seven-year sparkline inside every code's detail view. Charts by Apache ECharts.
 - **Saved codes**, copy code, share link (`#hs-8528.59.00`), light/dark theme, keyboard and screen-reader friendly.
 
 ## Repository layout
@@ -35,13 +36,13 @@ data/
   parsed.json                  structured parse (rows, headings, chapters, notes, export)
   tariff.json                  compact dataset inlined into the page
   nepal-customs-tariff-2026-27.csv   flat CSV of every line (for Excel / other tools)
-  FTS_Annual_2081_82.xlsx      Department of Customs annual foreign trade statistics (source)
-  stats.json                   compact trade statistics inlined into the page
+  fts/<fy>/*.xlsx              Department of Customs FTS workbooks by fiscal year (not in git; see data/sources)
+  stats.json                   compact multi-year trade statistics inlined into the page
 scripts/
   parse.py     PDF text → parsed.json (handles the PDF's scrambled table columns)
   aliases.py   everyday names → HS prefixes used by search hints
   build.py     parsed.json → tariff.json
-  stats.py     FTS_Annual_*.xlsx → stats.json
+  stats.py     data/fts/**/*.xlsx → stats.json (latest year detail + history + monthly)
   assemble.py  src.html + tariff.json → public/index.html
 api/classify.js        Vercel serverless proxy to the Anthropic API for the assistant
 ```
