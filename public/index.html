@@ -524,7 +524,7 @@ const BY = Object.fromEntries(ROWS.map(r => [r.code, r]));
 const BYHEAD = {}; ROWS.forEach(r => (BYHEAD[r.h] = BYHEAD[r.h] || []).push(r));
 const CHCOUNT = {}; ROWS.forEach(r => CHCOUNT[r.ch] = (CHCOUNT[r.ch] || 0) + 1);
 const sectionOf = ch => { let s = null; D.sections.forEach(x => { if (x.f <= ch) s = x; }); return s; };
-const label = r => (r.path.length && /^other\b/i.test(r.d)) ? r.path[r.path.length-1] + ' — ' + r.d : r.d;
+const label = r => { if (!r.path.length || !/^other\b/i.test(r.d)) return r.d; const p = [...r.path].reverse().find(x => !/^other$/i.test(x)); return p ? p + ' — ' + r.d : r.d; };
 
 /* ---------- rates ---------- */
 let origin = store.get('origin', 'gen');
