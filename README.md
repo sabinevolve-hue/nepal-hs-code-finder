@@ -1,5 +1,7 @@
 # Nepal HS Code Finder
 
+**Live:** https://nepal-hs-code-finder-tzco.vercel.app · **Source:** https://github.com/sabinevolve-hue/nepal-hs-code-finder
+
 Mobile-first search of the **Nepal Customs Tariff 2026/27** (FY 2083/84): all 6,340 import tariff lines with
 general and SAARC duty rates, the export duty schedule, chapter legal notes, an import-tax / landed-cost calculator,
 and an AI assistant that classifies a plain-language product description into likely HS codes.
