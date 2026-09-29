@@ -441,6 +441,14 @@ button.br:hover{background:var(--muted-bg)}
 .facts-box ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:.95rem;line-height:1.5;max-width:65ch}
 .facts-box b{font-variant-numeric:tabular-nums}
 .tiles b,.big b,.glance b,.row2 b,.tile b{font-variant-numeric:tabular-nums}
+.yearsel{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -16px var(--s2);padding:0 16px 4px}
+.yearsel::-webkit-scrollbar{display:none}
+.yearsel button{flex-shrink:0;min-height:34px;padding:0 11px;border-radius:8px;font-size:.82rem;font-weight:700;color:var(--muted);background:var(--muted-bg);font-variant-numeric:tabular-nums;transition:all var(--t)}
+.yearsel button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.yearsel button.ytd{border:1px dashed var(--border);background:none}
+.cmp-ctl{display:grid;grid-template-columns:1fr auto 1fr;gap:var(--s2);align-items:center;margin-bottom:var(--s3)}
+.cmp-ctl select{height:44px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);padding:0 10px;font-weight:700;color:var(--fg);min-width:0}
+.cmp-ctl span{color:var(--muted);font-size:.85rem;font-weight:700}
 
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--on-primary);padding:10px 18px;border-radius:999px;font-size:.88rem;font-weight:700;z-index:60;box-shadow:var(--shadow)}
 footer{color:var(--muted);font-size:.8rem;padding-block:var(--s5) var(--s6);margin-top:var(--s6);border-top:1px solid var(--border)}
@@ -572,8 +580,10 @@ footer p{margin:0 0 6px;max-width:70ch}
   <!-- TRADE STATISTICS -->
   <section id="v-stats" hidden>
     <div class="page-h"><h1 id="st-title">Nepal foreign trade</h1><p id="st-sub"></p></div>
+    <div class="yearsel" id="yearsel" aria-label="Fiscal year"></div>
     <div class="subnav" role="tablist" aria-label="Trade views">
       <button role="tab" data-sv="overview" aria-selected="true">Overview</button>
+      <button role="tab" data-sv="compare" aria-selected="false">Compare</button>
       <button role="tab" data-sv="trends" aria-selected="false">Trends</button>
       <button role="tab" data-sv="products" aria-selected="false">Products</button>
       <button role="tab" data-sv="chapters" aria-selected="false">Chapters</button>
@@ -1222,8 +1232,8 @@ function rs(th, short){
 const pctc = (a, b) => b ? ((a - b) / b * 100) : 0;
 const qty = (q, u) => (q >= 1e6 ? (q / 1e6).toLocaleString('en-IN', { maximumFractionDigits: 1 }) + ' M' : q.toLocaleString('en-IN', { maximumFractionDigits: q < 100 ? 1 : 0 })) + ' ' + (u || '').toLowerCase();
 function kpiTiles(compact){
-  const o = ST.overview, t = (label, key, inverse) => { const [p, c] = o[key]; const ch = pctc(c, p); const good = inverse ? ch < 0 : ch > 0;
-    return `<div class="tile"><span>${label}</span><b>${rs(c, true)}</b><small class="${Math.abs(ch) < .05 ? 'neutral' : good ? 'up' : 'down'}">${ic(ch >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:14px;height:14px"')}${Math.abs(ch).toFixed(1)}%&nbsp;vs&nbsp;${ST.fy_prev}</small></div>`; };
+  const o = compact ? ST.overview : OV(), fyp = compact ? ST.fy_prev : (stYear ? FY[stYear-1] : ''), t = (label, key, inverse) => { const [p, c] = o[key]; const ch = pctc(c, p); const good = inverse ? ch < 0 : ch > 0;
+    return `<div class="tile"><span>${label}</span><b>${rs(c, true)}</b><small class="${Math.abs(ch) < .05 ? 'neutral' : good ? 'up' : 'down'}">${ic(ch >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:14px;height:14px"')}${Math.abs(ch).toFixed(1)}%&nbsp;vs&nbsp;${fyp || 'previous'}</small></div>`; };
   return t('Imports', 'imports') + t('Exports', 'exports') + t('Trade deficit', 'trade_deficit', true) + (compact ? `<div class="tile"><span>Exports cover</span><b>${(o.exports[1] / o.imports[1] * 100).toFixed(1)}%</b><small class="neutral">of imports</small></div>` : `<div class="tile"><span>Imports per NPR 1 exported</span><b>NPR ${o.imports_exports_ratio[1].toFixed(1)}</b><small class="${o.imports_exports_ratio[1] < o.imports_exports_ratio[0] ? 'up' : 'down'}">was ${o.imports_exports_ratio[0].toFixed(1)}</small></div>`);
 }
 function barRows(items, opts){
@@ -1236,7 +1246,7 @@ function barRows(items, opts){
       <span class="l">${x.sub ? `<small class="${x.sub.length <= 2 ? 'in' : ''}">${esc(x.sub)}</small>` : ''}${esc(x.label)}</span>
       <span class="t">${seg(x.a, opts && opts.cls || '')}${two ? seg(x.b, 'e') : ''}</span></${tag}>`; }).join('')}</div>`;
 }
-const fig = (title, cap, body, legend) => `<div class="fig"><header>${title ? `<h3>${title}</h3>` : ''}${cap ? `<span class="cap">${cap}</span>` : ''}${legend ? `<div class="legend2">${legend}</div>` : ''}</header>${body}<p class="src">Source: Department of Customs, Nepal · FY ${ST.fy} · NPR</p></div>`;
+const fig = (title, cap, body, legend) => `<div class="fig"><header>${title ? `<h3>${title}</h3>` : ''}${cap ? `<span class="cap">${cap}</span>` : ''}${legend ? `<div class="legend2">${legend}</div>` : ''}</header>${body}<p class="src">Source: Department of Customs, Nepal · FY ${typeof yFY === 'function' && stView === 'compare' ? FY[cmpA] + ' and ' + FY[cmpB] : yFY()} · NPR</p></div>`;
 const LEG2 = `<span><i style="background:var(--imp)"></i>Imports</span><span><i style="background:var(--exp)"></i>Exports</span>`;
 const chapName = c => CHSHORT[c] || (ST.chapters.find(x => x[0] === c) || [0, ''])[1];
 
@@ -1280,9 +1290,9 @@ function monthlyLine(el, key){
 }
 function treemapChart(el){
   const secs = {};
-  ST.chapters.forEach(c => { const s = sectionOf(c[0]); if (!s) return; (secs[s.n] = secs[s.n] || { name: 'Section ' + s.n + ' · ' + s.t.split(';')[0].slice(0, 40), children: [] }).children.push({ name: chapName(c[0]), value: c[2], ch: c[0] }); });
+  CH().forEach(c => { const s = sectionOf(c[0]); if (!s) return; (secs[s.n] = secs[s.n] || { name: 'Section ' + s.n + ' · ' + s.t.split(';')[0].slice(0, 40), children: [] }).children.push({ name: chapName(c[0]), value: c[2], ch: c[0] }); });
   const pal = ['#1D81A2', '#2E9E6B', '#E8722E', '#7C5CBF', '#B8860B', '#C0392B', '#3A7CA5', '#5B8C5A', '#8E44AD', '#D35400', '#16A085', '#7F8C8D', '#2C3E50', '#27AE60', '#E67E22', '#2980B9', '#8D6E63', '#00838F', '#AD1457', '#6D4C41', '#455A64'];
-  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => `${esc(p.name)}<br><b>${rs(p.value)}</b> · ${(p.value / ST.overview.imports[1] * 100).toFixed(1)}% of imports` },
+  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => `${esc(p.name)}<br><b>${rs(p.value)}</b> · ${(p.value / OV().imports[1] * 100).toFixed(1)}% of imports` },
     series: [{ type: 'treemap', roam: false, nodeClick: 'zoomToNode', breadcrumb: { show: false }, label: { fontSize: 11, color: '#fff', formatter: p => p.name.replace(/^Section [IVX]+ · /, '') },
       upperLabel: { show: true, height: 20, fontSize: 11, color: '#fff' }, itemStyle: { borderColor: tok('--card'), borderWidth: 1, gapWidth: 1 },
       levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }, { colorSaturation: [.35, .6], itemStyle: { gapWidth: 2, borderColorSaturation: .5 } }],
@@ -1301,6 +1311,21 @@ function sankeyChart(el){
 }
 
 let stView = 'overview', stSort = 'imp', stCountry = null, stChapter = null, stQ = '';
+let stYear = FY.length - 1;
+let cmpA = Math.max(0, FY.length - 2), cmpB = FY.length - 1, cmpQ = '';
+const isLatest = () => stYear === FY.length - 1;
+const yFY = () => FY[stYear];
+const OV = () => H.overview[stYear];
+const CH = () => Object.keys(H.chapters).map(Number).map(c => [c, '', H.chapters[c][stYear][0], H.chapters[c][stYear][1], H.chapters[c][stYear][2]]).filter(x => x[2] || x[3]);
+const CO = () => Object.keys(H.countries).map(nm => [nm, H.countries[nm][stYear][0], H.countries[nm][stYear][1]]).filter(x => x[1] || x[2]);
+const CU = () => Object.keys(H.customs).map(nm => [nm, H.customs[nm][stYear][0], H.customs[nm][stYear][1]]).filter(x => x[1] || x[2]);
+const BD = () => H.bands[stYear] || [];
+const impV = c => isLatest() ? (ST.imports[c] ? ST.imports[c][3] : 0) : (H.codes[c] ? H.codes[c][stYear][0] : 0);
+const expV = c => isLatest() ? (ST.exports[c] ? ST.exports[c][3] : 0) : (H.codes[c] ? H.codes[c][stYear][1] : 0);
+const codeLabel = c => { const r = BY[c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6)]; return r ? label(r) : (ST.imports[c] || ST.exports[c] || [c])[0]; };
+function renderYearSel(){
+  $('#yearsel').innerHTML = FY.map((y, i) => `<button data-year="${i}" aria-pressed="${i === stYear}">${y}</button>`).join('') + (ST.current ? `<button class="ytd" disabled title="Current year, ${ST.current.months} months so far">${ST.current.fy} · ${ST.current.months} mo</button>` : '');
+}
 const impRow = c => ST.imports[c], expRow = c => ST.exports[c];
 function tradeCard(code8){
   const im = impRow(code8), ex = expRow(code8);
@@ -1317,30 +1342,31 @@ function tradeCard(code8){
   return h + '</div>';
 }
 function renderStats(){
-  $('#st-sub').textContent = `Fiscal year ${ST.fy} (mid-July 2025 to mid-July 2026) with history from ${FY[0]} · NPR`;
+  $('#st-sub').textContent = `Pick a fiscal year. Full detail from FY ${FY[0]} to ${FY[FY.length-1]}${ST.current ? ', plus ' + ST.current.fy + ' so far' : ''} · NPR`;
   $('#st-src-t').textContent = UNITS === 'intl' ? 'NPR 1 bn = 1 Arab = 100 Crore. Values as published by the Department of Customs.' : '1 Arab = 100 Crore = NPR 1 billion. Values as published by the Department of Customs.'; $('#u-np').setAttribute('aria-pressed', UNITS === 'np'); $('#u-intl').setAttribute('aria-pressed', UNITS === 'intl');
   $$('[data-sv]').forEach(b => b.setAttribute('aria-selected', b.dataset.sv === stView));
+  renderYearSel();
   ecClear();
   const body = $('#st-body'); let h = '';
   const topN = (arr, key, n) => [...arr].sort((a, b) => b[key] - a[key]).slice(0, n);
   if (stView === 'overview'){
-    const ch = ST.chapters, co = ST.countries;
+    const ch = CH(), co = CO(), ov = OV();
     h += `<div class="tiles">${kpiTiles(false)}</div>`;
     { const topCh = topN(ch, 2, 1)[0], topCo = topN(co, 1, 1)[0], topEx = topN(co, 2, 1)[0], topExCh = topN(ch, 3, 1)[0];
-      const gi = pctc(ST.overview.imports[1], ST.overview.imports[0]), ge = pctc(ST.overview.exports[1], ST.overview.exports[0]);
+      const gi = pctc(ov.imports[1], ov.imports[0]), ge = pctc(ov.exports[1], ov.exports[0]);
       h += `<div class="facts-box"><h3>In plain words</h3><ul>
-        <li>Nepal imported <b>${rs(ST.overview.imports[1])}</b> of goods in FY ${ST.fy}, ${gi >= 0 ? 'up' : 'down'} ${Math.abs(gi).toFixed(1)}% on the year before, and exported <b>${rs(ST.overview.exports[1])}</b> (${ge >= 0 ? 'up' : 'down'} ${Math.abs(ge).toFixed(1)}%).</li>
-        <li>For every NPR 100 exported, NPR ${(ST.overview.imports_exports_ratio[1] * 100).toFixed(0)} was imported: a trade deficit of <b>${rs(ST.overview.trade_deficit[1])}</b>.</li>
-        <li><b>${esc(topCo[0])}</b> supplied ${(topCo[1] / ST.overview.imports[1] * 100).toFixed(0)}% of all imports; <b>${esc(chapName(topCh[0]))}</b> was the largest import category (${(topCh[2] / ST.overview.imports[1] * 100).toFixed(0)}%).</li>
-        <li>The biggest export market was <b>${esc(topEx[0])}</b> (${(topEx[2] / ST.overview.exports[1] * 100).toFixed(0)}% of exports); the top export category was <b>${esc(chapName(topExCh[0]))}</b>.</li></ul></div>`; }
-    if (ST.current) h += `<div class="ytd">${ic('i-info')}<div>FY ${ST.current.fy} so far (${ST.current.months} month${ST.current.months > 1 ? 's' : ''}): imports <b>${rs(ST.current.overview.imports[1], true)}</b> (${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]) >= 0 ? '+' : ''}${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]).toFixed(1)}% on the same months last year), exports <b>${rs(ST.current.overview.exports[1], true)}</b>.</div></div>`;
+        <li>Nepal imported <b>${rs(ov.imports[1])}</b> of goods in FY ${yFY()}, ${gi >= 0 ? 'up' : 'down'} ${Math.abs(gi).toFixed(1)}% on the year before, and exported <b>${rs(ov.exports[1])}</b> (${ge >= 0 ? 'up' : 'down'} ${Math.abs(ge).toFixed(1)}%).</li>
+        <li>For every NPR 100 exported, NPR ${(ov.imports_exports_ratio[1] * 100).toFixed(0)} was imported: a trade deficit of <b>${rs(ov.trade_deficit[1])}</b>.</li>
+        <li><b>${esc(topCo[0])}</b> supplied ${(topCo[1] / ov.imports[1] * 100).toFixed(0)}% of all imports; <b>${esc(chapName(topCh[0]))}</b> was the largest import category (${(topCh[2] / ov.imports[1] * 100).toFixed(0)}%).</li>
+        <li>The biggest export market was <b>${esc(topEx[0])}</b> (${(topEx[2] / ov.exports[1] * 100).toFixed(0)}% of exports); the top export category was <b>${esc(chapName(topExCh[0]))}</b>.</li></ul></div>`; }
+    if (ST.current && isLatest()) h += `<div class="ytd">${ic('i-info')}<div>FY ${ST.current.fy} so far (${ST.current.months} month${ST.current.months > 1 ? 's' : ''}): imports <b>${rs(ST.current.overview.imports[1], true)}</b> (${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]) >= 0 ? '+' : ''}${pctc(ST.current.overview.imports[1], ST.current.overview.imports[0]).toFixed(1)}% on the same months last year), exports <b>${rs(ST.current.overview.exports[1], true)}</b>.</div></div>`;
     h += fig('Seven years of trade', 'Annual imports and exports, FY ' + FY[0] + ' to ' + FY[FY.length-1], `<div class="ech" id="ec-years"></div>`);
-    h += fig('Map of imports', 'Every chapter sized by import value; tap a block to zoom', `<div class="ech tall" id="ec-tree"></div>`);
+    h += fig('Map of imports', 'Every chapter sized by import value, FY ' + yFY() + '; tap a block to open it', `<div class="ech tall" id="ec-tree"></div>`);
     h += fig('Top import categories', 'Import value by tariff chapter, 10 largest', barRows(topN(ch, 2, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[2] }))), '');
     h += fig('Top export categories', 'Export value by tariff chapter, 10 largest', barRows(topN(ch, 3, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[3] })), { cls: 'e' }), '');
     h += fig('Where imports come from', 'Import value by partner country', barRows(topN(co, 1, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1] }))), '');
     h += fig('Where exports go', 'Export value by destination', barRows(topN(co, 2, 10).map(x => ({ k: 'co:' + x[0], label: x[0], a: x[2] })), { cls: 'e' }), '');
-    h += fig('Busiest customs points', 'Import and export value cleared per customs office', barRows(topN(ST.customs, 1, 8).map(x => ({ k: 'cu', label: x[0], a: x[1], b: x[2] }))), LEG2);
+    h += fig('Busiest customs points', 'Import and export value cleared per customs office', barRows(topN(CU(), 1, 8).map(x => ({ k: 'cu', label: x[0], a: x[1], b: x[2] }))), LEG2);
   }
   if (stView === 'trends'){
     h += fig('Imports by month', 'Monthly import value, last three fiscal years and ' + (ST.current ? ST.current.fy + ' so far' : ''), `<div class="ech" id="ec-mimp"></div>`);
@@ -1350,42 +1376,67 @@ function renderStats(){
     h += fig('Fastest growing import categories', `Import value FY ${FY[FY.length-1]} compared with FY ${FY[0]}, chapters over NPR 5 Arab`, barRows(gr.filter(x => H.chapters[x[0]][FY.length-1][0] > 5e6).slice(0, 10).map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]) + ' · ×' + x[1].toFixed(1), a: H.chapters[x[0]][FY.length-1][0] }))));
   }
   if (stView === 'flows'){
+    if (!isLatest()) h += `<p class="fine">Country-to-product flows are available for FY ${ST.fy}; showing that year.</p>`;
     h += fig('Where imports come from, and what they are', 'Largest source countries (left) flowing into the largest import categories (right), FY ' + ST.fy, `<div class="ech tall" id="ec-sankey" style="height:${window.innerWidth < 640 ? 520 : 460}px"></div>`);
     h += fig('Import sources over time', 'Top 6 sources by year', `<div class="ech" id="ec-co"></div>`);
+  }
+  if (stView === 'compare'){
+    const opts = FY.map((y, i) => `<option value="${i}">${y}</option>`).join('');
+    h += `<div class="cmp-ctl"><select id="cmp-a" aria-label="First year">${opts}</select><span>vs</span><select id="cmp-b" aria-label="Second year">${opts}</select></div>`;
+    const A = cmpA, B = cmpB, ta = H.totals[A], tb = H.totals[B];
+    const d = (a, b) => { const p = b ? (a - b) / b * 100 : 0; return `<small class="${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '+' : ''}${p.toFixed(1)}%</small>`; };
+    h += `<div class="tiles"><div class="tile"><span>Imports</span><b>${rs(tb[0], true)}</b>${d(tb[0], ta[0])}</div><div class="tile"><span>Exports</span><b>${rs(tb[1], true)}</b>${d(tb[1], ta[1])}</div><div class="tile"><span>Trade deficit</span><b>${rs(tb[0] - tb[1], true)}</b>${d(tb[0] - tb[1], ta[0] - ta[1])}</div><div class="tile"><span>Exports cover</span><b>${(tb[1] / tb[0] * 100).toFixed(1)}%</b><small class="neutral">was ${(ta[1] / ta[0] * 100).toFixed(1)}%</small></div></div>
+      <p class="fine" style="margin-top:6px">FY ${FY[B]} compared with FY ${FY[A]}.</p>`;
+    h += fig('Import categories, side by side', `Top 10 of FY ${FY[B]}`, `<div class="ech tall" id="ec-cmp-ch"></div>`);
+    h += fig('Import sources, side by side', `Top 10 of FY ${FY[B]}`, `<div class="ech tall" id="ec-cmp-co"></div>`);
+    const mv = Object.keys(H.chapters).map(Number).map(c => [c, H.chapters[c][B][0] - H.chapters[c][A][0]]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 10);
+    h += fig('Biggest changes in imports', `Chapters that moved most between FY ${FY[A]} and FY ${FY[B]}`, `<div class="bars">${mv.map(x => `<button class="br" data-k="ch:${x[0]}"><span class="l"><small class="in">${String(x[0]).padStart(2,'0')}</small>${esc(chapName(x[0]))}</span><span class="t"><span class="s"><i class="${x[1] < 0 ? 'e' : ''}" style="width:${(Math.abs(x[1]) / Math.abs(mv[0][1]) * 68).toFixed(1)}%"></i><b>${x[1] >= 0 ? '+' : '−'}${rs(Math.abs(x[1]), true)}</b></span></span></button>`).join('')}</div>`);
+    h += `<div class="tsearch" style="margin-top:var(--s5)">${ic('i-search')}<input id="cmp-q" type="search" placeholder="Track any product, chapter or country across all years…" aria-label="Track across years" value="${esc(cmpQ)}"></div>`;
+    if (cmpQ.trim()){
+      const q = cmpQ.trim().toLowerCase();
+      const cos = Object.keys(H.countries).filter(n => n.toLowerCase().includes(q)).slice(0, 3);
+      const chs = Object.keys(H.chapters).map(Number).filter(c => chapName(c).toLowerCase().includes(q)).slice(0, 3);
+      const codes = search(cmpQ).rows.map(r => r.digits).filter(c => H.codes[c] && H.codes[c].some(x => x[0] || x[1])).slice(0, 6);
+      if (!cos.length && !chs.length && !codes.length) h += `<div class="empty"><b>Nothing matches</b><p>Try a product word, a chapter name or a country.</p></div>`;
+      cos.forEach((n, i) => h += fig(esc(n), 'Imports from and exports to, by year', `<div class="ech short" id="ec-tr-co${i}"></div>`));
+      chs.forEach((c, i) => h += fig(esc(chapName(c)) + ' (chapter ' + c + ')', 'Imports and exports by year', `<div class="ech short" id="ec-tr-ch${i}"></div>`));
+      codes.forEach((c, i) => h += fig(`<span class="mono" style="font-size:.9rem">${c.slice(0,4)}.${c.slice(4,6)}.${c.slice(6)}</span> ${esc(codeLabel(c))}`, 'Imports and exports by year', `<div class="ech short" id="ec-tr-hs${i}"></div>`));
+      h += `<script type="text/plain" id="cmp-track">${JSON.stringify({ cos, chs, codes })}<\/script>`;
+    }
   }
   if (stView === 'products'){
     const q = stQ.trim();
     h += `<div class="tsearch">${ic('i-search')}<input id="st-q" type="search" placeholder="Product or HS code: cement, 8703, solar…" aria-label="Search traded products" value="${esc(stQ)}"></div>`;
     let list;
-    if (q){ list = search(q).rows.map(r => r.digits).filter(c => ST.imports[c] || ST.exports[c]).slice(0, 40); }
-    else { list = Object.keys(ST.imports).sort((a, b) => ST.imports[b][3] - ST.imports[a][3]).slice(0, 25); h += `<h3 class="h" style="margin-top:var(--s2)">Top 25 imported products</h3>`; }
+    if (q){ list = search(q).rows.map(r => r.digits).filter(c => impV(c) || expV(c)).slice(0, 40); }
+    else { list = Object.keys(H.codes).sort((a, b) => impV(b) - impV(a)).slice(0, 25); h += `<h3 class="h" style="margin-top:var(--s2)">Top 25 imported products, FY ${yFY()}</h3>`; }
     if (!list.length) h += `<div class="empty"><b>No traded products match</b><p>Try another word or a 4-digit heading.</p></div>`;
-    else h += fig(q ? `${list.length} matching products` : '', '', barRows(list.map(c => { const im = ST.imports[c], ex = ST.exports[c]; const r = BY[c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6)];
-      return { k: 'hs:' + c, sub: c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6), label: r ? label(r) : (im || ex)[0], a: im ? im[3] : 0, b: ex ? ex[3] : 0 }; })), LEG2);
+    else h += fig(q ? `${list.length} matching products, FY ${yFY()}` : '', '', barRows(list.map(c => ({ k: 'hs:' + c, sub: c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6), label: codeLabel(c), a: impV(c), b: expV(c) }))), LEG2);
   }
   if (stView === 'chapters'){
     if (stChapter){
-      const c = stChapter, codes = Object.keys(ST.imports).filter(k => +k.slice(0,2) === c).sort((a, b) => ST.imports[b][3] - ST.imports[a][3]).slice(0, 20);
-      const ecodes = Object.keys(ST.exports).filter(k => +k.slice(0,2) === c).sort((a, b) => ST.exports[b][3] - ST.exports[a][3]).slice(0, 10);
-      const row = ST.chapters.find(x => x[0] === c) || [c, '', 0, 0, 0];
+      const c = stChapter, codes = Object.keys(H.codes).filter(k => +k.slice(0,2) === c && impV(k)).sort((a, b) => impV(b) - impV(a)).slice(0, 20);
+      const ecodes = Object.keys(H.codes).filter(k => +k.slice(0,2) === c && expV(k)).sort((a, b) => expV(b) - expV(a)).slice(0, 10);
+      const row = CH().find(x => x[0] === c) || [c, '', 0, 0, 0];
       h += `<button class="back" data-back="ch">${ic('i-left')}All chapters</button><h2 style="font-size:1.1rem;margin:8px 0 4px">Chapter ${c} · ${esc(chapName(c))}</h2>
         <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports</span><b>${rs(row[2], true)}</b></div><div class="tile"><span>Exports</span><b>${rs(row[3], true)}</b></div><div class="tile"><span>Duty collected</span><b>${rs(row[4], true)}</b></div><div class="tile"><span>Effective duty</span><b>${row[2] ? (row[4] / row[2] * 100).toFixed(1) : 0}%</b></div></div>`;
       if (H.chapters[c]) h += fig('Seven-year trend', 'Imports, exports and duty collected by year', `<div class="ech short" id="ec-chap"></div>`);
-      if (codes.length) h += fig('Most imported lines', '', barRows(codes.map(k => { const r = BY[k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6)]; return { k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: r ? label(r) : ST.imports[k][0], a: ST.imports[k][3] }; })));
-      if (ecodes.length) h += fig('Most exported lines', '', barRows(ecodes.map(k => { const r = BY[k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6)]; return { k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: r ? label(r) : ST.exports[k][0], a: ST.exports[k][3] }; }), { cls: 'e' }));
+      if (codes.length) h += fig('Most imported lines', 'FY ' + yFY(), barRows(codes.map(k => ({ k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: codeLabel(k), a: impV(k) }))));
+      if (ecodes.length) h += fig('Most exported lines', 'FY ' + yFY(), barRows(ecodes.map(k => ({ k: 'hs:' + k, sub: k.slice(0,4)+'.'+k.slice(4,6)+'.'+k.slice(6), label: codeLabel(k), a: expV(k) })), { cls: 'e' }));
     } else {
       const key = { imp: 2, exp: 3, rev: 4 }[stSort];
-      const rows = [...ST.chapters].sort((a, b) => b[key] - a[key]);
+      const rows = CH().sort((a, b) => b[key] - a[key]);
       h += `<div class="sortbar">Sort by ${['imp','exp','rev'].map(k => `<button data-sort="${k}" aria-pressed="${stSort === k}">${{ imp: 'Imports', exp: 'Exports', rev: 'Duty collected' }[k]}</button>`).join('')}</div>`;
-      h += fig('All 96 chapters', '', barRows(rows.map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[key] })), { cls: stSort === 'exp' ? 'e' : stSort === 'rev' ? 'r' : '' }));
+      h += fig('All chapters, FY ' + yFY(), '', barRows(rows.map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[key] })), { cls: stSort === 'exp' ? 'e' : stSort === 'rev' ? 'r' : '' }));
     }
   }
   if (stView === 'countries'){
     if (stCountry){
-      const row = ST.countries.find(x => x[0] === stCountry) || [stCountry, 0, 0], top = ST.country_top[stCountry] || [[], []];
+      const row = CO().find(x => x[0] === stCountry) || [stCountry, 0, 0], top = isLatest() ? (ST.country_top[stCountry] || [[], []]) : [[], []];
       h += `<button class="back" data-back="co">${ic('i-left')}All countries</button><h2 style="font-size:1.1rem;margin:8px 0 4px">${esc(stCountry)}</h2>
         <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports from</span><b>${rs(row[1], true)}</b></div><div class="tile"><span>Exports to</span><b>${rs(row[2], true)}</b></div></div>`;
       if (H.countries[stCountry]) h += fig('Seven-year trend', 'Imports from and exports to ' + esc(stCountry), `<div class="ech short" id="ec-cty"></div>`);
+      if (!isLatest()) h += `<p class="fine">Product breakdown by country is available for FY ${ST.fy} (select it above).</p>`;
       if (top[0].length) h += fig('What Nepal buys from ' + esc(stCountry), '', barRows(top[0].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] }))));
       if (top[1].length) h += fig('What Nepal sells to ' + esc(stCountry), '', barRows(top[1].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] })), { cls: 'e' }));
     } else {
@@ -1393,24 +1444,38 @@ function renderStats(){
       h += `<div class="tsearch">${ic('i-search')}<input id="st-q" type="search" placeholder="Find a country" aria-label="Find a country" value="${esc(stQ)}"></div>`;
       const key = stSort === 'exp' ? 2 : 1;
       h += `<div class="sortbar">Sort by ${['imp','exp'].map(k => `<button data-sort="${k}" aria-pressed="${stSort === k}">${{ imp: 'Imports', exp: 'Exports' }[k]}</button>`).join('')}</div>`;
-      const rows = ST.countries.filter(x => !q || x[0].toLowerCase().includes(q)).sort((a, b) => b[key] - a[key]).slice(0, q ? 200 : 40);
-      h += fig(q ? `${rows.length} countries` : 'Top 40 trading partners', '', barRows(rows.map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1], b: x[2] }))), LEG2);
+      const rows = CO().filter(x => !q || x[0].toLowerCase().includes(q)).sort((a, b) => b[key] - a[key]).slice(0, q ? 200 : 40);
+      h += fig(q ? `${rows.length} countries` : 'Top 40 trading partners, FY ' + yFY(), '', barRows(rows.map(x => ({ k: 'co:' + x[0], label: x[0], a: x[1], b: x[2] }))), LEG2);
     }
   }
   if (stView === 'customs'){
-    const ti = ST.customs.reduce((a, x) => a + x[1], 0), te = ST.customs.reduce((a, x) => a + x[2], 0);
-    h += fig('Imports and exports by customs office', '', barRows([...ST.customs].sort((a, b) => b[1] - a[1]).map(x => ({ label: x[0], a: x[1], b: x[2] }))), LEG2);
-    h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Customs office</th><th>Imports</th><th>Share</th><th>Exports</th><th>Share</th></tr></thead><tbody>${[...ST.customs].sort((a, b) => b[1] - a[1]).map(x => `<tr><td>${esc(x[0])}</td><td>${rs(x[1], true)}</td><td>${(x[1] / ti * 100).toFixed(1)}%</td><td>${rs(x[2], true)}</td><td>${(x[2] / te * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
+    const cu = CU(), ti = cu.reduce((a, x) => a + x[1], 0), te = cu.reduce((a, x) => a + x[2], 0);
+    h += fig('Imports and exports by customs office', 'FY ' + yFY(), barRows([...cu].sort((a, b) => b[1] - a[1]).map(x => ({ label: x[0], a: x[1], b: x[2] }))), LEG2);
+    h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Customs office</th><th>Imports</th><th>Share</th><th>Exports</th><th>Share</th></tr></thead><tbody>${[...cu].sort((a, b) => b[1] - a[1]).map(x => `<tr><td>${esc(x[0])}</td><td>${rs(x[1], true)}</td><td>${(x[1] / ti * 100).toFixed(1)}%</td><td>${rs(x[2], true)}</td><td>${(x[2] / te * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
   }
   if (stView === 'duty'){
-    const tv = ST.bands.reduce((a, x) => a + x[2], 0), td = ST.bands.reduce((a, x) => a + x[1], 0);
-    h += fig('Import value by customs duty rate', 'How much of what Nepal imports falls in each duty band', barRows(ST.bands.map(x => ({ label: (x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? x[0].replace(/^./, c => c.toUpperCase()) : +x[0] + '% duty'), a: x[2] }))));
-    h += fig('Duty collected by rate', '', barRows(ST.bands.map(x => ({ label: (x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? x[0].replace(/^./, c => c.toUpperCase()) : +x[0] + '% duty'), a: x[1] })), { cls: 'r' }));
-    h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Duty rate</th><th>Import value</th><th>Share</th><th>Duty collected</th><th>Share</th></tr></thead><tbody>${ST.bands.map(x => `<tr><td>${x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? esc(x[0]) : +x[0] + '%'}</td><td>${rs(x[2], true)}</td><td>${(x[2] / tv * 100).toFixed(1)}%</td><td>${rs(x[1], true)}</td><td>${(x[1] / td * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
+    const bd = BD(), tv = bd.reduce((a, x) => a + x[2], 0), td = bd.reduce((a, x) => a + x[1], 0);
+    h += fig('Import value by customs duty rate', 'How much of what Nepal imported in FY ' + yFY() + ' falls in each duty band', barRows(bd.map(x => ({ label: (x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? x[0].replace(/^./, c => c.toUpperCase()) : +x[0] + '% duty'), a: x[2] }))));
+    h += fig('Duty collected by rate', '', barRows(bd.map(x => ({ label: (x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? x[0].replace(/^./, c => c.toUpperCase()) : +x[0] + '% duty'), a: x[1] })), { cls: 'r' }));
+    h += `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Duty rate</th><th>Import value</th><th>Share</th><th>Duty collected</th><th>Share</th></tr></thead><tbody>${bd.map(x => `<tr><td>${x[0] === '0' ? 'Duty free' : isNaN(+x[0]) ? esc(x[0]) : +x[0] + '%'}</td><td>${rs(x[2], true)}</td><td>${(x[2] / tv * 100).toFixed(1)}%</td><td>${rs(x[1], true)}</td><td>${(x[1] / td * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table></div>`;
   }
   body.innerHTML = h;
   if (!HAS_EC) return;
   if (stView === 'overview'){ yearBars($('#ec-years'), [{ name: 'Imports', data: H.totals.map(t => t[0]) }, { name: 'Exports', data: H.totals.map(t => t[1]) }], ['Imports', 'Exports']); treemapChart($('#ec-tree')); const tc = charts[charts.length-1]; if (tc) tc.on('click', p => { if (p.data && p.data.ch){ stView = 'chapters'; stChapter = p.data.ch; renderStats(); window.scrollTo({top:0}); } }); }
+  if (stView === 'compare'){
+    const A = cmpA, B = cmpB, two = (el, cats, fa, fb) => ecInit(el, { grid: { left: 8, right: 12, top: 30, bottom: 8, containLabel: true }, tooltip: Object.assign({}, tip, { trigger: 'axis' }), legend: { top: 0, textStyle: { color: tok('--fg-2') } },
+      yAxis: Object.assign(axisBase(), { type: 'category', inverse: true, data: cats, axisLabel: { color: tok('--fg-2'), fontSize: 11, width: 110, overflow: 'truncate' } }), xAxis: Object.assign(axisBase(), { type: 'value', splitNumber: 3, axisLabel: { color: tok('--muted'), fontSize: 11, formatter: v => rs(v, true) } }),
+      series: [{ name: 'FY ' + FY[A], type: 'bar', data: fa, itemStyle: { color: tok('--muted') }, barMaxWidth: 12 }, { name: 'FY ' + FY[B], type: 'bar', data: fb, itemStyle: { color: tok('--imp') }, barMaxWidth: 12 }] });
+    const topCh = Object.keys(H.chapters).map(Number).sort((a, b) => H.chapters[b][B][0] - H.chapters[a][B][0]).slice(0, 10);
+    two($('#ec-cmp-ch'), topCh.map(chapName), topCh.map(c => H.chapters[c][A][0]), topCh.map(c => H.chapters[c][B][0]));
+    const topCo = Object.keys(H.countries).sort((a, b) => H.countries[b][B][0] - H.countries[a][B][0]).slice(0, 10);
+    two($('#ec-cmp-co'), topCo, topCo.map(c => H.countries[c][A][0]), topCo.map(c => H.countries[c][B][0]));
+    const tr = $('#cmp-track'); if (tr){ const t = JSON.parse(tr.textContent);
+      t.cos.forEach((n, i) => yearBars($('#ec-tr-co' + i), [{ name: 'Imports from', data: H.countries[n].map(x => x[0]) }, { name: 'Exports to', data: H.countries[n].map(x => x[1]) }], ['a', 'b']));
+      t.chs.forEach((c, i) => yearBars($('#ec-tr-ch' + i), [{ name: 'Imports', data: H.chapters[c].map(x => x[0]) }, { name: 'Exports', data: H.chapters[c].map(x => x[1]) }], ['a', 'b']));
+      t.codes.forEach((c, i) => yearBars($('#ec-tr-hs' + i), [{ name: 'Imports', data: H.codes[c].map(x => x[0]) }, { name: 'Exports', data: H.codes[c].map(x => x[1]) }], ['a', 'b'])); }
+    $('#cmp-a').value = A; $('#cmp-b').value = B;
+  }
   if (stView === 'trends'){ monthlyLine($('#ec-mimp'), 'imp'); monthlyLine($('#ec-mexp'), 'exp'); yearBars($('#ec-def'), [{ name: 'Trade deficit', data: H.totals.map(t => t[0] - t[1]) }], ['Trade deficit']); }
   if (stView === 'flows'){ sankeyChart($('#ec-sankey')); const top6 = [...ST.countries].sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0]);
     ecInit($('#ec-co'), { grid: { left: 8, right: 12, top: 34, bottom: 24, containLabel: true }, tooltip: tip, legend: { top: 0, textStyle: { color: tok('--fg-2') }, itemWidth: 14 },
@@ -1422,6 +1487,7 @@ function renderStats(){
 $('#v-stats').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'u-np' || b.id === 'u-intl'){ UNITS = b.id === 'u-np' ? 'np' : 'intl'; store.set('units', UNITS); renderStats(); return; }
+  if (b.dataset.year !== undefined){ stYear = +b.dataset.year; renderStats(); return; }
   if (b.dataset.sv){ stView = b.dataset.sv; stQ = ''; stCountry = null; stChapter = null; renderStats(); return; }
   if (b.dataset.sort){ stSort = b.dataset.sort; renderStats(); return; }
   if (b.dataset.back){ if (b.dataset.back === 'co') stCountry = null; else stChapter = null; renderStats(); window.scrollTo({top:0}); return; }
@@ -1431,7 +1497,9 @@ $('#v-stats').addEventListener('click', e => {
   if (k.startsWith('co:')){ stView = 'countries'; stCountry = k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
   if (k === 'cu'){ stView = 'customs'; renderStats(); window.scrollTo({top:0}); }
 });
-$('#v-stats').addEventListener('input', e => { if (e.target.id === 'st-q'){ stQ = e.target.value; const pos = e.target.selectionStart; renderStats(); const el = $('#st-q'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
+$('#v-stats').addEventListener('change', e => { if (e.target.id === 'cmp-a'){ cmpA = +e.target.value; renderStats(); } if (e.target.id === 'cmp-b'){ cmpB = +e.target.value; renderStats(); } });
+$('#v-stats').addEventListener('input', e => { if (e.target.id === 'cmp-q'){ cmpQ = e.target.value; clearTimeout(window._cq); window._cq = setTimeout(() => { const pos = e.target.selectionStart; renderStats(); const el = $('#cmp-q'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } }, 250); return; }
+  if (e.target.id === 'st-q'){ stQ = e.target.value; const pos = e.target.selectionStart; renderStats(); const el = $('#st-q'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
 
 /* ---------- tabs ---------- */
 let curTab = 'search';

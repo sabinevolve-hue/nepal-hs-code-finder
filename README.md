@@ -21,8 +21,9 @@ Single self-contained page (`public/index.html`, ~2.7 MB, ~600 KB gzipped) plus 
 - **Ask AI**: describe the product (English or Nepali, optional photo when supported); the assistant searches the
   tariff with tools, returns ranked candidates with reasons and confidence, and asks clarifying questions.
 - **Trade data**: Department of Customs foreign trade statistics — latest full year (FY 2082/83) in detail, seven
-  years of history (FY 2076/77 →), monthly series for the last three years, and the current year to date. Overview,
-  Trends, Products, Chapters, Countries, Flows (sankey), Customs points and Duty bands, with per-product import/export
+  years of history (FY 2076/77 →), monthly series for the last three years, and the current year to date. A fiscal-year
+  selector switches every view; Compare puts any two years side by side and tracks any product, chapter or country
+  across all years. Views: Overview, Compare, Trends, Products, Chapters, Countries, Flows (sankey), Customs points, Duty bands, with per-product import/export
   figures, source countries and a seven-year sparkline inside every code's detail view. Charts by Apache ECharts.
 - **Saved codes**, copy code, share link (`#hs-8528.59.00`), light/dark theme, keyboard and screen-reader friendly.
 

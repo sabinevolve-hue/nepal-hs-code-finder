@@ -129,9 +129,10 @@ L = parsed[(latest_full, 11)]
 hist_years = full
 history = dict(years=[parsed[(fy, 11)]['fy'] for fy in hist_years],
                totals=[[parsed[(fy, 11)]['overview']['imports'][1], parsed[(fy, 11)]['overview']['exports'][1]] for fy in hist_years],
-               chapters={}, countries={}, customs={}, codes={})
+               chapters={}, countries={}, customs={}, codes={}, bands=[], overview=[])
 for i, fy in enumerate(hist_years):
     P = parsed[(fy, 11)]
+    history['bands'].append(P['bands']); history['overview'].append(P['overview'])
     for c, iv, ev, rv in P['chapters']: history['chapters'].setdefault(c, [[0, 0, 0] for _ in hist_years])[i] = [iv, ev, rv]
     for nm, iv, ev in P['countries']: history['countries'].setdefault(nm, [[0, 0] for _ in hist_years])[i] = [iv, ev]
     for nm, iv, ev in P['customs']: history['customs'].setdefault(nm, [[0, 0] for _ in hist_years])[i] = [iv, ev]
