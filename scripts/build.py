@@ -1,4 +1,4 @@
-import json, re
+import json, re, pathlib
 import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from aliases import ALIASES
 d = json.load(open(__import__('pathlib').Path(__file__).resolve().parents[1] / 'data' / 'parsed.json'))
@@ -35,13 +35,14 @@ for terms, prefixes in ALIASES:
     if bad: print('ALIAS PREFIX NOT FOUND', terms[:30], bad)
     if ok: alias_out.append([[t.strip() for t in terms.split(',')], ok])
 
-sections = [dict(n=('I' if s['n']=='1' else s['n']), t=(lambda x:x[:1].upper()+x[1:].lower())(re.split(r' \d\.-',s['t'])[0].strip()), f=s['first']) for s in d['sections']]
+sections = [dict(n=('I' if s['n']=='1' else s['n']), t=(lambda x:x[:1].upper()+x[1:].lower())(re.split(r' \d\.-',s['t'])[0].strip()), f=s['first'], notes=s.get('notes','')) for s in d['sections']]
 roman = {'1': 'I'}
 chapters = {int(k): dict(t=v['t'], s=v['s'], n=v['notes'], pg=v['pg']) for k, v in d['chapters'].items()}
 heads = {k: [v['t'], v.get('pg') or 0] for k, v in d['headings'].items()}
 export = {k: [v['d'], norm_rate(v['r'])] for k, v in d['export'].items()}
 
-data = dict(v='2026/27', rows=rows, strs=strs, heads=heads, chapters=chapters, sections=sections, export=export, aliases=alias_out)
+gri = json.load(open(pathlib.Path(__file__).resolve().parents[1] / 'data' / 'gri.json'))
+data = dict(v='2026/27', gri=gri['gri'], abbr=gri['abbr'], rows=rows, strs=strs, heads=heads, chapters=chapters, sections=sections, export=export, aliases=alias_out)
 js = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 js = re.sub(r'\\u00[01][0-9a-f]', '-', js)
 open(__import__('pathlib').Path(__file__).resolve().parents[1] / 'data' / 'tariff.json', 'w').write(js)

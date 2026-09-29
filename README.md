@@ -14,7 +14,8 @@ Single self-contained page (`public/index.html`, ~1 MB, ~200 KB gzipped). No fra
 - **Filters**: duty band (free / up to 10 / up to 20 / over 20 %) and chapter.
 - **Code detail**: both duty rates, VAT, unit, LDC rate, export duty, full section → chapter → heading → line path,
   every sibling line under the same heading, chapter legal notes and the source page number in the PDF.
-- **Browse**: 21 sections → 97 chapters → headings → lines, with a filter box at every level.
+- **Browse**: 21 sections → 97 chapters → headings → lines, with a filter box at every level; section and chapter
+  legal notes, the General Rules of Interpretation, abbreviations, and the export duty schedule.
 - **Calculator**: CIF value, customs duty, excise, VAT 13 %, other costs → landed cost and cost per unit,
   including specific per-unit duties (e.g. "Rs. 300 per litre or 80 %, whichever is higher").
 - **Ask AI**: describe the product (English or Nepali, optional photo when supported); the assistant searches the
@@ -57,9 +58,10 @@ To rebuild the data from the PDF text: `npm run build:data` then `npm run build`
 ## Deploy on Vercel
 
 1. Import this repository in Vercel (framework preset: **Other**, output directory: `public`).
-2. Add environment variables in the project settings:
-   - `ANTHROPIC_API_KEY` – required for the "Ask AI" tab.
-   - `ANTHROPIC_MODEL` – optional, defaults to `claude-sonnet-4-5`.
+2. Add environment variables in the project settings (one provider is enough):
+   - `DEEPSEEK_API_KEY` – DeepSeek (`deepseek-chat`, OpenAI-compatible, low cost). Optional `DEEPSEEK_MODEL`.
+   - `ANTHROPIC_API_KEY` – Anthropic Claude. Optional `ANTHROPIC_MODEL` (default `claude-sonnet-4-5`).
+   - `AI_PROVIDER=deepseek|anthropic` – optional, forces one when both keys are set (DeepSeek wins by default).
 3. Deploy. The page works without the key; only the assistant is disabled.
 
 Inside claude.ai the same page uses the viewer's own Claude account instead of the API key.
