@@ -101,6 +101,11 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 header.top{background:var(--navy);color:#fff}
 @media(prefers-color-scheme:dark){header.top{background:#0B1428}}
 header.top .wrap{display:flex;align-items:center;gap:10px;height:52px}
+header.top .wrap.topbar{gap:14px}
+.topnav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.topnav a{color:rgba(255,255,255,.82);font-size:.85rem;font-weight:600;padding:7px 11px;border-radius:8px;white-space:nowrap}
+.topnav a:hover{background:rgba(255,255,255,.12);color:#fff;text-decoration:none}
+.topnav a.cur{background:rgba(255,255,255,.16);color:#fff}
 .logo{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:700}
 .logo b{background:#0F172A;color:#fff;font-family:var(--mono);font-size:12px;font-weight:700;padding:4px 6px;border-radius:6px}
 @media(prefers-color-scheme:dark){header.top .logo{color:#F1F5F9}}
@@ -172,7 +177,16 @@ def page_head(title, desc, path, breadcrumb):
         '<script type="application/ld+json">' + ldj + '</script>'
         + ANALYTICS +
         '</head><body>'
-        '<header class="top"><div class="wrap"><a class="logo" href="/"><b>HS</b> Customs Nepal</a></div></header>'
+        '<header class="top"><div class="wrap topbar">'
+        '<a class="logo" href="/"><b>HS</b> Customs Nepal</a>'
+        '<nav class="topnav">'
+        '<a href="/">Search</a>'
+        '<a href="/#ai">Ask AI</a>'
+        '<a href="/#stats">Trade data</a>'
+        '<a href="/tariff" class="cur">Tariff</a>'
+        '<a href="/#calc">Calculator</a>'
+        '<a href="/#invoice">Invoice</a>'
+        '</nav></div></header>'
         '<div class="wrap">'
     )
 
