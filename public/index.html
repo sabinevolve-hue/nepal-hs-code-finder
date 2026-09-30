@@ -2174,8 +2174,8 @@ async function suggestHS(){
     await initAI();
     if (!sampleFn){ invMsg('inv-ai-msg', 'The AI assistant is not switched on for this site.', 'err'); return; }
     const list = rows.map((x, k) => { const cand = search(x.it.desc + ' ' + (x.it.model || '')).rows.slice(0, 8).map(r => r.code + ' ' + label(r).slice(0, 46)).join(' | '); return `${k + 1}. ${x.it.desc}${x.it.model ? ' (model ' + x.it.model + ')' : ''}\n   options: ${cand || 'none found'}`; }).join('\n');
-    const prompt = `You classify products into Nepal 8-digit customs HS codes (Customs Tariff 2026/27). For each numbered product pick the single most appropriate Nepal HS code, preferring one of its listed options but choosing a better real Nepal code if none fit. Give a one-line classification basis.\n\nProducts:\n${list}\n\nReply ONLY with JSON, no other text: {"items":[{"n":1,"hs":"8518.10.00","note":"short reason"}]}`;
-    const data = await sampleFn.json([{ role: 'user', content: prompt }], { cache: false });
+    const sys = `You classify products into Nepal 8-digit customs HS codes (Customs Tariff 2026/27). For each numbered product pick the single most appropriate Nepal HS code, preferring one of its listed options but choosing a better real Nepal code if none fit. Reply ONLY with JSON, no other text: {"items":[{"n":1,"hs":"8518.10.00","note":"short classification basis"}]}`;
+    const data = await sampleFn.json([{ role: 'user', content: sys }, { role: 'user', content: 'Products:\n' + list }], { cache: false });
     const arr = (data && data.items) || [];
     let filled = 0;
     arr.forEach(a => { const idx = rows[(a.n || 0) - 1]; if (!idx) return; const code = String(a.hs || '').trim(); if (code){ invItems[idx.i].hs = code; invItems[idx.i].note = a.note || ''; filled++; } });
