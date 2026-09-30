@@ -94,6 +94,16 @@ def read(path, fy_hint=None):
     out['country_top'] = {nm: [sorted(cc[nm].items(), key=lambda x: -x[1])[:6], sorted(ce[nm].items(), key=lambda x: -x[1])[:6]] for nm, _, _ in co if cc[nm] or ce[nm]}
     # country x chapter full matrix for flows (top 30 countries x all chapters, imports)
     out['flow'] = {nm: [[k, v] for k, v in cc[nm].items() if v > 0] for nm in [x[0] for x in sorted(co, key=lambda x: -x[1])[:30]]}
+    # country -> top-20 products (8-digit) by value, imports and exports (for the country drill-down)
+    cpi = collections.defaultdict(lambda: collections.defaultdict(int)); cpe = collections.defaultdict(lambda: collections.defaultdict(int))
+    for c, lst in part.items():
+        for a, b in lst: cpi[a][c] += b
+    for c, lst in epart.items():
+        for a, b in lst: cpe[a][c] += b
+    def _packtop(cm, N=20):
+        s = sorted(cm.items(), key=lambda x: -x[1]); rest = s[N:]
+        return [[[c, v] for c, v in s[:N]], ([sum(v for _, v in rest), len(rest)] if rest else 0)]
+    out['country_prod'] = {nm: (_packtop(cpi[nm]) + _packtop(cpe[nm])) for nm in (set(cpi) | set(cpe))}
     return out
 
 def month_of(name):
@@ -163,7 +173,7 @@ out = dict(fy=L['fy'], fy_prev=L['fy_prev'], months=12, unit='Rs. thousand', per
            overview=L['overview'], chapters=[[c, '', iv, ev, rv] for c, iv, ev, rv in L['chapters']], countries=L['countries'], customs=L['customs'], bands=L['bands'],
            imports={c: [v['d'], v['u'], v['q'], v['v'], v['r'], v['p'], v['np']] for c, v in L['imports'].items()},
            exports={c: [v['d'], v['u'], v['q'], v['v'], v['p'], v['np']] for c, v in L['exports'].items()},
-           country_top=L['country_top'], flow=L['flow'],
+           country_top=L['country_top'], flow=L['flow'], country_prod=L['country_prod'],
            history=history, monthly=monthly, month_names=MONTHS,
            current=dict(fy=parsed[(current, cur_mo)]['fy'], months=cur_mo + 1, overview=parsed[(current, cur_mo)]['overview'],
                         chapters=[[c, iv, ev, rv] for c, iv, ev, rv in parsed[(current, cur_mo)]['chapters']],

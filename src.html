@@ -1912,8 +1912,18 @@ function renderStats(){
         <div class="tiles" style="margin-bottom:var(--s2)"><div class="tile"><span>Imports from</span><b>${rs(row[1], true)}</b></div><div class="tile"><span>Exports to</span><b>${rs(row[2], true)}</b></div></div>`;
       if (H.countries[stCountry]) h += fig('Seven-year trend', 'Imports from and exports to ' + esc(stCountry), `<div class="ech short" id="ec-cty"></div>`);
       if (!isLatest()) h += `<p class="fine">Product breakdown by country is available for FY ${ST.fy} (select it above).</p>`;
-      if (top[0].length) h += fig('What Nepal buys from ' + esc(stCountry), '', barRows(top[0].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] }))));
-      if (top[1].length) h += fig('What Nepal sells to ' + esc(stCountry), '', barRows(top[1].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] })), { cls: 'e' }));
+      const cp = isLatest() ? (ST.country_prod && ST.country_prod[stCountry]) : null;
+      const prodFig = (list, rem, total, sell) => {
+        if (!list || !list.length) return '';
+        const items = list.map(([c, v]) => ({ k: 'hs:' + c, sub: c.slice(0,4) + '.' + c.slice(4,6) + '.' + c.slice(6), label: codeLabel(c) + (total ? ' · ' + (v / total * 100).toFixed(1) + '%' : ''), a: v }));
+        if (rem && rem[0]) items.push({ sub: '', label: rem[1] + ' other products', a: rem[0] });
+        return fig(sell ? 'What Nepal sells to ' + esc(stCountry) : 'What Nepal buys from ' + esc(stCountry), 'Top ' + list.length + ' products by value · tap a bar for its trend', barRows(items, sell ? { cls: 'e' } : undefined));
+      };
+      if (cp){ h += prodFig(cp[0], cp[1], row[1], false); h += prodFig(cp[2], cp[3], row[2], true); }
+      else if (top[0].length || top[1].length){
+        if (top[0].length) h += fig('What Nepal buys from ' + esc(stCountry), '', barRows(top[0].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] }))));
+        if (top[1].length) h += fig('What Nepal sells to ' + esc(stCountry), '', barRows(top[1].map(x => ({ k: 'ch:' + x[0], sub: String(x[0]).padStart(2, '0'), label: chapName(x[0]), a: x[1] })), { cls: 'e' }));
+      }
     } else {
       const q = stQ.trim().toLowerCase();
       h += `<div class="tsearch">${ic('i-search')}<input id="st-q" type="search" placeholder="Find a country" aria-label="Find a country" value="${esc(stQ)}"></div>`;
