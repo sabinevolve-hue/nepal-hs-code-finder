@@ -247,7 +247,9 @@ h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppe
 .inv-tot .row{display:flex;justify-content:space-between;align-items:baseline;font-size:.9rem}
 .inv-tot .row.big{font-size:1.05rem;font-weight:800}.inv-tot .row.big b{color:var(--accent)}
 .inv-tot .row span{color:var(--muted)}.inv-tot .row b{font-variant-numeric:tabular-nums}
+.sublabel{margin:0 0 var(--s2);font-size:.82rem;color:var(--muted);font-weight:600}
 .chks{display:flex;flex-direction:column;gap:8px;margin-bottom:var(--s3)}
+.chks .switch.off{opacity:.6}
 .gen-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .gen-actions .btn{flex:1;min-width:130px;justify-content:center}
 #v-invoice.dt-commercial .ponly,#v-invoice.dt-commercial .vonly{display:none}
@@ -738,7 +740,7 @@ footer p{margin:0 0 6px;max-width:70ch}
         <input type="file" id="inv-file" accept=".xlsx,.xls,.csv,application/pdf,image/*" hidden>
         <svg class="i big"><use href="#i-up"/></svg>
         <b>Upload an invoice to auto-fill</b>
-        <span>Excel, CSV, PDF or a photo — AI reads the line items. Or just fill the table below.</span>
+        <span>Excel, CSV, PDF or a photo — AI reads the seller, buyer, bank, shipment terms and line items. Or just fill everything in below.</span>
       </label>
       <div id="inv-upmsg" class="upmsg" hidden></div>
     </div>
@@ -811,16 +813,20 @@ footer p{margin:0 0 6px;max-width:70ch}
 
     <div class="card">
       <h2><span class="n">3</span>Generate &amp; download</h2>
+      <p class="sublabel">Master file — pick the sheets to include:</p>
       <div class="chks">
-        <label class="switch"><span>Customs &amp; Landed Cost sheet</span><input type="checkbox" id="inv-lc" checked></label>
+        <label class="switch"><span>Proforma Invoice sheet</span><input type="checkbox" id="inv-sh-pi" checked></label>
+        <label class="switch"><span>Commercial Invoice sheet</span><input type="checkbox" id="inv-sh-ci" checked></label>
+        <label class="switch"><span>Customs Duty &amp; Landed Cost sheet</span><input type="checkbox" id="inv-lc" checked></label>
         <label class="switch"><span>HS Code Review sheet (AI notes)</span><input type="checkbox" id="inv-hsr"></label>
+        <label class="switch off"><span>Disclaimer sheet (always included)</span><input type="checkbox" checked disabled></label>
       </div>
       <div class="gen-actions">
-        <button class="btn primary" id="inv-xlsx"><svg class="i"><use href="#i-down"/></svg>Download Excel</button>
-        <button class="btn" id="inv-pdf"><svg class="i"><use href="#i-doc"/></svg>Download PDF</button>
+        <button class="btn primary" id="inv-xlsx"><svg class="i"><use href="#i-down"/></svg>Download master file</button>
+        <button class="btn" id="inv-pdf"><svg class="i"><use href="#i-doc"/></svg>Invoice PDF</button>
         <button class="btn" id="inv-save"><svg class="i"><use href="#i-bookmark"/></svg>Save draft</button>
       </div>
-      <p class="fine">Files are built in your browser and downloaded to your device. Nothing is uploaded. Estimate only — confirm classification and taxes with the customs office or your clearing agent.</p>
+      <p class="fine">Files are built in your browser and downloaded to your device. Nothing is uploaded. Approximate estimate for planning — cross-check the final classification, duty, VAT and other levies with the Department of Customs or a licensed clearing agent before use.</p>
     </div>
   </section>
 
@@ -1400,10 +1406,11 @@ function buildInvoiceWorkbook(data){
   const wb = new ExcelJS.Workbook(); wb.creator = 'customsnepal.com'; wb.created = new Date();
   const A = data.assumptions, s = data.shipment, cur = s.currency;
   const items = data.items.map(it => ({ ...it, duty: it.duty != null ? it.duty : 0 }));
-  const isCom = data.docType === 'commercial', title = isCom ? 'COMMERCIAL INVOICE' : 'PROFORMA INVOICE';
   const hcell = (c, t) => { c.value = t; c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 9 }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY } }; c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }; c.border = box; };
   const money = (c, f) => { c.numFmt = f; c.alignment = { horizontal: 'right', vertical: 'middle' }; c.border = box; };
-  // sheet 1: invoice
+  // one invoice sheet per requested type (Proforma / Commercial)
+  const addInvoiceSheet = (kind) => {
+  const isCom = kind === 'commercial', title = isCom ? 'COMMERCIAL INVOICE' : 'PROFORMA INVOICE';
   const pi = wb.addWorksheet(isCom ? 'Commercial Invoice' : 'Proforma Invoice', { pageSetup: { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.3, footer: 0.3 } } });
   pi.columns = [{ width: 5 }, { width: 34 }, { width: 12 }, { width: 13 }, { width: 6 }, { width: 6 }, { width: 12 }, { width: 13 }];
   let R = 1; const merge = (r, a, b) => pi.mergeCells(r, a, r, b);
@@ -1437,8 +1444,13 @@ function buildInvoiceWorkbook(data){
   pi.mergeCells(R, 1, R, 4); pi.getCell(R, 1).value = '__________________________'; pi.mergeCells(R, 5, R, 8); pi.getCell(R, 5).value = '__________________________'; R++;
   pi.mergeCells(R, 1, R, 4); pi.getCell(R, 1).value = 'Authorised Signature & Company Stamp'; pi.getCell(R, 1).font = { size: 7, color: { argb: 'FF64748B' } }; pi.mergeCells(R, 5, R, 8); pi.getCell(R, 5).value = 'Authorised Signature & Company Stamp'; pi.getCell(R, 5).font = { size: 7, color: { argb: 'FF64748B' } }; R += 2;
   merge(R, 1, 8); pi.getCell(R, 1).value = 'Prepared with customsnepal.com — Nepal customs tariff, duty & landed-cost tools. Estimate only; confirm final classification and taxes with the customs office or your clearing agent.'; pi.getCell(R, 1).font = { size: 7, italic: true, color: { argb: 'FF94A3B8' } }; pi.getCell(R, 1).alignment = { wrapText: true, horizontal: 'center' };
+  };
+  const chk = (id, def) => { const el = document.getElementById(id); return el ? el.checked : def; };
+  if (chk('inv-sh-pi', data.docType === 'proforma')) addInvoiceSheet('proforma');
+  if (chk('inv-sh-ci', data.docType === 'commercial')) addInvoiceSheet('commercial');
+  if (!wb.worksheets.length) addInvoiceSheet(data.docType || 'proforma');
 
-  // sheet 2: customs & landed cost
+  // sheet: customs & landed cost
   if ($('#inv-lc').checked){
     const lc = wb.addWorksheet('Customs & Landed Cost', { pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
     lc.columns = [{ width: 4 }, { width: 26 }, { width: 12 }, { width: 5 }, { width: 11 }, { width: 11 }, { width: 12 }, { width: 6 }, { width: 13 }, { width: 12 }, { width: 12 }, { width: 14 }, { width: 15 }];
@@ -1465,12 +1477,22 @@ function buildInvoiceWorkbook(data){
     items.forEach((it, i) => { [i + 1, it.description, it.hs, it.duty, it.note || ''].forEach((v, c) => { const cell = hr.getCell(r3, c + 1); cell.value = v; cell.border = box; cell.font = { size: 8 }; cell.alignment = { vertical: 'top', wrapText: c === 1 || c === 4, horizontal: c === 0 || c === 2 || c === 3 ? 'center' : 'left' }; if (c === 3) cell.numFmt = '0%'; }); r3++; });
     hr.mergeCells(r3 + 1, 1, r3 + 1, 5); hr.getCell(r3 + 1, 1).value = 'AI-assisted suggestions from the Nepal tariff — verify with the customs office or your clearing agent before declaring.'; hr.getCell(r3 + 1, 1).font = { size: 8, italic: true, color: { argb: 'FF64748B' } };
   }
+  // disclaimer sheet (always last)
+  const dc = wb.addWorksheet('Disclaimer', { pageSetup: { orientation: 'portrait', fitToWidth: 1, fitToHeight: 0, margins: { left: 0.6, right: 0.6, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 } } });
+  dc.columns = [{ width: 104 }]; let d1 = 1;
+  dc.getCell(d1, 1).value = 'IMPORTANT — PLEASE READ (DISCLAIMER)'; dc.getCell(d1, 1).font = { bold: true, size: 13, color: { argb: NAVY } }; d1 += 2;
+  const dp = t => { dc.getCell(d1, 1).value = t; dc.getCell(d1, 1).font = { size: 10, color: { argb: 'FF334155' } }; dc.getCell(d1, 1).alignment = { wrapText: true, vertical: 'top' }; dc.getRow(d1).height = Math.max(16, Math.ceil(t.length / 96) * 14); d1 += 2; };
+  dp('This workbook is a computer-generated planning aid prepared with customsnepal.com. The Proforma Invoice and Commercial Invoice sheets are DRAFTS built from the details you entered or uploaded — verify every party name, address, bank detail, quantity, price and HS code before issuing or submitting them anywhere.');
+  dp('The Customs Duty & Landed Cost figures are an APPROXIMATE ESTIMATE. Customs duty is applied at the general Nepal Customs Tariff 2026/27 rate for each HS code, and VAT at ' + (A.vat * 100).toFixed(0) + '% on (CIF + customs duty). The estimate does NOT capture every case: the final amount payable depends on the customs officer’s valuation and classification, the exchange rate on the declaration date, excise duty, agriculture / road / infrastructure and other levies, advance income tax, exemptions, anti-dumping or safeguard duties, and any SAARC/BIMSTEC preferential rate or fees charged by your agent or bank.');
+  dp('HS-code suggestions, where shown, are AI-assisted from the Nepal tariff text and can be wrong for your specific goods. Classification is ultimately decided by the Department of Customs, and an incorrect code may lead to re-assessment, fines or seizure.');
+  dp('Before relying on any figure in this file for pricing, a letter of credit, a bank submission or customs clearance, CROSS-CHECK with the Department of Customs (customs.gov.np), a licensed customs clearing agent, your bank, or another competent authority. customsnepal.com and its authors accept no liability for any decision made on the basis of this file.');
+  dp('Duty source: Department of Customs, Government of Nepal — Customs Tariff 2026/27 (HS 2022 nomenclature). Prepared ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · customsnepal.com');
   return wb;
 }
 async function downloadInvExcel(){
   const d = invData(); if (!d.items.length){ invMsg('inv-ai-msg', 'Add at least one line item (description or price) first.', 'err'); return; }
   const btn = $('#inv-xlsx'), old = btn.innerHTML; btn.disabled = true; btn.textContent = 'Building…';
-  try { await loadExcelJS(); const wb = buildInvoiceWorkbook(d); const buf = await wb.xlsx.writeBuffer(); dlBlob(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), (d.docType === 'commercial' ? 'Commercial' : 'Proforma') + '_Invoice_' + (d.shipment.piNo || 'draft').replace(/[^\w-]+/g, '_') + '.xlsx'); invMsg('inv-ai-msg', 'Excel downloaded.', 'ok'); saveInvDraft(); }
+  try { await loadExcelJS(); const wb = buildInvoiceWorkbook(d); const buf = await wb.xlsx.writeBuffer(); const names = wb.worksheets.map(w => w.name); dlBlob(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'Invoice_Master_' + (d.shipment.piNo || 'draft').replace(/[^\w-]+/g, '_') + '.xlsx'); invMsg('inv-ai-msg', 'Master file downloaded — sheets: ' + names.join(', ') + '.', 'ok'); saveInvDraft(); }
   catch (e){ invMsg('inv-ai-msg', 'Could not build the Excel file: ' + (e && e.message || e), 'err'); }
   finally { btn.disabled = false; btn.innerHTML = old; }
 }
@@ -1539,30 +1561,74 @@ async function suggestHS(){
 /* --- import invoice file (Excel/CSV now; PDF/photo guided) --- */
 function loadSheetJS(){ if (window.XLSX) return Promise.resolve(); if (loadSheetJS._p) return loadSheetJS._p; return loadSheetJS._p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload = res; s.onerror = () => rej(new Error('Could not load the spreadsheet reader.')); document.head.appendChild(s); }); }
 function pickCol(headers, re){ for (let i = 0; i < headers.length; i++) if (re.test(headers[i])) return i; return -1; }
-async function importInvoiceFile(file){
-  const name = (file.name || '').toLowerCase(), isSheet = /\.(xlsx|xls|csv)$/.test(name);
-  if (!isSheet){ invMsg('inv-upmsg', 'For now, Excel or CSV files auto-fill the table. For a PDF or photo, enter the items below (or paste them) and use “Suggest HS codes with AI”. PDF/photo reading is coming next.', 'err'); return; }
-  invMsg('inv-upmsg', 'Reading ' + file.name + '…', '');
+function loadPdfJS(){ if (window.pdfjsLib) return Promise.resolve(); if (loadPdfJS._p) return loadPdfJS._p; return loadPdfJS._p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js'; s.onload = () => { try { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'; } catch (e){} res(); }; s.onerror = () => rej(new Error('Could not load the PDF reader.')); document.head.appendChild(s); }); }
+function loadTesseract(){ if (window.Tesseract) return Promise.resolve(); if (loadTesseract._p) return loadTesseract._p; return loadTesseract._p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; s.onload = res; s.onerror = () => rej(new Error('Could not load the photo text reader.')); document.head.appendChild(s); }); }
+// pull raw text from a file: Excel/CSV (SheetJS), PDF (pdf.js text layer), image (OCR)
+async function extractFileText(file){
+  const name = (file.name || '').toLowerCase(), CAP = 9000;
+  if (/\.(xlsx|xls|csv)$/.test(name)){ await loadSheetJS(); const buf = await file.arrayBuffer(), wb = XLSX.read(buf, { type: 'array' }); let t = ''; for (const sn of wb.SheetNames.slice(0, 3)){ t += '### ' + sn + '\n' + XLSX.utils.sheet_to_csv(wb.Sheets[sn]) + '\n'; if (t.length > CAP) break; } return t.slice(0, CAP); }
+  if (/\.pdf$/.test(name) || file.type === 'application/pdf'){ await loadPdfJS(); const buf = await file.arrayBuffer(), pdf = await pdfjsLib.getDocument({ data: buf }).promise; let t = ''; for (let i = 1; i <= Math.min(pdf.numPages, 8); i++){ const pg = await pdf.getPage(i), c = await pg.getTextContent(); t += c.items.map(x => x.str).join(' ') + '\n'; if (t.length > CAP) break; } return t.slice(0, CAP); }
+  if (/^image\//.test(file.type) || /\.(png|jpe?g|webp|gif|bmp|tiff?)$/.test(name)){ invMsg('inv-upmsg', 'Reading the photo… the text reader downloads on first use, please wait.', ''); await loadTesseract(); const r = await Tesseract.recognize(file, 'eng'); return ((r.data && r.data.text) || '').slice(0, CAP); }
+  return '';
+}
+async function aiExtractInvoice(text){
+  const sys = 'You extract structured data from an import/export invoice (proforma or commercial). Reply ONLY with JSON, no other text, exactly this shape: {"seller":{"name":"","address":"","contact":""},"buyer":{"name":"","address":"","contact":"","pan":""},"bank":{"name":"","bank":"","address":"","swift":"","account":""},"shipment":{"piNo":"","date":"","currency":"USD","priceTerm":"","origin":"","pol":"","entry":"","dest":"","mode":""},"items":[{"description":"","model":"","hs":"","qty":0,"unit":"PCS","unitPrice":0}]}. Fill only fields present in the document; leave the rest as empty strings. For each item, if the HS code is missing or clearly not a Nepal code, suggest the most likely Nepal 8-digit HS code (Customs Tariff 2026/27). Numbers must be plain numbers with no symbols or commas.';
+  return await sampleFn.json([{ role: 'user', content: sys }, { role: 'user', content: 'INVOICE:\n' + text }], { cache: false });
+}
+function applyExtracted(d){
+  const setV = (id, v) => { const el = $('#' + id); if (el && v != null && String(v).trim() !== '') el.value = String(v).trim(); };
+  const s = d.seller || {}, b = d.buyer || {}, bk = d.bank || {}, sh = d.shipment || {};
+  setV('inv-s-name', s.name); setV('inv-s-addr', s.address); setV('inv-s-contact', s.contact);
+  setV('inv-b-name', b.name); setV('inv-b-addr', b.address); setV('inv-b-contact', b.contact); setV('inv-b-pan', b.pan);
+  setV('inv-bk-name', bk.name); setV('inv-bk-bank', bk.bank); setV('inv-bk-addr', bk.address); setV('inv-bk-swift', bk.swift); setV('inv-bk-acct', bk.account);
+  setV('inv-no', sh.piNo); setV('inv-date', sh.date); setV('inv-term', sh.priceTerm); setV('inv-origin', sh.origin); setV('inv-pol', sh.pol); setV('inv-entry', sh.entry); setV('inv-dest', sh.dest); setV('inv-mode', sh.mode);
+  if (sh.currency && [...$('#inv-cur').options].some(o => o.value === sh.currency)) $('#inv-cur').value = sh.currency;
+  if ((s.name || b.name || bk.name || bk.account) && $('#inv-parties')) $('#inv-parties').open = true;
+  const items = (d.items || []).filter(it => it && (it.description || it.hs || it.unitPrice));
+  if (items.length) invItems = items.map(it => { let hs = String(it.hs || '').replace(/[^\d.]/g, ''); if (/^\d{8}$/.test(hs)) hs = hs.slice(0,4) + '.' + hs.slice(4,6) + '.' + hs.slice(6); return Object.assign(blankItem(), { desc: it.description || '', model: it.model || '', hs, qty: parseFloat(it.qty) || '', unit: it.unit || 'PCS', price: parseFloat(it.unitPrice) || '' }); });
+  renderInvRows(); renderInvTotals(); saveInvDraft();
+  return items.length;
+}
+async function parseSheetItems(file){
   try {
     await loadSheetJS();
     const buf = await file.arrayBuffer(), wb = XLSX.read(buf, { type: 'array' }), ws = wb.Sheets[wb.SheetNames[0]];
     const grid = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false });
-    // find the header row: the one mentioning description/hs/qty/price
     let hi = grid.findIndex(r => r && r.some(c => /descrip|item|product/i.test(String(c))) && r.some(c => /qty|quant|price|rate|amount|hs|code/i.test(String(c))));
     if (hi < 0) hi = 0;
     const headers = (grid[hi] || []).map(c => String(c || '').toLowerCase());
     const cD = pickCol(headers, /descrip|product|item name|goods/), cM = pickCol(headers, /model|item.?code|part/), cH = pickCol(headers, /h\.?s|hs.?code|tariff/), cQ = pickCol(headers, /qty|quant/), cU = pickCol(headers, /unit(?!.?price)/), cP = pickCol(headers, /unit.?price|price|rate/);
-    if (cD < 0 && cH < 0){ invMsg('inv-upmsg', 'Could not find a description or HS-code column. Check the file has a header row, or type the items in below.', 'err'); return; }
+    if (cD < 0 && cH < 0){ invMsg('inv-upmsg', 'Could not find a description or HS-code column. Type the items in below.', 'err'); return; }
     const out = [];
     for (let r = hi + 1; r < grid.length; r++){ const row = grid[r] || []; const desc = cD >= 0 ? String(row[cD] || '').trim() : ''; const hsRaw = cH >= 0 ? String(row[cH] || '').trim() : ''; const price = cP >= 0 ? parseFloat(String(row[cP]).replace(/[^\d.]/g, '')) : 0;
       if (!desc && !hsRaw && !price) continue;
       let hs = hsRaw.replace(/[^\d.]/g, ''); if (/^\d{8}$/.test(hs)) hs = hs.slice(0,4) + '.' + hs.slice(4,6) + '.' + hs.slice(6);
       out.push(Object.assign(blankItem(), { desc, model: cM >= 0 ? String(row[cM] || '').trim() : '', hs, qty: cQ >= 0 ? (parseFloat(String(row[cQ]).replace(/[^\d.]/g, '')) || '') : '', unit: cU >= 0 ? (String(row[cU] || '').trim() || 'PCS') : 'PCS', price: price || '' })); }
-    if (!out.length){ invMsg('inv-upmsg', 'No line items found in the sheet. Type them in below instead.', 'err'); return; }
+    if (!out.length){ invMsg('inv-upmsg', 'No line items found in the sheet. Type them in below.', 'err'); return; }
     invItems = out; renderInvRows(); renderInvTotals(); saveInvDraft();
     const noHS = out.filter(x => !x.hs).length;
-    invMsg('inv-upmsg', `Loaded ${out.length} item(s) from ${file.name}.` + (noHS ? ` ${noHS} have no HS code — tap “Suggest HS codes with AI”.` : ''), 'ok');
-  } catch (e){ invMsg('inv-upmsg', 'Could not read that file: ' + (e && e.message || e) + '. Try CSV, or type the items in below.', 'err'); }
+    invMsg('inv-upmsg', `Loaded ${out.length} item(s) from ${file.name}.` + (noHS ? ` ${noHS} have no HS code — tap "Suggest HS codes with AI".` : ''), 'ok');
+  } catch (e){ invMsg('inv-upmsg', 'Could not read that file: ' + (e && e.message || e) + '. Type the items in below.', 'err'); }
+}
+async function importInvoiceFile(file){
+  const isSheet = /\.(xlsx|xls|csv)$/.test((file.name || '').toLowerCase());
+  invMsg('inv-upmsg', 'Reading ' + file.name + '…', '');
+  let text = '';
+  try { text = await extractFileText(file); }
+  catch (e){ invMsg('inv-upmsg', 'Could not read that file: ' + (e && e.message || e) + (isSheet ? '' : ' Try an Excel/CSV, or type the items in below.'), 'err'); return; }
+  if (!text || text.trim().length < 8){ if (isSheet) return parseSheetItems(file); invMsg('inv-upmsg', 'No readable text found. If it is a photo, use a clearer image, or type the items in below.', 'err'); return; }
+  await initAI();
+  if (sampleFn){
+    invMsg('inv-upmsg', 'AI is reading the invoice — parties, bank and line items…', '');
+    try {
+      const d = await aiExtractInvoice(text), n = applyExtracted(d);
+      if ($('#inv-hsr')) $('#inv-hsr').checked = true;
+      invMsg('inv-upmsg', n ? `Read ${n} item(s) plus party, shipment and bank details from ${file.name}. Review anything the AI got wrong, then download.` : 'Read the file but found no clear line items — check it or type the items in below.', n ? 'ok' : 'err');
+      return;
+    } catch (e){ if (isSheet) return parseSheetItems(file); }
+  }
+  if (isSheet) return parseSheetItems(file);
+  invMsg('inv-upmsg', 'The AI reader is off for this copy of the site, so PDF/photo reading is unavailable. Upload an Excel or CSV, or type the items in below.', 'err');
 }
 
 /* saved */
