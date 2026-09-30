@@ -1566,7 +1566,7 @@ async function suggestHS(){
     if (!sampleFn){ invMsg('inv-ai-msg', 'The AI assistant is not switched on for this site.', 'err'); return; }
     const list = rows.map((x, k) => { const cand = search(x.it.desc + ' ' + (x.it.model || '')).rows.slice(0, 8).map(r => r.code + ' ' + label(r).slice(0, 46)).join(' | '); return `${k + 1}. ${x.it.desc}${x.it.model ? ' (model ' + x.it.model + ')' : ''}\n   options: ${cand || 'none found'}`; }).join('\n');
     const sys = `You classify products into Nepal 8-digit customs HS codes (Customs Tariff 2026/27). For each numbered product pick the single most appropriate Nepal HS code, preferring one of its listed options but choosing a better real Nepal code if none fit. Reply ONLY with JSON, no other text: {"items":[{"n":1,"hs":"8518.10.00","note":"short classification basis"}]}`;
-    const data = await sampleFn.json([{ role: 'user', content: sys }, { role: 'user', content: 'Products:\n' + list }], { cache: false });
+    const data = await sampleFn.json([{ role: 'user', content: sys }, { role: 'user', content: 'Products:\n' + list }], { cache: false, task: 'classify' });
     const arr = (data && data.items) || [];
     let filled = 0;
     arr.forEach(a => { const idx = rows[(a.n || 0) - 1]; if (!idx) return; const code = String(a.hs || '').trim(); if (code){ invItems[idx.i].hs = code; invItems[idx.i].note = a.note || ''; filled++; } });
@@ -1591,7 +1591,7 @@ async function extractFileText(file){
 }
 async function aiExtractInvoice(text){
   const sys = 'You extract structured data from an import/export invoice (proforma or commercial). Reply ONLY with JSON, no other text, exactly this shape: {"seller":{"name":"","address":"","contact":""},"buyer":{"name":"","address":"","contact":"","pan":""},"bank":{"name":"","bank":"","address":"","swift":"","account":""},"shipment":{"piNo":"","date":"","currency":"USD","priceTerm":"","origin":"","pol":"","entry":"","dest":"","mode":""},"items":[{"description":"","model":"","hs":"","qty":0,"unit":"PCS","unitPrice":0}]}. Fill only fields present in the document; leave the rest as empty strings. For each item, if the HS code is missing or clearly not a Nepal code, suggest the most likely Nepal 8-digit HS code (Customs Tariff 2026/27). Numbers must be plain numbers with no symbols or commas.';
-  return await sampleFn.json([{ role: 'user', content: sys }, { role: 'user', content: 'INVOICE:\n' + text }], { cache: false });
+  return await sampleFn.json([{ role: 'user', content: sys }, { role: 'user', content: 'INVOICE:\n' + text }], { cache: false, task: 'extract' });
 }
 function applyExtracted(d){
   const setV = (id, v) => { const el = $('#' + id); if (el && v != null && String(v).trim() !== '') el.value = String(v).trim(); };
@@ -1686,11 +1686,11 @@ const AI_TOOLS = [
 // Fallback agent loop against /api/classify (a thin proxy to the Anthropic Messages API). Same call shape as claude.use('sample').json.
 async function apiSample(){ throw { code: 'invalid_request', message: 'use apiSample.json' }; }
 apiSample.json = async function(input, opts){
-  const system = input[0].content, msgs = input.slice(1).map(t => ({ role: t.role, content: t.content }));
+  const task = opts.task || 'assistant', msgs = input.slice(1).map(t => ({ role: t.role, content: t.content }));
   const tools = (opts.tools || []).map(t => ({ name: t.name, description: t.description, input_schema: t.inputSchema || { type: 'object', properties: {} } }));
   for (let round = 0; round < 8; round++){
     let r;
-    try { r = await fetch('/api/classify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ system, messages: msgs, tools }), signal: opts.signal }); }
+    try { r = await fetch('/api/classify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ task, messages: msgs, tools }), signal: opts.signal }); }
     catch(e){ throw { code: e && e.name === 'AbortError' ? 'cancelled' : 'upstream_error', message: String(e) }; }
     if (r.status === 429) throw { code: 'rate_limited', message: 'rate limited' };
     if (!r.ok) throw { code: 'upstream_error', message: 'HTTP ' + r.status };
@@ -1739,7 +1739,7 @@ async function askAI(userText){
   $('#ai-stop').onclick = () => aiCtl.abort();
   const input = [{ role: 'user', content: AI_RULES }, ...aiTurns];
   const useTools = !!(aiLimits && aiLimits.tools);
-  let opts = { signal: aiCtl.signal, cache: false };
+  let opts = { signal: aiCtl.signal, cache: false, task: 'assistant' };
   if (useTools) opts.tools = AI_TOOLS;
   else {
     // no tool support: pre-fetch candidates locally and pass them in the prompt
