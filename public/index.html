@@ -57,17 +57,17 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .logo .mark::after{content:"";position:absolute;right:-3px;top:-3px;width:10px;height:10px;border-radius:50%;background:var(--brand);border:2px solid var(--hero1)}
 .logo small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);letter-spacing:0}
 .nav-desk{display:flex;gap:2px}
-.nav-desk button{height:40px;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t)}
-.nav-desk button:hover{background:rgba(255,255,255,.1);color:#fff}
-.nav-desk button[aria-selected="true"]{background:var(--hero3);color:#fff}
+.nav-desk button,.nav-desk a{height:40px;display:flex;align-items:center;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t);text-decoration:none;cursor:pointer;background:none;border:0}
+.nav-desk button:hover,.nav-desk a:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav-desk button[aria-selected="true"],.nav-desk a[aria-selected="true"]{background:var(--hero3);color:#fff}
 @media (max-width:720px){.nav-desk{display:none}}
 
 nav.tabbar{display:none}
 @media (max-width:720px){
   nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:var(--card);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0px)}
-  nav.tabbar button{flex:1;min-width:0;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 2px;font-size:.7rem;font-weight:600;letter-spacing:-.01em;white-space:nowrap;color:var(--muted);transition:color var(--t)}
-  nav.tabbar button svg{width:21px;height:21px}
-  nav.tabbar button[aria-selected="true"]{color:var(--accent)}
+  nav.tabbar button,nav.tabbar a{flex:1;min-width:0;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 2px;font-size:.7rem;font-weight:600;letter-spacing:-.01em;white-space:nowrap;color:var(--muted);transition:color var(--t);text-decoration:none;background:none;border:0;cursor:pointer}
+  nav.tabbar button svg,nav.tabbar a svg{width:21px;height:21px}
+  nav.tabbar button[aria-selected="true"],nav.tabbar a[aria-selected="true"]{color:var(--accent)}
   main{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 }
 
@@ -603,12 +603,13 @@ footer p{margin:0 0 6px;max-width:70ch}
     <div class="logo"><span class="mark">HS</span><span>Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></div>
     <div style="display:flex;align-items:center;gap:6px">
     <div class="nav-desk" role="tablist" aria-label="Sections">
-      <button role="tab" data-tab="search" aria-selected="true">Search</button>
-      <button role="tab" data-tab="ai" aria-selected="false">Ask AI</button>
-      <button role="tab" data-tab="stats" aria-selected="false">Trade data</button>
-      <button role="tab" data-tab="browse" aria-selected="false">Browse</button>
-      <button role="tab" data-tab="calc" aria-selected="false">Calculator</button>
-      <button role="tab" data-tab="invoice" aria-selected="false">Invoice</button>
+      <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
+      <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI</a>
+      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade data</a>
+      <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
+      <a href="/tariff">Tariff</a>
+      <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
+      <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false">Invoice</a>
     </div>
     <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
@@ -842,12 +843,12 @@ footer p{margin:0 0 6px;max-width:70ch}
 </main>
 
 <nav class="tabbar" role="tablist" aria-label="Sections">
-  <button role="tab" data-tab="search" aria-selected="true"><svg class="i"><use href="#i-search"/></svg>Search</button>
-  <button role="tab" data-tab="ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</button>
-  <button role="tab" data-tab="stats" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Trade</button>
-  <button role="tab" data-tab="browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</button>
-  <button role="tab" data-tab="calc" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</button>
-  <button role="tab" data-tab="invoice" aria-selected="false"><svg class="i"><use href="#i-doc"/></svg>Invoice</button>
+  <a role="tab" data-tab="search" href="/" aria-selected="true"><svg class="i"><use href="#i-search"/></svg>Search</a>
+  <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</a>
+  <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Trade</a>
+  <a role="tab" data-tab="browse" href="/browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</a>
+  <a role="tab" data-tab="calc" href="/calculator" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</a>
+  <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false"><svg class="i"><use href="#i-doc"/></svg>Invoice</a>
 </nav>
 
 <div class="scrim" id="scrim" hidden></div>
@@ -2773,8 +2774,9 @@ const TITLES = {
   invoice: 'Proforma & Commercial Invoice Generator | Customs Nepal',
   saved: 'Saved HS Codes | Customs Nepal'
 };
+const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved' };
 let curTab = 'search';
-function go(t){
+function go(t, hist){
   curTab = t;
   try { document.title = TITLES[t] || TITLES.search; } catch(e){}
   ['search','ai','stats','browse','calc','invoice','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
@@ -2782,18 +2784,22 @@ function go(t){
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc(); if (t === 'invoice') initInvoice();
-  try { history.replaceState(null, '', '#' + t); } catch(e){}
+  try { var _p = TABPATH[t] || '/'; if (hist === 'push') history.pushState(null,'',_p); else if (hist !== false) history.replaceState(null,'',_p); } catch(e){}
   window.scrollTo({top:0});
 }
-$$('[data-tab]').forEach(b => b.addEventListener('click', () => go(b.dataset.tab)));
+$$('[data-tab]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); go(b.dataset.tab, 'push'); }));
 
 setOrigin(origin);
 initCalc();
 renderResults();
 try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.trim()) runQuery(uq.trim()); } catch(e){}
+const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved' };
+const _pt = PATHS[location.pathname];
+if (_pt && _pt !== 'search') go(_pt);
+window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (['ai','stats','browse','calc','invoice','saved'].includes(h)) go(h);
+else if (!_pt && ['ai','stats','browse','calc','invoice','saved'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
 })();
@@ -2909,8 +2915,8 @@ try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
   $('#cn-mx').addEventListener('click', closeModal);
   $('#cn-scrim').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
 
-  function openDash(){ $('#cn-dash').classList.add('on'); $('#cn-em').textContent=USER?USER.email:''; select(cur); }
-  function closeDash(){ $('#cn-dash').classList.remove('on'); $('#cn-side').classList.remove('open'); }
+  function openDash(noPush){ $('#cn-dash').classList.add('on'); $('#cn-em').textContent=USER?USER.email:''; select(cur); try{ if(!noPush && location.pathname!=='/account') history.pushState(null,'','/account'); }catch(e){} }
+  function closeDash(){ $('#cn-dash').classList.remove('on'); $('#cn-side').classList.remove('open'); try{ if(location.pathname==='/account') history.replaceState(null,'','/'); }catch(e){} }
   $('#cn-dclose').addEventListener('click', closeDash);
   $('#cn-burger').addEventListener('click', function(){ $('#cn-side').classList.toggle('open'); });
   var TT={overview:'Dashboard',invoices:'My Invoices',estimates:'My Estimates',codes:'Saved HS Codes',account:'Account'};
@@ -2955,7 +2961,7 @@ try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
 
   function boot(){ try{
     sb=window.supabase.createClient(URL_,KEY_);
-    sb.auth.getSession().then(function(r){ USER=(r.data&&r.data.session&&r.data.session.user)||null; updateHeader(); });
+    sb.auth.getSession().then(function(r){ USER=(r.data&&r.data.session&&r.data.session.user)||null; updateHeader(); if(location.pathname==='/account'){ if(USER) openDash(true); else openModal(); } });
     sb.auth.onAuthStateChange(function(_e,s){ var was=!!USER; USER=(s&&s.user)||null; updateHeader(); if(USER&&!was){ closeModal(); toast('Signed in'); } });
   }catch(e){} }
   $('#cn-google').addEventListener('click', function(){ toast('Google sign-in is being set up. Please use the email magic link for now.'); });
