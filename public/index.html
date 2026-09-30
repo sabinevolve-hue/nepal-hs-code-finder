@@ -824,9 +824,9 @@ footer p{margin:0 0 6px;max-width:70ch}
       <div class="gen-actions">
         <button class="btn primary" id="inv-xlsx"><svg class="i"><use href="#i-down"/></svg>Download master file</button>
         <button class="btn" id="inv-pdf"><svg class="i"><use href="#i-doc"/></svg>Invoice PDF</button>
-        <button class="btn" id="inv-save"><svg class="i"><use href="#i-bookmark"/></svg>Save draft</button>
+        <button class="btn" id="inv-clear"><svg class="i"><use href="#i-x"/></svg>New / clear</button>
       </div>
-      <p class="fine">Files are built in your browser and downloaded to your device. Nothing is uploaded. Approximate estimate for planning — cross-check the final classification, duty, VAT and other levies with the Department of Customs or a licensed clearing agent before use.</p>
+      <p class="fine"><b>Your privacy:</b> everything you type or upload stays in your own browser and is cleared when you close this tab — it is never saved on our server or shared with anyone else. Each visitor starts from a blank form. When you use the AI reader or “Suggest HS codes”, only the invoice text is sent to the AI service to process your request. Figures here are an approximate estimate — cross-check the final classification, duty, VAT and other levies with the Department of Customs or a licensed clearing agent before use.</p>
     </div>
   </section>
 
@@ -1548,6 +1548,13 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem('nphs.'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem('nphs.'+k, JSON.stringify(v)); }catch(e){} }
 };
+// session-scoped store for sensitive drafts (invoice parties/bank): cleared when the browser tab closes,
+// so a new visitor — or the next person on a shared computer — always starts from a blank form.
+const sstore = {
+  get(k, d){ try{ const v = sessionStorage.getItem('nphs.'+k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ sessionStorage.setItem('nphs.'+k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ sessionStorage.removeItem('nphs.'+k); }catch(e){} }
+};
 
 /* ---------- data ---------- */
 const ROWS = D.rows.map((r, i) => {
@@ -2017,7 +2024,7 @@ function bindInvoice() {
   $('#inv-suggest').addEventListener('click', suggestHS);
   $('#inv-xlsx').addEventListener('click', downloadInvExcel);
   $('#inv-pdf').addEventListener('click', downloadInvPDF);
-  $('#inv-save').addEventListener('click', () => { saveInvDraft(); invMsg('inv-ai-msg', 'Draft saved in this browser.', 'ok'); });
+  $('#inv-clear').addEventListener('click', () => { if (invItems.some(it => it.desc || it.hs || it.price) || $('#inv-b-name').value || $('#inv-s-name').value) { if (!confirm('Clear this invoice and start a new blank one? This cannot be undone.')) return; } clearInvoice(); });
   $('#inv-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) importInvoiceFile(f); e.target.value = ''; });
   const dz = $('#inv-drop');
   dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
@@ -2028,7 +2035,8 @@ function bindInvoice() {
 function initInvoice() {
   if (invReady) return; invReady = true;
   $('#inv-offices').innerHTML = OF.offices.map(o => `<option value="${esc(o.name)}"></option>`).join('');
-  const draft = store.get('invDraft', null);
+  try { localStorage.removeItem('nphs.invDraft'); } catch (e) {}  // wipe any legacy persisted draft (pre session-storage)
+  const draft = sstore.get('invDraft', null);
   if (draft && draft.items) { invItems = draft.items.map(it => Object.assign(blankItem(), it)); invDoc = draft.docType || 'proforma'; applyInvFields(draft.fields || {}); }
   if (!invItems.length) invItems = [blankItem(), blankItem(), blankItem()];
   $$('#inv-doc .segbtn').forEach(x => { const on = x.dataset.doc === invDoc; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
@@ -2039,7 +2047,17 @@ function initInvoice() {
 const INV_FIELDS = 'inv-s-name inv-s-addr inv-s-contact inv-b-name inv-b-addr inv-b-contact inv-b-pan inv-no inv-date inv-validity inv-term inv-origin inv-pol inv-entry inv-dest inv-mode inv-bk-name inv-bk-bank inv-bk-addr inv-bk-swift inv-bk-acct inv-cur inv-fx inv-freight inv-vat inv-margin inv-disc'.split(' ');
 function collectInvFields() { const o = {}; INV_FIELDS.forEach(id => { const el = $('#' + id); if (el) o[id] = el.value; }); return o; }
 function applyInvFields(o) { INV_FIELDS.forEach(id => { const el = $('#' + id); if (el && o[id] != null) el.value = o[id]; }); }
-function saveInvDraft() { store.set('invDraft', { docType: invDoc, items: invItems, fields: collectInvFields() }); }
+function saveInvDraft() { sstore.set('invDraft', { docType: invDoc, items: invItems, fields: collectInvFields() }); }
+function clearInvoice() {
+  sstore.del('invDraft');
+  INV_FIELDS.forEach(id => { const el = $('#' + id); if (el && !['inv-cur', 'inv-fx', 'inv-freight', 'inv-vat', 'inv-margin', 'inv-disc'].includes(id)) el.value = ''; });
+  $('#inv-fx').value = 140; $('#inv-freight').value = 10; $('#inv-vat').value = 13; $('#inv-margin').value = 25; $('#inv-disc').value = 0; $('#inv-cur').value = 'USD';
+  $('#inv-date').value = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  invItems = [blankItem(), blankItem(), blankItem()];
+  renderInvRows(); renderInvTotals();
+  ['inv-upmsg', 'inv-ai-msg'].forEach(id => { const el = $('#' + id); if (el) el.hidden = true; });
+  const p = $('#inv-parties'); if (p) p.open = false;
+}
 function invMsg(id, text, cls) { const el = $('#' + id); if (!el) return; el.hidden = false; el.className = 'upmsg' + (cls ? ' ' + cls : ''); el.textContent = text; }
 
 function invData() {
