@@ -2295,7 +2295,7 @@ try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
     sb.auth.getSession().then(function(r){ USER=(r.data&&r.data.session&&r.data.session.user)||null; updateHeader(); if(location.pathname==='/account'){ if(USER) openDash(true); else openModal(); } });
     sb.auth.onAuthStateChange(function(_e,s){ var was=!!USER; USER=(s&&s.user)||null; updateHeader(); if(USER&&!was){ closeModal(); toast('Signed in'); } });
   }catch(e){} }
-  $('#cn-google').addEventListener('click', function(){ toast('Google sign-in is being set up. Please use the email magic link for now.'); });
+  $('#cn-google').addEventListener('click', function(){ if(!sb){ toast('Still loading'); return; } sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin}}).then(function(r){ if(r&&r.error){ var m=(r.error.message||'').toLowerCase(); if(m.indexOf('provider')>-1||m.indexOf('not enabled')>-1||m.indexOf('unsupported')>-1) toast('Google sign-in is being set up. Please use the email magic link for now.'); else toast(r.error.message); } }).catch(function(){ toast('Google sign-in is being set up. Please use the email magic link for now.'); }); });
   $('#cn-magic').addEventListener('click', function(){ if(!sb){ toast('Still loading'); return; } var em=($('#cn-email').value||'').trim(); if(!em){ $('#cn-email').focus(); return; } sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin}}).then(function(r){ if(r.error) toast(r.error.message); else toast('Check your email for the sign-in link'); }); });
   $('#cn-out').addEventListener('click', function(){ if(sb) sb.auth.signOut(); closeDash(); toast('Signed out'); });
 

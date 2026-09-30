@@ -5,7 +5,7 @@ The <head> (title, meta description, canonical, Open Graph, Twitter, JSON-LD) is
 HERE so it lives inside <head> — src.html only carries the <body> content and inline data.
 Nothing below changes the site's visual design, layout or fonts.
 """
-import pathlib, re, json, datetime
+import pathlib, re, json, datetime, os
 root = pathlib.Path(__file__).resolve().parents[1]
 src = (root / 'src.html').read_text(encoding='utf-8')
 data = (root / 'data' / 'tariff.json').read_text(encoding='utf-8').replace('</', '<\\/')
@@ -23,6 +23,9 @@ DESC = ('Find the Nepal HS code, customs duty, VAT and landed cost for any produ
         'proforma invoice — free.')
 OGIMG = SITE + '/og.png'
 TODAY = datetime.date.today().isoformat()
+# Google Search Console HTML-tag verification (optional fallback; GA4 verification needs none).
+# Set env GSC_VERIFICATION="<token>" at build time to emit the meta tag.
+GSC = os.environ.get('GSC_VERIFICATION', '').strip()
 
 # JSON-LD: Organization + WebSite (with a sitelinks SearchAction that maps to /?q=)
 LD = {
@@ -70,6 +73,7 @@ head = (
     '<link rel="canonical" href="' + SITE + '/">'
     '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">'
     '<meta name="author" content="Customs Nepal">'
+    + ('<meta name="google-site-verification" content="' + esc(GSC) + '">' if GSC else '') +
     # Open Graph
     '<meta property="og:type" content="website">'
     '<meta property="og:site_name" content="Customs Nepal">'
