@@ -1,0 +1,48 @@
+:root{--bg:#F8FAFC;--card:#fff;--fg:#0B1220;--fg2:#334155;--muted:#5B6878;--border:#E2E8F0;
+--navy:#293C55;--accent:#5470C6;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
+--mid:#A15C07;--mid-bg:#FEF3C7;--hi:#B91C1C;--hi-bg:#FEE2E2;--spec:#475569;--spec-bg:#EEF2F6;
+--f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+--mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace}
+@media(prefers-color-scheme:dark){:root{--bg:#0B1120;--card:#131C2E;--fg:#F1F5F9;--fg2:#CBD5E1;--muted:#94A3B8;--border:#243047;
+--navy:#E2E8F0;--accent:#7A93E6;--accent-bg:#1C2743;--free:#4ADE80;--free-bg:#0F2E1C;--low:#38BDF8;--low-bg:#0C2A40;
+--mid:#FBBF24;--mid-bg:#33260A;--hi:#F87171;--hi-bg:#3A1414;--spec:#94A3B8;--spec-bg:#1A2436;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header.top{background:var(--navy);color:#fff}
+@media(prefers-color-scheme:dark){header.top{background:#0B1428}}
+header.top .wrap{display:flex;align-items:center;gap:10px;height:52px}
+.logo{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:700}
+.logo b{background:#0F172A;color:#fff;font-family:var(--mono);font-size:12px;font-weight:700;padding:4px 6px;border-radius:6px}
+@media(prefers-color-scheme:dark){header.top .logo{color:#F1F5F9}}
+.crumb{font-size:.82rem;color:var(--muted);padding:12px 0 0}
+.crumb a{color:var(--muted)}
+h1{font-size:1.6rem;letter-spacing:-.02em;margin:.4em 0 .2em}
+h2.sec{font-size:1.15rem;letter-spacing:-.01em;margin:1.6em 0 .4em;padding-bottom:.3em;border-bottom:1px solid var(--border)}
+h3.head{font-size:.95rem;color:var(--fg2);margin:1.4em 0 .5em;font-family:var(--mono)}
+.lede{color:var(--fg2);font-size:1.02rem;max-width:70ch}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.btn{display:inline-block;background:var(--accent);color:#fff;padding:9px 14px;border-radius:9px;font-weight:600;font-size:.9rem}
+.btn.ghost{background:var(--accent-bg);color:var(--accent)}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:.3em 0 1em}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem;min-width:540px}
+.tbl th,.tbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.tbl td.code{font-family:var(--mono);white-space:nowrap;font-size:.85rem}
+.tbl td.unit{color:var(--muted);white-space:nowrap}
+.duty{display:inline-block;font-weight:700;font-size:.8rem;padding:2px 7px;border-radius:6px;white-space:nowrap}
+.d-free{background:var(--free-bg);color:var(--free)}.d-low{background:var(--low-bg);color:var(--low)}
+.d-mid{background:var(--mid-bg);color:var(--mid)}.d-hi{background:var(--hi-bg);color:var(--hi)}.d-spec{background:var(--spec-bg);color:var(--spec)}
+.note{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:1em 0;font-size:.9rem;color:var(--fg2);white-space:pre-wrap}
+.note summary{cursor:pointer;font-weight:600;color:var(--fg)}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:.6em 0 1.4em}
+.chcard{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--fg)}
+.chcard:hover{border-color:var(--accent);text-decoration:none}
+.chcard .n{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.chcard .t{font-weight:600;display:block;margin-top:2px}
+.chcard .c{font-size:.78rem;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:10px;margin:1.6em 0;font-size:.9rem}
+footer{border-top:1px solid var(--border);margin-top:2em;padding:20px 0 40px;color:var(--muted);font-size:.82rem}
+footer a{color:var(--muted)}
