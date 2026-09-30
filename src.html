@@ -1,7 +1,5 @@
 <title>Nepal HS Code Finder</title>
 <meta name="description" content="Search Nepal Customs Tariff 2026/27 by HS code, product name or material. Import duty, SAARC rates and a landed-cost estimator.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 /* Layout: Swiss-minimal single column (max 760px). Sticky search app-bar, 4-tab bottom nav on phones,
    full-height detail sheet with sticky action bar. Understand -> trust -> act on every code. */
@@ -12,8 +10,8 @@
   --seg-goods:#94A3B8; --seg-duty:#0369A1; --seg-excise:#A15C07; --seg-vat:#7C3AED; --seg-other:#475569;
   --imp:#5470C6; --exp:#EE8A4B; --rev:#5FB365; --track:#EEF2F6; --grid:#E5E9EE;
   --scrim:rgba(2,6,23,.5); --shadow:0 12px 32px rgba(15,23,42,.16);
-  --f-body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",Roboto,system-ui,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
   --r-sm:8px; --r:12px; --r-lg:16px;
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
   --t:180ms cubic-bezier(.2,.7,.2,1);
@@ -37,8 +35,12 @@
 input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
 [hidden]{display:none!important}
 html,body{background:var(--bg)}
-body{color:var(--fg);font:15.5px/1.5 var(--f-body);letter-spacing:0;font-feature-settings:'cv11','ss01';-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
-button,input,select{font:inherit;color:inherit}
+body{color:var(--fg);font:16px/1.47 var(--f-body);letter-spacing:-.011em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+/* Apple-style heading rhythm: tighter tracking as size grows */
+h1{letter-spacing:-.022em}h2{letter-spacing:-.019em}h3{letter-spacing:-.015em}
+/* Prevent iOS focus-zoom: form controls never below 16px on phones */
+@media (max-width:640px){input,select,textarea{font-size:16px!important}}
 button{cursor:pointer;background:none;border:0;padding:0}
 svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
@@ -64,8 +66,8 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 nav.tabbar{display:none}
 @media (max-width:720px){
   nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;background:var(--card);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0px)}
-  nav.tabbar button{flex:1;min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.72rem;font-weight:700;color:var(--muted);transition:color var(--t)}
-  nav.tabbar button svg{width:22px;height:22px}
+  nav.tabbar button{flex:1;min-width:0;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 2px;font-size:.7rem;font-weight:600;letter-spacing:-.01em;white-space:nowrap;color:var(--muted);transition:color var(--t)}
+  nav.tabbar button svg{width:21px;height:21px}
   nav.tabbar button[aria-selected="true"]{color:var(--accent)}
   main{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 }
@@ -204,7 +206,7 @@ h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppe
 .vals{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.vals span{font-size:.8rem;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--muted-bg);color:var(--fg-2)}
 /* invoice generator */
 .seg2{display:flex;gap:6px;background:var(--muted-bg);padding:4px;border-radius:12px;margin-bottom:var(--s3)}
-.seg2 .segbtn{flex:1;min-height:40px;border-radius:9px;font-weight:700;font-size:.9rem;color:var(--fg-2);background:transparent;transition:all var(--t)}
+.seg2 .segbtn{flex:1;min-height:42px;border-radius:9px;font-weight:600;font-size:.84rem;letter-spacing:-.01em;white-space:nowrap;color:var(--fg-2);background:transparent;transition:all var(--t)}
 .seg2 .segbtn.on{background:var(--card);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .dropzone{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:var(--s5) var(--s4);border:1.5px dashed var(--border);border-radius:var(--r);cursor:pointer;transition:border-color var(--t),background var(--t)}
 .dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-bg)}
@@ -249,9 +251,27 @@ h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppe
 .gen-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
 .gen-actions .btn{flex:1;min-width:130px;justify-content:center}
 #v-invoice.dt-commercial .ponly,#v-invoice.dt-commercial .vonly{display:none}
+/* line items become stacked cards on phones (Apple-style responsive table) */
+@media (max-width:640px){
+  .itbl-wrap{overflow:visible;margin:0;padding:0}
+  .itbl,.itbl tbody{display:block;min-width:0}
+  .itbl thead{display:none}
+  .itbl tr{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;border:1px solid var(--border);border-radius:14px;margin-bottom:12px;background:var(--card)}
+  .itbl td{display:flex;flex-direction:column;gap:4px;padding:0;border:0}
+  .itbl td[data-label]::before{content:attr(data-label);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .itbl td.c-desc,.itbl td.c-model{grid-column:1/-1}
+  .itbl .c-sn{display:none}
+  .itbl td.c-duty,.itbl td.c-amt{font:600 15px var(--f-body);color:var(--fg);text-align:left;white-space:normal}
+  .itbl td.c-amt{align-items:flex-start}
+  .itbl input,.itbl select{border:1px solid var(--border);background:var(--card);min-height:44px;width:100%}
+  .itbl .c-hs input{width:100%}
+  .itbl .c-del{grid-column:1/-1;align-items:stretch}
+  .itbl .c-del button{width:100%;height:40px;border:1px solid var(--border);border-radius:9px;gap:6px;font-size:13px;color:var(--muted)}
+  .itbl .c-del button::after{content:"Remove"}
+}
 .page-h{padding-block:var(--s5) var(--s3)}
-.page-h h1{margin:0;font-size:1.5rem;letter-spacing:-.02em}
-.page-h p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
+.page-h h1{margin:0;font-size:1.7rem;font-weight:700;line-height:1.12;letter-spacing:-.028em}
+.page-h p{margin:6px 0 0;color:var(--muted);font-size:.95rem;line-height:1.45;max-width:60ch}
 .acc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .acc + .acc{margin-top:var(--s2)}
 .acc>button{width:100%;display:grid;grid-template-columns:48px minmax(0,1fr) 20px;gap:var(--s3);align-items:center;text-align:left;min-height:60px;padding:var(--s3) var(--s4)}
@@ -1282,14 +1302,14 @@ const fmtC = n => (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumF
 function invRowHTML(it, i) {
   return `<tr data-i="${i}">
     <td class="c-sn">${i + 1}</td>
-    <td class="c-desc"><input value="${esc(it.desc || '')}" data-f="desc" placeholder="Product description"></td>
-    <td class="c-model"><input value="${esc(it.model || '')}" data-f="model" placeholder="Model"></td>
-    <td class="c-hs"><input value="${esc(it.hs || '')}" data-f="hs" placeholder="0000.00.00" autocomplete="off"></td>
-    <td class="c-duty" data-duty>${dutyLabel(it.hs)}</td>
-    <td class="c-num"><input value="${it.qty ?? ''}" data-f="qty" type="number" inputmode="decimal" min="0" step="any"></td>
-    <td class="c-unit"><input value="${esc(it.unit || '')}" data-f="unit"></td>
-    <td class="c-num"><input value="${it.price ?? ''}" data-f="price" type="number" inputmode="decimal" min="0" step="any"></td>
-    <td class="c-amt" data-amt>${fmtC(lineAmt(it))}</td>
+    <td class="c-desc" data-label="Description"><input value="${esc(it.desc || '')}" data-f="desc" placeholder="Product description"></td>
+    <td class="c-model" data-label="Model"><input value="${esc(it.model || '')}" data-f="model" placeholder="Model / item code"></td>
+    <td class="c-hs" data-label="HS code"><input value="${esc(it.hs || '')}" data-f="hs" placeholder="0000.00.00" autocomplete="off"></td>
+    <td class="c-duty" data-label="Duty" data-duty>${dutyLabel(it.hs)}</td>
+    <td class="c-num" data-label="Qty"><input value="${it.qty ?? ''}" data-f="qty" type="number" inputmode="decimal" min="0" step="any"></td>
+    <td class="c-unit" data-label="Unit"><input value="${esc(it.unit || '')}" data-f="unit"></td>
+    <td class="c-num" data-label="Unit price"><input value="${it.price ?? ''}" data-f="price" type="number" inputmode="decimal" min="0" step="any"></td>
+    <td class="c-amt" data-label="Amount" data-amt>${fmtC(lineAmt(it))}</td>
     <td class="c-del"><button data-del aria-label="Remove line">${ic('i-x')}</button></td>
   </tr>`;
 }
