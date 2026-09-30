@@ -60,6 +60,7 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .nav-desk button,.nav-desk a{height:40px;display:flex;align-items:center;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t);text-decoration:none;cursor:pointer;background:none;border:0}
 .nav-desk button:hover,.nav-desk a:hover{background:rgba(255,255,255,.1);color:#fff}
 .nav-desk button[aria-selected="true"],.nav-desk a[aria-selected="true"]{background:var(--hero3);color:#fff}
+.nav-desk a .beta{margin-left:6px;font-size:.56rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:2px 5px;border-radius:999px;background:#F59E0B;color:#3a2600;line-height:1}
 @media (max-width:720px){.nav-desk{display:none}}
 
 nav.tabbar{display:none}
@@ -604,12 +605,12 @@ footer p{margin:0 0 6px;max-width:70ch}
     <div style="display:flex;align-items:center;gap:6px">
     <div class="nav-desk" role="tablist" aria-label="Sections">
       <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
-      <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI</a>
+      <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
       <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade data</a>
       <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
       <a href="/tariff">Tariff</a>
       <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
-      <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false">Invoice</a>
+      <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false">Invoice<span class="beta">Beta</span></a>
     </div>
     <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
