@@ -3,6 +3,8 @@ node_modules
 .env
 .env.local
 *.png
+!public/og.png
+!public/icon-180.png
 data/fts/
 
 # generated documents and business fixtures (never publish)

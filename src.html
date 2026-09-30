@@ -1,5 +1,4 @@
-<title>Nepal HS Code Finder</title>
-<meta name="description" content="Search Nepal Customs Tariff 2026/27 by HS code, product name or material. Import duty, SAARC rates and a landed-cost estimator.">
+<!-- The full <head> (title, meta description, canonical, Open Graph, Twitter, JSON-LD) is injected by scripts/assemble.py so it sits inside <head>, not <body>. -->
 <style>
 /* Layout: Swiss-minimal single column (max 760px). Sticky search app-bar, 4-tab bottom nav on phones,
    full-height detail sheet with sticky action bar. Understand -> trust -> act on every code. */
@@ -2094,9 +2093,19 @@ $('#v-stats').addEventListener('input', e => { if (e.target.id === 'cmp-q'){ cmp
   if (e.target.id === 'st-q'){ stQ = e.target.value; const pos = e.target.selectionStart; renderStats(); const el = $('#st-q'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
 
 /* ---------- tabs ---------- */
+const TITLES = {
+  search: 'Nepal HS Code Finder — Customs Tariff & Import Duty 2026/27',
+  ai: 'Ask AI — Nepal HS Code Classifier | Customs Nepal',
+  stats: 'Nepal Foreign Trade Data — Imports & Exports | Customs Nepal',
+  browse: 'Browse the Nepal Customs Tariff 2026/27 | Customs Nepal',
+  calc: 'Nepal Import Tax & Landed Cost Calculator | Customs Nepal',
+  invoice: 'Proforma & Commercial Invoice Generator | Customs Nepal',
+  saved: 'Saved HS Codes | Customs Nepal'
+};
 let curTab = 'search';
 function go(t){
   curTab = t;
+  try { document.title = TITLES[t] || TITLES.search; } catch(e){}
   ['search','ai','stats','browse','calc','invoice','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
   if (t === 'stats') renderStats(); else ecClear();
   if (t === 'ai') initAI();
@@ -2110,6 +2119,7 @@ $$('[data-tab]').forEach(b => b.addEventListener('click', () => go(b.dataset.tab
 setOrigin(origin);
 initCalc();
 renderResults();
+try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.trim()) runQuery(uq.trim()); } catch(e){}
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
 else if (['ai','stats','browse','calc','invoice','saved'].includes(h)) go(h);
