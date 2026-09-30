@@ -4,3 +4,8 @@ node_modules
 .env.local
 *.png
 data/fts/
+
+# generated documents and business fixtures (never publish)
+out/
+scripts/_pi_fixture.json
+node_modules/
