@@ -61,7 +61,7 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .nav-desk button:hover,.nav-desk a:hover{background:rgba(255,255,255,.1);color:#fff}
 .nav-desk button[aria-selected="true"],.nav-desk a[aria-selected="true"]{background:var(--hero3);color:#fff}
 .nav-desk a .beta{margin-left:6px;font-size:.56rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:2px 5px;border-radius:999px;background:#F59E0B;color:#3a2600;line-height:1}
-@media (max-width:720px){.nav-desk{display:none}}
+@media (max-width:720px){.nav-desk{display:none}.bar .wrap{padding-inline:12px}.bar-row{gap:var(--s2)}}
 
 nav.tabbar{display:none}
 @media (max-width:720px){
@@ -2294,7 +2294,7 @@ try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
   function boot(){ try{
     sb=window.supabase.createClient(URL_,KEY_);
     sb.auth.getSession().then(function(r){ USER=(r.data&&r.data.session&&r.data.session.user)||null; updateHeader(); if(location.pathname==='/account'){ if(USER) openDash(true); else openModal(); } });
-    sb.auth.onAuthStateChange(function(_e,s){ var was=!!USER; USER=(s&&s.user)||null; updateHeader(); if(USER&&!was){ closeModal(); toast('Signed in'); } });
+    sb.auth.onAuthStateChange(function(_e,s){ var was=!!USER; USER=(s&&s.user)||null; updateHeader(); if(USER&&!was&&_e==='SIGNED_IN'){ closeModal(); toast('Signed in'); } });
   }catch(e){} }
   $('#cn-google').addEventListener('click', function(){ if(!sb){ toast('Still loading'); return; } sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin}}).then(function(r){ if(r&&r.error){ var m=(r.error.message||'').toLowerCase(); if(m.indexOf('provider')>-1||m.indexOf('not enabled')>-1||m.indexOf('unsupported')>-1) toast('Google sign-in is being set up. Please use the email magic link for now.'); else toast(r.error.message); } }).catch(function(){ toast('Google sign-in is being set up. Please use the email magic link for now.'); }); });
   $('#cn-magic').addEventListener('click', function(){ if(!sb){ toast('Still loading'); return; } var em=($('#cn-email').value||'').trim(); if(!em){ $('#cn-email').focus(); return; } sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin}}).then(function(r){ if(r.error) toast(r.error.message); else toast('Check your email for the sign-in link'); }); });
