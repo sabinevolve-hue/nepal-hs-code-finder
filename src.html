@@ -202,6 +202,53 @@ h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppe
 .kv{display:grid;grid-template-columns:auto 1fr;gap:8px var(--s3);font-size:.9rem;margin:0}
 .kv dt{color:var(--muted);font-weight:600}.kv dd{margin:0;word-break:break-word}.kv a{color:var(--fg);font-weight:600;text-decoration:none}.kv a:hover{color:var(--accent)}
 .vals{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.vals span{font-size:.8rem;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--muted-bg);color:var(--fg-2)}
+/* invoice generator */
+.seg2{display:flex;gap:6px;background:var(--muted-bg);padding:4px;border-radius:12px;margin-bottom:var(--s3)}
+.seg2 .segbtn{flex:1;min-height:40px;border-radius:9px;font-weight:700;font-size:.9rem;color:var(--fg-2);background:transparent;transition:all var(--t)}
+.seg2 .segbtn.on{background:var(--card);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.dropzone{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:var(--s5) var(--s4);border:1.5px dashed var(--border);border-radius:var(--r);cursor:pointer;transition:border-color var(--t),background var(--t)}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-bg)}
+.dropzone b{font-size:.95rem}.dropzone span{font-size:.82rem;color:var(--muted);max-width:42ch}
+.i.big{width:30px;height:30px;color:var(--accent);margin-bottom:4px}
+.upmsg{margin-top:var(--s3);padding:10px var(--s3);border-radius:10px;font-size:.86rem;background:var(--muted-bg);color:var(--fg-2)}
+.upmsg.ok{background:var(--free-bg);color:var(--free)}.upmsg.err{background:#fef2f2;color:#b91c1c}
+:root[data-theme="dark"] .upmsg.err,:root:not([data-theme="light"]) .upmsg.err{background:#3b1414}
+.acc-card{padding:0}.acc-card>summary{list-style:none;cursor:pointer;padding:var(--s4);display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700}
+.acc-card>summary::-webkit-details-marker{display:none}
+.acc-card>summary .sm{font-weight:400;color:var(--muted);font-size:.8rem}
+.acc-card>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform var(--t);flex-shrink:0}
+.acc-card[open]>summary::after{transform:rotate(-135deg)}
+.pform{padding:0 var(--s4) var(--s4)}
+.pform fieldset{border:1px solid var(--border);border-radius:12px;padding:var(--s3);margin:0 0 var(--s3)}
+.pform legend{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);padding:0 6px}
+.fld2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s2) var(--s3)}
+.pform .field{margin:0 0 8px}.fld2 .field{margin:0}
+.itbl-wrap{overflow-x:auto;margin:0 calc(-1*var(--s4));padding:0 var(--s4)}
+.itbl{width:100%;border-collapse:collapse;font-size:.84rem;min-width:640px}
+.itbl th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);font-weight:700;padding:4px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+.itbl th.r{text-align:right}
+.itbl td{padding:3px 4px;vertical-align:middle;border-bottom:1px solid var(--border)}
+.itbl input,.itbl select{width:100%;min-height:36px;border:1px solid transparent;border-radius:7px;padding:4px 7px;font-size:.84rem;background:transparent;color:var(--fg)}
+.itbl input:hover,.itbl select:hover{border-color:var(--border)}
+.itbl input:focus,.itbl select:focus{border-color:var(--accent);background:var(--card);outline:none}
+.itbl .c-sn{width:26px;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+.itbl .c-desc input{min-width:150px}.itbl .c-hs input{width:104px;font-family:var(--f-mono);font-size:.8rem}
+.itbl .c-num input{width:70px;text-align:right;font-variant-numeric:tabular-nums}
+.itbl .c-unit input{width:52px}.itbl .c-duty{text-align:right;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap;padding-right:8px}
+.itbl .c-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;padding-right:8px}
+.itbl .c-del button{width:30px;height:30px;border-radius:7px;color:var(--muted);display:grid;place-items:center}
+.itbl .c-del button:hover{background:#fef2f2;color:#b91c1c}
+.itbl-foot{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s3)}
+.btn.sm{min-height:38px;padding:0 14px;font-size:.85rem}
+.btn.sm.ai{background:var(--accent-bg);color:var(--accent);border-color:transparent}
+.inv-tot{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--border);display:grid;gap:6px}
+.inv-tot .row{display:flex;justify-content:space-between;align-items:baseline;font-size:.9rem}
+.inv-tot .row.big{font-size:1.05rem;font-weight:800}.inv-tot .row.big b{color:var(--accent)}
+.inv-tot .row span{color:var(--muted)}.inv-tot .row b{font-variant-numeric:tabular-nums}
+.chks{display:flex;flex-direction:column;gap:8px;margin-bottom:var(--s3)}
+.gen-actions{display:flex;gap:var(--s2);flex-wrap:wrap}
+.gen-actions .btn{flex:1;min-width:130px;justify-content:center}
+#v-invoice.dt-commercial .ponly,#v-invoice.dt-commercial .vonly{display:none}
 .page-h{padding-block:var(--s5) var(--s3)}
 .page-h h1{margin:0;font-size:1.5rem;letter-spacing:-.02em}
 .page-h p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
@@ -499,6 +546,8 @@ footer p{margin:0 0 6px;max-width:70ch}
   <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v-4M12 15V7M17 15v-6"/></symbol>
   <symbol id="i-up" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M7 7l10 10M17 9v8H9"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
   <symbol id="c-chip" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
   <symbol id="c-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
@@ -538,6 +587,7 @@ footer p{margin:0 0 6px;max-width:70ch}
       <button role="tab" data-tab="stats" aria-selected="false">Trade data</button>
       <button role="tab" data-tab="browse" aria-selected="false">Browse</button>
       <button role="tab" data-tab="calc" aria-selected="false">Calculator</button>
+      <button role="tab" data-tab="invoice" aria-selected="false">Invoice</button>
     </div>
     <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
@@ -655,6 +705,105 @@ footer p{margin:0 0 6px;max-width:70ch}
     <div class="card result" id="c-out"></div>
   </section>
 
+  <!-- INVOICE GENERATOR -->
+  <section id="v-invoice" hidden>
+    <div class="page-h"><h1>Invoice generator</h1><p>Create a Proforma or Commercial Invoice with a customs &amp; landed-cost estimate. Type your line items, or upload an invoice and let AI read the items and suggest the Nepal HS codes.</p></div>
+
+    <div class="card">
+      <div class="seg2" id="inv-doc" role="tablist" aria-label="Document type">
+        <button class="segbtn on" data-doc="proforma" role="tab" aria-selected="true">Proforma Invoice</button>
+        <button class="segbtn" data-doc="commercial" role="tab" aria-selected="false">Commercial Invoice</button>
+      </div>
+      <label class="dropzone" id="inv-drop">
+        <input type="file" id="inv-file" accept=".xlsx,.xls,.csv,application/pdf,image/*" hidden>
+        <svg class="i big"><use href="#i-up"/></svg>
+        <b>Upload an invoice to auto-fill</b>
+        <span>Excel, CSV, PDF or a photo — AI reads the line items. Or just fill the table below.</span>
+      </label>
+      <div id="inv-upmsg" class="upmsg" hidden></div>
+    </div>
+
+    <details class="card acc-card" id="inv-parties">
+      <summary><span>Parties &amp; shipment</span><span class="sm">seller, buyer, PI/invoice no, terms</span></summary>
+      <div class="pform">
+        <fieldset><legend>Exporter / Seller</legend>
+          <div class="field"><label>Company</label><input id="inv-s-name" placeholder="Supplier / exporter name"></div>
+          <div class="field"><label>Address</label><input id="inv-s-addr" placeholder="Full address"></div>
+          <div class="field"><label>Contact</label><input id="inv-s-contact" placeholder="Tel / email"></div>
+        </fieldset>
+        <fieldset><legend>Importer / Buyer</legend>
+          <div class="field"><label>Company</label><input id="inv-b-name" placeholder="Your company"></div>
+          <div class="field"><label>Address</label><input id="inv-b-addr" placeholder="Full address"></div>
+          <div class="field"><label>Contact</label><input id="inv-b-contact" placeholder="Tel / attn"></div>
+          <div class="field"><label>PAN / VAT No.</label><input id="inv-b-pan" placeholder="Nepal PAN/VAT"></div>
+        </fieldset>
+        <fieldset><legend>Document &amp; shipment</legend>
+          <div class="fld2">
+            <div class="field"><label>Invoice / PI No.</label><input id="inv-no" placeholder="e.g. PI-2026-001"></div>
+            <div class="field"><label>Date</label><input id="inv-date" placeholder="29 September, 2026"></div>
+            <div class="field vonly"><label>Validity</label><input id="inv-validity" placeholder="30 days from issue"></div>
+            <div class="field"><label>Price term</label><input id="inv-term" placeholder="EXW / FOB / CIF …"></div>
+            <div class="field"><label>Country of origin</label><input id="inv-origin" placeholder="China"></div>
+            <div class="field"><label>Port of loading</label><input id="inv-pol" placeholder="Guangzhou, China"></div>
+            <div class="field"><label>Entry point (Nepal)</label><input id="inv-entry" list="inv-offices" placeholder="Customs office"></div>
+            <div class="field"><label>Final destination</label><input id="inv-dest" placeholder="Kathmandu, Nepal"></div>
+            <div class="field"><label>Mode of shipment</label><input id="inv-mode" placeholder="By road / air / sea"></div>
+          </div>
+        </fieldset>
+        <fieldset class="ponly"><legend>Beneficiary bank (Proforma)</legend>
+          <div class="fld2">
+            <div class="field"><label>Beneficiary</label><input id="inv-bk-name"></div>
+            <div class="field"><label>Bank</label><input id="inv-bk-bank"></div>
+            <div class="field"><label>Bank address</label><input id="inv-bk-addr"></div>
+            <div class="field"><label>SWIFT</label><input id="inv-bk-swift"></div>
+            <div class="field"><label>Account no.</label><input id="inv-bk-acct"></div>
+          </div>
+        </fieldset>
+        <datalist id="inv-offices"></datalist>
+      </div>
+    </details>
+
+    <div class="card">
+      <h2><span class="n">1</span>Line items</h2>
+      <div class="itbl-wrap"><table class="itbl">
+        <thead><tr><th>#</th><th>Description</th><th>Model</th><th>HS code</th><th class="r">Duty</th><th class="r">Qty</th><th>Unit</th><th class="r">Unit price</th><th class="r">Amount</th><th aria-label="Remove"></th></tr></thead>
+        <tbody id="inv-rows"></tbody>
+      </table></div>
+      <div class="itbl-foot">
+        <button class="btn sm" id="inv-add"><svg class="i"><use href="#i-plus"/></svg>Add line</button>
+        <button class="btn sm ai" id="inv-suggest"><svg class="i"><use href="#i-spark"/></svg>Suggest HS codes with AI</button>
+      </div>
+      <div id="inv-ai-msg" class="upmsg" hidden></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">2</span>Currency &amp; assumptions</h2>
+      <div class="fields">
+        <div class="field"><label for="inv-cur">Currency</label><select id="inv-cur"><option>USD</option><option>CNY</option><option>INR</option><option>EUR</option><option>GBP</option><option>AED</option><option>JPY</option><option>NPR</option></select></div>
+        <div class="field"><label for="inv-fx">Exchange rate</label><input id="inv-fx" type="number" inputmode="decimal" min="0" step="any" value="140"><span class="help">NPR per 1 unit</span></div>
+        <div class="field"><label for="inv-freight">Freight + insurance %</label><input id="inv-freight" type="number" inputmode="decimal" min="0" step="any" value="10"><span class="help">% of goods value → CIF</span></div>
+        <div class="field"><label for="inv-vat">VAT %</label><input id="inv-vat" type="number" inputmode="decimal" min="0" step="any" value="13"></div>
+        <div class="field"><label for="inv-margin">Target margin %</label><input id="inv-margin" type="number" inputmode="decimal" min="0" max="99" step="any" value="25"><span class="help">For suggested selling price</span></div>
+        <div class="field"><label for="inv-disc">Discount (total)</label><input id="inv-disc" type="number" inputmode="decimal" min="0" step="any" value="0"><span class="help">In currency, on the invoice</span></div>
+      </div>
+      <div class="inv-tot" id="inv-tot"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">3</span>Generate &amp; download</h2>
+      <div class="chks">
+        <label class="switch"><span>Customs &amp; Landed Cost sheet</span><input type="checkbox" id="inv-lc" checked></label>
+        <label class="switch"><span>HS Code Review sheet (AI notes)</span><input type="checkbox" id="inv-hsr"></label>
+      </div>
+      <div class="gen-actions">
+        <button class="btn primary" id="inv-xlsx"><svg class="i"><use href="#i-down"/></svg>Download Excel</button>
+        <button class="btn" id="inv-pdf"><svg class="i"><use href="#i-doc"/></svg>Download PDF</button>
+        <button class="btn" id="inv-save"><svg class="i"><use href="#i-bookmark"/></svg>Save draft</button>
+      </div>
+      <p class="fine">Files are built in your browser and downloaded to your device. Nothing is uploaded. Estimate only — confirm classification and taxes with the customs office or your clearing agent.</p>
+    </div>
+  </section>
+
   <!-- SAVED -->
   <section id="v-saved" hidden></section>
 
@@ -669,7 +818,8 @@ footer p{margin:0 0 6px;max-width:70ch}
   <button role="tab" data-tab="ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</button>
   <button role="tab" data-tab="stats" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Trade</button>
   <button role="tab" data-tab="browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</button>
-  <button role="tab" data-tab="calc" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calculator</button>
+  <button role="tab" data-tab="calc" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</button>
+  <button role="tab" data-tab="invoice" aria-selected="false"><svg class="i"><use href="#i-doc"/></svg>Invoice</button>
 </nav>
 
 <div class="scrim" id="scrim" hidden></div>
@@ -1120,7 +1270,282 @@ function initCalc(){
   pickCalc(BY[c] ? c : '8528.59.00');
 }
 
-/* ---------- saved ---------- */
+/* ---------- invoice generator ---------- */
+let invItems = [], invDoc = 'proforma', invReady = false, invBound = false, invSaveT = null;
+const invDuty = code => { const r = BY[code]; if (!r) return null; const n = num(r.g); return isNaN(n) ? null : n / 100; };
+const dutyLabel = hs => { const d = invDuty(hs); return d === 0 ? 'Free' : d == null ? (hs ? 'spec.' : '—') : Math.round(d * 100) + '%'; };
+const blankItem = () => ({ desc: '', model: '', hs: '', qty: '', unit: 'PCS', price: '', note: '' });
+const lineAmt = it => (parseFloat(it.qty) || 0) * (parseFloat(it.price) || 0);
+const invCur = () => $('#inv-cur').value;
+const fmtC = n => (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function invRowHTML(it, i) {
+  return `<tr data-i="${i}">
+    <td class="c-sn">${i + 1}</td>
+    <td class="c-desc"><input value="${esc(it.desc || '')}" data-f="desc" placeholder="Product description"></td>
+    <td class="c-model"><input value="${esc(it.model || '')}" data-f="model" placeholder="Model"></td>
+    <td class="c-hs"><input value="${esc(it.hs || '')}" data-f="hs" placeholder="0000.00.00" autocomplete="off"></td>
+    <td class="c-duty" data-duty>${dutyLabel(it.hs)}</td>
+    <td class="c-num"><input value="${it.qty ?? ''}" data-f="qty" type="number" inputmode="decimal" min="0" step="any"></td>
+    <td class="c-unit"><input value="${esc(it.unit || '')}" data-f="unit"></td>
+    <td class="c-num"><input value="${it.price ?? ''}" data-f="price" type="number" inputmode="decimal" min="0" step="any"></td>
+    <td class="c-amt" data-amt>${fmtC(lineAmt(it))}</td>
+    <td class="c-del"><button data-del aria-label="Remove line">${ic('i-x')}</button></td>
+  </tr>`;
+}
+function renderInvRows() { $('#inv-rows').innerHTML = invItems.map(invRowHTML).join(''); }
+function renderInvTotals() {
+  const cur = invCur(), sub = invItems.reduce((a, it) => a + lineAmt(it), 0), disc = parseFloat($('#inv-disc').value) || 0, total = sub - disc;
+  const fx = parseFloat($('#inv-fx').value) || 0, fr = (parseFloat($('#inv-freight').value) || 0) / 100, vat = (parseFloat($('#inv-vat').value) || 0) / 100;
+  let cifn = 0, duty = 0;
+  invItems.forEach(it => { const d = invDuty(it.hs) || 0, cif = lineAmt(it) * (1 + fr) * fx; cifn += cif; duty += Math.round(cif * d); });
+  const vatN = Math.round((cifn + duty) * vat), tax = duty + vatN, landed = cifn + duty;
+  $('#inv-tot').innerHTML = `
+    <div class="row"><span>Sub-total</span><b>${cur} ${fmtC(sub)}</b></div>
+    ${disc ? `<div class="row"><span>Less discount</span><b>− ${cur} ${fmtC(disc)}</b></div>` : ''}
+    <div class="row big"><span>Invoice total</span><b>${cur} ${fmtC(total)}</b></div>
+    <div class="row" style="margin-top:6px"><span>Est. customs duty</span><b>${npr(duty)}</b></div>
+    <div class="row"><span>Est. VAT ${Math.round(vat * 100)}%</span><b>${npr(vatN)}</b></div>
+    <div class="row"><span>Est. total import tax</span><b>${npr(tax)}</b></div>
+    <div class="row big"><span>Est. landed cost (excl. VAT)</span><b>${npr(landed)}</b></div>`;
+}
+function invSchedule() { renderInvTotals(); clearTimeout(invSaveT); invSaveT = setTimeout(saveInvDraft, 600); }
+
+function bindInvoice() {
+  if (invBound) return; invBound = true;
+  $('#inv-doc').addEventListener('click', e => { const b = e.target.closest('[data-doc]'); if (!b) return; invDoc = b.dataset.doc; $$('#inv-doc .segbtn').forEach(x => { const on = x.dataset.doc === invDoc; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); }); $('#v-invoice').classList.toggle('dt-commercial', invDoc === 'commercial'); invSchedule(); });
+  $('#inv-rows').addEventListener('input', e => { const tr = e.target.closest('tr'); if (!tr) return; const i = +tr.dataset.i, f = e.target.dataset.f; if (f === undefined) return; invItems[i][f] = e.target.value; if (f === 'hs') { tr.querySelector('[data-duty]').textContent = dutyLabel(e.target.value.trim()); } if (f === 'qty' || f === 'price') tr.querySelector('[data-amt]').textContent = fmtC(lineAmt(invItems[i])); invSchedule(); });
+  $('#inv-rows').addEventListener('click', e => { const del = e.target.closest('[data-del]'); if (!del) return; const i = +del.closest('tr').dataset.i; invItems.splice(i, 1); if (!invItems.length) invItems.push(blankItem()); renderInvRows(); invSchedule(); });
+  $('#inv-add').addEventListener('click', () => { invItems.push(blankItem()); renderInvRows(); const inps = $('#inv-rows').querySelectorAll('tr:last-child input'); if (inps[0]) inps[0].focus(); });
+  ['inv-disc','inv-fx','inv-freight','inv-vat','inv-margin'].forEach(id => $('#' + id).addEventListener('input', invSchedule));
+  $('#inv-cur').addEventListener('change', () => { if (invCur() === 'NPR') $('#inv-fx').value = 1; renderInvRows(); invSchedule(); });
+  $('#inv-suggest').addEventListener('click', suggestHS);
+  $('#inv-xlsx').addEventListener('click', downloadInvExcel);
+  $('#inv-pdf').addEventListener('click', downloadInvPDF);
+  $('#inv-save').addEventListener('click', () => { saveInvDraft(); invMsg('inv-ai-msg', 'Draft saved in this browser.', 'ok'); });
+  $('#inv-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) importInvoiceFile(f); e.target.value = ''; });
+  const dz = $('#inv-drop');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); const f = e.dataTransfer.files[0]; if (f) importInvoiceFile(f); });
+  [...'inv-s-name inv-s-addr inv-s-contact inv-b-name inv-b-addr inv-b-contact inv-b-pan inv-no inv-date inv-validity inv-term inv-origin inv-pol inv-entry inv-dest inv-mode inv-bk-name inv-bk-bank inv-bk-addr inv-bk-swift inv-bk-acct'.split(' ')].forEach(id => { const el = $('#' + id); if (el) el.addEventListener('input', () => { clearTimeout(invSaveT); invSaveT = setTimeout(saveInvDraft, 600); }); });
+}
+function initInvoice() {
+  if (invReady) return; invReady = true;
+  $('#inv-offices').innerHTML = OF.offices.map(o => `<option value="${esc(o.name)}"></option>`).join('');
+  const draft = store.get('invDraft', null);
+  if (draft && draft.items) { invItems = draft.items.map(it => Object.assign(blankItem(), it)); invDoc = draft.docType || 'proforma'; applyInvFields(draft.fields || {}); }
+  if (!invItems.length) invItems = [blankItem(), blankItem(), blankItem()];
+  $$('#inv-doc .segbtn').forEach(x => { const on = x.dataset.doc === invDoc; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
+  $('#v-invoice').classList.toggle('dt-commercial', invDoc === 'commercial');
+  if (!$('#inv-date').value) $('#inv-date').value = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  renderInvRows(); renderInvTotals(); bindInvoice();
+}
+const INV_FIELDS = 'inv-s-name inv-s-addr inv-s-contact inv-b-name inv-b-addr inv-b-contact inv-b-pan inv-no inv-date inv-validity inv-term inv-origin inv-pol inv-entry inv-dest inv-mode inv-bk-name inv-bk-bank inv-bk-addr inv-bk-swift inv-bk-acct inv-cur inv-fx inv-freight inv-vat inv-margin inv-disc'.split(' ');
+function collectInvFields() { const o = {}; INV_FIELDS.forEach(id => { const el = $('#' + id); if (el) o[id] = el.value; }); return o; }
+function applyInvFields(o) { INV_FIELDS.forEach(id => { const el = $('#' + id); if (el && o[id] != null) el.value = o[id]; }); }
+function saveInvDraft() { store.set('invDraft', { docType: invDoc, items: invItems, fields: collectInvFields() }); }
+function invMsg(id, text, cls) { const el = $('#' + id); if (!el) return; el.hidden = false; el.className = 'upmsg' + (cls ? ' ' + cls : ''); el.textContent = text; }
+
+function invData() {
+  const g = id => ($('#' + id).value || '').trim(), n = id => parseFloat($('#' + id).value) || 0, cur = invCur();
+  const items = invItems.filter(it => it.desc || it.hs || parseFloat(it.price)).map(it => ({ description: it.desc, model: it.model, hs: it.hs, qty: parseFloat(it.qty) || 0, unit: it.unit || 'PCS', unitPrice: parseFloat(it.price) || 0, duty: invDuty(it.hs), note: it.note || '' }));
+  const d = { docType: invDoc, seller: { name: g('inv-s-name') || 'Exporter', address: g('inv-s-addr'), contact: g('inv-s-contact') },
+    buyer: { name: g('inv-b-name') || 'Importer', address: g('inv-b-addr'), contact: g('inv-b-contact'), pan: g('inv-b-pan') },
+    shipment: { piNo: g('inv-no'), date: g('inv-date'), validity: g('inv-validity'), currency: cur, priceTerm: g('inv-term'), origin: g('inv-origin'), pol: g('inv-pol'), entry: g('inv-entry'), dest: g('inv-dest'), mode: g('inv-mode') },
+    assumptions: { fx: n('inv-fx') || 1, freightPct: n('inv-freight') / 100, vat: n('inv-vat') / 100, otherPct: 0, margin: n('inv-margin') / 100, discount: n('inv-disc') },
+    declaration: 'We certify that this invoice shows the actual price and description of the goods, and that all particulars are true and correct.',
+    items };
+  if (g('inv-bk-name') || g('inv-bk-acct')) d.bank = { name: g('inv-bk-name'), bank: g('inv-bk-bank'), address: g('inv-bk-addr'), swift: g('inv-bk-swift'), account: g('inv-bk-acct') };
+  if (invDoc === 'proforma' && g('inv-term')) d.terms = ['Payment by T/T through banking channel, quoting this invoice number.'];
+  return d;
+}
+
+/* --- number to words (for amount chargeable) --- */
+const INV_ONES = ['','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE','TEN','ELEVEN','TWELVE','THIRTEEN','FOURTEEN','FIFTEEN','SIXTEEN','SEVENTEEN','EIGHTEEN','NINETEEN'];
+const INV_TENS = ['','','TWENTY','THIRTY','FORTY','FIFTY','SIXTY','SEVENTY','EIGHTY','NINETY'];
+function invWords(n){ n = Math.floor(n); if (n === 0) return 'ZERO';
+  const ch = x => x < 20 ? INV_ONES[x] : x < 100 ? INV_TENS[Math.floor(x/10)] + (x%10 ? '-' + INV_ONES[x%10] : '') : INV_ONES[Math.floor(x/100)] + ' HUNDRED' + (x%100 ? ' AND ' + ch(x%100) : '');
+  let out = ''; for (const [v,name] of [[1e9,'BILLION'],[1e6,'MILLION'],[1e3,'THOUSAND'],[1,'']]) { if (n >= v){ out += (out ? ' ' : '') + ch(Math.floor(n/v)) + (name ? ' ' + name : ''); n %= v; } } return out.trim(); }
+function invAmountWords(total, cur){ const d = Math.floor(total), c = Math.round((total-d)*100); return `${cur === 'USD' ? 'US DOLLARS' : cur} ${invWords(d)}${c ? ' AND CENTS ' + invWords(c) : ''} ONLY`; }
+
+/* --- browser ExcelJS workbook (ported from the validated generator) --- */
+function loadExcelJS(){ if (window.ExcelJS) return Promise.resolve(); if (loadExcelJS._p) return loadExcelJS._p;
+  return loadExcelJS._p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js'; s.onload = res; s.onerror = () => rej(new Error('Could not load the spreadsheet library (check your connection).')); document.head.appendChild(s); }); }
+function dlBlob(blob, name){ const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1500); }
+
+function buildInvoiceWorkbook(data){
+  const NAVY = 'FF0F172A', LIGHT = 'FFF1F5F9', ACCENT = 'FF1E3A8A', BORDER = 'FFCBD5E1';
+  const thin = { style: 'thin', color: { argb: BORDER } }, box = { top: thin, left: thin, bottom: thin, right: thin };
+  const wb = new ExcelJS.Workbook(); wb.creator = 'customsnepal.com'; wb.created = new Date();
+  const A = data.assumptions, s = data.shipment, cur = s.currency;
+  const items = data.items.map(it => ({ ...it, duty: it.duty != null ? it.duty : 0 }));
+  const isCom = data.docType === 'commercial', title = isCom ? 'COMMERCIAL INVOICE' : 'PROFORMA INVOICE';
+  const hcell = (c, t) => { c.value = t; c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 9 }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY } }; c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }; c.border = box; };
+  const money = (c, f) => { c.numFmt = f; c.alignment = { horizontal: 'right', vertical: 'middle' }; c.border = box; };
+  // sheet 1: invoice
+  const pi = wb.addWorksheet(isCom ? 'Commercial Invoice' : 'Proforma Invoice', { pageSetup: { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.3, footer: 0.3 } } });
+  pi.columns = [{ width: 5 }, { width: 34 }, { width: 12 }, { width: 13 }, { width: 6 }, { width: 6 }, { width: 12 }, { width: 13 }];
+  let R = 1; const merge = (r, a, b) => pi.mergeCells(r, a, r, b);
+  merge(R, 1, 8); pi.getCell(R, 1).value = data.seller.name; pi.getCell(R, 1).font = { bold: true, size: 14, color: { argb: NAVY } }; pi.getCell(R, 1).alignment = { horizontal: 'center' }; pi.getRow(R).height = 20; R++;
+  if (data.seller.address){ merge(R, 1, 8); pi.getCell(R, 1).value = data.seller.address; pi.getCell(R, 1).alignment = { horizontal: 'center', wrapText: true }; pi.getCell(R, 1).font = { size: 8 }; R++; }
+  if (data.seller.contact){ merge(R, 1, 8); pi.getCell(R, 1).value = data.seller.contact; pi.getCell(R, 1).alignment = { horizontal: 'center' }; pi.getCell(R, 1).font = { size: 8 }; R++; }
+  R++; merge(R, 1, 8); const tt = pi.getCell(R, 1); tt.value = title; tt.font = { bold: true, size: 13, color: { argb: 'FFFFFFFF' } }; tt.alignment = { horizontal: 'center', vertical: 'middle' }; tt.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: NAVY } }; pi.getRow(R).height = 20; R += 2;
+  const rt = (l, v) => ({ richText: [{ font: { bold: true, size: 8 }, text: l + '  ' }, { font: { size: 8 }, text: String(v == null ? '' : v) }] });
+  const bl = [{ t: 'APPLICANT / BUYER / CONSIGNEE:', b: 1 }, { t: data.buyer.name, b: 1 }, { t: data.buyer.address }, { t: data.buyer.contact }, { rt: rt('PAN / VAT No.:', data.buyer.pan || '') }].filter(x => x.b || x.rt || x.t);
+  const sl = [['INVOICE NO.:', s.piNo], ['DATE:', s.date]]; if (!isCom && s.validity) sl.push(['VALIDITY:', s.validity]);
+  sl.push(['CURRENCY:', cur]); if (s.priceTerm) sl.push(['PRICE TERM:', s.priceTerm]); if (s.origin) sl.push(['COUNTRY OF ORIGIN:', s.origin]);
+  if (s.pol) sl.push(['PORT OF LOADING:', s.pol]); if (s.entry) sl.push(['ENTRY POINT:', s.entry]); if (s.dest) sl.push(['FINAL DESTINATION:', s.dest]); if (s.mode) sl.push(['MODE OF SHIPMENT:', s.mode]);
+  const b0 = R;
+  bl.forEach((l, i) => { pi.mergeCells(b0 + i, 1, b0 + i, 4); const c = pi.getCell(b0 + i, 1); if (l.rt) c.value = l.rt; else { c.value = l.t; c.font = { bold: !!l.b, size: 8 }; } c.alignment = { wrapText: true, vertical: 'top' }; });
+  sl.forEach((row, i) => { pi.mergeCells(b0 + i, 5, b0 + i, 8); const c = pi.getCell(b0 + i, 5); c.value = rt(row[0], row[1]); c.alignment = { wrapText: true, vertical: 'top' }; });
+  if (bl.length > 2) pi.getRow(b0 + 2).height = 22;
+  R = b0 + Math.max(bl.length, sl.length) + 1;
+  const head = ['SN', 'DESCRIPTION', 'ITEM / MODEL', 'H.S. CODE', 'QTY', 'UNIT', 'UNIT PRICE (' + cur + ')', 'AMOUNT (' + cur + ')'];
+  head.forEach((h, i) => hcell(pi.getCell(R, i + 1), h)); pi.getRow(R).height = 26; R++;
+  let sub = 0;
+  items.forEach((it, i) => { const amt = Math.round(it.qty * it.unitPrice * 100) / 100; sub += amt;
+    [i + 1, it.description, it.model || '', it.hs, it.qty, it.unit || 'PCS', it.unitPrice, amt].forEach((v, c) => { const cell = pi.getCell(R, c + 1); cell.value = v; cell.border = box; cell.font = { size: 8 }; cell.alignment = { vertical: 'middle', horizontal: c === 0 || c === 3 || c === 4 || c === 5 ? 'center' : c >= 6 ? 'right' : 'left', wrapText: c === 1 }; if (c >= 6) cell.numFmt = '#,##0.00'; }); R++; });
+  const disc = A.discount || 0, total = Math.round((sub - disc) * 100) / 100;
+  const trow = (l, v, bold) => { pi.mergeCells(R, 1, R, 7); const a = pi.getCell(R, 1); a.value = l; a.alignment = { horizontal: 'right' }; a.font = { bold: !!bold, size: 9 }; a.border = box; const b = pi.getCell(R, 8); b.value = v; money(b, '#,##0.00'); b.font = { bold: !!bold, size: 9 }; if (bold){ a.fill = b.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT } }; } R++; };
+  trow('SUB-TOTAL', sub); if (disc) trow('LESS: DISCOUNT', -disc); trow('TOTAL AMOUNT (' + cur + ')', total, true);
+  merge(R, 1, 8); pi.getCell(R, 1).value = 'AMOUNT IN WORDS: ' + invAmountWords(total, cur); pi.getCell(R, 1).font = { italic: true, bold: true, size: 8 }; pi.getCell(R, 1).alignment = { wrapText: true }; pi.getRow(R).height = 22; R += 2;
+  if (data.terms && data.terms.length){ merge(R, 1, 8); pi.getCell(R, 1).value = 'TERMS OF PAYMENT'; pi.getCell(R, 1).font = { bold: true, size: 9, color: { argb: ACCENT } }; R++; data.terms.forEach(t => { merge(R, 1, 8); pi.getCell(R, 1).value = '• ' + t; pi.getCell(R, 1).font = { size: 8 }; pi.getCell(R, 1).alignment = { wrapText: true }; R++; }); R++; }
+  if (data.bank && (data.bank.name || data.bank.account)){ merge(R, 1, 8); pi.getCell(R, 1).value = 'BENEFICIARY ACCOUNT DETAILS'; pi.getCell(R, 1).font = { bold: true, size: 9, color: { argb: ACCENT } }; R++; [['BENEFICIARY:', data.bank.name], ['BENEFICIARY BANK:', data.bank.bank], ['BANK ADDRESS:', data.bank.address], ['SWIFT CODE:', data.bank.swift], ['ACCOUNT NO.:', data.bank.account]].filter(x => x[1]).forEach(row => { merge(R, 1, 8); pi.getCell(R, 1).value = rt(row[0], row[1]); pi.getCell(R, 1).alignment = { wrapText: true }; R++; }); R++; }
+  merge(R, 1, 8); pi.getCell(R, 1).value = 'DECLARATION'; pi.getCell(R, 1).font = { bold: true, size: 9, color: { argb: ACCENT } }; R++; merge(R, 1, 8); pi.getCell(R, 1).value = data.declaration; pi.getCell(R, 1).font = { size: 8, italic: true }; pi.getCell(R, 1).alignment = { wrapText: true }; pi.getRow(R).height = 22; R += 2;
+  pi.mergeCells(R, 1, R, 4); pi.getCell(R, 1).value = 'ACCEPTED BY APPLICANT:'; pi.getCell(R, 1).font = { bold: true, size: 8 }; pi.mergeCells(R, 5, R, 8); pi.getCell(R, 5).value = 'For and on behalf of ' + data.seller.name; pi.getCell(R, 5).font = { bold: true, size: 8 }; R += 3;
+  pi.mergeCells(R, 1, R, 4); pi.getCell(R, 1).value = '__________________________'; pi.mergeCells(R, 5, R, 8); pi.getCell(R, 5).value = '__________________________'; R++;
+  pi.mergeCells(R, 1, R, 4); pi.getCell(R, 1).value = 'Authorised Signature & Company Stamp'; pi.getCell(R, 1).font = { size: 7, color: { argb: 'FF64748B' } }; pi.mergeCells(R, 5, R, 8); pi.getCell(R, 5).value = 'Authorised Signature & Company Stamp'; pi.getCell(R, 5).font = { size: 7, color: { argb: 'FF64748B' } }; R += 2;
+  merge(R, 1, 8); pi.getCell(R, 1).value = 'Prepared with customsnepal.com — Nepal customs tariff, duty & landed-cost tools. Estimate only; confirm final classification and taxes with the customs office or your clearing agent.'; pi.getCell(R, 1).font = { size: 7, italic: true, color: { argb: 'FF94A3B8' } }; pi.getCell(R, 1).alignment = { wrapText: true, horizontal: 'center' };
+
+  // sheet 2: customs & landed cost
+  if ($('#inv-lc').checked){
+    const lc = wb.addWorksheet('Customs & Landed Cost', { pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+    lc.columns = [{ width: 4 }, { width: 26 }, { width: 12 }, { width: 5 }, { width: 11 }, { width: 11 }, { width: 12 }, { width: 6 }, { width: 13 }, { width: 12 }, { width: 12 }, { width: 14 }, { width: 15 }];
+    let r2 = 1; lc.mergeCells(r2, 1, r2, 13); lc.getCell(r2, 1).value = 'CUSTOMS DUTY, TAXES & LANDED COST (ESTIMATE)'; lc.getCell(r2, 1).font = { bold: true, size: 12, color: { argb: NAVY } }; r2++;
+    lc.mergeCells(r2, 1, r2, 13); lc.getCell(r2, 1).value = `Duty from Nepal Customs Tariff 2026/27. FX 1 ${cur} = NPR ${A.fx} · Freight+insurance ${(A.freightPct*100).toFixed(0)}% · VAT ${(A.vat*100).toFixed(0)}% · Target margin ${(A.margin*100).toFixed(0)}%.`; lc.getCell(r2, 1).font = { size: 8, italic: true, color: { argb: 'FF64748B' } }; r2 += 2;
+    ['NO.','MODEL / DESC','NEPAL HS','DUTY %','EXW (' + cur + ')','CIF (' + cur + ')','CIF (NPR)','QTY','CUSTOMS DUTY','VAT ' + (A.vat*100).toFixed(0) + '%','TOTAL TAX','LANDED (excl VAT)','SELL/UNIT excl VAT'].forEach((h, i) => hcell(lc.getCell(r2, i + 1), h)); lc.getRow(r2).height = 26; r2++;
+    const T = { exw: 0, cif: 0, cifn: 0, duty: 0, vat: 0, tax: 0, landed: 0 };
+    items.forEach((it, i) => { const exw = it.qty * it.unitPrice, cif = exw * (1 + A.freightPct), cifn = cif * A.fx, duty = Math.round(cifn * it.duty), vat = Math.round((cifn + duty) * A.vat), tax = duty + vat, landed = cifn + duty, perU = it.qty ? landed / it.qty : 0, sell = A.margin < 1 ? perU / (1 - A.margin) : 0;
+      T.exw += exw; T.cif += cif; T.cifn += cifn; T.duty += duty; T.vat += vat; T.tax += tax; T.landed += landed;
+      [i + 1, it.model || it.description.slice(0, 24), it.hs, it.duty, exw, cif, cifn, it.qty, duty, vat, tax, landed, sell].forEach((v, c) => { const cell = lc.getCell(r2, c + 1); cell.value = v; cell.border = box; cell.font = { size: 8 };
+        if (c === 0 || c === 2 || c === 7) cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        else if (c === 1) cell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+        else if (c === 3){ cell.numFmt = '0%'; cell.alignment = { horizontal: 'center' }; }
+        else if (c === 4 || c === 5) money(cell, '#,##0.00'); else money(cell, '#,##0'); }); r2++; });
+    ['', 'TOTAL', '', '', T.exw, T.cif, T.cifn, items.reduce((a, x) => a + x.qty, 0), T.duty, T.vat, T.tax, T.landed, ''].forEach((v, c) => { const cell = lc.getCell(r2, c + 1); cell.value = v; cell.border = box; cell.font = { bold: true, size: 8 }; cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: LIGHT } }; if (c === 4 || c === 5) money(cell, '#,##0.00'); else if (c >= 6 && c !== 7) money(cell, '#,##0'); else cell.alignment = { horizontal: 'center' }; }); r2 += 2;
+    ['Customs duty = CIF (NPR) × tariff rate.  VAT = (CIF + customs duty) × rate.', 'Landed cost excludes VAT (claimable as input credit by a VAT-registered importer).', 'Freight + insurance spread across value; replace with your forwarder’s actual split for a firmer figure.', 'Estimate only — confirm classification, excise and other levies with the customs office or your clearing agent.'].forEach(t => { lc.mergeCells(r2, 1, r2, 13); lc.getCell(r2, 1).value = '• ' + t; lc.getCell(r2, 1).font = { size: 8, color: { argb: 'FF475569' } }; r2++; });
+  }
+  // sheet 3: HS code review (AI notes)
+  if ($('#inv-hsr').checked && items.some(it => it.note)){
+    const hr = wb.addWorksheet('HS Code Review', { pageSetup: { orientation: 'landscape', fitToWidth: 1, fitToHeight: 0 } });
+    hr.columns = [{ width: 4 }, { width: 30 }, { width: 12 }, { width: 8 }, { width: 70 }]; let r3 = 1;
+    hr.mergeCells(r3, 1, r3, 5); hr.getCell(r3, 1).value = 'HS CODE REVIEW — Nepal Customs Tariff 2026/27 (AI suggestions)'; hr.getCell(r3, 1).font = { bold: true, size: 12, color: { argb: NAVY } }; r3 += 2;
+    ['NO.', 'DESCRIPTION', 'NEPAL HS', 'DUTY %', 'CLASSIFICATION BASIS / NOTE'].forEach((h, i) => hcell(hr.getCell(r3, i + 1), h)); r3++;
+    items.forEach((it, i) => { [i + 1, it.description, it.hs, it.duty, it.note || ''].forEach((v, c) => { const cell = hr.getCell(r3, c + 1); cell.value = v; cell.border = box; cell.font = { size: 8 }; cell.alignment = { vertical: 'top', wrapText: c === 1 || c === 4, horizontal: c === 0 || c === 2 || c === 3 ? 'center' : 'left' }; if (c === 3) cell.numFmt = '0%'; }); r3++; });
+    hr.mergeCells(r3 + 1, 1, r3 + 1, 5); hr.getCell(r3 + 1, 1).value = 'AI-assisted suggestions from the Nepal tariff — verify with the customs office or your clearing agent before declaring.'; hr.getCell(r3 + 1, 1).font = { size: 8, italic: true, color: { argb: 'FF64748B' } };
+  }
+  return wb;
+}
+async function downloadInvExcel(){
+  const d = invData(); if (!d.items.length){ invMsg('inv-ai-msg', 'Add at least one line item (description or price) first.', 'err'); return; }
+  const btn = $('#inv-xlsx'), old = btn.innerHTML; btn.disabled = true; btn.textContent = 'Building…';
+  try { await loadExcelJS(); const wb = buildInvoiceWorkbook(d); const buf = await wb.xlsx.writeBuffer(); dlBlob(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), (d.docType === 'commercial' ? 'Commercial' : 'Proforma') + '_Invoice_' + (d.shipment.piNo || 'draft').replace(/[^\w-]+/g, '_') + '.xlsx'); invMsg('inv-ai-msg', 'Excel downloaded.', 'ok'); saveInvDraft(); }
+  catch (e){ invMsg('inv-ai-msg', 'Could not build the Excel file: ' + (e && e.message || e), 'err'); }
+  finally { btn.disabled = false; btn.innerHTML = old; }
+}
+/* --- PDF via print --- */
+function invHTML(d){
+  const s = d.shipment, cur = s.currency, A = d.assumptions, isCom = d.docType === 'commercial', title = isCom ? 'COMMERCIAL INVOICE' : 'PROFORMA INVOICE';
+  let sub = 0; const rows = d.items.map((it, i) => { const amt = it.qty * it.unitPrice; sub += amt; return `<tr><td class=c>${i+1}</td><td>${esc(it.description)}</td><td>${esc(it.model||'')}</td><td class=c>${esc(it.hs||'')}</td><td class=r>${it.qty}</td><td class=c>${esc(it.unit||'PCS')}</td><td class=r>${fmtC(it.unitPrice)}</td><td class=r>${fmtC(amt)}</td></tr>`; }).join('');
+  const disc = A.discount || 0, total = sub - disc;
+  const kv = (l, v) => v ? `<div><b>${l}</b> ${esc(v)}</div>` : '';
+  const bank = d.bank && (d.bank.name || d.bank.account) ? `<h3>Beneficiary account details</h3><div class=blk>${kv('Beneficiary:', d.bank.name)}${kv('Bank:', d.bank.bank)}${kv('Address:', d.bank.address)}${kv('SWIFT:', d.bank.swift)}${kv('Account:', d.bank.account)}</div>` : '';
+  const terms = d.terms && d.terms.length ? `<h3>Terms of payment</h3><ul>${d.terms.map(t => '<li>' + esc(t) + '</li>').join('')}</ul>` : '';
+  return `<!doctype html><html><head><meta charset=utf-8><title>${title} ${esc(s.piNo||'')}</title><style>
+    *{box-sizing:border-box}body{font:12px/1.5 -apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0f172a;margin:28px;max-width:800px}
+    h1{text-align:center;margin:0;font-size:18px}.sub{text-align:center;font-size:10px;color:#475569;margin:2px 0 12px}
+    .title{background:#0f172a;color:#fff;text-align:center;padding:7px;font-weight:700;letter-spacing:1px;margin:10px 0}
+    .grid{display:flex;justify-content:space-between;gap:24px;font-size:11px}.grid>div{flex:1}.grid b{font-weight:700}
+    table{width:100%;border-collapse:collapse;margin:14px 0;font-size:11px}th,td{border:1px solid #cbd5e1;padding:5px 7px}th{background:#0f172a;color:#fff;font-size:10px}
+    td.r,th.r{text-align:right}td.c,th.c{text-align:center}tfoot td{font-weight:700;background:#f1f5f9}
+    h3{font-size:11px;color:#1e3a8a;margin:14px 0 4px}.blk div,ul{font-size:11px}ul{margin:4px 0;padding-left:18px}
+    .words{font-style:italic;font-weight:700;font-size:11px;margin:6px 0}
+    .sign{display:flex;justify-content:space-between;margin-top:40px;font-size:10px;color:#475569}.sign div{width:45%;border-top:1px solid #94a3b8;padding-top:4px}
+    .foot{margin-top:24px;font-size:9px;color:#94a3b8;text-align:center;font-style:italic}
+    @media print{body{margin:0;padding:16px}}
+  </style></head><body>
+    <h1>${esc(d.seller.name)}</h1><div class=sub>${esc(d.seller.address||'')}${d.seller.contact ? ' · ' + esc(d.seller.contact) : ''}</div>
+    <div class=title>${title}</div>
+    <div class=grid>
+      <div><b>APPLICANT / BUYER / CONSIGNEE</b><br>${esc(d.buyer.name)}<br>${esc(d.buyer.address||'')}<br>${esc(d.buyer.contact||'')}${d.buyer.pan ? '<br>PAN/VAT: ' + esc(d.buyer.pan) : ''}</div>
+      <div>${kv('Invoice No.:', s.piNo)}${kv('Date:', s.date)}${!isCom ? kv('Validity:', s.validity) : ''}${kv('Currency:', cur)}${kv('Price term:', s.priceTerm)}${kv('Country of origin:', s.origin)}${kv('Port of loading:', s.pol)}${kv('Entry point:', s.entry)}${kv('Final destination:', s.dest)}${kv('Mode:', s.mode)}</div>
+    </div>
+    <table><thead><tr><th class=c>SN</th><th>Description</th><th>Model</th><th class=c>H.S. Code</th><th class=r>Qty</th><th class=c>Unit</th><th class=r>Unit price</th><th class=r>Amount (${cur})</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td colspan=7 class=r>SUB-TOTAL</td><td class=r>${fmtC(sub)}</td></tr>${disc ? `<tr><td colspan=7 class=r>LESS: DISCOUNT</td><td class=r>-${fmtC(disc)}</td></tr>` : ''}<tr><td colspan=7 class=r>TOTAL (${cur})</td><td class=r>${fmtC(total)}</td></tr></tfoot></table>
+    <div class=words>Amount in words: ${invAmountWords(total, cur)}</div>
+    ${terms}${bank}
+    <h3>Declaration</h3><div style="font-size:11px;font-style:italic">${esc(d.declaration)}</div>
+    <div class=sign><div>Accepted by applicant<br>&nbsp;</div><div>For and on behalf of ${esc(d.seller.name)}<br>&nbsp;</div></div>
+    <div class=foot>Prepared with customsnepal.com — Nepal customs tariff, duty &amp; landed-cost tools. Estimate only; confirm final classification and taxes with the customs office or your clearing agent.</div>
+  </body></html>`;
+}
+function downloadInvPDF(){
+  const d = invData(); if (!d.items.length){ invMsg('inv-ai-msg', 'Add at least one line item first.', 'err'); return; }
+  const w = window.open('', '_blank'); if (!w){ invMsg('inv-ai-msg', 'Allow pop-ups to export a PDF, or use Download Excel.', 'err'); return; }
+  w.document.write(invHTML(d)); w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (e){} }, 500);
+}
+/* --- AI: suggest HS codes for the current line items --- */
+async function suggestHS(){
+  const rows = invItems.map((it, i) => ({ it, i })).filter(x => (x.it.desc || '').trim());
+  if (!rows.length){ invMsg('inv-ai-msg', 'Add product descriptions first — then AI suggests the HS codes.', 'err'); return; }
+  const btn = $('#inv-suggest'); btn.disabled = true; invMsg('inv-ai-msg', 'Classifying ' + rows.length + ' item(s) with AI…', '');
+  try {
+    await initAI();
+    if (!sampleFn){ invMsg('inv-ai-msg', 'The AI assistant is not switched on for this site.', 'err'); return; }
+    const list = rows.map((x, k) => { const cand = search(x.it.desc + ' ' + (x.it.model || '')).rows.slice(0, 8).map(r => r.code + ' ' + label(r).slice(0, 46)).join(' | '); return `${k + 1}. ${x.it.desc}${x.it.model ? ' (model ' + x.it.model + ')' : ''}\n   options: ${cand || 'none found'}`; }).join('\n');
+    const prompt = `You classify products into Nepal 8-digit customs HS codes (Customs Tariff 2026/27). For each numbered product pick the single most appropriate Nepal HS code, preferring one of its listed options but choosing a better real Nepal code if none fit. Give a one-line classification basis.\n\nProducts:\n${list}\n\nReply ONLY with JSON, no other text: {"items":[{"n":1,"hs":"8518.10.00","note":"short reason"}]}`;
+    const data = await sampleFn.json([{ role: 'user', content: prompt }], { cache: false });
+    const arr = (data && data.items) || [];
+    let filled = 0;
+    arr.forEach(a => { const idx = rows[(a.n || 0) - 1]; if (!idx) return; const code = String(a.hs || '').trim(); if (code){ invItems[idx.i].hs = code; invItems[idx.i].note = a.note || ''; filled++; } });
+    renderInvRows(); renderInvTotals(); saveInvDraft();
+    invMsg('inv-ai-msg', filled ? `AI suggested HS codes for ${filled} item(s). Review the codes and duty, then generate your documents. Tick “HS Code Review sheet” to include the notes.` : 'AI could not confidently classify these — try more specific descriptions.', filled ? 'ok' : 'err');
+    if (filled) $('#inv-hsr').checked = true;
+  } catch (e){ const code = e && e.code || ''; invMsg('inv-ai-msg', code === 'rate_limited' ? 'Too many requests — wait a minute and try again.' : 'The AI could not classify these right now. You can enter HS codes manually.', 'err'); }
+  finally { btn.disabled = false; }
+}
+/* --- import invoice file (Excel/CSV now; PDF/photo guided) --- */
+function loadSheetJS(){ if (window.XLSX) return Promise.resolve(); if (loadSheetJS._p) return loadSheetJS._p; return loadSheetJS._p = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'; s.onload = res; s.onerror = () => rej(new Error('Could not load the spreadsheet reader.')); document.head.appendChild(s); }); }
+function pickCol(headers, re){ for (let i = 0; i < headers.length; i++) if (re.test(headers[i])) return i; return -1; }
+async function importInvoiceFile(file){
+  const name = (file.name || '').toLowerCase(), isSheet = /\.(xlsx|xls|csv)$/.test(name);
+  if (!isSheet){ invMsg('inv-upmsg', 'For now, Excel or CSV files auto-fill the table. For a PDF or photo, enter the items below (or paste them) and use “Suggest HS codes with AI”. PDF/photo reading is coming next.', 'err'); return; }
+  invMsg('inv-upmsg', 'Reading ' + file.name + '…', '');
+  try {
+    await loadSheetJS();
+    const buf = await file.arrayBuffer(), wb = XLSX.read(buf, { type: 'array' }), ws = wb.Sheets[wb.SheetNames[0]];
+    const grid = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false });
+    // find the header row: the one mentioning description/hs/qty/price
+    let hi = grid.findIndex(r => r && r.some(c => /descrip|item|product/i.test(String(c))) && r.some(c => /qty|quant|price|rate|amount|hs|code/i.test(String(c))));
+    if (hi < 0) hi = 0;
+    const headers = (grid[hi] || []).map(c => String(c || '').toLowerCase());
+    const cD = pickCol(headers, /descrip|product|item name|goods/), cM = pickCol(headers, /model|item.?code|part/), cH = pickCol(headers, /h\.?s|hs.?code|tariff/), cQ = pickCol(headers, /qty|quant/), cU = pickCol(headers, /unit(?!.?price)/), cP = pickCol(headers, /unit.?price|price|rate/);
+    if (cD < 0 && cH < 0){ invMsg('inv-upmsg', 'Could not find a description or HS-code column. Check the file has a header row, or type the items in below.', 'err'); return; }
+    const out = [];
+    for (let r = hi + 1; r < grid.length; r++){ const row = grid[r] || []; const desc = cD >= 0 ? String(row[cD] || '').trim() : ''; const hsRaw = cH >= 0 ? String(row[cH] || '').trim() : ''; const price = cP >= 0 ? parseFloat(String(row[cP]).replace(/[^\d.]/g, '')) : 0;
+      if (!desc && !hsRaw && !price) continue;
+      let hs = hsRaw.replace(/[^\d.]/g, ''); if (/^\d{8}$/.test(hs)) hs = hs.slice(0,4) + '.' + hs.slice(4,6) + '.' + hs.slice(6);
+      out.push(Object.assign(blankItem(), { desc, model: cM >= 0 ? String(row[cM] || '').trim() : '', hs, qty: cQ >= 0 ? (parseFloat(String(row[cQ]).replace(/[^\d.]/g, '')) || '') : '', unit: cU >= 0 ? (String(row[cU] || '').trim() || 'PCS') : 'PCS', price: price || '' })); }
+    if (!out.length){ invMsg('inv-upmsg', 'No line items found in the sheet. Type them in below instead.', 'err'); return; }
+    invItems = out; renderInvRows(); renderInvTotals(); saveInvDraft();
+    const noHS = out.filter(x => !x.hs).length;
+    invMsg('inv-upmsg', `Loaded ${out.length} item(s) from ${file.name}.` + (noHS ? ` ${noHS} have no HS code — tap “Suggest HS codes with AI”.` : ''), 'ok');
+  } catch (e){ invMsg('inv-upmsg', 'Could not read that file: ' + (e && e.message || e) + '. Try CSV, or type the items in below.', 'err'); }
+}
+
+/* saved */
 function renderSaved(){
   const s = store.get('saved', []).filter(c => BY[c]);
   $('#v-saved').innerHTML = `<div class="page-h"><h1>Saved codes</h1><p>Kept in this browser for quick reference.</p></div>` + (s.length
@@ -1557,11 +1982,11 @@ $('#v-stats').addEventListener('input', e => { if (e.target.id === 'cmp-q'){ cmp
 let curTab = 'search';
 function go(t){
   curTab = t;
-  ['search','ai','stats','browse','calc','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
+  ['search','ai','stats','browse','calc','invoice','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
   if (t === 'stats') renderStats(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
-  if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc();
+  if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc(); if (t === 'invoice') initInvoice();
   try { history.replaceState(null, '', '#' + t); } catch(e){}
   window.scrollTo({top:0});
 }
@@ -1572,6 +1997,6 @@ initCalc();
 renderResults();
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (['ai','stats','browse','calc','saved'].includes(h)) go(h);
+else if (['ai','stats','browse','calc','invoice','saved'].includes(h)) go(h);
 })();
 </script>
