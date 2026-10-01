@@ -49,6 +49,7 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 
 /* ---------- app bar ---------- */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero1);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
+.bar .wrap{max-width:1100px}
 .bar .logo,.bar .logo small{color:#fff}
 .bar .logo small{color:rgba(255,255,255,.65)}
 .bar-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);min-height:56px}
@@ -58,10 +59,10 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .logo small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);letter-spacing:0}
 .nav-desk{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0}
 .nav-desk::-webkit-scrollbar{display:none}
-.nav-desk button,.nav-desk a{height:40px;display:flex;align-items:center;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t);text-decoration:none;cursor:pointer;background:none;border:0}
+.nav-desk button,.nav-desk a{height:40px;display:flex;align-items:center;padding:0 11px;border-radius:10px;font-weight:700;font-size:.88rem;white-space:nowrap;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t);text-decoration:none;cursor:pointer;background:none;border:0}
 .nav-desk button:hover,.nav-desk a:hover{background:rgba(255,255,255,.1);color:#fff}
 .nav-desk button[aria-selected="true"],.nav-desk a[aria-selected="true"]{background:var(--hero3);color:#fff}
-.nav-desk a .beta{margin-left:6px;font-size:.56rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:2px 5px;border-radius:999px;background:#F59E0B;color:#3a2600;line-height:1}
+.beta{margin-left:6px;font-size:.56rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:2px 5px;border-radius:999px;background:#F59E0B;color:#3a2600;line-height:1;vertical-align:middle}
 @media (max-width:720px){.nav-desk{display:none}.bar .wrap{padding-inline:12px}.bar-row{gap:var(--s2)}}
 
 nav.tabbar{display:none}
@@ -603,7 +604,7 @@ footer p{margin:0 0 6px;max-width:70ch}
 <header class="bar">
   <div class="wrap bar-row">
     <a class="logo" href="/" data-tab="search" aria-label="Customs Nepal — home"><span class="mark">HS</span><span>Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></a>
-    <div style="display:flex;align-items:center;gap:6px">
+    <div style="display:flex;align-items:center;gap:6px;min-width:0">
     <div class="nav-desk" role="tablist" aria-label="Sections">
       <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
       <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
@@ -613,7 +614,6 @@ footer p{margin:0 0 6px;max-width:70ch}
       <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
       <a href="/tariff">Tariff</a>
       <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
-      <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false">Invoice<span class="beta">Beta</span></a>
     </div>
     <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
@@ -712,6 +712,7 @@ footer p{margin:0 0 6px;max-width:70ch}
 
   <!-- CALCULATOR -->
   <section id="v-calc" hidden>
+    <div class="subnav toolsnav" role="tablist" aria-label="Costing tools"><button role="tab" data-toolt="calc" aria-selected="true">Quick estimate</button><button role="tab" data-toolt="invoice" aria-selected="false">Invoice<span class="beta">Beta</span></button></div>
     <div class="page-h"><h1>Import tax calculator</h1><p>Estimate customs duty, VAT and landed cost. An example LED display shipment is loaded; replace it with your own figures.</p></div>
     <div class="card">
       <h2><span class="n">1</span>Product</h2>
@@ -747,6 +748,7 @@ footer p{margin:0 0 6px;max-width:70ch}
 
   <!-- INVOICE GENERATOR -->
   <section id="v-invoice" hidden>
+    <div class="subnav toolsnav" role="tablist" aria-label="Costing tools"><button role="tab" data-toolt="calc" aria-selected="false">Quick estimate</button><button role="tab" data-toolt="invoice" aria-selected="true">Invoice<span class="beta">Beta</span></button></div>
     <div class="page-h"><h1>Invoice generator</h1><p>Create a Proforma or Commercial Invoice with a customs &amp; landed-cost estimate. Type your line items, or upload an invoice and let AI read the items and suggest the Nepal HS codes.</p></div>
 
     <div class="card">
@@ -867,7 +869,6 @@ footer p{margin:0 0 6px;max-width:70ch}
   <a role="tab" data-tab="exports" href="/exports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Exports</a>
   <a role="tab" data-tab="browse" href="/browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</a>
   <a role="tab" data-tab="calc" href="/calculator" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</a>
-  <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false"><svg class="i"><use href="#i-doc"/></svg>Invoice</a>
 </nav>
 
 <div class="scrim" id="scrim" hidden></div>
@@ -1694,7 +1695,7 @@ function renderHome(){
       <button data-go="imports"><span class="ic" style="background:#1D81A2">${ic('i-chart')}</span><b>Imports</b><small>What Nepal buys, by product and country</small></button>
       <button data-go="exports"><span class="ic" style="background:#2E9E6B">${ic('i-chart')}</span><b>Exports</b><small>What Nepal sells, by product and country</small></button>
       <button data-go="stats"><span class="ic" style="background:#EE8A4B">${ic('i-chart')}</span><b>Trade</b><small>Compare years, products and partners</small></button>
-      <button data-go="calc"><span class="ic" style="background:#5FB365">${ic('i-calc')}</span><b>Tax calculator</b><small>Duty, VAT and landed cost in NPR</small></button>
+      <button data-go="calc"><span class="ic" style="background:#5FB365">${ic('i-calc')}</span><b>Calculator</b><small>Duty, VAT &amp; landed cost, plus proforma invoice</small></button>
       <button data-go="browse"><span class="ic" style="background:#9A60B4">${ic('i-list')}</span><b>Browse tariff</b><small>Sections, chapters, notes and rules</small></button>
     </div>
     ${recent.length ? `<h2 class="sec">Recent searches</h2><div class="recent">${recent.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
@@ -2898,11 +2899,13 @@ function go(t, hist){
   if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else if (t === 'imports') renderImports(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+  try { $$('[data-toolt]').forEach(b => b.setAttribute('aria-selected', b.dataset.toolt === t)); if (t === 'invoice') $$('[data-tab="calc"]').forEach(b => b.setAttribute('aria-selected', 'true')); } catch(e){}
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc(); if (t === 'invoice') initInvoice();
   try { var _p = TABPATH[t] || '/'; if (hist === 'push') history.pushState(null,'',_p); else if (hist !== false) history.replaceState(null,'',_p); } catch(e){}
   window.scrollTo({top:0});
 }
 $$('[data-tab]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); go(b.dataset.tab, 'push'); }));
+$$('[data-toolt]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); go(b.dataset.toolt, 'push'); }));
 
 setOrigin(origin);
 initCalc();

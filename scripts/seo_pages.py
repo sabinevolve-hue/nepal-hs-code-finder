@@ -100,9 +100,10 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 .wrap{max-width:760px;margin:0 auto;padding:0 16px}
 header.top{background:var(--navy);color:#fff}
 @media(prefers-color-scheme:dark){header.top{background:#0B1428}}
-header.top .wrap{display:flex;align-items:center;gap:10px;min-height:56px}
+header.top .wrap{display:flex;align-items:center;gap:10px;min-height:56px;max-width:1060px}
 header.top .wrap.topbar{gap:14px}
-.topnav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.topnav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.topnav::-webkit-scrollbar{display:none}
 .topnav a{color:rgba(255,255,255,.72);font-size:.9rem;font-weight:700;padding:8px 12px;border-radius:10px;white-space:nowrap}
 .topnav a:hover{background:rgba(255,255,255,.1);color:#fff;text-decoration:none}
 .topnav a.cur{background:var(--accent);color:#fff}
@@ -191,7 +192,6 @@ def page_head(title, desc, path, breadcrumb):
         '<a href="/browse">Browse</a>'
         '<a href="/tariff" class="cur">Tariff</a>'
         '<a href="/calculator">Calculator</a>'
-        '<a href="/invoice">Invoice</a>'
         '</nav></div></header>'
         '<div class="wrap">'
     )
