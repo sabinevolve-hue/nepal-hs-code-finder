@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.customsnepal.app",
+      "sha256_cert_fingerprints": [
+        "25:20:ED:A9:24:7B:DF:23:DA:B1:5C:53:05:23:48:EF:CF:08:CA:77:4F:D1:02:05:DA:8F:2B:12:30:C9:B9:C7"
+      ]
+    }
+  }
+]
