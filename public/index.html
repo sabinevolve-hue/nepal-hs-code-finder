@@ -690,6 +690,13 @@ footer p{margin:0 0 6px;max-width:70ch}
     <div class="fine" id="st-src" style="margin-top:var(--s4);display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;align-items:center"><span id="st-src-t"></span><span class="seg" style="padding:2px"><button id="u-np" style="min-height:32px;padding:0 10px;font-size:.78rem">Arab · Crore</button><button id="u-intl" style="min-height:32px;padding:0 10px;font-size:.78rem">Billion · Million</button></span></div>
   </section>
 
+  <!-- EXPORTS -->
+  <section id="v-exports" hidden>
+    <div class="page-h"><h1>Nepal exports</h1><p id="ex-sub"></p></div>
+    <div id="ex-body"></div>
+    <div class="fine" style="margin-top:var(--s4)">Source: Department of Customs, Nepal — Foreign Trade Statistics. Values as published; NPR.</div>
+  </section>
+
   <!-- BROWSE -->
   <section id="v-browse" hidden></section>
 
@@ -2540,11 +2547,12 @@ function monthlyLine(el, key){
     xAxis: Object.assign(axisBase(), { type: 'category', boundaryGap: false, data: ST.month_names.map(m => m.slice(0, 3)) }),
     yAxis: Object.assign(axisBase(), { type: 'value', axisLabel: { color: tok('--muted'), fontSize: 11, formatter: v => rs(v, true) } }), series });
 }
-function treemapChart(el){
+function treemapChart(el, dir){
+  const vi = dir === 'exp' ? 3 : 2, tot = (dir === 'exp' ? OV().exports[1] : OV().imports[1]) || 1, lbl = dir === 'exp' ? 'exports' : 'imports';
   const secs = {};
-  CH().forEach(c => { const s = sectionOf(c[0]); if (!s) return; (secs[s.n] = secs[s.n] || { name: 'Section ' + s.n + ' · ' + s.t.split(';')[0].slice(0, 40), children: [] }).children.push({ name: chapName(c[0]), value: c[2], ch: c[0] }); });
+  CH().forEach(c => { const s = sectionOf(c[0]); if (!s || !c[vi]) return; (secs[s.n] = secs[s.n] || { name: 'Section ' + s.n + ' · ' + s.t.split(';')[0].slice(0, 40), children: [] }).children.push({ name: chapName(c[0]), value: c[vi], ch: c[0] }); });
   const pal = ['#1D81A2', '#2E9E6B', '#E8722E', '#7C5CBF', '#B8860B', '#C0392B', '#3A7CA5', '#5B8C5A', '#8E44AD', '#D35400', '#16A085', '#7F8C8D', '#2C3E50', '#27AE60', '#E67E22', '#2980B9', '#8D6E63', '#00838F', '#AD1457', '#6D4C41', '#455A64'];
-  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => `${esc(p.name)}<br><b>${rs(p.value)}</b> · ${(p.value / OV().imports[1] * 100).toFixed(1)}% of imports` },
+  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => `${esc(p.name)}<br><b>${rs(p.value)}</b> · ${(p.value / tot * 100).toFixed(1)}% of ${lbl}` },
     series: [{ type: 'treemap', roam: false, nodeClick: 'zoomToNode', breadcrumb: { show: false }, label: { fontSize: 11, color: '#fff', formatter: p => p.name.replace(/^Section [IVX]+ · /, '') },
       upperLabel: { show: true, height: 20, fontSize: 11, color: '#fff' }, itemStyle: { borderColor: tok('--card'), borderWidth: 1, gapWidth: 1 },
       levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }, { colorSaturation: [.35, .6], itemStyle: { gapWidth: 2, borderColorSaturation: .5 } }],
@@ -2747,6 +2755,54 @@ function renderStats(){
   if (stView === 'chapters' && stChapter && H.chapters[stChapter]) yearBars($('#ec-chap'), [{ name: 'Imports', data: H.chapters[stChapter].map(x => x[0]) }, { name: 'Exports', data: H.chapters[stChapter].map(x => x[1]) }, { name: 'Duty collected', data: H.chapters[stChapter].map(x => x[2]) }], ['Imports', 'Exports', 'Duty collected']);
   if (stView === 'countries' && stCountry && H.countries[stCountry]) yearBars($('#ec-cty'), [{ name: 'Imports from', data: H.countries[stCountry].map(x => x[0]) }, { name: 'Exports to', data: H.countries[stCountry].map(x => x[1]) }], ['Imports from', 'Exports to']);
 }
+function renderExports(){
+  var exb = document.getElementById('ex-body'); if (!exb) return;
+  var sub = document.getElementById('ex-sub'); if (sub) sub.textContent = 'What Nepal sells abroad — by product and destination. FY ' + yFY() + ' · NPR';
+  ecClear();
+  var ch = CH(), co = CO(), ov = OV();
+  var topN = function(arr, key, n){ return arr.slice().sort(function(a,b){return b[key]-a[key];}).slice(0, n); };
+  var expTot = ov.exports[1] || 1;
+  var ge = pctc(ov.exports[1], ov.exports[0]);
+  var topCo = topN(co, 2, 1)[0], topCh = topN(ch, 3, 1)[0];
+  var top5 = topN(ch, 3, 5).reduce(function(a,x){return a + x[3];}, 0);
+  var share = ov.exports[1] / ((ov.imports[1] + ov.exports[1]) || 1) * 100;
+  var arrow = function(g){ return ic(g >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:14px;height:14px"'); };
+  var h = '';
+  h += '<div class="tiles">'
+    + '<div class="tile"><span>Exports FY ' + yFY() + '</span><b>' + rs(ov.exports[1], true) + '</b><small class="' + (ge>=0?'up':'down') + '">' + arrow(ge) + Math.abs(ge).toFixed(1) + '%&nbsp;vs&nbsp;' + (FY[stYear-1]||'prev') + '</small></div>'
+    + '<div class="tile"><span>Share of total trade</span><b>' + share.toFixed(1) + '%</b><small class="neutral">exports of all trade</small></div>'
+    + '<div class="tile"><span>Top market</span><b>' + esc(topCo[0]) + '</b><small class="neutral">' + (topCo[2]/expTot*100).toFixed(0) + '% of exports</small></div>'
+    + '<div class="tile"><span>Top product</span><b style="font-size:.98rem;line-height:1.2">' + esc(chapName(topCh[0])) + '</b><small class="neutral">' + (topCh[3]/expTot*100).toFixed(0) + '% of exports</small></div>'
+    + '</div>';
+  h += '<div class="facts-box"><h3>In plain words</h3><ul>'
+    + '<li>Nepal exported <b>' + rs(ov.exports[1]) + '</b> in FY ' + yFY() + ', ' + (ge>=0?'up':'down') + ' ' + Math.abs(ge).toFixed(1) + '% on the year before.</li>'
+    + '<li><b>' + esc(topCo[0]) + '</b> took ' + (topCo[2]/expTot*100).toFixed(0) + '% of all exports, and the top five product groups make up <b>' + (top5/expTot*100).toFixed(0) + '%</b> — exports are highly concentrated.</li>'
+    + '<li>The largest export category was <b>' + esc(chapName(topCh[0])) + '</b> (' + (topCh[3]/expTot*100).toFixed(0) + '%).</li></ul></div>';
+  if (ST.current && isLatest()){ var cex = ST.current.overview.exports, cg = pctc(cex[1], cex[0]); h += '<div class="ytd">' + ic('i-info') + '<div>FY ' + ST.current.fy + ' so far (' + ST.current.months + ' mo): exports <b>' + rs(cex[1], true) + '</b> (' + (cg>=0?'+':'') + cg.toFixed(1) + '% on the same months last year).</div></div>'; }
+  h += fig('Exports by year', 'Annual export value, FY ' + FY[0] + ' to ' + FY[FY.length-1], '<div class="ech short" id="ecx-trend"></div>');
+  h += fig('Map of exports', 'Every chapter sized by export value, FY ' + yFY() + '; tap a block to open it', '<div class="ech tall" id="ecx-tree"></div>');
+  h += fig('Top export categories', 'Export value by tariff chapter, 12 largest', barRows(topN(ch,3,12).map(function(x){return {k:'ch:'+x[0], sub:String(x[0]).padStart(2,'0'), label:chapName(x[0]), a:x[3]};}), {cls:'e'}));
+  h += fig('Where exports go', 'Export value by destination country, 12 largest', barRows(topN(co,2,12).map(function(x){return {k:'co:'+x[0], label:x[0], a:x[2]};}), {cls:'e'}));
+  if (isLatest() && FY.length > 1){
+    var mv = ch.map(function(c){ var cur=c[3], prev=(H.chapters[c[0]]&&H.chapters[c[0]][stYear-1])?H.chapters[c[0]][stYear-1][1]:0; return {ch:c[0], cur:cur, g: prev>0?((cur-prev)/prev*100):null}; }).filter(function(x){return x.cur>5e5 && x.g!==null;});
+    var up = mv.slice().sort(function(a,b){return b.g-a.g;}).slice(0,6);
+    var dn = mv.slice().sort(function(a,b){return a.g-b.g;}).slice(0,6);
+    if (up.length) h += fig('Fastest rising exports', 'Biggest year-on-year gains, chapters over NPR 50 Crore', barRows(up.map(function(x){return {k:'ch:'+x.ch, sub:(x.g>=0?'+':'')+x.g.toFixed(0)+'%', label:chapName(x.ch), a:x.cur};}), {cls:'e'}));
+    if (dn.length) h += fig('Falling exports', 'Biggest year-on-year declines', barRows(dn.map(function(x){return {k:'ch:'+x.ch, sub:x.g.toFixed(0)+'%', label:chapName(x.ch), a:x.cur};}), {cls:'e'}));
+  }
+  h += '<div class="facts-box"><h3>How exporting from Nepal works</h3><ul>'
+    + '<li><b>No export duty on most goods.</b> It applies only to a set list of raw materials (hides, wool, aggregates, some scrap) — finished goods usually leave duty-free.</li>'
+    + '<li><b>Exports are zero-rated for VAT</b>, and exporters reclaim VAT paid on inputs.</li>'
+    + '<li><b>Cash incentive:</b> the government pays about 3–5% cash back on export value, scaled by domestic value addition.</li>'
+    + '<li><b>LDC-graduation watch:</b> duty-free access to the EU and other markets rests on Nepal&rsquo;s LDC status; graduation (a deferral to 2029 is being sought) would phase those out. Access to India is treaty-based and unaffected.</li></ul></div>';
+  h += fig('Exports by month', 'Monthly export value, recent fiscal years', '<div class="ech" id="ecx-month"></div>');
+  exb.innerHTML = h;
+  if (!HAS_EC) return;
+  yearBars($('#ecx-trend'), [{name:'Exports', data:H.totals.map(function(t){return t[1];})}], ['Exports']);
+  treemapChart($('#ecx-tree'), 'exp'); var tc = charts[charts.length-1]; if (tc) tc.on('click', function(p){ if (p.data && p.data.ch){ stView='chapters'; stChapter=p.data.ch; stCountry=null; go('stats','push'); } });
+  monthlyLine($('#ecx-month'), 'exp');
+}
+$('#v-exports').addEventListener('click', function(e){ var b = e.target.closest('[data-k]'); if (!b) return; var k = b.dataset.k || ''; if (k.indexOf('ch:')===0){ stView='chapters'; stChapter=+k.slice(3); stCountry=null; go('stats','push'); } else if (k.indexOf('co:')===0){ stView='countries'; stCountry=k.slice(3); stChapter=null; go('stats','push'); } });
 $('#v-stats').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'u-np' || b.id === 'u-intl'){ UNITS = b.id === 'u-np' ? 'np' : 'intl'; store.set('units', UNITS); renderStats(); return; }
@@ -2770,18 +2826,20 @@ const TITLES = {
   search: 'Nepal HS Code Finder — Customs Tariff & Import Duty 2026/27',
   ai: 'Ask AI — Nepal HS Code Classifier | Customs Nepal',
   stats: 'Nepal Foreign Trade Data — Imports & Exports | Customs Nepal',
+  exports: 'Nepal Exports Data — by Product & Country | Customs Nepal',
+  imports: 'Nepal Imports Data — by Product & Country | Customs Nepal',
   browse: 'Browse the Nepal Customs Tariff 2026/27 | Customs Nepal',
   calc: 'Nepal Import Tax & Landed Cost Calculator | Customs Nepal',
   invoice: 'Proforma & Commercial Invoice Generator | Customs Nepal',
   saved: 'Saved HS Codes | Customs Nepal'
 };
-const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved' };
+const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', exports:'/exports', imports:'/imports', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved' };
 let curTab = 'search';
 function go(t, hist){
   curTab = t;
   try { document.title = TITLES[t] || TITLES.search; } catch(e){}
-  ['search','ai','stats','browse','calc','invoice','saved'].forEach(x => $('#v-' + x).hidden = x !== t);
-  if (t === 'stats') renderStats(); else ecClear();
+  ['search','ai','stats','exports','browse','calc','invoice','saved'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
+  if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc(); if (t === 'invoice') initInvoice();
@@ -2794,13 +2852,13 @@ setOrigin(origin);
 initCalc();
 renderResults();
 try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.trim()) runQuery(uq.trim()); } catch(e){}
-const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved' };
+const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved' };
 const _pt = PATHS[location.pathname];
 if (_pt && _pt !== 'search') go(_pt);
 window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (!_pt && ['ai','stats','browse','calc','invoice','saved'].includes(h)) go(h);
+else if (!_pt && ['ai','stats','exports','browse','calc','invoice','saved'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
 })();
