@@ -4,7 +4,7 @@ node_modules
 .env.local
 *.png
 !public/og.png
-!public/icon-180.png
+!public/icon-*.png
 data/fts/
 
 # generated documents and business fixtures (never publish)
