@@ -54,6 +54,16 @@ ANALYTICS = (
     "})();</script>"
 )
 
+# Service worker registration (installable PWA + offline). Registered only on the live domain,
+# its vercel.app mirror, or localhost, so the standalone/preview copy never tries to register.
+SW_REG = (
+    "<script>(function(){if(!('serviceWorker' in navigator))return;"
+    "var h=location.hostname;"
+    "if(h.indexOf('customsnepal.com')<0&&h.indexOf('vercel.app')<0&&h!=='localhost'&&h!=='127.0.0.1')return;"
+    "window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});"
+    "})();</script>"
+)
+
 FAVICON = ("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E"
            "%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230F172A%27/%3E"
            "%3Ctext x=%2716%27 y=%2721%27 font-family=%27monospace%27 font-size=%2713%27 font-weight=%27700%27 "
@@ -92,10 +102,18 @@ head = (
     '<meta name="twitter:image" content="' + OGIMG + '">'
     # Icons
     '<link rel="icon" href="' + FAVICON + '">'
+    '<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">'
     '<link rel="apple-touch-icon" href="/icon-180.png">'
+    # PWA (installable app) — manifest + platform hints
+    '<link rel="manifest" href="/manifest.webmanifest">'
+    '<meta name="application-name" content="Customs Nepal">'
+    '<meta name="mobile-web-app-capable" content="yes">'
+    '<meta name="apple-mobile-web-app-capable" content="yes">'
+    '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">'
+    '<meta name="apple-mobile-web-app-title" content="Customs Nepal">'
     # Structured data
     '<script type="application/ld+json">' + LD_JSON + '</script>'
-    + ANALYTICS +
+    + ANALYTICS + SW_REG +
     '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{overflow-x:hidden}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
     '</head><body>')
 

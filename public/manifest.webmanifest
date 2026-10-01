@@ -1,0 +1,27 @@
+{
+  "name": "Customs Nepal — HS Code & Customs Tariff",
+  "short_name": "Customs Nepal",
+  "description": "Find Nepal HS codes, customs duty, VAT and landed cost. Search the Customs Tariff 2026/27, explore import/export trade data, and generate a proforma invoice.",
+  "id": "/",
+  "start_url": "/?src=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#1B2A45",
+  "background_color": "#0B1428",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "finance", "productivity", "utilities"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Ask AI", "short_name": "Ask AI", "url": "/ask-ai", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Calculator", "short_name": "Calculator", "url": "/calculator", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Imports", "short_name": "Imports", "url": "/imports", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Exports", "short_name": "Exports", "url": "/exports", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
