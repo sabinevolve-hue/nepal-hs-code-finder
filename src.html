@@ -609,7 +609,7 @@ footer p{margin:0 0 6px;max-width:70ch}
       <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
       <a role="tab" data-tab="imports" href="/imports" aria-selected="false">Imports</a>
       <a role="tab" data-tab="exports" href="/exports" aria-selected="false">Exports</a>
-      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade data</a>
+      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade</a>
       <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
       <a href="/tariff">Tariff</a>
       <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
@@ -1024,7 +1024,7 @@ function renderHome(){
       <button data-go="ai"><span class="ic" style="background:#5470C6">${ic('i-spark')}</span><b>Ask AI</b><small>Describe a product, get ranked HS codes with reasons</small></button>
       <button data-go="imports"><span class="ic" style="background:#1D81A2">${ic('i-chart')}</span><b>Imports</b><small>What Nepal buys, by product and country</small></button>
       <button data-go="exports"><span class="ic" style="background:#2E9E6B">${ic('i-chart')}</span><b>Exports</b><small>What Nepal sells, by product and country</small></button>
-      <button data-go="stats"><span class="ic" style="background:#EE8A4B">${ic('i-chart')}</span><b>Trade data</b><small>Compare years, products and partners</small></button>
+      <button data-go="stats"><span class="ic" style="background:#EE8A4B">${ic('i-chart')}</span><b>Trade</b><small>Compare years, products and partners</small></button>
       <button data-go="calc"><span class="ic" style="background:#5FB365">${ic('i-calc')}</span><b>Tax calculator</b><small>Duty, VAT and landed cost in NPR</small></button>
       <button data-go="browse"><span class="ic" style="background:#9A60B4">${ic('i-list')}</span><b>Browse tariff</b><small>Sections, chapters, notes and rules</small></button>
     </div>
@@ -2115,7 +2115,8 @@ function renderExports(){
   h += '<div class="facts-box"><h3>In plain words</h3><ul>'
     + '<li>Nepal exported <b>' + rs(ov.exports[1]) + '</b> in FY ' + yFY() + ', ' + (ge>=0?'up':'down') + ' ' + Math.abs(ge).toFixed(1) + '% on the year before.</li>'
     + '<li><b>' + esc(topCo[0]) + '</b> took ' + (topCo[2]/expTot*100).toFixed(0) + '% of all exports, and the top five product groups make up <b>' + (top5/expTot*100).toFixed(0) + '%</b> — exports are highly concentrated.</li>'
-    + '<li>The largest export category was <b>' + esc(chapName(topCh[0])) + '</b> (' + (topCh[3]/expTot*100).toFixed(0) + '%).</li></ul></div>';
+    + '<li>The largest export category was <b>' + esc(chapName(topCh[0])) + '</b> (' + (topCh[3]/expTot*100).toFixed(0) + '%).</li>'
+    + '<li>Exports cover only <b>' + (ov.exports[1]/(ov.imports[1]||1)*100).toFixed(0) + '%</b> of what Nepal imports — a trade deficit of <b>' + rs(ov.imports[1]-ov.exports[1]) + '</b>.</li></ul></div>';
   if (ST.current && isLatest()){ var cex = ST.current.overview.exports, cg = pctc(cex[1], cex[0]); h += '<div class="ytd">' + ic('i-info') + '<div>FY ' + ST.current.fy + ' so far (' + ST.current.months + ' mo): exports <b>' + rs(cex[1], true) + '</b> (' + (cg>=0?'+':'') + cg.toFixed(1) + '% on the same months last year).</div></div>'; }
   h += fig('Exports by year', 'Annual export value, FY ' + FY[0] + ' to ' + FY[FY.length-1], '<div class="ech short" id="ecx-trend"></div>');
   h += fig('Map of exports', 'Every chapter sized by export value, FY ' + yFY() + '; tap a block to open it', '<div class="ech tall" id="ecx-tree"></div>');
@@ -2163,7 +2164,8 @@ function renderImports(){
   h += '<div class="facts-box"><h3>In plain words</h3><ul>'
     + '<li>Nepal imported <b>' + rs(ov.imports[1]) + '</b> in FY ' + yFY() + ', ' + (gi>=0?'up':'down') + ' ' + Math.abs(gi).toFixed(1) + '% on the year before.</li>'
     + '<li><b>' + esc(topCo[0]) + '</b> supplied ' + (topCo[1]/impTot*100).toFixed(0) + '% of all imports; the top five product groups make up <b>' + (top5/impTot*100).toFixed(0) + '%</b>.</li>'
-    + '<li>The largest import category was <b>' + esc(chapName(topCh[0])) + '</b> (' + (topCh[2]/impTot*100).toFixed(0) + '%).</li></ul></div>';
+    + '<li>The largest import category was <b>' + esc(chapName(topCh[0])) + '</b> (' + (topCh[2]/impTot*100).toFixed(0) + '%).</li>'
+    + '<li>Imports are <b>' + (ov.imports[1]/(ov.exports[1]||1)).toFixed(1) + '×</b> exports — a trade deficit of <b>' + rs(ov.imports[1]-ov.exports[1]) + '</b>.</li></ul></div>';
   if (ST.current && isLatest()){ var cim = ST.current.overview.imports, cg = pctc(cim[1], cim[0]); h += '<div class="ytd">' + ic('i-info') + '<div>FY ' + ST.current.fy + ' so far (' + ST.current.months + ' mo): imports <b>' + rs(cim[1], true) + '</b> (' + (cg>=0?'+':'') + cg.toFixed(1) + '% on the same months last year).</div></div>'; }
   h += fig('Imports by year', 'Annual import value, FY ' + FY[0] + ' to ' + FY[FY.length-1], '<div class="ech short" id="eci-trend"></div>');
   h += fig('Map of imports', 'Every chapter sized by import value, FY ' + yFY() + '; tap a block to open it', '<div class="ech tall" id="eci-tree"></div>');

@@ -187,7 +187,7 @@ def page_head(title, desc, path, breadcrumb):
         '<a href="/ask-ai">Ask AI</a>'
         '<a href="/imports">Imports</a>'
         '<a href="/exports">Exports</a>'
-        '<a href="/trade-data">Trade data</a>'
+        '<a href="/trade-data">Trade</a>'
         '<a href="/browse">Browse</a>'
         '<a href="/tariff" class="cur">Tariff</a>'
         '<a href="/calculator">Calculator</a>'
