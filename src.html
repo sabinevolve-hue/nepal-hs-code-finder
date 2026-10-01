@@ -606,7 +606,8 @@ footer p{margin:0 0 6px;max-width:70ch}
     <div class="nav-desk" role="tablist" aria-label="Sections">
       <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
       <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
-      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade data</a>
+      <a role="tab" data-tab="imports" href="/imports" aria-selected="false">Imports</a>
+      <a role="tab" data-tab="exports" href="/exports" aria-selected="false">Exports</a>
       <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
       <a href="/tariff">Tariff</a>
       <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
@@ -694,6 +695,13 @@ footer p{margin:0 0 6px;max-width:70ch}
   <section id="v-exports" hidden>
     <div class="page-h"><h1>Nepal exports</h1><p id="ex-sub"></p></div>
     <div id="ex-body"></div>
+    <div class="fine" style="margin-top:var(--s4)">Source: Department of Customs, Nepal — Foreign Trade Statistics. Values as published; NPR.</div>
+  </section>
+
+  <!-- IMPORTS -->
+  <section id="v-imports" hidden>
+    <div class="page-h"><h1>Nepal imports</h1><p id="im-sub"></p></div>
+    <div id="im-body"></div>
     <div class="fine" style="margin-top:var(--s4)">Source: Department of Customs, Nepal — Foreign Trade Statistics. Values as published; NPR.</div>
   </section>
 
@@ -853,7 +861,8 @@ footer p{margin:0 0 6px;max-width:70ch}
 <nav class="tabbar" role="tablist" aria-label="Sections">
   <a role="tab" data-tab="search" href="/" aria-selected="true"><svg class="i"><use href="#i-search"/></svg>Search</a>
   <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</a>
-  <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Trade</a>
+  <a role="tab" data-tab="imports" href="/imports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Imports</a>
+  <a role="tab" data-tab="exports" href="/exports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Exports</a>
   <a role="tab" data-tab="browse" href="/browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</a>
   <a role="tab" data-tab="calc" href="/calculator" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</a>
   <a role="tab" data-tab="invoice" href="/invoice" aria-selected="false"><svg class="i"><use href="#i-doc"/></svg>Invoice</a>
@@ -1011,14 +1020,10 @@ function renderHome(){
   $('#results').innerHTML = `
     <div class="feat">
       <button data-go="ai"><span class="ic" style="background:#5470C6">${ic('i-spark')}</span><b>Ask AI</b><small>Describe a product, get ranked HS codes with reasons</small></button>
-      <button data-go="stats"><span class="ic" style="background:#EE8A4B">${ic('i-chart')}</span><b>Trade data</b><small>Imports, exports, countries and trends since ${FY[0]}</small></button>
+      <button data-go="imports"><span class="ic" style="background:#1D81A2">${ic('i-chart')}</span><b>Imports</b><small>What Nepal buys, by product and country</small></button>
+      <button data-go="exports"><span class="ic" style="background:#2E9E6B">${ic('i-chart')}</span><b>Exports</b><small>What Nepal sells, by product and country</small></button>
       <button data-go="calc"><span class="ic" style="background:#5FB365">${ic('i-calc')}</span><b>Tax calculator</b><small>Duty, VAT and landed cost in NPR</small></button>
       <button data-go="browse"><span class="ic" style="background:#9A60B4">${ic('i-list')}</span><b>Browse tariff</b><small>Sections, chapters, notes and rules</small></button>
-    </div>
-    <div class="live"><div class="lt"><h2>Nepal trade now</h2><button data-go="stats">All trade data ›</button></div>
-      <div class="tiles">${kpiTiles(true)}</div>
-      ${cur ? `<div class="ytd" style="margin-top:0">${ic('i-info')}<div>FY ${cur.fy}, first ${cur.months} month${cur.months > 1 ? 's' : ''}: imports <b>${rs(cur.overview.imports[1], true)}</b>, ${pctc(cur.overview.imports[1], cur.overview.imports[0]) >= 0 ? 'up' : 'down'} ${Math.abs(pctc(cur.overview.imports[1], cur.overview.imports[0])).toFixed(1)}% on last year.</div></div>` : ''}
-      <div class="ech short" id="ec-home"></div>
     </div>
     ${recent.length ? `<h2 class="sec">Recent searches</h2><div class="recent">${recent.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
     <h2 class="sec">Popular searches</h2>
@@ -1032,7 +1037,6 @@ function renderHome(){
       <div class="step"><span class="n">3</span><b>Estimate the tax</b><p>Send the code to the calculator for duty, VAT and landed cost in NPR.</p></div>
     </div>`;
   ecClear();
-  if (HAS_EC) monthlyLine($('#ec-home'), 'imp');
 }
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
@@ -2134,6 +2138,53 @@ function renderExports(){
   monthlyLine($('#ecx-month'), 'exp');
 }
 $('#v-exports').addEventListener('click', function(e){ var b = e.target.closest('[data-k]'); if (!b) return; var k = b.dataset.k || ''; if (k.indexOf('ch:')===0){ stView='chapters'; stChapter=+k.slice(3); stCountry=null; go('stats','push'); } else if (k.indexOf('co:')===0){ stView='countries'; stCountry=k.slice(3); stChapter=null; go('stats','push'); } });
+function renderImports(){
+  var imb = document.getElementById('im-body'); if (!imb) return;
+  var sub = document.getElementById('im-sub'); if (sub) sub.textContent = 'What Nepal buys from abroad — by product and source. FY ' + yFY() + ' · NPR';
+  ecClear();
+  var ch = CH(), co = CO(), ov = OV();
+  var topN = function(arr, key, n){ return arr.slice().sort(function(a,b){return b[key]-a[key];}).slice(0, n); };
+  var impTot = ov.imports[1] || 1;
+  var gi = pctc(ov.imports[1], ov.imports[0]);
+  var topCo = topN(co, 1, 1)[0], topCh = topN(ch, 2, 1)[0];
+  var top5 = topN(ch, 2, 5).reduce(function(a,x){return a + x[2];}, 0);
+  var share = ov.imports[1] / ((ov.imports[1] + ov.exports[1]) || 1) * 100;
+  var arrow = function(g){ return ic(g >= 0 ? 'i-up' : 'i-down').replace('class="i"', 'class="i" style="width:14px;height:14px"'); };
+  var h = '';
+  h += '<div class="tiles">'
+    + '<div class="tile"><span>Imports FY ' + yFY() + '</span><b>' + rs(ov.imports[1], true) + '</b><small class="' + (gi>=0?'up':'down') + '">' + arrow(gi) + Math.abs(gi).toFixed(1) + '%&nbsp;vs&nbsp;' + (FY[stYear-1]||'prev') + '</small></div>'
+    + '<div class="tile"><span>Share of total trade</span><b>' + share.toFixed(1) + '%</b><small class="neutral">imports of all trade</small></div>'
+    + '<div class="tile"><span>Top source</span><b>' + esc(topCo[0]) + '</b><small class="neutral">' + (topCo[1]/impTot*100).toFixed(0) + '% of imports</small></div>'
+    + '<div class="tile"><span>Top product</span><b style="font-size:.98rem;line-height:1.2">' + esc(chapName(topCh[0])) + '</b><small class="neutral">' + (topCh[2]/impTot*100).toFixed(0) + '% of imports</small></div>'
+    + '</div>';
+  h += '<div class="facts-box"><h3>In plain words</h3><ul>'
+    + '<li>Nepal imported <b>' + rs(ov.imports[1]) + '</b> in FY ' + yFY() + ', ' + (gi>=0?'up':'down') + ' ' + Math.abs(gi).toFixed(1) + '% on the year before.</li>'
+    + '<li><b>' + esc(topCo[0]) + '</b> supplied ' + (topCo[1]/impTot*100).toFixed(0) + '% of all imports; the top five product groups make up <b>' + (top5/impTot*100).toFixed(0) + '%</b>.</li>'
+    + '<li>The largest import category was <b>' + esc(chapName(topCh[0])) + '</b> (' + (topCh[2]/impTot*100).toFixed(0) + '%).</li></ul></div>';
+  if (ST.current && isLatest()){ var cim = ST.current.overview.imports, cg = pctc(cim[1], cim[0]); h += '<div class="ytd">' + ic('i-info') + '<div>FY ' + ST.current.fy + ' so far (' + ST.current.months + ' mo): imports <b>' + rs(cim[1], true) + '</b> (' + (cg>=0?'+':'') + cg.toFixed(1) + '% on the same months last year).</div></div>'; }
+  h += fig('Imports by year', 'Annual import value, FY ' + FY[0] + ' to ' + FY[FY.length-1], '<div class="ech short" id="eci-trend"></div>');
+  h += fig('Map of imports', 'Every chapter sized by import value, FY ' + yFY() + '; tap a block to open it', '<div class="ech tall" id="eci-tree"></div>');
+  h += fig('Top import categories', 'Import value by tariff chapter, 12 largest', barRows(topN(ch,2,12).map(function(x){return {k:'ch:'+x[0], sub:String(x[0]).padStart(2,'0'), label:chapName(x[0]), a:x[2]};})));
+  h += fig('Where imports come from', 'Import value by source country, 12 largest', barRows(topN(co,1,12).map(function(x){return {k:'co:'+x[0], label:x[0], a:x[1]};})));
+  if (isLatest() && FY.length > 1){
+    var mv = ch.map(function(c){ var cur=c[2], prev=(H.chapters[c[0]]&&H.chapters[c[0]][stYear-1])?H.chapters[c[0]][stYear-1][0]:0; return {ch:c[0], cur:cur, g: prev>0?((cur-prev)/prev*100):null}; }).filter(function(x){return x.cur>5e6 && x.g!==null;});
+    var up = mv.slice().sort(function(a,b){return b.g-a.g;}).slice(0,6);
+    var dn = mv.slice().sort(function(a,b){return a.g-b.g;}).slice(0,6);
+    if (up.length) h += fig('Fastest rising imports', 'Biggest year-on-year gains, chapters over NPR 5 Arab', barRows(up.map(function(x){return {k:'ch:'+x.ch, sub:(x.g>=0?'+':'')+x.g.toFixed(0)+'%', label:chapName(x.ch), a:x.cur};})));
+    if (dn.length) h += fig('Falling imports', 'Biggest year-on-year declines', barRows(dn.map(function(x){return {k:'ch:'+x.ch, sub:x.g.toFixed(0)+'%', label:chapName(x.ch), a:x.cur};})));
+  }
+  h += '<div class="facts-box"><h3>Imports &amp; customs revenue</h3><ul>'
+    + '<li><b>Imports are where government revenue comes from</b> — customs duty, 13% VAT and excise on the landed (CIF) value.</li>'
+    + '<li><b>India is the biggest source</b>, followed by China; fuels, oils &amp; gas and machinery are the largest categories.</li>'
+    + '<li>Use the <a href="/calculator">tax calculator</a> to estimate duty + VAT + landed cost, or <a href="/trade-data">compare years and duty bands</a> in the full trade view.</li></ul></div>';
+  h += fig('Imports by month', 'Monthly import value, recent fiscal years', '<div class="ech" id="eci-month"></div>');
+  imb.innerHTML = h;
+  if (!HAS_EC) return;
+  yearBars($('#eci-trend'), [{name:'Imports', data:H.totals.map(function(t){return t[0];})}], ['Imports']);
+  treemapChart($('#eci-tree')); var tc = charts[charts.length-1]; if (tc) tc.on('click', function(p){ if (p.data && p.data.ch){ stView='chapters'; stChapter=p.data.ch; stCountry=null; go('stats','push'); } });
+  monthlyLine($('#eci-month'), 'imp');
+}
+$('#v-imports').addEventListener('click', function(e){ var b = e.target.closest('[data-k]'); if (!b) return; var k = b.dataset.k || ''; if (k.indexOf('ch:')===0){ stView='chapters'; stChapter=+k.slice(3); stCountry=null; go('stats','push'); } else if (k.indexOf('co:')===0){ stView='countries'; stCountry=k.slice(3); stChapter=null; go('stats','push'); } });
 $('#v-stats').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'u-np' || b.id === 'u-intl'){ UNITS = b.id === 'u-np' ? 'np' : 'intl'; store.set('units', UNITS); renderStats(); return; }
@@ -2169,8 +2220,8 @@ let curTab = 'search';
 function go(t, hist){
   curTab = t;
   try { document.title = TITLES[t] || TITLES.search; } catch(e){}
-  ['search','ai','stats','exports','browse','calc','invoice','saved'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
-  if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else ecClear();
+  ['search','ai','stats','exports','imports','browse','calc','invoice','saved'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
+  if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else if (t === 'imports') renderImports(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc(); if (t === 'invoice') initInvoice();
@@ -2189,7 +2240,7 @@ if (_pt && _pt !== 'search') go(_pt);
 window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (!_pt && ['ai','stats','exports','browse','calc','invoice','saved'].includes(h)) go(h);
+else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
 })();

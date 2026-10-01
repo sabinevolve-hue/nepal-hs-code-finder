@@ -305,7 +305,9 @@ out.append('</div>' + FOOT)
 (pub / 'seo.css').write_text(CSS.strip(), encoding='utf-8')
 
 # ---- sitemap (homepage + tariff index + every chapter) ----
-urls = [(SITE + '/', '1.0', 'weekly'), (SITE + '/tariff', '0.9', 'monthly')]
+urls = [(SITE + '/', '1.0', 'weekly'),
+        (SITE + '/imports', '0.8', 'weekly'), (SITE + '/exports', '0.8', 'weekly'),
+        (SITE + '/trade-data', '0.7', 'monthly'), (SITE + '/tariff', '0.9', 'monthly')]
 for ch in CHAPTERS:
     urls.append((SITE + '/tariff/%02d' % ch, '0.7', 'monthly'))
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',
