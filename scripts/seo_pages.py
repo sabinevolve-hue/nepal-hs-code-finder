@@ -86,7 +86,7 @@ CHAPTERS = sorted(by_ch.keys())
 # ---- shared stylesheet ----
 CSS = """
 :root{--bg:#F8FAFC;--card:#fff;--fg:#0B1220;--fg2:#334155;--muted:#5B6878;--border:#E2E8F0;
---navy:#293C55;--accent:#5470C6;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
+--navy:#1B2A45;--accent:#5470C6;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
 --mid:#A15C07;--mid-bg:#FEF3C7;--hi:#B91C1C;--hi-bg:#FEE2E2;--spec:#475569;--spec-bg:#EEF2F6;
 --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
 --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace}
@@ -97,17 +97,20 @@ CSS = """
 html,body{overflow-x:hidden}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.5;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
 header.top{background:var(--navy);color:#fff}
 @media(prefers-color-scheme:dark){header.top{background:#0B1428}}
-header.top .wrap{display:flex;align-items:center;gap:10px;height:52px}
+header.top .wrap{display:flex;align-items:center;gap:10px;min-height:56px}
 header.top .wrap.topbar{gap:14px}
 .topnav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.topnav a{color:rgba(255,255,255,.82);font-size:.85rem;font-weight:600;padding:7px 11px;border-radius:8px;white-space:nowrap}
-.topnav a:hover{background:rgba(255,255,255,.12);color:#fff;text-decoration:none}
-.topnav a.cur{background:rgba(255,255,255,.16);color:#fff}
-.logo{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:700}
-.logo b{background:#0F172A;color:#fff;font-family:var(--mono);font-size:12px;font-weight:700;padding:4px 6px;border-radius:6px}
+.topnav a{color:rgba(255,255,255,.72);font-size:.9rem;font-weight:700;padding:8px 12px;border-radius:10px;white-space:nowrap}
+.topnav a:hover{background:rgba(255,255,255,.1);color:#fff;text-decoration:none}
+.topnav a.cur{background:var(--accent);color:#fff}
+.logo{display:inline-flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;white-space:nowrap;text-decoration:none}
+.logo:hover{text-decoration:none}
+.logo .mark{width:32px;height:32px;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center;font:700 .72rem var(--mono)}
+.logo .lt{display:flex;flex-direction:column;line-height:1.12}
+.logo small{display:block;font-weight:400;font-size:.72rem;color:rgba(255,255,255,.65);letter-spacing:0}
 @media(prefers-color-scheme:dark){header.top .logo{color:#F1F5F9}}
 .crumb{font-size:.82rem;color:var(--muted);padding:12px 0 0}
 .crumb a{color:var(--muted)}
@@ -178,10 +181,12 @@ def page_head(title, desc, path, breadcrumb):
         + ANALYTICS +
         '</head><body>'
         '<header class="top"><div class="wrap topbar">'
-        '<a class="logo" href="/"><b>HS</b> Customs Nepal</a>'
+        '<a class="logo" href="/" aria-label="Customs Nepal — home"><span class="mark">HS</span><span class="lt">Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></a>'
         '<nav class="topnav">'
         '<a href="/">Search</a>'
         '<a href="/ask-ai">Ask AI</a>'
+        '<a href="/imports">Imports</a>'
+        '<a href="/exports">Exports</a>'
         '<a href="/trade-data">Trade data</a>'
         '<a href="/browse">Browse</a>'
         '<a href="/tariff" class="cur">Tariff</a>'

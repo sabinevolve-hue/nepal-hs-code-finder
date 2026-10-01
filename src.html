@@ -52,11 +52,12 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .bar .logo,.bar .logo small{color:#fff}
 .bar .logo small{color:rgba(255,255,255,.65)}
 .bar-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);min-height:56px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;white-space:nowrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;white-space:nowrap;text-decoration:none;color:inherit}
 .logo .mark{width:32px;height:32px;border-radius:9px;background:var(--hero3);color:#fff;display:grid;place-items:center;font:700 .72rem var(--f-mono);position:relative}
 .logo .mark::after{content:"";position:absolute;right:-3px;top:-3px;width:10px;height:10px;border-radius:50%;background:var(--brand);border:2px solid var(--hero1)}
 .logo small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);letter-spacing:0}
-.nav-desk{display:flex;gap:2px}
+.nav-desk{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.nav-desk::-webkit-scrollbar{display:none}
 .nav-desk button,.nav-desk a{height:40px;display:flex;align-items:center;padding:0 14px;border-radius:10px;font-weight:700;font-size:.9rem;color:rgba(255,255,255,.72);transition:background var(--t),color var(--t);text-decoration:none;cursor:pointer;background:none;border:0}
 .nav-desk button:hover,.nav-desk a:hover{background:rgba(255,255,255,.1);color:#fff}
 .nav-desk button[aria-selected="true"],.nav-desk a[aria-selected="true"]{background:var(--hero3);color:#fff}
@@ -601,13 +602,14 @@ footer p{margin:0 0 6px;max-width:70ch}
 
 <header class="bar">
   <div class="wrap bar-row">
-    <div class="logo"><span class="mark">HS</span><span>Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></div>
+    <a class="logo" href="/" data-tab="search" aria-label="Customs Nepal — home"><span class="mark">HS</span><span>Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></a>
     <div style="display:flex;align-items:center;gap:6px">
     <div class="nav-desk" role="tablist" aria-label="Sections">
       <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
       <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
       <a role="tab" data-tab="imports" href="/imports" aria-selected="false">Imports</a>
       <a role="tab" data-tab="exports" href="/exports" aria-selected="false">Exports</a>
+      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade data</a>
       <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
       <a href="/tariff">Tariff</a>
       <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
@@ -1022,6 +1024,7 @@ function renderHome(){
       <button data-go="ai"><span class="ic" style="background:#5470C6">${ic('i-spark')}</span><b>Ask AI</b><small>Describe a product, get ranked HS codes with reasons</small></button>
       <button data-go="imports"><span class="ic" style="background:#1D81A2">${ic('i-chart')}</span><b>Imports</b><small>What Nepal buys, by product and country</small></button>
       <button data-go="exports"><span class="ic" style="background:#2E9E6B">${ic('i-chart')}</span><b>Exports</b><small>What Nepal sells, by product and country</small></button>
+      <button data-go="stats"><span class="ic" style="background:#EE8A4B">${ic('i-chart')}</span><b>Trade data</b><small>Compare years, products and partners</small></button>
       <button data-go="calc"><span class="ic" style="background:#5FB365">${ic('i-calc')}</span><b>Tax calculator</b><small>Duty, VAT and landed cost in NPR</small></button>
       <button data-go="browse"><span class="ic" style="background:#9A60B4">${ic('i-list')}</span><b>Browse tariff</b><small>Sections, chapters, notes and rules</small></button>
     </div>
