@@ -544,15 +544,15 @@ button.br:hover{background:var(--muted-bg)}
 footer{color:var(--muted);font-size:.8rem;padding-block:var(--s5) var(--s6);margin-top:var(--s6);border-top:1px solid var(--border)}
 footer p{margin:0 0 6px;max-width:70ch}
 footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover{text-decoration:underline}
-#v-about .about-body{max-width:70ch}
-#v-about .about-body h2{font-size:1.12rem;letter-spacing:-.01em;margin:1.7em 0 .4em;color:var(--fg)}
-#v-about .about-body p{line-height:1.65;margin:.55em 0}
-#v-about .about-body ul{margin:.4em 0 .6em;padding-left:1.15em;line-height:1.5}
-#v-about .about-body li{margin:.4em 0}
-#v-about .about-body a{color:var(--accent);font-weight:600;text-decoration:none}
-#v-about .about-body a:hover{text-decoration:underline}
-#v-about .about-body a.about-cta{display:inline-flex;gap:8px;align-items:center;margin-top:8px;background:var(--hero3,#5470C6);color:#fff;padding:11px 16px;border-radius:11px;font-weight:700;text-decoration:none}
-#v-about .about-body a.about-cta:hover{filter:brightness(1.08);text-decoration:none}
+.about-body{max-width:70ch}
+.about-body h2{font-size:1.12rem;letter-spacing:-.01em;margin:1.7em 0 .4em;color:var(--fg)}
+.about-body p{line-height:1.65;margin:.55em 0}
+.about-body ul{margin:.4em 0 .6em;padding-left:1.15em;line-height:1.5}
+.about-body li{margin:.4em 0}
+.about-body a{color:var(--accent);font-weight:600;text-decoration:none}
+.about-body a:hover{text-decoration:underline}
+.about-body a.about-cta{display:inline-flex;gap:8px;align-items:center;margin-top:8px;background:var(--hero3,#5470C6);color:#fff;padding:11px 16px;border-radius:11px;font-weight:700;text-decoration:none}
+.about-body a.about-cta:hover{filter:brightness(1.08);text-decoration:none}
 @media (prefers-reduced-motion:no-preference){
   .sheet:not([hidden]){animation:rise .24s cubic-bezier(.2,.7,.2,1)}
   @keyframes rise{from{transform:translateY(28px);opacity:.5}}
@@ -890,8 +890,53 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
     </div>
   </section>
 
+  <!-- PRIVACY -->
+  <section id="v-privacy" hidden>
+    <div class="page-h">
+      <h1>Privacy Policy</h1>
+      <p>How Customs Nepal handles your information.</p>
+    </div>
+    <div class="about-body">
+      <p>Last updated: 2 October 2026.</p>
+      <p><b>Customs Nepal</b> ("we", "our") operates the website and Android app at customsnepal.com. This policy explains what information we handle when you use the HS code search, duty and landed-cost calculator, invoice tools, AI suggestions and trade data. It applies to both the website and the Android app, which shows the same site.</p>
+
+      <h2>The short version</h2>
+      <p>Most of what you do stays on your own device. What you type into the search, calculator and invoice tools lives in your browser and is cleared when you close the tab — it reaches our server only if you sign in and choose "Save to my account". We do not sell your data.</p>
+
+      <h2>What we handle</h2>
+      <ul>
+        <li><b>Things you type or upload</b> (searches, product descriptions, invoice details) stay in your browser. They are sent to our server only when you are signed in and tap "Save to my account".</li>
+        <li><b>Account information.</b> Signing in is optional. If you sign in with Google or an email link, our authentication provider (Supabase) stores your email address, and for Google sign-in your basic Google profile (name and email), so we can keep your saved items against your account.</li>
+        <li><b>AI features.</b> When you use "Ask AI", "Suggest HS codes" or the invoice reader, the text you submit is sent to our AI provider (Anthropic) to generate a response. Send only what you need classified.</li>
+        <li><b>Analytics.</b> We use Google Analytics and Vercel Analytics cookies to count visits and understand how the site is used. These collect standard, aggregated usage data (such as pages viewed and approximate region). No personal data you type into the tools is sent to them.</li>
+      </ul>
+
+      <h2>How we use it</h2>
+      <p>To provide and operate the tools, keep you signed in and hold the items you choose to save, understand overall usage so we can improve the app, and keep the service secure.</p>
+
+      <h2>Who we share it with</h2>
+      <p>We do not sell your data. We share it only with the service providers needed to run Customs Nepal: Supabase (sign-in and saved data), Anthropic (AI suggestions), and Google Analytics, Vercel Analytics and Vercel hosting (operating and measuring the site). Each processes data only to provide its service to us. We may disclose information if required by law.</p>
+
+      <h2>Keeping and deleting data</h2>
+      <p>Data in your browser is cleared when you close the tab or clear your browser. Saved account data is kept until you delete it or ask us to. To delete your account and the data linked to it, email <a href="mailto:info@customsnepal.com">info@customsnepal.com</a> and we will remove it.</p>
+
+      <h2>Security</h2>
+      <p>All traffic to and from the site is encrypted in transit (HTTPS). No method of storage or transmission is completely secure, but we take reasonable steps to protect your information.</p>
+
+      <h2>Children</h2>
+      <p>Customs Nepal is a business and reference tool and is not directed at children.</p>
+
+      <h2>Changes</h2>
+      <p>We may update this policy from time to time. We will post the new version here and update the date above.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about privacy? Email <a href="mailto:info@customsnepal.com">info@customsnepal.com</a>.</p>
+      <p><a class="about-cta" href="mailto:info@customsnepal.com">Email info@customsnepal.com</a></p>
+    </div>
+  </section>
+
   <footer>
-    <p><a href="/about" data-tab="about">About Customs Nepal</a> · <a href="mailto:info@customsnepal.com">Contact &amp; feedback: info@customsnepal.com</a></p>
+    <p><a href="/about" data-tab="about">About Customs Nepal</a> · <a href="/privacy" data-tab="privacy">Privacy Policy</a> · <a href="mailto:info@customsnepal.com">Contact &amp; feedback: info@customsnepal.com</a></p>
     <p><a href="/tariff">Browse the full Nepal Customs Tariff 2026/27 by chapter →</a></p>
     <p><b>Source:</b> Government of Nepal, Department of Customs, Customs Tariff 2026/2027 (HS 2022 nomenclature, Customs Tariff Act 2024). Duty rates as printed; export duties from the export schedule.</p>
     <p>This is a search aid and estimate, not an official classification or customs assessment. Confirm the final HS code and taxes with the customs office or your clearing agent.</p>
@@ -2257,14 +2302,15 @@ const TITLES = {
   calc: 'Nepal Import Tax & Landed Cost Calculator | Customs Nepal',
   invoice: 'Proforma & Commercial Invoice Generator | Customs Nepal',
   saved: 'Saved HS Codes | Customs Nepal',
-  about: 'About Customs Nepal — Nepal HS Code, Customs Tariff & Trade Portal'
+  about: 'About Customs Nepal — Nepal HS Code, Customs Tariff & Trade Portal',
+  privacy: 'Privacy Policy | Customs Nepal'
 };
-const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', exports:'/exports', imports:'/imports', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved', about:'/about' };
+const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', exports:'/exports', imports:'/imports', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved', about:'/about', privacy:'/privacy' };
 let curTab = 'search';
 function go(t, hist){
   curTab = t;
   try { document.title = TITLES[t] || TITLES.search; } catch(e){}
-  ['search','ai','stats','exports','imports','browse','calc','invoice','saved','about'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
+  ['search','ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
   if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else if (t === 'imports') renderImports(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
@@ -2280,13 +2326,13 @@ setOrigin(origin);
 initCalc();
 renderResults();
 try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.trim()) runQuery(uq.trim()); } catch(e){}
-const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved','/about':'about' };
+const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved','/about':'about','/privacy':'privacy' };
 const _pt = PATHS[location.pathname];
 if (_pt && _pt !== 'search') go(_pt);
 window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved','about'].includes(h)) go(h);
+else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
 })();

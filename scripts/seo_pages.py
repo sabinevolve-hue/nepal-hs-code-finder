@@ -313,7 +313,8 @@ out.append('</div>' + FOOT)
 urls = [(SITE + '/', '1.0', 'weekly'),
         (SITE + '/imports', '0.8', 'weekly'), (SITE + '/exports', '0.8', 'weekly'),
         (SITE + '/trade-data', '0.7', 'monthly'), (SITE + '/tariff', '0.9', 'monthly'),
-        (SITE + '/about', '0.6', 'monthly')]
+        (SITE + '/about', '0.6', 'monthly'),
+        (SITE + '/privacy', '0.3', 'yearly')]
 for ch in CHAPTERS:
     urls.append((SITE + '/tariff/%02d' % ch, '0.7', 'monthly'))
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',
