@@ -543,6 +543,16 @@ button.br:hover{background:var(--muted-bg)}
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--on-primary);padding:10px 18px;border-radius:999px;font-size:.88rem;font-weight:700;z-index:60;box-shadow:var(--shadow)}
 footer{color:var(--muted);font-size:.8rem;padding-block:var(--s5) var(--s6);margin-top:var(--s6);border-top:1px solid var(--border)}
 footer p{margin:0 0 6px;max-width:70ch}
+footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover{text-decoration:underline}
+#v-about .about-body{max-width:70ch}
+#v-about .about-body h2{font-size:1.12rem;letter-spacing:-.01em;margin:1.7em 0 .4em;color:var(--fg)}
+#v-about .about-body p{line-height:1.65;margin:.55em 0}
+#v-about .about-body ul{margin:.4em 0 .6em;padding-left:1.15em;line-height:1.5}
+#v-about .about-body li{margin:.4em 0}
+#v-about .about-body a{color:var(--accent);font-weight:600;text-decoration:none}
+#v-about .about-body a:hover{text-decoration:underline}
+#v-about .about-body a.about-cta{display:inline-flex;gap:8px;align-items:center;margin-top:8px;background:var(--hero3,#5470C6);color:#fff;padding:11px 16px;border-radius:11px;font-weight:700;text-decoration:none}
+#v-about .about-body a.about-cta:hover{filter:brightness(1.08);text-decoration:none}
 @media (prefers-reduced-motion:no-preference){
   .sheet:not([hidden]){animation:rise .24s cubic-bezier(.2,.7,.2,1)}
   @keyframes rise{from{transform:translateY(28px);opacity:.5}}
@@ -854,7 +864,34 @@ footer p{margin:0 0 6px;max-width:70ch}
   <!-- SAVED -->
   <section id="v-saved" hidden></section>
 
+  <!-- ABOUT -->
+  <section id="v-about" hidden>
+    <div class="page-h">
+      <h1>About Customs Nepal</h1>
+      <p>Nepal's customs tariff, HS codes and trade data — in one simple place.</p>
+    </div>
+    <div class="about-body">
+      <p><b>Customs Nepal</b> is a free portal for individuals and organizations to find the correct Nepal HS code, customs duty, VAT and landed cost for any product — and to understand how import and export classification works in Nepal.</p>
+      <p>It brings the official <b>Customs Tariff 2026/27 (FY 2083/84)</b> together with trade data and simple tools, so importers, exporters, customs agents, banks and businesses get accurate answers in seconds instead of digging through PDFs.</p>
+      <h2>What you can do</h2>
+      <ul>
+        <li><b>Search HS codes</b> — the full Customs Tariff 2026/27 (6,340 lines), by product name, material or code, in English or Nepali.</li>
+        <li><b>Classify with AI</b> — describe a product in plain words and get ranked HS code suggestions with the reasoning.</li>
+        <li><b>Calculate landed cost</b> — customs duty, VAT and total landed cost in rupees, plus a proforma or commercial invoice.</li>
+        <li><b>Explore trade data</b> — Nepal's imports and exports by product category and partner country, with multi-year trends.</li>
+      </ul>
+      <h2>Who it's for</h2>
+      <p>Importers and exporters, customs and clearing agents, freight forwarders, banks and trade-finance teams, students, and any business that needs to know what a product costs to bring into or send out of Nepal.</p>
+      <h2>A note on accuracy</h2>
+      <p>Customs Nepal is a reference and estimation tool based on the official Customs Tariff 2026/27. It does not replace an official customs classification or assessment — always confirm the final HS code and taxes with the customs office or your clearing agent.</p>
+      <h2>Contact, suggestions &amp; feedback</h2>
+      <p>We'd love to hear how we can make Customs Nepal more useful. Reach us any time at <a href="mailto:info@customsnepal.com">info@customsnepal.com</a>.</p>
+      <p><a class="about-cta" href="mailto:info@customsnepal.com">Email info@customsnepal.com</a></p>
+    </div>
+  </section>
+
   <footer>
+    <p><a href="/about" data-tab="about">About Customs Nepal</a> · <a href="mailto:info@customsnepal.com">Contact &amp; feedback: info@customsnepal.com</a></p>
     <p><a href="/tariff">Browse the full Nepal Customs Tariff 2026/27 by chapter →</a></p>
     <p><b>Source:</b> Government of Nepal, Department of Customs, Customs Tariff 2026/2027 (HS 2022 nomenclature, Customs Tariff Act 2024). Duty rates as printed; export duties from the export schedule.</p>
     <p>This is a search aid and estimate, not an official classification or customs assessment. Confirm the final HS code and taxes with the customs office or your clearing agent.</p>
@@ -2219,14 +2256,15 @@ const TITLES = {
   browse: 'Browse the Nepal Customs Tariff 2026/27 | Customs Nepal',
   calc: 'Nepal Import Tax & Landed Cost Calculator | Customs Nepal',
   invoice: 'Proforma & Commercial Invoice Generator | Customs Nepal',
-  saved: 'Saved HS Codes | Customs Nepal'
+  saved: 'Saved HS Codes | Customs Nepal',
+  about: 'About Customs Nepal — Nepal HS Code, Customs Tariff & Trade Portal'
 };
-const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', exports:'/exports', imports:'/imports', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved' };
+const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', exports:'/exports', imports:'/imports', browse:'/browse', calc:'/calculator', invoice:'/invoice', saved:'/saved', about:'/about' };
 let curTab = 'search';
 function go(t, hist){
   curTab = t;
   try { document.title = TITLES[t] || TITLES.search; } catch(e){}
-  ['search','ai','stats','exports','imports','browse','calc','invoice','saved'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
+  ['search','ai','stats','exports','imports','browse','calc','invoice','saved','about'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
   if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else if (t === 'imports') renderImports(); else ecClear();
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
@@ -2242,13 +2280,13 @@ setOrigin(origin);
 initCalc();
 renderResults();
 try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.trim()) runQuery(uq.trim()); } catch(e){}
-const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved' };
+const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved','/about':'about' };
 const _pt = PATHS[location.pathname];
 if (_pt && _pt !== 'search') go(_pt);
 window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
-else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved'].includes(h)) go(h);
+else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved','about'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
 })();
