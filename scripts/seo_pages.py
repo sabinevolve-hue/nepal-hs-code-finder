@@ -16,6 +16,7 @@ import pathlib, json, re, datetime, html
 
 root = pathlib.Path(__file__).resolve().parents[1]
 D = json.loads((root / 'data' / 'tariff.json').read_text(encoding='utf-8'))
+FAQ = json.loads((root / 'data' / 'faq.json').read_text(encoding='utf-8'))['faqs']
 pub = root / 'public'
 (pub / 'tariff').mkdir(parents=True, exist_ok=True)
 
@@ -162,6 +163,12 @@ def page_head(title, desc, path, breadcrumb):
                                **({"item": SITE + b[1]} if b[1] else {})}
                               for i, b in enumerate(breadcrumb)]}
     ldj = json.dumps(ld, ensure_ascii=False).replace('</', '<\\/')
+    NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
+           ('/trade-data', 'Trade'), ('/browse', 'Browse'), ('/tariff', 'Tariff'),
+           ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
+    def _cur(h):
+        return (path == h) or (h == '/tariff' and path.startswith('/tariff'))
+    nav = ''.join('<a href="%s"%s>%s</a>' % (h, ' class="cur"' if _cur(h) else '', esc(l)) for h, l in NAV)
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
@@ -183,16 +190,7 @@ def page_head(title, desc, path, breadcrumb):
         '</head><body>'
         '<header class="top"><div class="wrap topbar">'
         '<a class="logo" href="/" aria-label="Customs Nepal — home"><span class="mark">HS</span><span class="lt">Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></a>'
-        '<nav class="topnav">'
-        '<a href="/">Search</a>'
-        '<a href="/ask-ai">Ask AI</a>'
-        '<a href="/imports">Imports</a>'
-        '<a href="/exports">Exports</a>'
-        '<a href="/trade-data">Trade</a>'
-        '<a href="/browse">Browse</a>'
-        '<a href="/tariff" class="cur">Tariff</a>'
-        '<a href="/calculator">Calculator</a>'
-        '</nav></div></header>'
+        '<nav class="topnav">' + nav + '</nav></div></header>'
         '<div class="wrap">'
     )
 
@@ -205,12 +203,18 @@ def crumb_html(breadcrumb):
             parts.append(esc(name))
     return '<nav class="crumb">' + ' › '.join(parts) + '</nav>'
 
-FOOT = ('<footer><div class="wrap"><p><b>Source:</b> Government of Nepal, Department of Customs, '
-        'Customs Tariff ' + YEAR + ' (HS 2022 nomenclature). Duty rates as printed. This is a search aid and '
-        'estimate, not an official classification or customs assessment — confirm the final HS code and taxes '
-        'with the customs office or your clearing agent.</p>'
-        '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · '
-        '<a href="/#calc">Duty calculator</a> · <a href="/#ai">Ask AI</a> · © customsnepal.com</p></div></footer>'
+FOOT = ('<footer><div class="wrap">'
+        '<p><b>Official sources:</b> Government of Nepal, '
+        '<a href="https://www.customs.gov.np" target="_blank" rel="noopener noreferrer">Department of Customs (customs.gov.np)</a> '
+        '— Customs Tariff ' + YEAR + ' (HS 2022 nomenclature) — and the '
+        '<a href="https://www.mof.gov.np" target="_blank" rel="noopener noreferrer">Ministry of Finance (mof.gov.np)</a>. '
+        'Duty rates are shown as printed. This is a search aid and estimate, not an official classification or '
+        'customs assessment — confirm the final HS code and taxes with the customs office or your clearing agent.</p>'
+        '<p><b>Not a government website.</b> Customs Nepal is an independent, privately operated reference tool. '
+        'It is not affiliated with, endorsed by, or representing the Government of Nepal.</p>'
+        '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · <a href="/faq">FAQ</a> · '
+        '<a href="/#calc">Duty calculator</a> · <a href="/#ai">Ask AI</a> · <a href="/about">About</a> · '
+        '© customsnepal.com</p></div></footer>'
         '</body></html>')
 
 # ---- chapter pages ----
@@ -306,6 +310,28 @@ for sec in sections:
 out.append('</div>' + FOOT)
 (pub / 'tariff.html').write_text(''.join(out), encoding='utf-8')
 
+# ---- FAQ page (crawlable, answer-engine friendly; FAQ source shared with assemble.py) ----
+title = 'Nepal Customs & HS Code FAQ — Duty, VAT & Landed Cost | Customs Nepal'
+desc = ('Answers to common questions about Nepal HS codes, customs duty, VAT (13%%), SAARC preferential '
+        'rates and landed cost, based on the official Customs Tariff %s.' % YEAR)
+bc = [('Home', '/'), ('FAQ', '')]
+out = [page_head(title, desc, '/faq', bc), crumb_html(bc)]
+out.append('<h1>Nepal customs &amp; HS code — frequently asked questions</h1>')
+out.append('<p class="lede">Clear, plain-language answers about HS codes, customs duty, VAT and landed cost in '
+           'Nepal, based on the official Customs Tariff %s. Customs Nepal is an independent reference tool, '
+           'not a government website.</p>' % YEAR)
+out.append('<div class="tools"><a class="btn" href="/">Search HS codes</a>'
+           '<a class="btn ghost" href="/#calc">Duty &amp; landed-cost calculator</a></div>')
+for f in FAQ:
+    out.append('<h2 class="sec">%s</h2><p>%s</p>' % (esc(f['q']), esc(f['a'])))
+out.append('<p style="margin-top:1.6em"><a href="/tariff">Browse the full Nepal Customs Tariff %s →</a></p>' % YEAR)
+faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "url": SITE + "/faq", "inLanguage": "en",
+          "mainEntity": [{"@type": "Question", "name": f['q'],
+                          "acceptedAnswer": {"@type": "Answer", "text": f['a']}} for f in FAQ]}
+out.append('<script type="application/ld+json">' + json.dumps(faq_ld, ensure_ascii=False).replace('</', '<\\/') + '</script>')
+out.append('</div>' + FOOT)
+(pub / 'faq.html').write_text(''.join(out), encoding='utf-8')
+
 # ---- shared stylesheet ----
 (pub / 'seo.css').write_text(CSS.strip(), encoding='utf-8')
 
@@ -313,6 +339,7 @@ out.append('</div>' + FOOT)
 urls = [(SITE + '/', '1.0', 'weekly'),
         (SITE + '/imports', '0.8', 'weekly'), (SITE + '/exports', '0.8', 'weekly'),
         (SITE + '/trade-data', '0.7', 'monthly'), (SITE + '/tariff', '0.9', 'monthly'),
+        (SITE + '/faq', '0.7', 'monthly'),
         (SITE + '/about', '0.6', 'monthly'),
         (SITE + '/privacy', '0.3', 'yearly')]
 for ch in CHAPTERS:
@@ -325,4 +352,5 @@ for loc, pr, cf in urls:
 sm.append('</urlset>')
 (pub / 'sitemap.xml').write_text('\n'.join(sm) + '\n', encoding='utf-8')
 
-print('seo_pages: %d chapter pages + tariff index + seo.css; sitemap has %d URLs' % (len(CHAPTERS), len(urls)))
+print('seo_pages: %d chapter pages + tariff index + FAQ (%d Q) + seo.css; sitemap has %d URLs'
+      % (len(CHAPTERS), len(FAQ), len(urls)))

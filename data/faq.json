@@ -1,0 +1,49 @@
+{
+  "updated": "2026-10-04",
+  "faqs": [
+    {
+      "q": "What is an HS code?",
+      "a": "An HS (Harmonized System) code is an internationally standardised number used to classify a traded product. Nepal, like most countries, uses it to decide the customs duty and taxes that apply to an import or export. The Harmonized System is maintained by the World Customs Organization and updated every few years; Nepal's tariff uses the HS 2022 edition."
+    },
+    {
+      "q": "How many digits is a Nepal HS code?",
+      "a": "Nepal's Customs Tariff classifies goods at the 8-digit level, usually written as groups separated by dots (for example 0101.21.00). The first 6 digits are the international HS subheading used worldwide; Nepal adds the last 2 digits for its own national tariff lines."
+    },
+    {
+      "q": "How do I find the HS code for a product in Nepal?",
+      "a": "Search the product name, material or keyword on Customs Nepal to see matching HS codes with their duty rates, or browse the tariff chapter by chapter. If you only have a plain-language description, the AI classifier suggests the most likely codes with its reasoning. Always confirm the final classification with the Department of Customs or your clearing agent."
+    },
+    {
+      "q": "How is customs duty calculated on imports to Nepal?",
+      "a": "Customs duty is charged as a percentage of the assessable (customs) value of the goods, which is generally the CIF value: cost plus insurance plus freight. Every HS code has its own general duty rate, and a lower SAARC rate may apply to qualifying goods imported from SAARC countries."
+    },
+    {
+      "q": "What is the VAT rate in Nepal?",
+      "a": "The standard VAT rate in Nepal is 13%. On imports, VAT is normally calculated on the assessable value plus customs duty (and excise duty, where it applies), not on the product price alone."
+    },
+    {
+      "q": "What taxes and fees apply when importing goods into Nepal?",
+      "a": "Depending on the product, an import can attract customs duty, VAT at 13%, excise duty, and an agriculture reform fee, among other charges. Which ones apply depends on the HS code. Customs Nepal's calculator combines them into an estimated total landed cost."
+    },
+    {
+      "q": "What does \"landed cost\" mean?",
+      "a": "Landed cost is the all-in cost of getting an imported product to you: the product price plus freight and insurance, customs duty, VAT and any other import taxes and fees. Customs Nepal's duty calculator estimates the landed cost in rupees for any HS code."
+    },
+    {
+      "q": "What is the SAARC (preferential) duty rate?",
+      "a": "Under the SAFTA trade agreement, goods that qualify as originating in a SAARC member country, such as India, Bangladesh or Sri Lanka, can often be imported at a reduced SAARC duty rate instead of the general rate, subject to the rules of origin and a valid certificate of origin."
+    },
+    {
+      "q": "Is Customs Nepal an official government website?",
+      "a": "No. Customs Nepal is an independent, privately operated reference tool. It is not affiliated with, endorsed by, or representing the Government of Nepal. Official customs information is published by the Department of Customs (customs.gov.np) and the Ministry of Finance (mof.gov.np)."
+    },
+    {
+      "q": "Where does Customs Nepal's data come from?",
+      "a": "The HS codes and duty rates are compiled from the Government of Nepal's published Customs Tariff for 2026/27 (FY 2083/84, HS 2022 nomenclature), issued by the Department of Customs, together with the Finance Act rates from the Ministry of Finance. Trade statistics are drawn from the Department of Customs' foreign-trade data. Rates are shown as printed and should be confirmed against the official tariff for any binding decision."
+    },
+    {
+      "q": "Is Customs Nepal free to use?",
+      "a": "Yes. Searching HS codes, calculating duty and landed cost, exploring trade data and generating a proforma or commercial invoice are all free."
+    }
+  ]
+}

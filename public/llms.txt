@@ -1,0 +1,24 @@
+# Customs Nepal
+
+> Customs Nepal (customsnepal.com) is a free tool to find the Nepal HS code, customs duty, VAT (13%) and total landed cost for any product, using the official Customs Tariff 2026/27 (FY 2083/84 BS, HS 2022 nomenclature). It also offers an AI HS-code classifier, a proforma/commercial invoice generator and Nepal import/export trade data.
+
+Customs Nepal is an independent, privately operated reference tool. It is NOT a government website and is not affiliated with the Government of Nepal. Official sources: the Department of Customs (https://www.customs.gov.np) and the Ministry of Finance (https://www.mof.gov.np). Rates are shown as published and should be confirmed with the customs office or a clearing agent before any binding decision.
+
+## Main pages
+- [HS code search (home)](https://www.customsnepal.com/): Search the full Nepal Customs Tariff by product name, material or code, in English or Nepali.
+- [Customs Tariff 2026/27 — all chapters](https://www.customsnepal.com/tariff): Browse every chapter of the tariff with general and SAARC import-duty rates.
+- [Duty & landed-cost calculator](https://www.customsnepal.com/calculator): Estimate customs duty, VAT and total landed cost in rupees for any HS code.
+- [Ask AI — HS code classifier](https://www.customsnepal.com/ask-ai): Describe a product in plain words and get ranked HS code suggestions with reasoning.
+- [Imports](https://www.customsnepal.com/imports): Nepal import data and duty by product category and partner country.
+- [Exports](https://www.customsnepal.com/exports): Nepal export data by product category and destination.
+- [Trade data](https://www.customsnepal.com/trade-data): Multi-year Nepal foreign-trade statistics.
+- [FAQ](https://www.customsnepal.com/faq): Common questions on HS codes, customs duty, VAT and landed cost in Nepal.
+- [About](https://www.customsnepal.com/about): What Customs Nepal is, who it is for, and its data sources.
+
+## Key facts about Nepal customs
+- Nepal HS codes are 8 digits, written in dotted groups (for example 0101.21.00). The first 6 digits are the international HS subheading; Nepal adds the last 2 for national tariff lines.
+- The standard VAT rate in Nepal is 13%. On imports, VAT is charged on the assessable value plus customs duty (plus excise where it applies).
+- Customs duty is a percentage of the assessable (CIF) value of the goods. Each HS code has its own general rate.
+- A lower SAARC (SAFTA) preferential duty rate may apply to qualifying goods from SAARC countries, subject to rules of origin and a certificate of origin.
+- Depending on the product, imports may also attract excise duty and an agriculture reform fee.
+- Landed cost = product price + freight + insurance + customs duty + VAT + any other import taxes and fees.
