@@ -1132,6 +1132,8 @@ function renderHome(){
     </div>`;
   ecClear();
 }
+function track(n,p){ try{ if(window.gtag) gtag('event', n, p||{}); }catch(e){} }
+let calcTracked = false;
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
   $('#qclear').hidden = !q;
@@ -1174,7 +1176,7 @@ let tmr;
 $('#q').addEventListener('input', () => { shown = 40; clearTimeout(tmr); tmr = setTimeout(renderResults, 110); });
 $('#q').addEventListener('keydown', e => { if (e.key === 'Enter'){ $('#q').blur(); remember($('#q').value.trim()); } });
 $('#qclear').addEventListener('click', () => { $('#q').value = ''; renderResults(); $('#q').focus(); });
-function remember(q){ if (q.length < 2) return; const r = store.get('recent', []).filter(x => x.toLowerCase() !== q.toLowerCase()); r.unshift(q); store.set('recent', r.slice(0, 6)); }
+function remember(q){ if (q.length < 2) return; track('hs_search', { search_term: q.slice(0,80) }); const r = store.get('recent', []).filter(x => x.toLowerCase() !== q.toLowerCase()); r.unshift(q); store.set('recent', r.slice(0, 6)); }
 function runQuery(q){ $('#q').value = q; shown = 40; renderResults(); remember(q); window.scrollTo({top:0}); }
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -1207,6 +1209,7 @@ let curDetail = null, lastFocus = null;
 const npr = n => 'NPR ' + Math.round(n).toLocaleString('en-IN');
 function openDetail(code, keep){
   const r = BY[code]; if (!r) return;
+  if (!keep) track('view_hs_code', { hs_code: code });
   if (!keep) lastFocus = document.activeElement;
   curDetail = code;
   const sec = sectionOf(r.ch), chap = D.chapters[r.ch] || {}, exp = D.export[code];
@@ -1375,6 +1378,7 @@ function calc(){
   const cdRaw = $('#c-cd').value, vatOn = $('#c-vat').checked;
   $('#c-picked').innerHTML = r ? `<div class="d"><b>${r.code}</b>${esc(label(r))}</div>${dutyTag(rateOf(r), true)}` : '<div class="d">Search for a code to load its duty rate.</div>';
   if (!val || !fx){ out.innerHTML = `<div class="empty" style="border:0"><b>Add the invoice value and exchange rate</b><p>Your tax breakdown and landed cost appear here.</p></div>`; return; }
+  if (!calcTracked){ calcTracked = true; track('duty_calculate'); }
   const av = (val + frt + ins) * fx, raw = r ? rateOf(r) : '';
   const isSpec = r && isNaN(num(raw)) && cdRaw === '';
   let cd = 0, note = '';
@@ -1619,7 +1623,7 @@ function buildInvoiceWorkbook(data){
 async function downloadInvExcel(){
   const d = invData(); if (!d.items.length){ invMsg('inv-ai-msg', 'Add at least one line item (description or price) first.', 'err'); return; }
   const btn = $('#inv-xlsx'), old = btn.innerHTML; btn.disabled = true; btn.textContent = 'Building…';
-  try { await loadExcelJS(); const wb = buildInvoiceWorkbook(d); const buf = await wb.xlsx.writeBuffer(); const names = wb.worksheets.map(w => w.name); dlBlob(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'Invoice_Master_' + (d.shipment.piNo || 'draft').replace(/[^\w-]+/g, '_') + '.xlsx'); invMsg('inv-ai-msg', 'Master file downloaded — sheets: ' + names.join(', ') + '.', 'ok'); saveInvDraft(); }
+  try { await loadExcelJS(); const wb = buildInvoiceWorkbook(d); const buf = await wb.xlsx.writeBuffer(); const names = wb.worksheets.map(w => w.name); dlBlob(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'Invoice_Master_' + (d.shipment.piNo || 'draft').replace(/[^\w-]+/g, '_') + '.xlsx'); invMsg('inv-ai-msg', 'Master file downloaded — sheets: ' + names.join(', ') + '.', 'ok'); saveInvDraft(); track('invoice_generate', { format:'excel' }); }
   catch (e){ invMsg('inv-ai-msg', 'Could not build the Excel file: ' + (e && e.message || e), 'err'); }
   finally { btn.disabled = false; btn.innerHTML = old; }
 }
@@ -1664,12 +1668,13 @@ function downloadInvPDF(){
   const d = invData(); if (!d.items.length){ invMsg('inv-ai-msg', 'Add at least one line item first.', 'err'); return; }
   const w = window.open('', '_blank'); if (!w){ invMsg('inv-ai-msg', 'Allow pop-ups to export a PDF, or use Download Excel.', 'err'); return; }
   w.document.write(invHTML(d)); w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (e){} }, 500);
+  track('invoice_generate', { format:'pdf' });
 }
 /* --- AI: suggest HS codes for the current line items --- */
 async function suggestHS(){
   const rows = invItems.map((it, i) => ({ it, i })).filter(x => (x.it.desc || '').trim());
   if (!rows.length){ invMsg('inv-ai-msg', 'Add product descriptions first — then AI suggests the HS codes.', 'err'); return; }
-  const btn = $('#inv-suggest'); btn.disabled = true; invMsg('inv-ai-msg', 'Classifying ' + rows.length + ' item(s) with AI…', '');
+  const btn = $('#inv-suggest'); btn.disabled = true; track('ai_suggest_codes', { items: rows.length }); invMsg('inv-ai-msg', 'Classifying' + rows.length + ' item(s) with AI…', '');
   try {
     await initAI();
     if (!sampleFn){ invMsg('inv-ai-msg', 'The AI assistant is not switched on for this site.', 'err'); return; }
@@ -1840,6 +1845,7 @@ $('#ai-photo').addEventListener('change', e => { aiPhoto = e.target.files[0] || 
 $('#ai-go').addEventListener('click', () => { const q = $('#ai-q').value.trim(); if (!q && !aiPhoto) { $('#ai-q').focus(); return; } aiTurns = []; aiAnswers = {}; askAI(q || 'Identify the product in the photo and classify it.'); });
 const AI_COPY = { not_granted: 'You have not allowed this page to use Claude, so the assistant is off. Search and Browse still work.', sampling_disabled: 'Claude is not available on this account.', rate_limited: 'Too many requests right now. Wait a minute and try again.', refused: 'The assistant could not answer this request. Try describing the product differently.', invalid_json: 'The answer came back in an unexpected form. Try again or shorten the description.', empty_completion: 'No answer came back. Try a shorter description.', upstream_error: 'The connection dropped. Try again.', prompt_too_large: 'The description is too long. Shorten it.', session_expired: 'Your Claude session expired. Sign in again and retry.', tools_unavailable: 'This viewer cannot run the assistant tools yet.' };
 async function askAI(userText){
+  track('ask_ai');
   const out = $('#ai-out'), go = $('#ai-go');
   aiTurns.push({ role: 'user', content: userText });
   go.disabled = true;
@@ -2323,7 +2329,7 @@ function go(t, hist){
   if (t === 'ai') initAI();
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   try { $$('[data-toolt]').forEach(b => b.setAttribute('aria-selected', b.dataset.toolt === t)); if (t === 'invoice') $$('[data-tab="calc"]').forEach(b => b.setAttribute('aria-selected', 'true')); } catch(e){}
-  if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc') calc(); if (t === 'invoice') initInvoice();
+  if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc'){ calcTracked = false; calc(); } if (t === 'invoice') initInvoice();
   try { var _p = TABPATH[t] || '/'; if (hist === 'push') history.pushState(null,'',_p); else if (hist !== false) history.replaceState(null,'',_p); } catch(e){}
   window.scrollTo({top:0});
 }
@@ -2503,7 +2509,7 @@ try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
   function boot(){ try{
     sb=window.supabase.createClient(URL_,KEY_);
     sb.auth.getSession().then(function(r){ USER=(r.data&&r.data.session&&r.data.session.user)||null; updateHeader(); if(location.pathname==='/account'){ if(USER) openDash(true); else openModal(); } });
-    sb.auth.onAuthStateChange(function(_e,s){ var was=!!USER; USER=(s&&s.user)||null; updateHeader(); if(USER&&!was&&_e==='SIGNED_IN'){ closeModal(); toast('Signed in'); } });
+    sb.auth.onAuthStateChange(function(_e,s){ var was=!!USER; USER=(s&&s.user)||null; updateHeader(); if(USER&&!was&&_e==='SIGNED_IN'){ closeModal(); toast('Signed in'); track('login', { method: (s.user && s.user.app_metadata && s.user.app_metadata.provider) || 'email' }); } });
   }catch(e){} }
   $('#cn-google').addEventListener('click', function(){ if(!sb){ toast('Still loading'); return; } sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin}}).then(function(r){ if(r&&r.error){ var m=(r.error.message||'').toLowerCase(); if(m.indexOf('provider')>-1||m.indexOf('not enabled')>-1||m.indexOf('unsupported')>-1) toast('Google sign-in is being set up. Please use the email magic link for now.'); else toast(r.error.message); } }).catch(function(){ toast('Google sign-in is being set up. Please use the email magic link for now.'); }); });
   $('#cn-magic').addEventListener('click', function(){ if(!sb){ toast('Still loading'); return; } var em=($('#cn-email').value||'').trim(); if(!em){ $('#cn-email').focus(); return; } sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin}}).then(function(r){ if(r.error) toast(r.error.message); else toast('Check your email for the sign-in link'); }); });
