@@ -8,12 +8,13 @@ Nothing below changes the site's visual design, layout or fonts.
 import pathlib, re, json, datetime, os
 root = pathlib.Path(__file__).resolve().parents[1]
 src = (root / 'src.html').read_text(encoding='utf-8')
-data = (root / 'data' / 'tariff.json').read_text(encoding='utf-8').replace('</', '<\\/')
-stats = (root / 'data' / 'stats.json').read_text(encoding='utf-8').replace('</', '<\\/')
-offices = (root / 'data' / 'offices.json').read_text(encoding='utf-8').replace('</', '<\\/')
-integrated = (root / 'data' / 'integrated.json').read_text(encoding='utf-8').replace('</', '<\\/')
-page = (src.replace('/*DATA*/', data).replace('/*STATS*/', stats)
-        .replace('/*OFFICES*/', offices).replace('/*INTEGRATED*/', integrated))
+# Data (tariff/stats/offices/integrated) is no longer inlined into the HTML. It is written to
+# separate files below and fetched async by the app (__boot), so the HTML shell stays small and
+# paints fast — important on Nepal mobile networks. Keeps the big 1.7 MB trade stats off the
+# critical first paint and lets the service worker cache each file independently.
+page = src
+DATA_FILES = [('tariff.json', 't.json'), ('stats.json', 'st.json'),
+              ('offices.json', 'of.json'), ('integrated.json', 'int.json')]
 
 # ---------------------------------------------------------------------------
 # SEO constants
@@ -153,6 +154,9 @@ page = page.replace('<!--FAQ-->', FAQ_HTML)
 
 (root / 'public').mkdir(exist_ok=True)
 (root / 'public' / 'index.html').write_text(head + page + '</body></html>', encoding='utf-8')
+# write the data files the app fetches (see __boot in src.html)
+for _src, _out in DATA_FILES:
+    (root / 'public' / _out).write_text((root / 'data' / _src).read_text(encoding='utf-8'), encoding='utf-8')
 
 # ---------------------------------------------------------------------------
 # robots.txt + sitemap.xml (regenerated every build so they stay in sync)

@@ -1,7 +1,7 @@
 /* Customs Nepal service worker — offline shell + fresh-on-online.
    Bump CACHE when the caching strategy changes. The app itself auto-updates
    because navigations are network-first (latest deploy always wins online). */
-const CACHE = 'cn-v1';
+const CACHE = 'cn-v2';
 const CORE = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/seo.css'];
 
 self.addEventListener('install', (e) => {
