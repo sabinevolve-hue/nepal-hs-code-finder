@@ -2060,7 +2060,9 @@ const yFY = () => FY[stYear];
 const OV = () => H.overview[stYear];
 const CH = () => Object.keys(H.chapters).map(Number).map(c => [c, '', H.chapters[c][stYear][0], H.chapters[c][stYear][1], H.chapters[c][stYear][2]]).filter(x => x[2] || x[3]);
 const CO = () => Object.keys(H.countries).map(nm => [nm, H.countries[nm][stYear][0], H.countries[nm][stYear][1]]).filter(x => x[1] || x[2]);
-const CU = () => Object.keys(H.customs).map(nm => [nm, H.customs[nm][stYear][0], H.customs[nm][stYear][1]]).filter(x => x[1] || x[2]);
+// customs offices as the FTS 'customswise' sheet names them; the sheet's own Total row is not an office
+const CU_NAME = { Ti_Airport: 'Tribhuvan International Airport', Dryport: 'Dry Port', Maheshpaur: 'Maheshpur' };
+const CU = () => Object.keys(H.customs).filter(nm => nm.toLowerCase() !== 'total').map(nm => [CU_NAME[nm] || nm, H.customs[nm][stYear][0], H.customs[nm][stYear][1]]).filter(x => x[1] || x[2]);
 const BD = () => H.bands[stYear] || [];
 const impV = c => isLatest() ? (ST.imports[c] ? ST.imports[c][3] : 0) : (H.codes[c] ? H.codes[c][stYear][0] : 0);
 const expV = c => isLatest() ? (ST.exports[c] ? ST.exports[c][3] : 0) : (H.codes[c] ? H.codes[c][stYear][1] : 0);

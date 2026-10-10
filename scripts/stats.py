@@ -57,7 +57,8 @@ def read(path, fy_hint=None):
     out['countries'] = co
     cu = []
     for r in rows(sheet('customswise')):
-        if r[1] and str(r[0]).strip().isdigit(): cu.append([str(r[1]).strip().title(), I(r[2]), I(r[4])])
+        # the sheet ends with a 'Total' row that also carries a serial number: it is not an office
+        if r[1] and str(r[0]).strip().isdigit() and str(r[1]).strip().lower() != 'total': cu.append([str(r[1]).strip().title(), I(r[2]), I(r[4])])
     out['customs'] = cu
     bd = []
     for r in rows(sheet('idvalue')):
