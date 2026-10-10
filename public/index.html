@@ -397,6 +397,16 @@ table.bk tr.sub td{font-weight:700}
 table.bk tr.total td{font-size:1.08rem;font-weight:700;border-top:2px solid var(--fg)}
 .warn{display:flex;gap:10px;background:var(--mid-bg);border-radius:10px;padding:var(--s3);font-size:.88rem;margin-top:var(--s3)}
 .warn svg{color:var(--mid)}
+.src{margin-top:var(--s4);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3) var(--s4);background:var(--card)}
+.src-h{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:.82rem;font-weight:700;letter-spacing:.01em}
+.src-h svg{width:17px;height:17px;color:var(--free)}
+.src-h .fy{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.src-h .pill{margin-left:auto;font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:999px}
+.src-h .pill.ok{background:var(--free-bg);color:var(--free)}
+.src-h .pill.soon,.src-h .pill.old{background:var(--mid-bg);color:var(--mid)}
+.src p{margin:6px 0 0;font-size:.8rem;line-height:1.5;color:var(--muted)}
+.src p b{color:var(--fg-2);font-weight:700}
+.src a{color:var(--accent);font-weight:700;white-space:nowrap}
 
 /* ---------- AI assistant ---------- */
 .ai-intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--s2);margin-top:var(--s3)}
@@ -574,6 +584,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.3 8 11 4.6-2.7 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></symbol>
   <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
@@ -1059,6 +1070,18 @@ function taxBreakdown(code){
   return h;
 }
 const pct = v => { const n = num(v); return isNaN(n) ? (v || 'Not stated') : n === 0 ? 'Free' : n + '%'; };
+/* trust / provenance — ties every rate to the official source, fiscal year and page */
+const DATA_FY = { ne: '2083/84', ad: (typeof D !== 'undefined' && D.v) || '2026/27', act: '2083',
+                  start: Date.UTC(2026, 6, 16), end: Date.UTC(2027, 6, 16) };
+const dataStatus = () => { const t = Date.now(); return t < DATA_FY.start ? 'Upcoming' : t <= DATA_FY.end ? 'In effect' : 'Latest edition'; };
+function sourceNote(code){
+  const r = code ? BY[code] : null, pg = r && r.pg ? r.pg : null;
+  const st = dataStatus(), cls = st === 'In effect' ? 'ok' : st === 'Upcoming' ? 'soon' : 'old';
+  return `<div class="src">
+    <div class="src-h">${ic('i-shield')}<span>Official rates</span><span class="fy">FY ${DATA_FY.ne} · ${DATA_FY.ad}</span><span class="pill ${cls}">${st}</span></div>
+    <p>Customs duty, excise, fees and VAT are taken from Nepal's <b>Customs Tariff ${DATA_FY.ad}</b> (Department of Customs) and the <b>Finance Act ${DATA_FY.act}</b> (Ministry of Finance), which set the rates for fiscal year ${DATA_FY.ne}.${pg ? ` Customs Tariff page <b>${pg}</b>.` : ''} <a href="https://www.customs.gov.np" target="_blank" rel="noopener noreferrer">customs.gov.np ↗</a></p>
+  </div>`;
+}
 function dutyTag(v, withLabel){
   const n = num(v);
   if (isNaN(n)) return `<span class="duty d-spec"><b>${v ? 'Specific rate' : 'Not stated'}</b>${withLabel ? '<small>duty</small>' : ''}</span>`;
@@ -1288,7 +1311,7 @@ function openDetail(code, keep){
     <div class="flow"><span>CIF value</span><i>+</i><span>Customs duty</span><i>+</i><span>Excise</span><i>→</i><span>VAT 13%</span><i>=</i><span>Landed cost</span></div>
     <p class="fine">Customs duty is charged on the CIF value. Excise, where it applies, is charged on value plus duty. VAT is charged on the total. SAARC rates generally need a valid certificate of origin.</p>
     ${chap.n ? `<h3 class="h">Legal notes</h3><details class="notes"><summary>Chapter ${r.ch} notes</summary><pre>${esc(reflow(chap.n))}</pre></details>` : ''}
-    <p class="fine">Source: Customs Tariff 2026/27, page ${r.pg}.</p>`;
+    ${sourceNote(code)}`;
   const saved = store.get('saved', []).includes(code);
   $('#sh-save').classList.toggle('on', saved); $('#sh-save').setAttribute('aria-label', saved ? 'Remove from saved' : 'Save code');
   $('#sh-save').innerHTML = ic('i-bookmark').replace('<svg', saved ? '<svg style="fill:currentColor"' : '<svg');
@@ -1458,7 +1481,8 @@ function calc(){
     ${isSpec && !qty ? `<div class="warn">${ic('i-alert')}<span>This code has a per-unit duty. Enter the quantity in ${esc(r.u)} to include it.</span></div>` : ''}
     ${calcTI && calcTI.sep.length ? `<p class="fine">Also collected at customs (not in the landed total above): ${calcTI.sep.map(s => `${esc(s.label)} ${s.rate}%`).join(', ')}.</p>` : ''}
     ${calcTI && calcTI.totals ? `<p class="fine">Official total effective rate — ${['India', 'other SAARC', 'Tibet', 'other countries'].map((nm, i) => calcTI.totals[i] != null ? `${nm} <b style="color:var(--fg)">${calcTI.totals[i]}%</b>` : '').filter(Boolean).join(' · ')}.</p>` : ''}
-    <p class="fine">Figures use the integrated Customs Tariff 2026/27. Exemptions and the current Finance Act can change them — check with customs or your clearing agent before pricing a shipment.</p>`;
+    ${sourceNote(r ? r.code : null)}
+    <p class="fine">Exemptions and the current Finance Act can change these rates — check with customs or your clearing agent before pricing a shipment.</p>`;
 }
 function initCalc(){
   const c = store.get('calcCode', '8528.59.00');
