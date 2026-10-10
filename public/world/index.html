@@ -132,6 +132,17 @@ table.bk td:last-child{text-align:right;font-family:var(--f-mono);font-weight:70
 .barrow .fi{display:block;height:100%;border-radius:6px;background:var(--accent);min-width:3px}
 .barrow .vl{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
 @media(max-width:520px){.barrow{grid-template-columns:110px 1fr auto;gap:7px;font-size:.8rem}}
+.lbrow{display:grid;grid-template-columns:26px 150px 1fr auto;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:6px;margin-bottom:2px;cursor:pointer;color:inherit;font-size:.86rem}
+.lbrow:hover{background:var(--muted-bg)}
+.lbrow .rk{color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.lbrow .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.lbrow .tr{background:var(--muted-bg);border-radius:6px;height:14px;overflow:hidden}
+.lbrow .fi{display:block;height:100%;border-radius:6px;min-width:3px}
+.lbrow .vl{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+@media(max-width:520px){.lbrow{grid-template-columns:22px 104px 1fr auto;gap:7px;font-size:.8rem}}
+.nepalcard{display:flex;align-items:center;gap:14px;background:var(--accent-bg);border-radius:var(--r);padding:var(--s4);margin-top:var(--s4);cursor:pointer;color:inherit;width:100%;text-align:left;border:0}
+.nepalcard .fl{font-size:2rem}
+.nepalcard b{font-weight:700}
 h3.h{font-size:1.05rem;margin:var(--s5) 0 var(--s2)}
 .sub2{display:flex;gap:6px;margin:var(--s4) 0}
 .sub2 button{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--fg-2)}
@@ -215,10 +226,12 @@ function home(){
   <main><div class="wrap">
     <div class="grid2">
       <a class="bigcard" href="/hs" data-nav><div class="ic">${ic(I.box)}</div><h3>World HS Code Finder</h3><p>Look up any product's 6-digit Harmonized System code and see how Nepal taxes it. The same code works in 200+ countries.</p><span class="go">Find a code ${ic(I.right)}</span></a>
-      <a class="bigcard" href="/trade" data-nav><div class="ic">${ic(I.globe)}</div><h3>Global Trade Profiles</h3><p>Who the biggest economies buy from and sell to, and what they trade — exports, imports, partners and products.</p><span class="go">Explore trade ${ic(I.right)}</span></a>
+      <a class="bigcard" href="/trade" data-nav><div class="ic">${ic(I.globe)}</div><h3>Global Trade Data</h3><p>World rankings and a trade profile for every one of ${TRADE.world.count} economies — exports, imports, partners and product mix.</p><span class="go">Explore trade ${ic(I.right)}</span></a>
     </div>
     <div class="statrow">
-      ${TRADE.countries.slice(0,4).map(c=>`<div class="s"><b>${c.flag} ${money(c.exp)}</b><span>${esc(c.name)} exports (${c.expYear})</span></div>`).join('')}
+      <div class="s"><b>${money(TRADE.world.totalExp)}</b><span>World merchandise trade (${TRADE.world.year})</span></div>
+      <div class="s"><b>${TRADE.world.count}</b><span>Economies profiled</span></div>
+      <div class="s"><b>${SUBS.length.toLocaleString()}</b><span>HS codes linked to trade</span></div>
     </div>
   </div></main>`;
 }
@@ -295,19 +308,44 @@ function hsDetail(code){
 }
 
 /* ---------------- PILLAR 2: TRADE ---------------- */
+let tFlow='exp';
+function leaderboard(list,color){const mx=Math.max(...list.map(x=>x[3]),1);
+  return `<div class="bars">${list.map((x,i)=>`<button class="lbrow" onclick="__go('/trade/${x[0].toLowerCase()}')"><span class="rk">${i+1}</span><span class="lb">${x[2]} ${esc(x[1])}</span><span class="tr"><span class="fi" style="width:${Math.max(2,x[3]/mx*100)}%;background:${color}"></span></span><span class="vl">${money(x[3])}</span></button>`).join('')}</div>`;}
+function countryRows(q){
+  const ql=(q||'').toLowerCase().trim();
+  const list=TRADE.countries.filter(c=>c.exp!=null&&(!ql||c.name.toLowerCase().includes(ql)));
+  if(!list.length)return '<p class="fine">No economy matches.</p>';
+  return list.map(c=>`<button class="row" onclick="__go('/trade/${c.iso.toLowerCase()}')"><span class="code" style="color:var(--muted);min-width:30px;text-align:right">#${c.rankExp||'–'}</span><span class="d">${c.flag} ${esc(c.name)}</span><span class="end"><b class="ex">${money(c.exp)}</b> ${ic(I.right)}</span></button>`).join('');
+}
 function tradeHome(){
-  document.title='Global Trade Profiles — Customs Nepal';
-  app.innerHTML=`<main><div class="wrap">
-    <div class="ph"><h2>Global Trade Profiles</h2><p>Merchandise exports, imports, top partners and product mix for the world's largest economies.</p></div>
-    <div class="ccards">${TRADE.countries.map(c=>{const bal=(c.exp||0)-(c.imp||0);
-      return `<button class="ccard" onclick="__go('/trade/${c.iso.toLowerCase()}')">
-        <div class="fl">${c.flag}</div><h3>${esc(c.name)}</h3>
-        <div class="kv"><span>Exports ${c.expYear}</span><b class="ex">${money(c.exp)}</b></div>
-        <div class="kv"><span>Imports ${c.impYear}</span><b class="im">${money(c.imp)}</b></div>
-        <div class="kv"><span>Balance</span><b style="color:${bal>=0?'var(--free)':'var(--hi)'}">${bal>=0?'+':'−'}${money(Math.abs(bal)).slice(1)}</b></div>
-      </button>`;}).join('')}</div>
-    <p class="fine">Totals: ${esc(TRADE.totalsSource)}. Partners &amp; products: ${esc(TRADE.detailSource)}.</p>
-  </div></main>`;
+  const W=TRADE.world, np=TRADE.countries.find(c=>c.iso==='NPL');
+  document.title='Global trade data — world rankings & country profiles — Customs Nepal';
+  renderT();
+  function renderT(){
+    const top=tFlow==='exp'?W.topExp:W.topImp, col=tFlow==='exp'?'var(--exp)':'var(--imp)';
+    const rmax=Math.max(...W.regions.map(r=>r[1]),1);
+    app.innerHTML=`<main><div class="wrap">
+      <div class="ph"><h2>Global trade</h2><p>World merchandise trade reached <b>${money(W.totalExp)}</b> in ${W.year}, across ${W.count} economies. Explore the rankings below, or open any country.</p></div>
+      <div class="statrow" style="margin-top:0">
+        <div class="s"><b class="ex">${money(W.totalExp)}</b><span>World exports (${W.year})</span></div>
+        <div class="s"><b class="im">${money(W.totalImp)}</b><span>World imports (${W.year})</span></div>
+        <div class="s"><b>${W.count}</b><span>Economies</span></div>
+      </div>
+      <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">World trade over time</b>${trendSVG(W.trend)}</div>
+      ${np?`<button class="nepalcard" onclick="__go('/trade/npl')"><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — #${np.rankExp} of ${W.count} by exports (${money(np.exp)}). See who Nepal trades with ${ic(I.right)}</span></button>`:''}
+      <div class="sub2" style="margin-top:var(--s5)"><button class="${tFlow==='exp'?'on':''}" onclick="__tflow('exp')">Top exporters</button><button class="${tFlow==='imp'?'on':''}" onclick="__tflow('imp')">Top importers</button></div>
+      ${leaderboard(top,col)}
+      <h3 class="h">By region</h3>
+      ${bars(W.regions.map(r=>[r[0],r[1]]),rmax,money,'var(--exp)')}
+      <h3 class="h">All economies</h3>
+      <div class="sbox">${ic(I.search)}<input id="cq" type="search" placeholder="Find a country…" autocomplete="off"></div>
+      <div id="clist">${countryRows('')}</div>
+      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span></div>
+        <p>World and country totals from the <b>World Bank</b> (merchandise trade, current US$); partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>. Rankings cover ${W.count} reporting economies.</p></div>
+    </div></main>`;
+    const cq=$('#cq'); if(cq)cq.addEventListener('input',()=>{$('#clist').innerHTML=countryRows(cq.value);});
+  }
+  window.__tflow=f=>{tFlow=f;renderT();window.scrollTo(0,0);};
 }
 
 function bars(items,max,fmt,color){ const c=color||'var(--accent)'; return `<div class="bars">${items.map(it=>{const v=it[it.length-1];return `<div class="barrow"><span class="lb">${esc(it[it.length-2])}</span><span class="tr"><span class="fi" style="width:${Math.max(2,v/max*100)}%;background:${c}"></span></span><span class="vl">${fmt(v)}</span></div>`;}).join('')}</div>`; }
@@ -329,31 +367,33 @@ function trendSVG(trend){
 let cFlow='exp';
 function country(iso){
   const c=TRADE.countries.find(x=>x.iso===iso); if(!c)return tradeHome();
-  document.title=`${c.name} trade profile — exports, imports, partners`;
-  const bal=(c.exp||0)-(c.imp||0);
+  const W=TRADE.world, deep=!!c.deep, bal=(c.exp||0)-(c.imp||0);
+  document.title=`${c.name} trade profile — exports, imports${deep?', partners':''} — Customs Nepal`;
   render();
   function render(){
-    const parts=cFlow==='exp'?c.expPartners:c.impPartners;
-    const prods=cFlow==='exp'?c.expProducts:c.impProducts;
+    const parts=deep?(cFlow==='exp'?c.expPartners:c.impPartners):[];
+    const prods=deep?(cFlow==='exp'?c.expProducts:c.impProducts):[];
     const fcol=cFlow==='exp'?'var(--exp)':'var(--imp)';
     const pmax=Math.max(...parts.map(p=>p[2]),1), rmax=Math.max(...prods.map(p=>p[1]),1);
     app.innerHTML=`<main><div class="wrap">
-      <button class="back" onclick="__go('/trade')">${ic(I.left)}All economies</button>
-      <div class="ph"><h2>${c.flag} ${esc(c.name)}</h2><p>Merchandise trade profile. Totals to ${c.expYear}; partners &amp; product mix for ${c.pYear}.</p></div>
+      <button class="back" onclick="__go('/trade')">${ic(I.left)}Global trade</button>
+      <div class="ph"><h2>${c.flag} ${esc(c.name)}</h2><p>${c.region?esc(c.region)+' · ':''}World rank <b>#${c.rankExp||'–'}</b> exporter, <b>#${c.rankImp||'–'}</b> importer, of ${W.count} economies.</p></div>
       <div class="statrow" style="margin-top:0">
         <div class="s"><b class="ex">${money(c.exp)}</b><span>Exports (${c.expYear})</span></div>
         <div class="s"><b class="im">${money(c.imp)}</b><span>Imports (${c.impYear})</span></div>
         <div class="s"><b style="color:${bal>=0?'var(--free)':'var(--hi)'}">${bal>=0?'+':'−'}${money(Math.abs(bal)).slice(1)}</b><span>Trade balance</span></div>
       </div>
       <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">Exports vs imports</b>${trendSVG(c.trend)}</div>
+      ${deep?`
       <div class="sub2"><button class="${cFlow==='exp'?'on':''}" onclick="__flow('exp')">Exports</button><button class="${cFlow==='imp'?'on':''}" onclick="__flow('imp')">Imports</button></div>
-      <h3 class="h">Top ${cFlow==='exp'?'export destinations':'import sources'}</h3>
+      <h3 class="h">Top ${cFlow==='exp'?'export destinations':'import sources'} <small style="font-weight:600;color:var(--muted)">(${c.pYear})</small></h3>
       ${parts.length?bars(parts.map(p=>[p[1],p[2]]),pmax,money,fcol):'<p class="fine">No partner data.</p>'}
       <h3 class="h">${cFlow==='exp'?'What it exports':'What it imports'}</h3>
-      ${prods.length?bars(prods.map(p=>[p[0],p[1]]),rmax,money,fcol):'<p class="fine">No product data.</p>'}
-      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span><span style="margin-left:auto;font-weight:600;color:var(--muted)">${c.pYear}</span></div>
-        <p>Trade totals from the <b>World Bank</b> (merchandise trade, current US$); partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b> (each country's own reported customs data). <a href="https://wits.worldbank.org/CountryProfile/en/${c.iso}" target="_blank" rel="noopener">World Bank profile ↗</a></p></div>
-      <p class="fine">Mirror-statistics note: a country's reported exports to a partner may differ from that partner's reported imports. Product groups follow HS chapter ranges.</p>
+      ${prods.length?bars(prods.map(p=>[p[0],p[1]]),rmax,money,fcol):'<p class="fine">No product data.</p>'}`
+      :`<div class="outcome" style="margin-top:var(--s4)">${ic(I.info)}<div>Partner and product breakdowns are live for the ~30 largest traders and Nepal, and rolling out to more economies. The totals and trend above are from the World Bank.</div></div>`}
+      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span>${deep?`<span style="margin-left:auto;font-weight:600;color:var(--muted)">${c.pYear}</span>`:''}</div>
+        <p>Trade totals from the <b>World Bank</b> (merchandise trade, current US$)${deep?'; partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>':''}. <a href="https://wits.worldbank.org/CountryProfile/en/${c.iso}" target="_blank" rel="noopener">World Bank profile ↗</a></p></div>
+      ${deep?'<p class="fine">Mirror-statistics note: a country&#39;s reported exports to a partner may differ from that partner&#39;s reported imports. Product groups follow HS chapter ranges.</p>':''}
     </div></main>`;
   }
   window.__flow=f=>{cFlow=f;render();window.scrollTo(0,0);};
