@@ -11,7 +11,9 @@ src = (root / 'src.html').read_text(encoding='utf-8')
 data = (root / 'data' / 'tariff.json').read_text(encoding='utf-8').replace('</', '<\\/')
 stats = (root / 'data' / 'stats.json').read_text(encoding='utf-8').replace('</', '<\\/')
 offices = (root / 'data' / 'offices.json').read_text(encoding='utf-8').replace('</', '<\\/')
-page = src.replace('/*DATA*/', data).replace('/*STATS*/', stats).replace('/*OFFICES*/', offices)
+integrated = (root / 'data' / 'integrated.json').read_text(encoding='utf-8').replace('</', '<\\/')
+page = (src.replace('/*DATA*/', data).replace('/*STATS*/', stats)
+        .replace('/*OFFICES*/', offices).replace('/*INTEGRATED*/', integrated))
 
 # ---------------------------------------------------------------------------
 # SEO constants
