@@ -1,31 +1,34 @@
 #!/usr/bin/env bash
-# Refresh data for world.customsnepal.com (Pillar 1 HS tree + Pillar 2 trade).
-# Usage: scripts/world_fetch.sh   (run from repo root; writes world/data/*.json)
-# Re-run yearly when World Bank / WITS publish a newer year, or when the HS edition changes (HS 2028 -> Jan 2028).
+# Refresh data for world.customsnepal.com.
+#   Pillar 1 (HS tree)      -> world/data/hs.json      via world_data.py
+#   Pillar 2 (global trade) -> world/data/trade.json   via world_trade.py
+# Usage: scripts/world_fetch.sh   (run from repo root)
+# Re-run yearly when World Bank / WITS publish a newer year, or for a new HS edition (HS 2028 -> Jan 2028).
 set -euo pipefail
-RAW="$(mktemp -d)"
-echo "raw dir: $RAW"
+RAW="$(mktemp -d)"; echo "raw dir: $RAW"
+WB="https://api.worldbank.org/v2"
+WITS="https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade/reporter"
 
-# Pillar 1 — canonical HS 6-digit tree (sections/chapters/headings/subheadings)
-curl -sS --max-time 40 -o "$RAW/hs.csv" \
-  "https://raw.githubusercontent.com/datasets/harmonized-system/master/data/harmonized-system.csv"
+# Pillar 1 — canonical HS 6-digit tree + WB country list (names/regions, aggregate filter)
+curl -sS --max-time 40 -o "$RAW/hs.csv" "https://raw.githubusercontent.com/datasets/harmonized-system/master/data/harmonized-system.csv"
+curl -sS --max-time 40 -o "$RAW/countrylist.json" "$WB/country?format=json&per_page=400"
 
-# World Bank country list (used to filter region aggregates out of partner lists)
-curl -sS --max-time 40 -o "$RAW/countrylist.json" \
-  "https://api.worldbank.org/v2/country?format=json&per_page=400"
+# Pillar 2 — all-country merchandise totals (every economy's totals/trend/rank + WLD world totals)
+curl -sS --max-time 90 -o "$RAW/wb_all_exp.json" "$WB/country/all/indicator/TX.VAL.MRCH.CD.WT?format=json&date=2010:2023&per_page=20000"
+curl -sS --max-time 90 -o "$RAW/wb_all_imp.json" "$WB/country/all/indicator/TM.VAL.MRCH.CD.WT?format=json&date=2010:2023&per_page=20000"
 
-# Pillar 2 — per economy: WB merchandise totals + WITS partners + WITS product mix.
-# name|wbcode|witscode|partnerYear   (Russia stopped reporting to Comtrade after 2021)
-for P in "USA|USA|2022" "CHN|CHN|2022" "JPN|JPN|2022" "IND|IND|2022" "RUS|RUS|2021" "EUU|EUN|2022"; do
-  WB="${P%%|*}"; REST="${P#*|}"; WT="${REST%%|*}"; Y="${REST##*|}"
-  curl -sS --max-time 60 -o "$RAW/wb_exp_$WB.json" "https://api.worldbank.org/v2/country/$WB/indicator/TX.VAL.MRCH.CD.WT?format=json&date=2010:2023&per_page=60"
-  curl -sS --max-time 60 -o "$RAW/wb_imp_$WB.json" "https://api.worldbank.org/v2/country/$WB/indicator/TM.VAL.MRCH.CD.WT?format=json&date=2010:2023&per_page=60"
-  B="https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade/reporter/$WT/year/$Y"
-  curl -sS --max-time 90 -o "$RAW/wits_expP_${WT}_$Y.xml" "$B/partner/all/product/Total/indicator/XPRT-TRD-VL"
-  curl -sS --max-time 90 -o "$RAW/wits_impP_${WT}_$Y.xml" "$B/partner/all/product/Total/indicator/MPRT-TRD-VL"
-  curl -sS --max-time 90 -o "$RAW/wits_expProd_${WT}.xml" "$B/partner/wld/product/all/indicator/XPRT-TRD-VL"
-  curl -sS --max-time 90 -o "$RAW/wits_impProd_${WT}.xml" "$B/partner/wld/product/all/indicator/MPRT-TRD-VL"
+# Deep partner/product detail (WITS, from UN Comtrade) for the largest traders + Nepal; latest-year fallback.
+DEEP="CHN USA DEU NLD JPN ITA FRA KOR MEX BEL HKG ARE CAN GBR SGP IND RUS ESP CHE POL AUS VNM BRA SAU MYS THA IDN TUR CZE AUT NPL"
+pull(){ for Y in 2022 2021 2020; do
+    sz=$(curl -sS --max-time 45 "$WITS/$1/year/$Y/$3" -o "$RAW/wits_$2_$1.xml" -w "%{size_download}" 2>/dev/null)
+    [ "${sz:-0}" -gt 1500 ] && { echo "$1 $2 $Y"; return; }; done; echo "$1 $2 NONE"; }
+for ISO in $DEEP; do
+  pull "$ISO" expP    "partner/all/product/Total/indicator/XPRT-TRD-VL"
+  pull "$ISO" impP    "partner/all/product/Total/indicator/MPRT-TRD-VL"
+  pull "$ISO" expProd "partner/wld/product/all/indicator/XPRT-TRD-VL"
+  pull "$ISO" impProd "partner/wld/product/all/indicator/MPRT-TRD-VL"
 done
 
-python3 -I scripts/world_data.py "$RAW/hs.csv" "$RAW" data/tariff.json world/data
-echo "done. Regenerate sitemap if chapters changed."
+python3 -I scripts/world_data.py  "$RAW/hs.csv" "$RAW" data/tariff.json world/data   # -> hs.json (also writes a trade.json, overwritten next)
+python3 -I scripts/world_trade.py "$RAW" world/data                                   # -> trade.json (v2: world overview + all economies)
+echo "done. If chapters or the country set changed, regenerate world/sitemap.xml."
