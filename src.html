@@ -978,11 +978,13 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
 <script id="data" type="application/json">/*DATA*/</script>
 <script id="stats" type="application/json">/*STATS*/</script>
 <script id="offices" type="application/json">/*OFFICES*/</script>
+<script id="integrated" type="application/json">/*INTEGRATED*/</script>
 <script>
 (function(){
 const D = JSON.parse(document.getElementById('data').textContent);
 const ST = JSON.parse(document.getElementById('stats').textContent);
 const OF = JSON.parse(document.getElementById('offices').textContent);
+const INT = (() => { try { return JSON.parse(document.getElementById('integrated').textContent || '{}'); } catch(e){ return {}; } })();
 const CHSHORT = {"1": "Live animals", "2": "Meat", "3": "Fish & seafood", "4": "Dairy, eggs & honey", "5": "Other animal products", "6": "Live plants & flowers", "7": "Vegetables", "8": "Fruit & nuts", "9": "Coffee, tea & spices", "10": "Cereals", "11": "Flour, malt & starch", "12": "Oil seeds & medicinal plants", "13": "Gums & resins", "14": "Vegetable materials", "15": "Edible oils & fats", "16": "Meat & fish preparations", "17": "Sugar & confectionery", "18": "Cocoa & chocolate", "19": "Cereal & bakery products", "20": "Processed fruit & vegetables", "21": "Misc. food preparations", "22": "Beverages & spirits", "23": "Animal feed & residues", "24": "Tobacco", "25": "Salt, stone, cement & lime", "26": "Ores & ash", "27": "Fuels, oils & gas", "28": "Inorganic chemicals", "29": "Organic chemicals", "30": "Pharmaceuticals", "31": "Fertilisers", "32": "Dyes, paints & inks", "33": "Cosmetics & perfumery", "34": "Soap & cleaning products", "35": "Glues & enzymes", "36": "Explosives & matches", "37": "Photographic goods", "38": "Misc. chemicals", "39": "Plastics", "40": "Rubber", "41": "Raw hides & leather", "42": "Leather goods & bags", "43": "Furskins", "44": "Wood & timber", "45": "Cork", "46": "Straw & basketware", "47": "Wood pulp", "48": "Paper & paperboard", "49": "Books & printed matter", "50": "Silk", "51": "Wool & animal hair", "52": "Cotton", "53": "Jute & other fibres", "54": "Synthetic filaments", "55": "Synthetic staple fibres", "56": "Wadding, felt & rope", "57": "Carpets", "58": "Special fabrics & lace", "59": "Coated & industrial textiles", "60": "Knitted fabrics", "61": "Knitted garments", "62": "Woven garments", "63": "Textile articles & rags", "64": "Footwear", "65": "Headgear", "66": "Umbrellas & sticks", "67": "Feathers & artificial flowers", "68": "Stone & cement articles", "69": "Ceramics", "70": "Glass", "71": "Gems, gold & jewellery", "72": "Iron & steel", "73": "Iron & steel articles", "74": "Copper", "75": "Nickel", "76": "Aluminium", "77": "Reserved", "78": "Lead", "79": "Zinc", "80": "Tin", "81": "Other base metals", "82": "Tools & cutlery", "83": "Misc. metal articles", "84": "Machinery & mechanical", "85": "Electrical & electronics", "86": "Railway", "87": "Vehicles & parts", "88": "Aircraft & drones", "89": "Ships & boats", "90": "Optical, medical & precision", "91": "Clocks & watches", "92": "Musical instruments", "93": "Arms & ammunition", "94": "Furniture & lighting", "95": "Toys, games & sports", "96": "Misc. manufactured", "97": "Art & antiques"};
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -1021,6 +1023,38 @@ const label = r => { if (!r.path.length || !/^other\b/i.test(r.d)) return r.d; c
 let origin = store.get('origin', 'gen');
 const rateOf = r => origin === 'saarc' ? r.s : r.g;
 const num = v => !v ? NaN : /^free$/i.test(v) ? 0 : /^\d+(\.\d+)?$/.test(v) ? parseFloat(v) : NaN;
+/* integrated tax data (customs + excise + VAT + special fees + total effective rate by origin) */
+function taxInfo(code){
+  const r = BY[code]; if (!r) return null;
+  const I = INT[code] || {}, e = I.e || {};
+  const FEE = { ro:'Road construction fee', lu:'Luxury fee', gr:'Green tax', cl:'Clean-infrastructure fee', in:'Internal production fee', ot:'Other tax' };
+  const fees = Object.keys(FEE).filter(k => e[k] != null).map(k => ({ label: FEE[k], rate: e[k] }));
+  const sep = [];
+  if (e.ag != null) sep.push({ label: 'Agriculture reform fee', rate: e.ag });
+  if (e.he != null) sep.push({ label: 'Health-risk tax', rate: e.he });
+  return { cgRaw:r.g, csRaw:r.s, cg:num(r.g), cs:num(r.s), excise:(e.ex != null ? e.ex : null),
+           fees, sep, vat:(I.v != null ? I.v : 13), totals:(I.t || null), specific:!!I.sp, unit:r.u };
+}
+const ORIGIN_NAMES = ['India', 'Other SAARC', 'Tibet', 'Other'];
+function taxBreakdown(code){
+  const t = taxInfo(code); if (!t) return '';
+  const row = (l, v, cls) => `<tr${cls ? ' class="' + cls + '"' : ''}><td>${l}</td><td>${v}</td></tr>`;
+  let h = '<table class="bk"><tbody>';
+  h += row('Customs duty — general', esc(pct(t.cgRaw)));
+  if (t.csRaw) h += row('Customs duty — SAFTA', esc(pct(t.csRaw)));
+  if (t.excise != null) h += row('Excise duty', t.excise + '%');
+  t.fees.forEach(f => h += row(esc(f.label), f.rate + '%'));
+  t.sep.forEach(f => h += row(esc(f.label) + ' <small>collected separately</small>', f.rate + '%'));
+  h += row('VAT', t.vat ? t.vat + '%' : 'Exempt');
+  if (t.totals && t.totals[3] != null) h += row('Total effective rate <small>from other countries</small>', t.totals[3] + '%', 'total');
+  h += '</tbody></table>';
+  if (t.totals) {
+    const cells = t.totals.map((x, i) => x != null ? `<span style="display:inline-block;margin:0 12px 6px 0"><small style="color:var(--muted)">${ORIGIN_NAMES[i]}</small> <b>${x}%</b></span>` : '').join('');
+    if (cells) h += `<p class="fine" style="margin-top:6px">Total effective rate by origin: ${cells}</p>`;
+  }
+  if (t.specific) h += '<p class="fine">This code also carries a specific (Rs per unit) duty — enter your quantity in the calculator for the exact amount.</p>';
+  return h;
+}
 const pct = v => { const n = num(v); return isNaN(n) ? (v || 'Not stated') : n === 0 ? 'Free' : n + '%'; };
 function dutyTag(v, withLabel){
   const n = num(v);
@@ -1215,6 +1249,7 @@ function openDetail(code, keep){
   curDetail = code;
   const sec = sectionOf(r.ch), chap = D.chapters[r.ch] || {}, exp = D.export[code];
   const v = rateOf(r), n = num(v), other = origin === 'saarc' ? r.g : r.s;
+  const TI = taxInfo(code), effOther = TI && TI.totals ? TI.totals[3] : null, effIndia = TI && TI.totals ? TI.totals[0] : null;
   const combined = isNaN(n) ? null : ((1 + n/100) * 1.13 - 1) * 100;
   const sib = BYHEAD[r.h] || [];
   $('#sh-eb').textContent = `Chapter ${r.ch} · Heading ${r.h}`;
@@ -1225,11 +1260,14 @@ function openDetail(code, keep){
     <div class="glance">
       <div class="on"><span>${origin === 'saarc' ? 'SAARC' : 'General'} duty</span><b class="${isNaN(n) ? 'sm' : ''}">${esc(pct(v))}</b></div>
       <div><span>${origin === 'saarc' ? 'General' : 'SAARC'} duty</span><b class="${isNaN(num(other)) ? 'sm' : ''}">${esc(pct(other))}</b></div>
-      <div><span>VAT</span><b>13%</b></div>
+      <div><span>VAT</span><b>${TI && TI.vat === 0 ? 'Exempt' : (TI ? TI.vat : 13) + '%'}</b></div>
       <div><span>Unit</span><b class="sm" style="font-size:1rem">${esc(r.u || '–')}</b></div>
     </div>
-    ${combined !== null ? `<div class="outcome">${ic('i-info')}<div>Every <b>NPR 1,00,000</b> of goods (CIF) pays about <b>${npr(combined * 1000)}</b> in customs duty and VAT, or <b>${combined.toFixed(1)}%</b>, before any excise.</div></div>`
+    ${effOther !== null ? `<div class="outcome">${ic('i-info')}<div>Every <b>NPR 1,00,000</b> of goods (CIF) from other countries pays about <b>${npr(effOther * 1000)}</b> in all duties and taxes — a total effective rate of <b>${effOther}%</b>.${effIndia !== null && effIndia !== effOther ? ` From India it's <b>${effIndia}%</b>.` : ''}</div></div>`
+      : combined !== null ? `<div class="outcome">${ic('i-info')}<div>Every <b>NPR 1,00,000</b> of goods (CIF) pays about <b>${npr(combined * 1000)}</b> in customs duty and VAT, or <b>${combined.toFixed(1)}%</b>.</div></div>`
       : `<div class="outcome">${ic('i-info')}<div>This line has a specific or special rate: <b>${esc(v || 'not stated in the tariff')}</b>. The calculator applies it from your quantity.</div></div>`}
+    <h3 class="h">Duty &amp; taxes on this code</h3>
+    ${taxBreakdown(code)}
     ${r.ldc ? `<p class="fine">Imports from Least Developed Countries: ${r.ldc}% duty.</p>` : ''}
     ${tradeCard(r.digits)}
     ${exp ? `<p class="fine">Export duty on this line: <b style="color:var(--fg)">${esc(exp[1])}</b>.</p>` : ''}
@@ -1349,11 +1387,13 @@ $('#v-browse').addEventListener('click', e => {
 });
 
 /* ---------- calculator ---------- */
-let calcRow = null;
+let calcRow = null, calcTI = null;
 function pickCalc(code){
   const r = BY[code]; if (!r) return;
-  calcRow = r; $('#c-code').value = r.code;
+  calcRow = r; calcTI = taxInfo(code); $('#c-code').value = r.code;
   const v = rateOf(r); $('#c-cd').value = isNaN(num(v)) ? '' : num(v);
+  $('#c-ex').value = calcTI && calcTI.excise != null ? calcTI.excise : 0;
+  if (calcTI) $('#c-vat').checked = calcTI.vat !== 0;
   $('#c-qtyu').textContent = `Tariff unit: ${r.u || '–'}. Used for cost per unit and per-unit duties.`;
   store.set('calcCode', code); calc();
 }
@@ -1387,8 +1427,11 @@ function calc(){
     if (s){ cd = s.amt; note = `Rs. ${s.per.toLocaleString('en-IN')} per ${esc(s.unit)}${s.p ? ` or ${s.p}% of value, whichever is higher (using ${s.which})` : ''}`; }
     else note = 'Special rate: enter a duty % above'; }
   else { const p = parseFloat(cdRaw) || 0; cd = av * p / 100; note = `${p}% of CIF value`; }
-  const ex = (av + cd) * exp / 100, vat = vatOn ? (av + cd + ex) * 0.13 : 0, taxes = cd + ex + vat, landed = av + taxes + oth;
-  const seg = [['Goods (CIF)', av, 'var(--seg-goods)'], ['Customs duty', cd, 'var(--seg-duty)'], ['Excise', ex, 'var(--seg-excise)'], ['VAT', vat, 'var(--seg-vat)'], ['Other costs', oth, 'var(--seg-other)']].filter(s => s[1] > 0);
+  const ex = (av + cd) * exp / 100;
+  let feeTot = 0; const feeRows = [];
+  if (calcTI && calcTI.fees.length){ let base = av + cd + ex; calcTI.fees.forEach(f => { const amt = base * f.rate / 100; feeRows.push([f.label, f.rate, amt]); base += amt; feeTot += amt; }); }
+  const vat = vatOn ? (av + cd + ex + feeTot) * 0.13 : 0, taxes = cd + ex + feeTot + vat, landed = av + taxes + oth;
+  const seg = [['Goods (CIF)', av, 'var(--seg-goods)'], ['Customs duty', cd, 'var(--seg-duty)'], ['Excise', ex, 'var(--seg-excise)'], ['Special fees', feeTot, 'var(--seg-excise)'], ['VAT', vat, 'var(--seg-vat)'], ['Other costs', oth, 'var(--seg-other)']].filter(s => s[1] > 0);
   out.innerHTML = `
     <div class="big">
       <div class="main"><span>Landed cost</span><b>${npr(landed)}</b></div>
@@ -1404,12 +1447,15 @@ function calc(){
       <tr class="sub"><td>CIF (assessable) value</td><td>${npr(av)}</td></tr>
       <tr><td>Customs duty<small>${note}</small></td><td>${npr(cd)}</td></tr>
       ${exp ? `<tr><td>Excise duty<small>${exp}% of CIF + customs duty</small></td><td>${npr(ex)}</td></tr>` : ''}
-      ${vatOn ? `<tr><td>VAT<small>13% of CIF + customs duty${exp ? ' + excise' : ''}</small></td><td>${npr(vat)}</td></tr>` : ''}
+      ${feeRows.map(f => `<tr><td>${esc(f[0])}<small>${f[1]}% of CIF + duties</small></td><td>${npr(f[2])}</td></tr>`).join('')}
+      ${vatOn ? `<tr><td>VAT<small>13% of CIF + customs duty${exp || feeTot ? ' + other taxes' : ''}</small></td><td>${npr(vat)}</td></tr>` : ''}
       ${oth ? `<tr><td>Other costs</td><td>${npr(oth)}</td></tr>` : ''}
       <tr class="total"><td>Estimated landed cost</td><td>${npr(landed)}</td></tr>
     </tbody></table>
     ${isSpec && !qty ? `<div class="warn">${ic('i-alert')}<span>This code has a per-unit duty. Enter the quantity in ${esc(r.u)} to include it.</span></div>` : ''}
-    <p class="fine">Estimate only, not a customs assessment. Exemptions, excise and other levies depend on the goods and the current Finance Act. Check with customs or your clearing agent before pricing a shipment.</p>`;
+    ${calcTI && calcTI.sep.length ? `<p class="fine">Also collected at customs (not in the landed total above): ${calcTI.sep.map(s => `${esc(s.label)} ${s.rate}%`).join(', ')}.</p>` : ''}
+    ${calcTI && calcTI.totals ? `<p class="fine">Official total effective rate — ${['India', 'other SAARC', 'Tibet', 'other countries'].map((nm, i) => calcTI.totals[i] != null ? `${nm} <b style="color:var(--fg)">${calcTI.totals[i]}%</b>` : '').filter(Boolean).join(' · ')}.</p>` : ''}
+    <p class="fine">Figures use the integrated Customs Tariff 2026/27. Exemptions and the current Finance Act can change them — check with customs or your clearing agent before pricing a shipment.</p>`;
 }
 function initCalc(){
   const c = store.get('calcCode', '8528.59.00');
