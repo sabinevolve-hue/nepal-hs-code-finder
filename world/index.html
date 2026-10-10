@@ -97,9 +97,9 @@ main{padding:var(--s5) 0 64px}
 .secs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .sec{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;color:inherit}
 .sec:hover{border-color:var(--accent)}
-.sec .n{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.sec .t{font-size:.9rem;font-weight:600;margin-top:3px;line-height:1.3}
-.sec .c{font-size:.75rem;color:var(--muted);margin-top:4px}
+.sec .n{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.sec .t{display:block;font-size:.9rem;font-weight:600;margin-top:3px;line-height:1.3}
+.sec .c{display:block;font-size:.75rem;color:var(--muted);margin-top:4px}
 /* detail */
 .dcode{font-family:var(--f-mono);font-size:1.8rem;font-weight:800;letter-spacing:-.01em}
 .dtitle{font-size:1.1rem;font-weight:600;margin:4px 0 0}
@@ -218,6 +218,11 @@ const OFFICIAL={
   NPL:['Dept. of Customs, Nepal','https://www.customs.gov.np']
 };
 const EUROSTAT=['Eurostat — Comext (EU-wide)','https://ec.europa.eu/eurostat/web/international-trade-in-goods/database'];
+// HS product groups (chapter ranges) — ties any HS code to "who trades this worldwide".
+const PGROUPS=[['Animal & animal products',1,5],['Vegetable products',6,15],['Foodstuffs, beverages & tobacco',16,24],['Minerals',25,26],['Mineral fuels & oils',27,27],['Chemicals & allied',28,38],['Plastics & rubber',39,40],['Hides, skins & leather',41,43],['Wood & paper',44,49],['Textiles & clothing',50,63],['Footwear & headgear',64,67],['Stone, glass & precious metals',68,71],['Base metals',72,83],['Machinery & electronics',84,85],['Transport equipment',86,89],['Instruments, arms & misc.',90,99]];
+const groupSlug=l=>l.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+const chapterGroup=ch=>{ch=+ch;return PGROUPS.find(g=>ch>=g[1]&&ch<=g[2]);};
+function productTraders(label,flow){const key=flow==='exp'?'expProducts':'impProducts';const out=[];TRADE.countries.forEach(c=>{if(!c[key])return;const e=c[key].find(p=>p[0]===label);if(e&&e[1]>0)out.push([c.iso,c.name,c.flag,e[1]]);});out.sort((a,b)=>b[3]-a[3]);return out;}
 let HS=null, TRADE=null, SUBS=[], HEADINGS={}, CHByNum={}, SECByRoman={};
 async function boot(){
   try{
@@ -243,6 +248,7 @@ function route(){
   if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); return hsChapter(m[1]); }
   if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); return hsDetail(m[1]); }
   if(p==='/trade'){ setNav('trade'); return tradeHome(); }
+  if((m=p.match(/^\/trade\/product\/([a-z0-9-]+)$/))){ setNav('trade'); return productView(m[1]); }
   if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ setNav('trade'); return country(m[1].toUpperCase()); }
   setNav(''); home();
 }
@@ -335,6 +341,7 @@ function hsDetail(code){
     <p class="crumb" style="margin-top:14px"><b>Heading ${head.slice(0,2)}.${head.slice(2)}:</b> ${esc(HEADINGS[head]||'')}</p>
     <div class="src"><div class="src-h">${ic(I.shield)}<span>International standard</span></div>
       <p>This is the global 6-digit Harmonized System code (${HS.edition}), identical across 200+ countries. Each country adds its own 8–10 digit extension and duty rates. <a href="https://www.wcoomd.org/en/topics/nomenclature/overview.aspx" target="_blank" rel="noopener">About the HS ↗</a></p></div>
+    ${chapterGroup(ch)?`<button class="nepalcard" onclick="__go('/trade/product/${groupSlug(chapterGroup(ch)[0])}')"><span class="fl">${ic(I.globe)}</span><span><b>Global trade in ${esc(chapterGroup(ch)[0])}</b> — see the world's top exporters &amp; importers ${ic(I.right)}</span></button>`:''}
     <h3 class="h">Other codes in heading ${head.slice(0,2)}.${head.slice(2)}</h3>
     ${SUBS.filter(x=>x[0].startsWith(head)).map(x=>`<button class="row ${x[0]===code?'':''}" onclick="__go('/hs/code/${x[0]}')"><span class="code">${fmtCode(x[0])}</span><span class="d">${esc(x[1])}</span><span class="end">${dutyChip(x)} ${ic(I.right)}</span></button>`).join('')}
   </div></main>`;
@@ -370,6 +377,9 @@ function tradeHome(){
       ${leaderboard(top,col)}
       <h3 class="h">By region</h3>
       ${bars(W.regions.map(r=>[r[0],r[1]]),rmax,money,'var(--exp)')}
+      <h3 class="h">Trade by product</h3>
+      <p class="fine" style="margin:0 0 10px">Who leads world trade in each product family — and the HS codes behind it:</p>
+      <div class="secs">${PGROUPS.map(x=>`<button class="sec" onclick="__go('/trade/product/${groupSlug(x[0])}')"><span class="t">${esc(x[0])}</span><span class="c">HS ${x[1]}–${x[2]}</span></button>`).join('')}</div>
       <h3 class="h">All economies</h3>
       <div class="sbox">${ic(I.search)}<input id="cq" type="search" placeholder="Find a country…" autocomplete="off"></div>
       <div id="clist">${countryRows('')}</div>
@@ -434,6 +444,29 @@ function country(iso){
     </div></main>`;
   }
   window.__flow=f=>{cFlow=f;render();window.scrollTo(0,0);};
+}
+let pFlow='exp';
+function productView(slug){
+  const g=PGROUPS.find(x=>groupSlug(x[0])===slug); if(!g)return tradeHome();
+  const label=g[0], yr=(TRADE.countries.find(c=>c.deep)||{}).pYear;
+  document.title=`Global trade in ${label} — top exporters & importers — Customs Nepal`;
+  render();
+  function render(){
+    const lb=productTraders(label,pFlow).slice(0,15), col=pFlow==='exp'?'var(--exp)':'var(--imp)';
+    app.innerHTML=`<main><div class="wrap">
+      <button class="back" onclick="__go('/trade')">${ic(I.left)}Global trade</button>
+      <div class="ph"><h2>${esc(label)}</h2><p>Who trades this worldwide — HS chapters ${g[1]}–${g[2]}. Leading exporters and importers among the major economies${yr?' ('+yr+')':''}.</p></div>
+      <div class="sub2"><button class="${pFlow==='exp'?'on':''}" onclick="__pflow('exp')">Top exporters</button><button class="${pFlow==='imp'?'on':''}" onclick="__pflow('imp')">Top importers</button></div>
+      <h3 class="h">Leading ${pFlow==='exp'?'exporters':'importers'} of ${esc(label.toLowerCase())}</h3>
+      ${lb.length?leaderboard(lb,col):'<p class="fine">No data for this group.</p>'}
+      <button class="nepalcard" onclick="__go('/hs/chapter/${String(g[1]).padStart(2,'0')}')"><span class="fl">${ic(I.box)}</span><span><b>Find the exact HS codes</b> — browse the ${SUBS.filter(s=>{const c=+s[0].slice(0,2);return c>=g[1]&&c<=g[2];}).length} six-digit codes in chapters ${g[1]}–${g[2]} ${ic(I.right)}</span></button>
+      <h3 class="h">All product groups</h3>
+      <div class="secs">${PGROUPS.map(x=>`<button class="sec${groupSlug(x[0])===slug?' ':''}" onclick="__go('/trade/product/${groupSlug(x[0])}')"><span class="t">${esc(x[0])}</span><span class="c">HS ${x[1]}–${x[2]}</span></button>`).join('')}</div>
+      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span>${yr?`<span style="margin-left:auto;font-weight:600;color:var(--muted)">${yr}</span>`:''}</div>
+        <p>Rankings computed from <b>World Bank WITS</b> product data (sourced from <b>UN Comtrade</b>) across the major trading economies — each country's merchandise ${pFlow==='exp'?'exports':'imports'} in this HS group. Smaller economies are not yet included, so treat it as "leading major-economy traders".</p></div>
+    </div></main>`;
+  }
+  window.__pflow=f=>{pFlow=f;render();window.scrollTo(0,0);};
 }
 window.__go=nav;
 boot();
