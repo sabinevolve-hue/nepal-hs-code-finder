@@ -975,16 +975,19 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-<script id="data" type="application/json">/*DATA*/</script>
-<script id="stats" type="application/json">/*STATS*/</script>
-<script id="offices" type="application/json">/*OFFICES*/</script>
-<script id="integrated" type="application/json">/*INTEGRATED*/</script>
+<!-- tariff/stats/offices/integrated data are fetched from separate cached files (see __boot) to keep this HTML shell small and fast to paint -->
 <script>
 (function(){
-const D = JSON.parse(document.getElementById('data').textContent);
-const ST = JSON.parse(document.getElementById('stats').textContent);
-const OF = JSON.parse(document.getElementById('offices').textContent);
-const INT = (() => { try { return JSON.parse(document.getElementById('integrated').textContent || '{}'); } catch(e){ return {}; } })();
+async function __boot(){
+const __j = u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); });
+let D, ST, OF, INT;
+try {
+  [D, ST, OF, INT] = await Promise.all([__j('/t.json'), __j('/st.json'), __j('/of.json'), __j('/int.json').catch(() => ({}))]);
+} catch (e) {
+  var el = document.querySelector('#v-home') || document.body;
+  if (el) el.innerHTML = '<div style="padding:48px 16px;text-align:center;color:#64748b;font:500 1rem system-ui">Couldn\'t load the tariff data. <a href="#" onclick="location.reload();return false" style="color:#5470C6">Tap to reload</a>.</div>';
+  return;
+}
 const CHSHORT = {"1": "Live animals", "2": "Meat", "3": "Fish & seafood", "4": "Dairy, eggs & honey", "5": "Other animal products", "6": "Live plants & flowers", "7": "Vegetables", "8": "Fruit & nuts", "9": "Coffee, tea & spices", "10": "Cereals", "11": "Flour, malt & starch", "12": "Oil seeds & medicinal plants", "13": "Gums & resins", "14": "Vegetable materials", "15": "Edible oils & fats", "16": "Meat & fish preparations", "17": "Sugar & confectionery", "18": "Cocoa & chocolate", "19": "Cereal & bakery products", "20": "Processed fruit & vegetables", "21": "Misc. food preparations", "22": "Beverages & spirits", "23": "Animal feed & residues", "24": "Tobacco", "25": "Salt, stone, cement & lime", "26": "Ores & ash", "27": "Fuels, oils & gas", "28": "Inorganic chemicals", "29": "Organic chemicals", "30": "Pharmaceuticals", "31": "Fertilisers", "32": "Dyes, paints & inks", "33": "Cosmetics & perfumery", "34": "Soap & cleaning products", "35": "Glues & enzymes", "36": "Explosives & matches", "37": "Photographic goods", "38": "Misc. chemicals", "39": "Plastics", "40": "Rubber", "41": "Raw hides & leather", "42": "Leather goods & bags", "43": "Furskins", "44": "Wood & timber", "45": "Cork", "46": "Straw & basketware", "47": "Wood pulp", "48": "Paper & paperboard", "49": "Books & printed matter", "50": "Silk", "51": "Wool & animal hair", "52": "Cotton", "53": "Jute & other fibres", "54": "Synthetic filaments", "55": "Synthetic staple fibres", "56": "Wadding, felt & rope", "57": "Carpets", "58": "Special fabrics & lace", "59": "Coated & industrial textiles", "60": "Knitted fabrics", "61": "Knitted garments", "62": "Woven garments", "63": "Textile articles & rags", "64": "Footwear", "65": "Headgear", "66": "Umbrellas & sticks", "67": "Feathers & artificial flowers", "68": "Stone & cement articles", "69": "Ceramics", "70": "Glass", "71": "Gems, gold & jewellery", "72": "Iron & steel", "73": "Iron & steel articles", "74": "Copper", "75": "Nickel", "76": "Aluminium", "77": "Reserved", "78": "Lead", "79": "Zinc", "80": "Tin", "81": "Other base metals", "82": "Tools & cutlery", "83": "Misc. metal articles", "84": "Machinery & mechanical", "85": "Electrical & electronics", "86": "Railway", "87": "Vehicles & parts", "88": "Aircraft & drones", "89": "Ships & boats", "90": "Optical, medical & precision", "91": "Clocks & watches", "92": "Musical instruments", "93": "Arms & ammunition", "94": "Furniture & lighting", "95": "Toys, games & sports", "96": "Misc. manufactured", "97": "Art & antiques"};
 
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -2398,6 +2401,8 @@ if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
 else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
+}
+__boot();
 })();
 </script>
 
