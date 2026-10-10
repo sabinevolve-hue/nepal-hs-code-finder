@@ -143,6 +143,11 @@ table.bk td:last-child{text-align:right;font-family:var(--f-mono);font-weight:70
 .nepalcard{display:flex;align-items:center;gap:14px;background:var(--accent-bg);border-radius:var(--r);padding:var(--s4);margin-top:var(--s4);cursor:pointer;color:inherit;width:100%;text-align:left;border:0}
 .nepalcard .fl{font-size:2rem}
 .nepalcard b{font-weight:700}
+.osrc{display:grid;gap:5px}
+.osrc-i{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;color:inherit;font-size:.9rem}
+.osrc-i:hover{border-color:var(--accent)}
+.osrc-i span{flex:1;font-weight:600}
+.osrc-i svg{color:var(--muted);width:18px;height:18px}
 h3.h{font-size:1.05rem;margin:var(--s5) 0 var(--s2)}
 .sub2{display:flex;gap:6px;margin:var(--s4) 0}
 .sub2 button{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--fg-2)}
@@ -185,6 +190,34 @@ function money(v){ if(v==null||isNaN(v))return'—'; const a=Math.abs(v);
   if(a>=1e12)return'$'+(v/1e12).toFixed(2)+'T'; if(a>=1e9)return'$'+(v/1e9).toFixed(a<1e10?1:0)+'B';
   if(a>=1e6)return'$'+(v/1e6).toFixed(0)+'M'; return'$'+Math.round(v).toLocaleString();}
 
+// Each major economy's own official customs/statistics office — where the freshest (2025) import/export data is published.
+const OFFICIAL={
+  CHN:['General Administration of Customs (GACC)','http://english.customs.gov.cn'],
+  USA:['U.S. Census Bureau — Foreign Trade','https://www.census.gov/foreign-trade/data/index.html'],
+  DEU:['Destatis — Foreign Trade','https://www.destatis.de/EN/Themes/Economy/Foreign-Trade/_node.html'],
+  NLD:['CBS — International trade','https://www.cbs.nl/en-gb/economy/international-trade'],
+  JPN:['Japan Customs / Ministry of Finance','https://www.customs.go.jp/toukei/info/index_e.htm'],
+  FRA:['French Customs (Douane) — open data','https://www.douane.gouv.fr/la-douane/opendata'],
+  KOR:['Korea Customs Service','https://tradedata.go.kr'],
+  ITA:['ISTAT — Foreign trade (Coeweb)','https://www.coeweb.istat.it'],
+  IND:['Dept. of Commerce — Export Import Data Bank','https://tradestat.commerce.gov.in'],
+  GBR:['HMRC — uktradeinfo','https://www.uktradeinfo.com/trade-data/'],
+  RUS:['Federal Customs Service','https://customs.gov.ru'],
+  ESP:['Datacomex / Aduanas','https://datacomex.comercio.es'],
+  CAN:['Statistics Canada — Trade','https://www150.statcan.gc.ca/n1/en/subjects/international_trade'],
+  MEX:['INEGI — Balanza comercial','https://www.inegi.org.mx/temas/balanza/'],
+  BRA:['ComexStat — Secex','https://comexstat.mdic.gov.br/en/home'],
+  AUS:['ABS — International trade','https://www.abs.gov.au/statistics/economy/international-trade'],
+  CHE:['Swiss-Impex — Federal Customs','https://www.gate.estv.admin.ch/swissimpex/'],
+  TUR:['TurkStat — Foreign trade','https://data.tuik.gov.tr/Kategori/GetKategori?p=foreign-trade-104'],
+  IDN:['BPS / Statistics Indonesia','https://www.bps.go.id/en'],
+  THA:['Thai Customs','http://www.customs.go.th'],
+  VNM:['Vietnam Customs','https://www.customs.gov.vn'],
+  SGP:['Enterprise Singapore / SingStat','https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment'],
+  SAU:['GASTAT — International trade','https://www.stats.gov.sa/en'],
+  NPL:['Dept. of Customs, Nepal','https://www.customs.gov.np']
+};
+const EUROSTAT=['Eurostat — Comext (EU-wide)','https://ec.europa.eu/eurostat/web/international-trade-in-goods/database'];
 let HS=null, TRADE=null, SUBS=[], HEADINGS={}, CHByNum={}, SECByRoman={};
 async function boot(){
   try{
@@ -340,7 +373,10 @@ function tradeHome(){
       <h3 class="h">All economies</h3>
       <div class="sbox">${ic(I.search)}<input id="cq" type="search" placeholder="Find a country…" autocomplete="off"></div>
       <div id="clist">${countryRows('')}</div>
-      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span></div>
+      <h3 class="h">Freshest 2025 data — official national sources</h3>
+      <p class="fine" style="margin:0 0 10px">The figures above are the World Bank's comparable cross-country series (to 2023). For the latest <b>2025</b> import/export data, each economy's own customs or statistics office is the authoritative source:</p>
+      <div class="osrc">${Object.keys(OFFICIAL).filter(k=>k!=='NPL').map(k=>[k,TRADE.countries.find(c=>c.iso===k)]).filter(x=>x[1]).sort((a,b)=>(b[1].exp||0)-(a[1].exp||0)).slice(0,12).map(([k,c])=>`<a class="osrc-i" href="${OFFICIAL[k][1]}" target="_blank" rel="noopener">${c.flag} <span>${esc(OFFICIAL[k][0])}</span>${ic(I.right)}</a>`).join('')}<a class="osrc-i" href="${EUROSTAT[1]}" target="_blank" rel="noopener">🇪🇺 <span>${esc(EUROSTAT[0])}</span>${ic(I.right)}</a></div>
+      <div class="src" style="margin-top:var(--s4)"><div class="src-h">${ic(I.shield)}<span>Official sources</span></div>
         <p>World and country totals from the <b>World Bank</b> (merchandise trade, current US$); partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>. Rankings cover ${W.count} reporting economies.</p></div>
     </div></main>`;
     const cq=$('#cq'); if(cq)cq.addEventListener('input',()=>{$('#clist').innerHTML=countryRows(cq.value);});
@@ -392,7 +428,8 @@ function country(iso){
       ${prods.length?bars(prods.map(p=>[p[0],p[1]]),rmax,money,fcol):'<p class="fine">No product data.</p>'}`
       :`<div class="outcome" style="margin-top:var(--s4)">${ic(I.info)}<div>Partner and product breakdowns are live for the ~30 largest traders and Nepal, and rolling out to more economies. The totals and trend above are from the World Bank.</div></div>`}
       <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span>${deep?`<span style="margin-left:auto;font-weight:600;color:var(--muted)">${c.pYear}</span>`:''}</div>
-        <p>Trade totals from the <b>World Bank</b> (merchandise trade, current US$)${deep?'; partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>':''}. <a href="https://wits.worldbank.org/CountryProfile/en/${c.iso}" target="_blank" rel="noopener">World Bank profile ↗</a></p></div>
+        <p>Trade totals from the <b>World Bank</b> (merchandise trade, current US$)${deep?'; partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>':''}. <a href="https://wits.worldbank.org/CountryProfile/en/${c.iso}" target="_blank" rel="noopener">World Bank profile ↗</a></p>
+        ${OFFICIAL[c.iso]?`<p style="margin-top:8px"><b style="color:var(--fg-2)">Freshest 2025 data →</b> <a href="${OFFICIAL[c.iso][1]}" target="_blank" rel="noopener">${esc(OFFICIAL[c.iso][0])} ↗</a>${c.region==='Europe & Central Asia'?` · <a href="${EUROSTAT[1]}" target="_blank" rel="noopener">Eurostat ↗</a>`:''}</p>`:(c.region==='Europe & Central Asia'?`<p style="margin-top:8px"><b style="color:var(--fg-2)">Freshest 2025 data →</b> <a href="${EUROSTAT[1]}" target="_blank" rel="noopener">${esc(EUROSTAT[0])} ↗</a></p>`:'')}</div>
       ${deep?'<p class="fine">Mirror-statistics note: a country&#39;s reported exports to a partner may differ from that partner&#39;s reported imports. Product groups follow HS chapter ranges.</p>':''}
     </div></main>`;
   }
