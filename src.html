@@ -386,6 +386,7 @@ h3.h{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:upperc
 .big div.main b{font-size:1.9rem}
 .stack{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:var(--s4) 0 var(--s2);background:var(--muted-bg)}
 .stack i{display:block;height:100%}
+.legcap{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--fg-2)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
@@ -1466,6 +1467,7 @@ function calc(){
       <div><span>Tax rate on CIF</span><b>${(taxes / av * 100).toFixed(1)}%</b></div>
     </div>
     <div class="stack" role="img" aria-label="Landed cost split">${seg.map(s => `<i style="width:${s[1] / landed * 100}%;background:${s[2]}"></i>`).join('')}</div>
+    <p class="legcap">Share of landed cost</p>
     <div class="legend">${seg.map(s => `<span><i style="background:${s[2]}"></i>${s[0]} ${Math.round(s[1] / landed * 100)}%</span>`).join('')}</div>
     <table class="bk"><tbody>
       <tr><td>Goods value<small>${val.toLocaleString()} ${$('#c-cur').value} × ${fx}</small></td><td>${npr(val * fx)}</td></tr>
