@@ -223,21 +223,36 @@ const PGROUPS=[['Animal & animal products',1,5],['Vegetable products',6,15],['Fo
 const groupSlug=l=>l.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const chapterGroup=ch=>{ch=+ch;return PGROUPS.find(g=>ch>=g[1]&&ch<=g[2]);};
 function productTraders(label,flow){const key=flow==='exp'?'expProducts':'impProducts';const out=[];TRADE.countries.forEach(c=>{if(!c[key])return;const e=c[key].find(p=>p[0]===label);if(e&&e[1]>0)out.push([c.iso,c.name,c.flag,e[1]]);});out.sort((a,b)=>b[3]-a[3]);return out;}
-// Per-HS6 global trade (BACI 2024) — lazy-loaded; values stored in millions USD.
-let PROD=null, PRODp=null, curHS=null;
+// Per-HS6 global trade + Nepal's real trade (BACI 2024) — lazy-loaded; values in millions USD.
+let PROD=null, PRODp=null, NEP=null, NEPp=null, curHS=null;
 function loadProd(){ if(PRODp)return PRODp; PRODp=fetch(BASE+'/data/prod.json').then(r=>r.ok?r.json():{}).then(d=>(PROD=d)).catch(()=>(PROD={})); return PRODp; }
+function loadNep(){ if(NEPp)return NEPp; NEPp=fetch(BASE+'/data/nepal.json').then(r=>r.ok?r.json():{}).then(d=>(NEP=d)).catch(()=>(NEP={})); return NEPp; }
 function isoMeta(iso){ const c=TRADE.countries.find(x=>x.iso===iso); return c?[c.name,c.flag]:[iso,'']; }
+const isoName=iso=>isoMeta(iso)[0];
+function nepalProd(code){
+  const z=NEP&&NEP[code]; if(!z||!(z.im||z.ex)) return '';
+  const p=PROD&&PROD[code]; const parts=[];
+  if(z.im){ const src=(z.ims||[]).map(x=>esc(isoName(x[0]))).slice(0,3).join(', ');
+    let pr='';
+    if(z.iu&&p&&p.u){ const d=Math.round((z.iu/p.u-1)*100);
+      pr=` at <b>$${z.iu}/kg</b> — ${d>8?`<b style="color:var(--hi)">${d}% above</b>`:d<-8?`<b style="color:var(--free)">${Math.abs(d)}% below</b>`:'about'} the world average ($${p.u}/kg)`; }
+    parts.push(`imports <b>${money(z.im*1e6)}</b>${src?` (mainly from ${src})`:''}${pr}`); }
+  if(z.ex){ const dst=(z.exs||[]).map(x=>esc(isoName(x[0]))).slice(0,3).join(', '); parts.push(`exports <b>${money(z.ex*1e6)}</b>${dst?` (to ${dst})`:''}`); }
+  return `<div class="outcome" style="margin-top:var(--s4)"><span style="font-size:1.3rem">🇳🇵</span><div><b>Nepal's trade in this product (2024):</b> ${parts.join('; ')}. <a href="https://customsnepal.com/?q=${code}" target="_blank" rel="noopener">Nepal duty &amp; taxes ↗</a></div></div>`;
+}
 function prodBlock(code){
-  if(PROD===null){ loadProd().then(()=>{ if(curHS===code) hsDetail(code,true); }); return '<p class="fine" style="margin-top:var(--s4)">Loading global trade for this product…</p>'; }
-  const p=PROD[code]; if(!p||!(p.x&&p.x.length)) return '';
+  if(PROD===null||NEP===null){ Promise.all([loadProd(),loadNep()]).then(()=>{ if(curHS===code) hsDetail(code,true); }); return '<p class="fine" style="margin-top:var(--s4)">Loading global trade for this product…</p>'; }
+  const p=PROD[code]; if(!p||!(p.x&&p.x.length)) return nepalProd(code);
   const mk=a=>a.map(([iso,v])=>{const m=isoMeta(iso);return [iso,m[0],m[1],v*1e6];});
   const ex=mk(p.x), im=mk(p.m||[]);
+  const price=p.u?` World average price: <b style="color:var(--fg)">$${p.u}/kg</b>.`:'';
   return `<h3 class="h">Who trades this worldwide</h3>
-    <p class="fine" style="margin:0 0 10px">World trade in HS ${fmtCode(code)} was <b style="color:var(--fg)">${money(p.w*1e6)}</b> in 2024. Leading exporters and importers:</p>
+    <p class="fine" style="margin:0 0 10px">World trade in HS ${fmtCode(code)} was <b style="color:var(--fg)">${money(p.w*1e6)}</b> in 2024.${price} Leading exporters and importers:</p>
     <p class="fine" style="margin:0 0 6px"><b style="color:var(--exp)">Top exporters</b></p>${leaderboard(ex,'var(--exp)')}
     ${im.length?`<p class="fine" style="margin:14px 0 6px"><b style="color:var(--imp)">Top importers</b></p>${leaderboard(im,'var(--imp)')}`:''}
+    ${nepalProd(code)}
     <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;font-weight:600;color:var(--muted)">2024</span></div>
-      <p><b>BACI</b> (CEPII) — bilateral trade at HS 6-digit, reconciled from <b>UN Comtrade</b> across ~200 countries. Values in current US$.</p></div>`;
+      <p><b>BACI</b> (CEPII) — bilateral trade at HS 6-digit, reconciled from <b>UN Comtrade</b> across ~200 countries; unit values = value ÷ quantity. Current US$.</p></div>`;
 }
 let HS=null, TRADE=null, SUBS=[], HEADINGS={}, CHByNum={}, SECByRoman={};
 async function boot(){
@@ -259,8 +274,9 @@ function route(){
   let p=decodeURIComponent(location.pathname);
   if(BASE&&p.indexOf(BASE)===0)p=p.slice(BASE.length)||'/';
   let m;
-  if(p.indexOf('/hs')===0) loadProd();
+  if(p.indexOf('/hs')===0){ loadProd(); loadNep(); }
   if(p==='/'||p===''){ setNav(''); return home(); }
+  if(p==='/nepal'){ setNav('trade'); return nepalView(); }
   if(p==='/hs'){ setNav('hs'); return hsHome(); }
   if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); return hsChapter(m[1]); }
   if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); return hsDetail(m[1]); }
@@ -391,7 +407,7 @@ function tradeHome(){
         <div class="s"><b>${W.count}</b><span>Economies</span></div>
       </div>
       <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">World trade over time</b>${trendSVG(W.trend)}</div>
-      ${np?`<button class="nepalcard" onclick="__go('/trade/npl')"><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — #${np.rankExp} of ${W.count} by exports (${money(np.exp)}). See who Nepal trades with ${ic(I.right)}</span></button>`:''}
+      ${np?`<button class="nepalcard" onclick="__go('/nepal')"><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product ${ic(I.right)}</span></button>`:''}
       <div class="sub2" style="margin-top:var(--s5)"><button class="${tFlow==='exp'?'on':''}" onclick="__tflow('exp')">Top exporters</button><button class="${tFlow==='imp'?'on':''}" onclick="__tflow('imp')">Top importers</button></div>
       ${leaderboard(top,col)}
       <h3 class="h">By region</h3>
@@ -486,6 +502,38 @@ function productView(slug){
     </div></main>`;
   }
   window.__pflow=f=>{pFlow=f;render();window.scrollTo(0,0);};
+}
+function hsDesc(code){ const s=SUBS.find(x=>x[0]===code); return s?s[1]:(HEADINGS[code.slice(0,4)]||code); }
+function nepalView(){
+  if(NEP===null||PROD===null){ Promise.all([loadNep(),loadProd()]).then(()=>{ if(location.pathname.indexOf('/nepal')>=0) nepalView(); }); app.innerHTML='<main><div class="wrap"><div class="empty" style="padding-top:70px">Loading Nepal trade…</div></div></main>'; return; }
+  document.title='Nepal in world trade — imports, exports & opportunities — Customs Nepal';
+  const T=NEP._t||{im:0,ex:0}, bal=T.ex-T.im;
+  const row=(code,val,extra)=>`<button class="row" onclick="__go('/hs/code/${code}')"><span class="code">${fmtCode(code)}</span><span class="d">${esc(hsDesc(code))}${extra?`<small style="display:block;color:var(--muted)">${extra}</small>`:''}</span><span class="end"><b>${money(val*1e6)}</b> ${ic(I.right)}</span></button>`;
+  const over=[];
+  (NEP._im||[]).forEach(([code,val])=>{ const z=NEP[code],p=PROD[code]; if(z&&z.iu&&p&&p.u&&z.iu>p.u*1.2&&val>=1) over.push([code,val,Math.round((z.iu/p.u-1)*100),z.iu,p.u]); });
+  over.sort((a,b)=>b[1]*b[2]-a[1]*a[2]);
+  const open=[];
+  (NEP._ex||[]).forEach(([code,val])=>{ const p=PROD[code]; if(p&&p.w){ const sh=val/p.w*100; if(sh<20) open.push([code,val,p.w,sh]); } });
+  open.sort((a,b)=>b[2]-a[2]);
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/trade')">${ic(I.left)}Global trade</button>
+    <div class="ph"><h2>🇳🇵 Nepal in world trade</h2><p>Nepal's real merchandise trade by product (BACI 2024) — and where the data points to openings.</p></div>
+    <div class="statrow" style="margin-top:0">
+      <div class="s"><b class="im">${money(T.im*1e6)}</b><span>Imports (2024)</span></div>
+      <div class="s"><b class="ex">${money(T.ex*1e6)}</b><span>Exports (2024)</span></div>
+      <div class="s"><b style="color:var(--hi)">−${money(Math.abs(bal)*1e6).slice(1)}</b><span>Trade deficit</span></div>
+    </div>
+    <h3 class="h">Sourcing watch — imports Nepal may overpay for</h3>
+    <p class="fine" style="margin:0 0 8px">Products where Nepal's import price sits well above the world average — worth checking a cheaper origin.</p>
+    ${over.length?over.slice(0,12).map(([code,val,d,iu,u])=>row(code,val,`Nepal $${iu}/kg vs $${u}/kg world · ${d}% higher`)).join(''):'<p class="fine">—</p>'}
+    <h3 class="h">Export openings — big world demand, small Nepal share</h3>
+    <p class="fine" style="margin:0 0 8px">Products Nepal already exports, where world import demand dwarfs Nepal's current sales.</p>
+    ${open.length?open.slice(0,12).map(([code,val,w,sh])=>row(code,val,`World imports ${money(w*1e6)} · Nepal ${sh<1?'<1':Math.round(sh)}%`)).join(''):'<p class="fine">—</p>'}
+    <h3 class="h">Nepal's top imports</h3>${(NEP._im||[]).slice(0,10).map(([code,val])=>row(code,val)).join('')}
+    <h3 class="h">Nepal's top exports</h3>${(NEP._ex||[]).slice(0,10).map(([code,val])=>row(code,val)).join('')}
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;color:var(--muted);font-weight:600">2024</span></div>
+      <p>Nepal's bilateral trade from <b>BACI</b> (CEPII, reconciled from UN Comtrade). "Overpay" compares Nepal's import unit value to the world average — a signal to investigate, not proof (grade/quality and freight differ). For duty on any line, open the code → customsnepal.com.</p></div>
+  </div></main>`;
 }
 window.__go=nav;
 boot();

@@ -37,6 +37,6 @@ python3 -I scripts/world_trade.py "$RAW" world/data                             
 BV="202601"; BZ="$RAW/baci_hs22.zip"
 curl -sS --max-time 600 "https://www.cepii.fr/DATA_DOWNLOAD/baci/data/BACI_HS22_V${BV}.zip" -o "$BZ"
 unzip -o -q "$BZ" "BACI_HS22_Y2024_V${BV}.csv" "country_codes_V${BV}.csv" -d "$RAW"
-python3 -I scripts/world_products.py "$RAW/BACI_HS22_Y2024_V${BV}.csv" "$RAW/country_codes_V${BV}.csv" world/data/prod.json  # -> prod.json
+python3 -I scripts/world_products.py "$RAW/BACI_HS22_Y2024_V${BV}.csv" "$RAW/country_codes_V${BV}.csv" world/data/prod.json world/data/nepal.json  # -> prod.json + nepal.json
 
 echo "done. If chapters or the country set changed, regenerate world/sitemap.xml."
