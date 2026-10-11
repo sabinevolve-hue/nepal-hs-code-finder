@@ -39,4 +39,7 @@ curl -sS --max-time 600 "https://www.cepii.fr/DATA_DOWNLOAD/baci/data/BACI_HS22_
 unzip -o -q "$BZ" "BACI_HS22_Y2024_V${BV}.csv" "country_codes_V${BV}.csv" -d "$RAW"
 python3 -I scripts/world_products.py "$RAW/BACI_HS22_Y2024_V${BV}.csv" "$RAW/country_codes_V${BV}.csv" world/data/prod.json world/data/nepal.json  # -> prod.json + nepal.json
 
+# Nepal import duty per HS6 (general + SAARC/SAFTA) for the landed-cost-by-origin tool.
+python3 -I scripts/world_nepduty.py data/tariff.json world/data/nepduty.json   # -> nepduty.json
+
 echo "done. If chapters or the country set changed, regenerate world/sitemap.xml."
