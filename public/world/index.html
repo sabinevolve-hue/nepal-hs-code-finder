@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>World HS Codes & Global Trade — Customs Nepal</title>
+<meta name="description" content="Search the international Harmonized System (HS) nomenclature — 5,600+ six-digit codes — and explore import/export trade profiles of the world's largest economies. From the makers of Customs Nepal.">
+<link rel="canonical" href="https://world.customsnepal.com/">
+<meta property="og:title" content="World HS Codes & Global Trade — Customs Nepal">
+<meta property="og:description" content="The international HS nomenclature plus trade profiles of the US, EU, China, India, Japan and Russia.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://world.customsnepal.com/">
+<meta name="theme-color" content="#1B2A45">
+<meta name="robots" content="index,follow">
+<style>
+:root{
+  --bg:#F8FAFC; --card:#FFFFFF; --muted-bg:#EEF2F6; --fg:#0B1220; --fg-2:#334155; --muted:#5B6878; --border:#E2E8F0;
+  --primary:#293C55; --on-primary:#FFFFFF; --accent:#5470C6; --accent-bg:#E8EDFA; --brand:#EE6666;
+  --hero1:#1B2A45; --hero2:#2F4E7A; --hero3:#5470C6;
+  --free:#15803D; --free-bg:#DCFCE7; --low:#0369A1; --low-bg:#E0F0FA; --mid:#A15C07; --mid-bg:#FEF3C7; --hi:#B91C1C; --hi-bg:#FEE2E2;
+  --exp:#5470C6; --imp:#EE6666;
+  --r-sm:8px; --r:12px; --r-lg:16px; --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --f-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-mono:"SF Mono",SFMono-Regular,ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
+  --primary:#E2E8F0; --on-primary:#0B1120; --accent:#7A93E6; --accent-bg:#1C2743; --brand:#F2606E;
+  --hero1:#0B1428; --hero2:#16294A; --hero3:#3F5CB0;
+  --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
+  --exp:#7A93E6; --imp:#F2606E;
+}}
+:root[data-theme="dark"]{
+  --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
+  --primary:#E2E8F0; --on-primary:#0B1120; --accent:#7A93E6; --accent-bg:#1C2743; --brand:#F2606E;
+  --hero1:#0B1428; --hero2:#16294A; --hero3:#3F5CB0;
+  --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
+  --exp:#7A93E6; --imp:#F2606E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 var(--s4)}
+.mono{font-family:var(--f-mono)}
+svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+/* header */
+.bar{position:sticky;top:0;z-index:30;background:var(--hero1);color:#fff}
+.bar .wrap{display:flex;align-items:center;gap:var(--s3);height:56px}
+.logo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:800;letter-spacing:-.02em}
+.logo .mk{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--accent);font-size:.9rem;font-weight:800}
+.logo small{display:block;font-size:.66rem;font-weight:600;color:#9fb4e6;letter-spacing:.02em;margin-top:-2px}
+.nav{margin-left:auto;display:flex;gap:2px;align-items:center}
+.nav a{color:#c9d6f0;font-weight:700;font-size:.9rem;padding:8px 11px;border-radius:8px}
+.nav a.on,.nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+.nav a.ext{color:#9fb4e6}
+@media(max-width:560px){.nav a{padding:7px 8px;font-size:.82rem}.logo small{display:none}}
+/* hero */
+.hero{background:linear-gradient(135deg,var(--hero1),var(--hero2) 60%,var(--hero3));color:#fff;padding:var(--s6) 0}
+.hero h1{margin:0 0 10px;font-size:2rem;line-height:1.1;letter-spacing:-.03em;font-weight:800;text-wrap:balance}
+.hero p{margin:0;color:#dbe4f7;max-width:54ch;font-size:1.02rem}
+.hero .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--s4)}
+.hero .chips span{background:rgba(255,255,255,.12);border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:600}
+@media(max-width:560px){.hero h1{font-size:1.6rem}}
+/* layout */
+main{padding:var(--s5) 0 64px}
+.ph{margin:0 0 var(--s4)}
+.ph h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}
+.ph p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--accent);font-weight:700;font-size:.9rem;cursor:pointer;padding:6px 0;margin-bottom:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
+@media(max-width:620px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4)}
+.bigcard{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s5);color:inherit;transition:border-color .15s,transform .15s}
+.bigcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.bigcard .ic{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--accent-bg);color:var(--accent);margin-bottom:var(--s3)}
+.bigcard h3{margin:0 0 6px;font-size:1.2rem;letter-spacing:-.01em}
+.bigcard p{margin:0;color:var(--muted);font-size:.92rem}
+.bigcard .go{margin-top:var(--s3);color:var(--accent);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:5px}
+.statrow{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s5)}
+.statrow .s b{display:block;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.statrow .s span{color:var(--muted);font-size:.84rem}
+/* search */
+.sbox{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 15px;margin-bottom:var(--s4)}
+.sbox:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-bg)}
+.sbox input{border:0;background:none;outline:none;font-size:1.05rem;color:var(--fg);width:100%}
+.sbox svg{color:var(--muted)}
+/* list rows */
+.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;color:inherit}
+.row:hover{border-color:var(--accent)}
+.row .code{font-family:var(--f-mono);font-weight:700;color:var(--accent);font-size:.92rem;flex:none}
+.row .d{flex:1;min-width:0;font-size:.93rem}
+.row .end{flex:none;color:var(--muted)}
+.chip{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--muted-bg);color:var(--fg-2)}
+.dutychip{background:var(--low-bg);color:var(--low)}
+/* section grid */
+.secs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.sec{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;color:inherit}
+.sec:hover{border-color:var(--accent)}
+.sec .n{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.sec .t{display:block;font-size:.9rem;font-weight:600;margin-top:3px;line-height:1.3}
+.sec .c{display:block;font-size:.75rem;color:var(--muted);margin-top:4px}
+/* detail */
+.dcode{font-family:var(--f-mono);font-size:1.8rem;font-weight:800;letter-spacing:-.01em}
+.dtitle{font-size:1.1rem;font-weight:600;margin:4px 0 0}
+.crumb{color:var(--muted);font-size:.86rem;margin:10px 0 0}
+.crumb b{color:var(--fg-2);font-weight:600}
+table.bk{width:100%;border-collapse:collapse;margin-top:var(--s4);font-variant-numeric:tabular-nums}
+table.bk td{padding:10px 0;border-top:1px solid var(--border);font-size:.94rem}
+table.bk td:last-child{text-align:right;font-family:var(--f-mono);font-weight:700;white-space:nowrap}
+.src{margin-top:var(--s4);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3) var(--s4);background:var(--card)}
+.src-h{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:.82rem;font-weight:700}
+.src-h svg{width:17px;height:17px;color:var(--free)}
+.src p{margin:6px 0 0;font-size:.8rem;line-height:1.5;color:var(--muted)}
+.src a{color:var(--accent);font-weight:700;white-space:nowrap}
+.outcome{display:flex;gap:12px;align-items:flex-start;background:var(--accent-bg);border-radius:var(--r);padding:12px 14px;font-size:.92rem;margin-top:var(--s4)}
+.outcome svg{color:var(--accent);margin-top:2px}
+/* country cards */
+.ccards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:var(--s3)}
+.ccard{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4);cursor:pointer;color:inherit}
+.ccard:hover{border-color:var(--accent)}
+.ccard .fl{font-size:1.6rem}
+.ccard h3{margin:6px 0 10px;font-size:1.1rem}
+.ccard .kv{display:flex;justify-content:space-between;font-size:.86rem;padding:3px 0}
+.ccard .kv b{font-variant-numeric:tabular-nums}
+.ex{color:var(--exp)} .im{color:var(--imp)}
+/* bars */
+.bars{margin-top:var(--s3)}
+.barrow{display:grid;grid-template-columns:140px 1fr auto;align-items:center;gap:10px;margin-bottom:7px;font-size:.86rem}
+.barrow .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barrow .tr{background:var(--muted-bg);border-radius:6px;height:16px;overflow:hidden}
+.barrow .fi{display:block;height:100%;border-radius:6px;background:var(--accent);min-width:3px}
+.barrow .vl{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+@media(max-width:520px){.barrow{grid-template-columns:110px 1fr auto;gap:7px;font-size:.8rem}}
+.lbrow{display:grid;grid-template-columns:26px 150px 1fr auto;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:6px;margin-bottom:2px;cursor:pointer;color:inherit;font-size:.86rem}
+.lbrow:hover{background:var(--muted-bg)}
+.lbrow .rk{color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.lbrow .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.lbrow .tr{background:var(--muted-bg);border-radius:6px;height:14px;overflow:hidden}
+.lbrow .fi{display:block;height:100%;border-radius:6px;min-width:3px}
+.lbrow .vl{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+@media(max-width:520px){.lbrow{grid-template-columns:22px 104px 1fr auto;gap:7px;font-size:.8rem}}
+.nepalcard{display:flex;align-items:center;gap:14px;background:var(--accent-bg);border-radius:var(--r);padding:var(--s4);margin-top:var(--s4);cursor:pointer;color:inherit;width:100%;text-align:left;border:0}
+.nepalcard .fl{font-size:2rem}
+.nepalcard b{font-weight:700}
+.osrc{display:grid;gap:5px}
+.osrc-i{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;color:inherit;font-size:.9rem}
+.osrc-i:hover{border-color:var(--accent)}
+.osrc-i span{flex:1;font-weight:600}
+.osrc-i svg{color:var(--muted);width:18px;height:18px}
+h3.h{font-size:1.05rem;margin:var(--s5) 0 var(--s2)}
+.sub2{display:flex;gap:6px;margin:var(--s4) 0}
+.sub2 button{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--fg-2)}
+.sub2 button.on{background:var(--accent-bg);color:var(--accent);border-color:transparent}
+.fine{font-size:.8rem;color:var(--muted);margin:var(--s3) 0 0}
+.empty{text-align:center;color:var(--muted);padding:var(--s6) var(--s4)}
+footer{border-top:1px solid var(--border);margin-top:48px;padding:var(--s5) 0;color:var(--muted);font-size:.84rem}
+footer a{font-weight:600}
+.trend{width:100%;height:150px;margin-top:var(--s3)}
+.lgnd{display:flex;gap:16px;font-size:.82rem;margin-top:6px}
+.lgnd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+</style>
+</head>
+<body>
+<header class="bar"><div class="wrap">
+  <a class="logo" href="/" data-nav><span class="mk">HS</span><span>Customs Nepal<small>World HS &amp; Trade</small></span></a>
+  <nav class="nav">
+    <a href="/hs" data-nav data-k="hs">HS Codes</a>
+    <a href="/trade" data-nav data-k="trade">Trade</a>
+    <a class="ext" href="https://customsnepal.com" target="_blank" rel="noopener">Nepal tools ↗</a>
+  </nav>
+</div></header>
+<div id="app"><div class="empty" style="padding-top:80px">Loading…</div></div>
+<footer><div class="wrap">
+  <p style="margin:0 0 6px"><b style="color:var(--fg-2)">world.customsnepal.com</b> — an international companion to <a href="https://customsnepal.com">customsnepal.com</a>.</p>
+  <p style="margin:0">HS nomenclature © World Customs Organization. Trade figures: World Bank &amp; World Bank WITS (sourced from UN Comtrade). This is an independent reference tool, not affiliated with any government or the WCO. Figures are indicative — verify against official sources before commercial decisions.</p>
+</div></footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), app=document.getElementById('app');
+// Works at the subdomain root (BASE='') and under a /world/ subpath (preview on the main domain).
+const BASE=(location.pathname.match(/^\/world(?=\/|$)/)?'/world':'');
+const ic=(p)=>`<svg class="i" viewBox="0 0 24 24">${p}</svg>`;
+const I={search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',right:'<path d="M9 6l6 6-6 6"/>',left:'<path d="M15 6l-6 6 6 6"/>',info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',shield:'<path d="M12 2 4 5v6c0 5 3.4 8.3 8 11 4.6-2.7 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/>',globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>',box:'<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8"/>',chart:'<path d="M3 3v18h18"/><path d="M7 15v-4M12 15V7M17 15v-6"/>'};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// money in USD -> $1.23T / $456B / $12.3M
+function money(v){ if(v==null||isNaN(v))return'—'; const a=Math.abs(v);
+  if(a>=1e12)return'$'+(v/1e12).toFixed(2)+'T'; if(a>=1e9)return'$'+(v/1e9).toFixed(a<1e10?1:0)+'B';
+  if(a>=1e6)return'$'+(v/1e6).toFixed(0)+'M'; return'$'+Math.round(v).toLocaleString();}
+
+// Each major economy's own official customs/statistics office — where the freshest (2025) import/export data is published.
+const OFFICIAL={
+  CHN:['General Administration of Customs (GACC)','http://english.customs.gov.cn'],
+  USA:['U.S. Census Bureau — Foreign Trade','https://www.census.gov/foreign-trade/data/index.html'],
+  DEU:['Destatis — Foreign Trade','https://www.destatis.de/EN/Themes/Economy/Foreign-Trade/_node.html'],
+  NLD:['CBS — International trade','https://www.cbs.nl/en-gb/economy/international-trade'],
+  JPN:['Japan Customs / Ministry of Finance','https://www.customs.go.jp/toukei/info/index_e.htm'],
+  FRA:['French Customs (Douane) — open data','https://www.douane.gouv.fr/la-douane/opendata'],
+  KOR:['Korea Customs Service','https://tradedata.go.kr'],
+  ITA:['ISTAT — Foreign trade (Coeweb)','https://www.coeweb.istat.it'],
+  IND:['Dept. of Commerce — Export Import Data Bank','https://tradestat.commerce.gov.in'],
+  GBR:['HMRC — uktradeinfo','https://www.uktradeinfo.com/trade-data/'],
+  RUS:['Federal Customs Service','https://customs.gov.ru'],
+  ESP:['Datacomex / Aduanas','https://datacomex.comercio.es'],
+  CAN:['Statistics Canada — Trade','https://www150.statcan.gc.ca/n1/en/subjects/international_trade'],
+  MEX:['INEGI — Balanza comercial','https://www.inegi.org.mx/temas/balanza/'],
+  BRA:['ComexStat — Secex','https://comexstat.mdic.gov.br/en/home'],
+  AUS:['ABS — International trade','https://www.abs.gov.au/statistics/economy/international-trade'],
+  CHE:['Swiss-Impex — Federal Customs','https://www.gate.estv.admin.ch/swissimpex/'],
+  TUR:['TurkStat — Foreign trade','https://data.tuik.gov.tr/Kategori/GetKategori?p=foreign-trade-104'],
+  IDN:['BPS / Statistics Indonesia','https://www.bps.go.id/en'],
+  THA:['Thai Customs','http://www.customs.go.th'],
+  VNM:['Vietnam Customs','https://www.customs.gov.vn'],
+  SGP:['Enterprise Singapore / SingStat','https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment'],
+  SAU:['GASTAT — International trade','https://www.stats.gov.sa/en'],
+  NPL:['Dept. of Customs, Nepal','https://www.customs.gov.np']
+};
+const EUROSTAT=['Eurostat — Comext (EU-wide)','https://ec.europa.eu/eurostat/web/international-trade-in-goods/database'];
+// HS product groups (chapter ranges) — ties any HS code to "who trades this worldwide".
+const PGROUPS=[['Animal & animal products',1,5],['Vegetable products',6,15],['Foodstuffs, beverages & tobacco',16,24],['Minerals',25,26],['Mineral fuels & oils',27,27],['Chemicals & allied',28,38],['Plastics & rubber',39,40],['Hides, skins & leather',41,43],['Wood & paper',44,49],['Textiles & clothing',50,63],['Footwear & headgear',64,67],['Stone, glass & precious metals',68,71],['Base metals',72,83],['Machinery & electronics',84,85],['Transport equipment',86,89],['Instruments, arms & misc.',90,99]];
+const groupSlug=l=>l.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+const chapterGroup=ch=>{ch=+ch;return PGROUPS.find(g=>ch>=g[1]&&ch<=g[2]);};
+function productTraders(label,flow){const key=flow==='exp'?'expProducts':'impProducts';const out=[];TRADE.countries.forEach(c=>{if(!c[key])return;const e=c[key].find(p=>p[0]===label);if(e&&e[1]>0)out.push([c.iso,c.name,c.flag,e[1]]);});out.sort((a,b)=>b[3]-a[3]);return out;}
+// Per-HS6 global trade + Nepal's real trade (BACI 2024) — lazy-loaded; values in millions USD.
+let PROD=null, PRODp=null, NEP=null, NEPp=null, DUTY=null, DUTYp=null, curHS=null;
+function loadProd(){ if(PRODp)return PRODp; PRODp=fetch(BASE+'/data/prod.json').then(r=>r.ok?r.json():{}).then(d=>(PROD=d)).catch(()=>(PROD={})); return PRODp; }
+function loadNep(){ if(NEPp)return NEPp; NEPp=fetch(BASE+'/data/nepal.json').then(r=>r.ok?r.json():{}).then(d=>(NEP=d)).catch(()=>(NEP={})); return NEPp; }
+function loadDuty(){ if(DUTYp)return DUTYp; DUTYp=fetch(BASE+'/data/nepduty.json').then(r=>r.ok?r.json():{}).then(d=>(DUTY=d)).catch(()=>(DUTY={})); return DUTYp; }
+function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+// Landed cost into Nepal on a $1,000 CIF shipment: SAARC/SAFTA origin vs general origin (customs duty + 13% VAT).
+function landedBlock(code){
+  if(DUTY===null){ loadDuty().then(()=>{ if(curHS===code) hsDetail(code,true); }); return ''; }
+  const d=DUTY[code]; if(!d||d[0]==null) return '';
+  const gen=d[0], saarc=(d[1]==null?gen:d[1]);
+  const CIF=1000, V=0.13, landed=r=>CIF*(1+r/100)*(1+V);
+  const lg=landed(gen), ls=landed(saarc), pref=saarc<gen;
+  const save=Math.round(lg-ls), savePct=Math.round((lg-ls)/lg*100);
+  const dl=r=>r===0?'Free':r+'%';
+  let verdict;
+  if(pref) verdict=`<div class="outcome" style="margin-top:var(--s3)"><span style="font-size:1.3rem">🇳🇵</span><div>Sourcing from <b>India or another SAARC country</b> lands this <b style="color:var(--free)">${fmtUSD(save)} cheaper per $1,000</b> (${savePct}% lower) than from China or the rest of the world — that gap is the SAFTA duty preference.</div></div>`;
+  else if(gen===0) verdict=`<div class="outcome" style="margin-top:var(--s3)">${ic(I.info)}<div>This code is <b style="color:var(--free)">duty-free</b> into Nepal whatever the origin — you pay only the 13% VAT.</div></div>`;
+  else verdict=`<div class="outcome" style="margin-top:var(--s3)">${ic(I.info)}<div>Nepal charges the same <b>${dl(gen)}</b> customs duty on this code regardless of origin — there's no SAARC/SAFTA preference to capture here.</div></div>`;
+  return `<h3 class="h">Import into Nepal — landed cost by origin</h3>
+    <p class="fine" style="margin:0 0 10px">On a <b style="color:var(--fg)">$1,000</b> shipment (CIF value), Nepal customs duty + 13% VAT comes to:</p>
+    <table class="bk"><tbody>
+      <tr><td>From India / a SAARC member <span class="fine">· ${dl(saarc)} duty (SAFTA)</span></td><td>${fmtUSD(ls)}</td></tr>
+      <tr><td>From China / rest of world <span class="fine">· ${dl(gen)} duty (general)</span></td><td>${fmtUSD(lg)}</td></tr>
+    </tbody></table>
+    ${verdict}
+    <p class="fine" style="margin-top:10px">Customs duty and 13% VAT only — excise duty, vehicle taxes and any product-specific levies are <b>not</b> included. <a href="https://customsnepal.com/?q=${code}" target="_blank" rel="noopener">Run the full Nepal calculator ↗</a> for the exact all-in figure.</p>`;
+}
+function isoMeta(iso){ const c=TRADE.countries.find(x=>x.iso===iso); return c?[c.name,c.flag]:[iso,'']; }
+const isoName=iso=>isoMeta(iso)[0];
+function nepalProd(code){
+  const z=NEP&&NEP[code]; if(!z||!(z.im||z.ex)) return '';
+  const p=PROD&&PROD[code]; const parts=[];
+  if(z.im){ const src=(z.ims||[]).map(x=>esc(isoName(x[0]))).slice(0,3).join(', ');
+    let pr='';
+    if(z.iu&&p&&p.u){ const d=Math.round((z.iu/p.u-1)*100);
+      pr=` at <b>$${z.iu}/kg</b> — ${d>8?`<b style="color:var(--hi)">${d}% above</b>`:d<-8?`<b style="color:var(--free)">${Math.abs(d)}% below</b>`:'about'} the world average ($${p.u}/kg)`; }
+    parts.push(`imports <b>${money(z.im*1e6)}</b>${src?` (mainly from ${src})`:''}${pr}`); }
+  if(z.ex){ const dst=(z.exs||[]).map(x=>esc(isoName(x[0]))).slice(0,3).join(', '); parts.push(`exports <b>${money(z.ex*1e6)}</b>${dst?` (to ${dst})`:''}`); }
+  return `<div class="outcome" style="margin-top:var(--s4)"><span style="font-size:1.3rem">🇳🇵</span><div><b>Nepal's trade in this product (2024):</b> ${parts.join('; ')}. <a href="https://customsnepal.com/?q=${code}" target="_blank" rel="noopener">Nepal duty &amp; taxes ↗</a></div></div>`;
+}
+function prodBlock(code){
+  if(PROD===null||NEP===null){ Promise.all([loadProd(),loadNep()]).then(()=>{ if(curHS===code) hsDetail(code,true); }); return '<p class="fine" style="margin-top:var(--s4)">Loading global trade for this product…</p>'; }
+  const p=PROD[code]; if(!p||!(p.x&&p.x.length)) return nepalProd(code);
+  const mk=a=>a.map(([iso,v])=>{const m=isoMeta(iso);return [iso,m[0],m[1],v*1e6];});
+  const ex=mk(p.x), im=mk(p.m||[]);
+  const price=p.u?` World average price: <b style="color:var(--fg)">$${p.u}/kg</b>.`:'';
+  return `<h3 class="h">Who trades this worldwide</h3>
+    <p class="fine" style="margin:0 0 10px">World trade in HS ${fmtCode(code)} was <b style="color:var(--fg)">${money(p.w*1e6)}</b> in 2024.${price} Leading exporters and importers:</p>
+    <p class="fine" style="margin:0 0 6px"><b style="color:var(--exp)">Top exporters</b></p>${leaderboard(ex,'var(--exp)')}
+    ${im.length?`<p class="fine" style="margin:14px 0 6px"><b style="color:var(--imp)">Top importers</b></p>${leaderboard(im,'var(--imp)')}`:''}
+    ${nepalProd(code)}
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;font-weight:600;color:var(--muted)">2024</span></div>
+      <p><b>BACI</b> (CEPII) — bilateral trade at HS 6-digit, reconciled from <b>UN Comtrade</b> across ~200 countries; unit values = value ÷ quantity. Current US$.</p></div>`;
+}
+let HS=null, TRADE=null, SUBS=[], HEADINGS={}, CHByNum={}, SECByRoman={};
+async function boot(){
+  try{
+    const j=u=>fetch(u).then(r=>{if(!r.ok)throw 0;return r.json();});
+    [HS,TRADE]=await Promise.all([j(BASE+'/data/hs.json'),j(BASE+'/data/trade.json')]);
+  }catch(e){ app.innerHTML='<div class="empty"><b>Couldn\'t load data.</b><p>Please refresh.</p></div>'; return; }
+  SUBS=HS.subs; HEADINGS=HS.headings;
+  HS.chapters.forEach(c=>CHByNum[c[0]]=c);
+  HS.sections.forEach(s=>SECByRoman[s[0]]=s);
+  window.addEventListener('popstate',route); route();
+}
+function nav(path){ history.pushState(null,'',BASE+path); route(); window.scrollTo(0,0); }
+document.addEventListener('click',e=>{ const a=e.target.closest('[data-nav]'); if(a&&a.getAttribute('href').startsWith('/')){ e.preventDefault(); nav(a.getAttribute('href')); }});
+
+function setNav(k){ document.querySelectorAll('.nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===k)); }
+
+function route(){
+  let p=decodeURIComponent(location.pathname);
+  if(BASE&&p.indexOf(BASE)===0)p=p.slice(BASE.length)||'/';
+  let m;
+  if(p.indexOf('/hs')===0){ loadProd(); loadNep(); loadDuty(); }
+  if(p==='/'||p===''){ setNav(''); return home(); }
+  if(p==='/nepal'){ setNav('trade'); return nepalView(); }
+  if(p==='/hs'){ setNav('hs'); return hsHome(); }
+  if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); return hsChapter(m[1]); }
+  if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); return hsDetail(m[1]); }
+  if(p==='/trade'){ setNav('trade'); return tradeHome(); }
+  if((m=p.match(/^\/trade\/product\/([a-z0-9-]+)$/))){ setNav('trade'); return productView(m[1]); }
+  if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ setNav('trade'); return country(m[1].toUpperCase()); }
+  setNav(''); home();
+}
+
+/* ---------------- HOME ---------------- */
+function home(){
+  document.title='World HS Codes & Global Trade — Customs Nepal';
+  app.innerHTML=`
+  <section class="hero"><div class="wrap">
+    <h1>The world's HS codes and trade, in one place.</h1>
+    <p>Search the international Harmonized System — the classification behind every customs tariff on earth — and explore the import/export profiles of the largest economies.</p>
+    <div class="chips"><span>${SUBS.length.toLocaleString()} six-digit HS codes</span><span>${HS.chapters.length} chapters</span><span>${TRADE.countries.length} economies</span><span>Official sources</span></div>
+  </div></section>
+  <main><div class="wrap">
+    <div class="grid2">
+      <a class="bigcard" href="/hs" data-nav><div class="ic">${ic(I.box)}</div><h3>World HS Code Finder</h3><p>Look up any product's 6-digit Harmonized System code and see how Nepal taxes it. The same code works in 200+ countries.</p><span class="go">Find a code ${ic(I.right)}</span></a>
+      <a class="bigcard" href="/trade" data-nav><div class="ic">${ic(I.globe)}</div><h3>Global Trade Data</h3><p>World rankings and a trade profile for every one of ${TRADE.world.count} economies — exports, imports, partners and product mix.</p><span class="go">Explore trade ${ic(I.right)}</span></a>
+    </div>
+    <div class="statrow">
+      <div class="s"><b>${money(TRADE.world.totalExp)}</b><span>World merchandise trade (${TRADE.world.year})</span></div>
+      <div class="s"><b>${TRADE.world.count}</b><span>Economies profiled</span></div>
+      <div class="s"><b>${SUBS.length.toLocaleString()}</b><span>HS codes linked to trade</span></div>
+    </div>
+  </div></main>`;
+}
+
+/* ---------------- PILLAR 1: HS ---------------- */
+function hsHome(){
+  document.title='World HS Code Finder — Customs Nepal';
+  app.innerHTML=`<main><div class="wrap">
+    <div class="ph"><h2>World HS Code Finder</h2><p>Search ${SUBS.length.toLocaleString()} international six-digit codes by product or number, or browse by section. ${HS.edition} nomenclature.</p></div>
+    <div class="sbox">${ic(I.search)}<input id="q" type="search" placeholder="e.g. coffee, lithium battery, 8471, 0901…" autocomplete="off"></div>
+    <div id="res"></div>
+    <div id="browse"><h3 class="h">Browse by section</h3><div class="secs">${HS.sections.map(s=>{
+      const n=SUBS.filter(x=>{const ch=+x[0].slice(0,2);return ch>=s[2]&&ch<=s[3];}).length;
+      return `<button class="sec" onclick="__go('/hs/chapter/${String(s[2]).padStart(2,'0')}')"><span class="n">Section ${s[0]}</span><span class="t">${esc(s[1])}</span><span class="c">Ch ${s[2]}–${s[3]} · ${n} codes</span></button>`;}).join('')}</div></div>`;
+  const q=$('#q'); q.focus(); q.addEventListener('input',()=>runSearch(q.value));
+}
+function runSearch(qv){
+  const res=$('#res'), br=$('#browse'); qv=qv.trim();
+  if(qv.length<2){ res.innerHTML=''; br.style.display=''; return; }
+  br.style.display='none';
+  const digits=qv.replace(/[^\d]/g,'');
+  let hits=[];
+  if(digits.length>=2){ hits=SUBS.filter(s=>s[0].startsWith(digits)).slice(0,60); }
+  else{ const words=qv.toLowerCase().split(/\s+/).filter(w=>w.length>1);
+    const scored=[];
+    for(const s of SUBS){ const d=s[1].toLowerCase(); let sc=0; for(const w of words){ const i=d.indexOf(w); if(i<0){sc=-1;break;} sc+=(i===0?3:1);} if(sc>0)scored.push([sc,s]); }
+    scored.sort((a,b)=>b[0]-a[0]); hits=scored.slice(0,60).map(x=>x[1]); }
+  if(!hits.length){ res.innerHTML='<div class="empty">No codes match. Try a simpler word or an HS number.</div>'; return; }
+  res.innerHTML=hits.map(s=>rowHTML(s)).join('');
+}
+function fmtCode(c){ return c.slice(0,4)+'.'+c.slice(4,6); }
+function dutyChip(s){ const np=s[3]; if(!np||np.g==null)return ''; const g=np.g; const txt=Array.isArray(g)?g[0]+'–'+g[1]+'%':(g===0?'Free':g+'%'); return `<span class="chip dutychip">NP ${txt}</span>`; }
+function rowHTML(s){ return `<button class="row" onclick="__go('/hs/code/${s[0]}')"><span class="code">${fmtCode(s[0])}</span><span class="d">${esc(s[1])}</span><span class="end">${dutyChip(s)} ${ic(I.right)}</span></button>`; }
+
+function hsChapter(ch){
+  const cn=CHByNum[ch]; if(!cn)return hsHome();
+  const sec=SECByRoman[cn[2]];
+  const rows=SUBS.filter(s=>s[0].startsWith(ch));
+  const byHead={}; rows.forEach(s=>{(byHead[s[2]]=byHead[s[2]]||[]).push(s);});
+  document.title=`Chapter ${ch} — ${cn[1]} — HS codes`;
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/hs')">${ic(I.left)}HS finder</button>
+    <div class="ph"><p style="margin:0;color:var(--muted);font-size:.85rem">Section ${cn[2]} · Chapter ${ch}</p><h2>${esc(cn[1])}</h2><p>${rows.length} six-digit codes${sec?' · '+esc(sec[1]):''}.</p></div>
+    ${Object.keys(byHead).sort().map(h=>`<h3 class="h">${h.slice(0,2)}.${h.slice(2)} — ${esc(HEADINGS[h]||'')}</h3>${byHead[h].map(s=>rowHTML(s)).join('')}`).join('')}
+  </div></main>`;
+}
+
+function hsDetail(code){
+  curHS=code;
+  const s=SUBS.find(x=>x[0]===code); if(!s)return hsHome();
+  const ch=code.slice(0,2), head=code.slice(0,4), cn=CHByNum[ch]||[ch,'',''], sec=SECByRoman[cn[2]]||['','',''];
+  const np=s[3];
+  document.title=`HS ${fmtCode(code)} — ${s[1]}`;
+  let nepal='';
+  if(np&&np.g!=null){ const g=np.g; const txt=Array.isArray(g)?`${g[0]}–${g[1]}%`:(g===0?'Free':g+'%');
+    nepal=`<div class="outcome">${ic(I.info)}<div>Nepal applies a general customs duty of <b>${txt}</b> on this code (${np.n} national line${np.n>1?'s':''}), plus excise/VAT where applicable. <a href="https://customsnepal.com/?q=${code}" target="_blank" rel="noopener">See full Nepal duty &amp; taxes ↗</a></div></div>`;
+  }else if(np){ nepal=`<div class="outcome">${ic(I.info)}<div>Nepal lists this code (${np.n} line${np.n>1?'s':''}). <a href="https://customsnepal.com/?q=${code}" target="_blank" rel="noopener">See Nepal duty &amp; taxes ↗</a></div></div>`; }
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/hs/chapter/${ch}')">${ic(I.left)}Chapter ${ch}</button>
+    <div class="dcode">${fmtCode(code)}</div><p class="dtitle">${esc(s[1])}</p>
+    <p class="crumb">Section ${cn[2]} · <b>${esc(sec[1])}</b></p>
+    ${nepal}
+    <table class="bk"><tbody>
+      <tr><td>Six-digit HS code</td><td>${fmtCode(code)}</td></tr>
+      <tr><td>Heading</td><td>${head.slice(0,4)}</td></tr>
+      <tr><td>Chapter</td><td>${ch} — ${esc(cn[1])}</td></tr>
+      <tr><td>Section</td><td>${cn[2]}</td></tr>
+    </tbody></table>
+    <p class="crumb" style="margin-top:14px"><b>Heading ${head.slice(0,2)}.${head.slice(2)}:</b> ${esc(HEADINGS[head]||'')}</p>
+    ${prodBlock(code)}
+    ${landedBlock(code)}
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>International standard</span></div>
+      <p>This is the global 6-digit Harmonized System code (${HS.edition}), identical across 200+ countries. Each country adds its own 8–10 digit extension and duty rates. <a href="https://www.wcoomd.org/en/topics/nomenclature/overview.aspx" target="_blank" rel="noopener">About the HS ↗</a></p></div>
+    ${chapterGroup(ch)?`<button class="nepalcard" onclick="__go('/trade/product/${groupSlug(chapterGroup(ch)[0])}')"><span class="fl">${ic(I.globe)}</span><span><b>Global trade in ${esc(chapterGroup(ch)[0])}</b> — see the world's top exporters &amp; importers ${ic(I.right)}</span></button>`:''}
+    <h3 class="h">Other codes in heading ${head.slice(0,2)}.${head.slice(2)}</h3>
+    ${SUBS.filter(x=>x[0].startsWith(head)).map(x=>`<button class="row ${x[0]===code?'':''}" onclick="__go('/hs/code/${x[0]}')"><span class="code">${fmtCode(x[0])}</span><span class="d">${esc(x[1])}</span><span class="end">${dutyChip(x)} ${ic(I.right)}</span></button>`).join('')}
+  </div></main>`;
+}
+
+/* ---------------- PILLAR 2: TRADE ---------------- */
+let tFlow='exp';
+function leaderboard(list,color){const mx=Math.max(...list.map(x=>x[3]),1);
+  return `<div class="bars">${list.map((x,i)=>`<button class="lbrow" onclick="__go('/trade/${x[0].toLowerCase()}')"><span class="rk">${i+1}</span><span class="lb">${x[2]} ${esc(x[1])}</span><span class="tr"><span class="fi" style="width:${Math.max(2,x[3]/mx*100)}%;background:${color}"></span></span><span class="vl">${money(x[3])}</span></button>`).join('')}</div>`;}
+function countryRows(q){
+  const ql=(q||'').toLowerCase().trim();
+  const list=TRADE.countries.filter(c=>c.exp!=null&&(!ql||c.name.toLowerCase().includes(ql)));
+  if(!list.length)return '<p class="fine">No economy matches.</p>';
+  return list.map(c=>`<button class="row" onclick="__go('/trade/${c.iso.toLowerCase()}')"><span class="code" style="color:var(--muted);min-width:30px;text-align:right">#${c.rankExp||'–'}</span><span class="d">${c.flag} ${esc(c.name)}</span><span class="end"><b class="ex">${money(c.exp)}</b> ${ic(I.right)}</span></button>`).join('');
+}
+function tradeHome(){
+  const W=TRADE.world, np=TRADE.countries.find(c=>c.iso==='NPL');
+  document.title='Global trade data — world rankings & country profiles — Customs Nepal';
+  renderT();
+  function renderT(){
+    const top=tFlow==='exp'?W.topExp:W.topImp, col=tFlow==='exp'?'var(--exp)':'var(--imp)';
+    const rmax=Math.max(...W.regions.map(r=>r[1]),1);
+    app.innerHTML=`<main><div class="wrap">
+      <div class="ph"><h2>Global trade</h2><p>World merchandise trade reached <b>${money(W.totalExp)}</b> in ${W.year}, across ${W.count} economies. Explore the rankings below, or open any country.</p></div>
+      <div class="statrow" style="margin-top:0">
+        <div class="s"><b class="ex">${money(W.totalExp)}</b><span>World exports (${W.year})</span></div>
+        <div class="s"><b class="im">${money(W.totalImp)}</b><span>World imports (${W.year})</span></div>
+        <div class="s"><b>${W.count}</b><span>Economies</span></div>
+      </div>
+      <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">World trade over time</b>${trendSVG(W.trend)}</div>
+      ${np?`<button class="nepalcard" onclick="__go('/nepal')"><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product ${ic(I.right)}</span></button>`:''}
+      <div class="sub2" style="margin-top:var(--s5)"><button class="${tFlow==='exp'?'on':''}" onclick="__tflow('exp')">Top exporters</button><button class="${tFlow==='imp'?'on':''}" onclick="__tflow('imp')">Top importers</button></div>
+      ${leaderboard(top,col)}
+      <h3 class="h">By region</h3>
+      ${bars(W.regions.map(r=>[r[0],r[1]]),rmax,money,'var(--exp)')}
+      <h3 class="h">Trade by product</h3>
+      <p class="fine" style="margin:0 0 10px">Who leads world trade in each product family — and the HS codes behind it:</p>
+      <div class="secs">${PGROUPS.map(x=>`<button class="sec" onclick="__go('/trade/product/${groupSlug(x[0])}')"><span class="t">${esc(x[0])}</span><span class="c">HS ${x[1]}–${x[2]}</span></button>`).join('')}</div>
+      <h3 class="h">All economies</h3>
+      <div class="sbox">${ic(I.search)}<input id="cq" type="search" placeholder="Find a country…" autocomplete="off"></div>
+      <div id="clist">${countryRows('')}</div>
+      <h3 class="h">Freshest 2025 data — official national sources</h3>
+      <p class="fine" style="margin:0 0 10px">The figures above are the World Bank's comparable cross-country series (to 2023). For the latest <b>2025</b> import/export data, each economy's own customs or statistics office is the authoritative source:</p>
+      <div class="osrc">${Object.keys(OFFICIAL).filter(k=>k!=='NPL').map(k=>[k,TRADE.countries.find(c=>c.iso===k)]).filter(x=>x[1]).sort((a,b)=>(b[1].exp||0)-(a[1].exp||0)).slice(0,12).map(([k,c])=>`<a class="osrc-i" href="${OFFICIAL[k][1]}" target="_blank" rel="noopener">${c.flag} <span>${esc(OFFICIAL[k][0])}</span>${ic(I.right)}</a>`).join('')}<a class="osrc-i" href="${EUROSTAT[1]}" target="_blank" rel="noopener">🇪🇺 <span>${esc(EUROSTAT[0])}</span>${ic(I.right)}</a></div>
+      <div class="src" style="margin-top:var(--s4)"><div class="src-h">${ic(I.shield)}<span>Official sources</span></div>
+        <p>World and country totals from the <b>World Bank</b> (merchandise trade, current US$); partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>. Rankings cover ${W.count} reporting economies.</p></div>
+    </div></main>`;
+    const cq=$('#cq'); if(cq)cq.addEventListener('input',()=>{$('#clist').innerHTML=countryRows(cq.value);});
+  }
+  window.__tflow=f=>{tFlow=f;renderT();window.scrollTo(0,0);};
+}
+
+function bars(items,max,fmt,color){ const c=color||'var(--accent)'; return `<div class="bars">${items.map(it=>{const v=it[it.length-1];return `<div class="barrow"><span class="lb">${esc(it[it.length-2])}</span><span class="tr"><span class="fi" style="width:${Math.max(2,v/max*100)}%;background:${c}"></span></span><span class="vl">${fmt(v)}</span></div>`;}).join('')}</div>`; }
+
+function trendSVG(trend){
+  const pts=trend.filter(r=>r[1]!=null||r[2]!=null); if(pts.length<2)return'';
+  const W=600,H=150,pad=4; const xs=pts.map(r=>r[0]); const minY=xs[0],maxY=xs[xs.length-1];
+  const vals=pts.flatMap(r=>[r[1],r[2]]).filter(v=>v!=null); const mx=Math.max(...vals)*1.05;
+  const X=y=>pad+(y-minY)/(maxY-minY)*(W-2*pad); const Y=v=>H-pad-(v/mx)*(H-2*pad);
+  const line=idx=>pts.filter(r=>r[idx]!=null).map((r,i)=>(i?'L':'M')+X(r[0]).toFixed(1)+' '+Y(r[idx]).toFixed(1)).join(' ');
+  const area=idx=>{const p=pts.filter(r=>r[idx]!=null);if(!p.length)return'';return 'M'+X(p[0][0]).toFixed(1)+' '+H+' L'+p.map(r=>X(r[0]).toFixed(1)+' '+Y(r[idx]).toFixed(1)).join(' L')+' L'+X(p[p.length-1][0]).toFixed(1)+' '+H+' Z';};
+  return `<svg class="trend" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Exports and imports trend">
+    <path d="${area(1)}" fill="var(--exp)" opacity=".10"/><path d="${line(1)}" fill="none" stroke="var(--exp)" stroke-width="2.5"/>
+    <path d="${line(2)}" fill="none" stroke="var(--imp)" stroke-width="2.5" stroke-dasharray="1"/>
+  </svg>
+  <div class="lgnd"><span><i style="background:var(--exp)"></i>Exports</span><span><i style="background:var(--imp)"></i>Imports</span><span style="color:var(--muted)">${minY}–${maxY}</span></div>`;
+}
+
+let cFlow='exp';
+function country(iso){
+  const c=TRADE.countries.find(x=>x.iso===iso); if(!c)return tradeHome();
+  const W=TRADE.world, deep=!!c.deep, bal=(c.exp||0)-(c.imp||0);
+  document.title=`${c.name} trade profile — exports, imports${deep?', partners':''} — Customs Nepal`;
+  render();
+  function render(){
+    const parts=deep?(cFlow==='exp'?c.expPartners:c.impPartners):[];
+    const prods=deep?(cFlow==='exp'?c.expProducts:c.impProducts):[];
+    const fcol=cFlow==='exp'?'var(--exp)':'var(--imp)';
+    const pmax=Math.max(...parts.map(p=>p[2]),1), rmax=Math.max(...prods.map(p=>p[1]),1);
+    app.innerHTML=`<main><div class="wrap">
+      <button class="back" onclick="__go('/trade')">${ic(I.left)}Global trade</button>
+      <div class="ph"><h2>${c.flag} ${esc(c.name)}</h2><p>${c.region?esc(c.region)+' · ':''}World rank <b>#${c.rankExp||'–'}</b> exporter, <b>#${c.rankImp||'–'}</b> importer, of ${W.count} economies.</p></div>
+      <div class="statrow" style="margin-top:0">
+        <div class="s"><b class="ex">${money(c.exp)}</b><span>Exports (${c.expYear})</span></div>
+        <div class="s"><b class="im">${money(c.imp)}</b><span>Imports (${c.impYear})</span></div>
+        <div class="s"><b style="color:${bal>=0?'var(--free)':'var(--hi)'}">${bal>=0?'+':'−'}${money(Math.abs(bal)).slice(1)}</b><span>Trade balance</span></div>
+      </div>
+      <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">Exports vs imports</b>${trendSVG(c.trend)}</div>
+      ${deep?`
+      <div class="sub2"><button class="${cFlow==='exp'?'on':''}" onclick="__flow('exp')">Exports</button><button class="${cFlow==='imp'?'on':''}" onclick="__flow('imp')">Imports</button></div>
+      <h3 class="h">Top ${cFlow==='exp'?'export destinations':'import sources'} <small style="font-weight:600;color:var(--muted)">(${c.pYear})</small></h3>
+      ${parts.length?bars(parts.map(p=>[p[1],p[2]]),pmax,money,fcol):'<p class="fine">No partner data.</p>'}
+      <h3 class="h">${cFlow==='exp'?'What it exports':'What it imports'}</h3>
+      ${prods.length?bars(prods.map(p=>[p[0],p[1]]),rmax,money,fcol):'<p class="fine">No product data.</p>'}`
+      :`<div class="outcome" style="margin-top:var(--s4)">${ic(I.info)}<div>Partner and product breakdowns are live for the ~30 largest traders and Nepal, and rolling out to more economies. The totals and trend above are from the World Bank.</div></div>`}
+      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span>${deep?`<span style="margin-left:auto;font-weight:600;color:var(--muted)">${c.pYear}</span>`:''}</div>
+        <p>Trade totals from the <b>World Bank</b> (merchandise trade, current US$)${deep?'; partners and product mix from <b>World Bank WITS</b>, sourced from <b>UN Comtrade</b>':''}. <a href="https://wits.worldbank.org/CountryProfile/en/${c.iso}" target="_blank" rel="noopener">World Bank profile ↗</a></p>
+        ${OFFICIAL[c.iso]?`<p style="margin-top:8px"><b style="color:var(--fg-2)">Freshest 2025 data →</b> <a href="${OFFICIAL[c.iso][1]}" target="_blank" rel="noopener">${esc(OFFICIAL[c.iso][0])} ↗</a>${c.region==='Europe & Central Asia'?` · <a href="${EUROSTAT[1]}" target="_blank" rel="noopener">Eurostat ↗</a>`:''}</p>`:(c.region==='Europe & Central Asia'?`<p style="margin-top:8px"><b style="color:var(--fg-2)">Freshest 2025 data →</b> <a href="${EUROSTAT[1]}" target="_blank" rel="noopener">${esc(EUROSTAT[0])} ↗</a></p>`:'')}</div>
+      ${deep?'<p class="fine">Mirror-statistics note: a country&#39;s reported exports to a partner may differ from that partner&#39;s reported imports. Product groups follow HS chapter ranges.</p>':''}
+    </div></main>`;
+  }
+  window.__flow=f=>{cFlow=f;render();window.scrollTo(0,0);};
+}
+let pFlow='exp';
+function productView(slug){
+  const g=PGROUPS.find(x=>groupSlug(x[0])===slug); if(!g)return tradeHome();
+  const label=g[0], yr=(TRADE.countries.find(c=>c.deep)||{}).pYear;
+  document.title=`Global trade in ${label} — top exporters & importers — Customs Nepal`;
+  render();
+  function render(){
+    const lb=productTraders(label,pFlow).slice(0,15), col=pFlow==='exp'?'var(--exp)':'var(--imp)';
+    app.innerHTML=`<main><div class="wrap">
+      <button class="back" onclick="__go('/trade')">${ic(I.left)}Global trade</button>
+      <div class="ph"><h2>${esc(label)}</h2><p>Who trades this worldwide — HS chapters ${g[1]}–${g[2]}. Leading exporters and importers among the major economies${yr?' ('+yr+')':''}.</p></div>
+      <div class="sub2"><button class="${pFlow==='exp'?'on':''}" onclick="__pflow('exp')">Top exporters</button><button class="${pFlow==='imp'?'on':''}" onclick="__pflow('imp')">Top importers</button></div>
+      <h3 class="h">Leading ${pFlow==='exp'?'exporters':'importers'} of ${esc(label.toLowerCase())}</h3>
+      ${lb.length?leaderboard(lb,col):'<p class="fine">No data for this group.</p>'}
+      <button class="nepalcard" onclick="__go('/hs/chapter/${String(g[1]).padStart(2,'0')}')"><span class="fl">${ic(I.box)}</span><span><b>Find the exact HS codes</b> — browse the ${SUBS.filter(s=>{const c=+s[0].slice(0,2);return c>=g[1]&&c<=g[2];}).length} six-digit codes in chapters ${g[1]}–${g[2]} ${ic(I.right)}</span></button>
+      <h3 class="h">All product groups</h3>
+      <div class="secs">${PGROUPS.map(x=>`<button class="sec${groupSlug(x[0])===slug?' ':''}" onclick="__go('/trade/product/${groupSlug(x[0])}')"><span class="t">${esc(x[0])}</span><span class="c">HS ${x[1]}–${x[2]}</span></button>`).join('')}</div>
+      <div class="src"><div class="src-h">${ic(I.shield)}<span>Official sources</span>${yr?`<span style="margin-left:auto;font-weight:600;color:var(--muted)">${yr}</span>`:''}</div>
+        <p>Rankings computed from <b>World Bank WITS</b> product data (sourced from <b>UN Comtrade</b>) across the major trading economies — each country's merchandise ${pFlow==='exp'?'exports':'imports'} in this HS group. Smaller economies are not yet included, so treat it as "leading major-economy traders".</p></div>
+    </div></main>`;
+  }
+  window.__pflow=f=>{pFlow=f;render();window.scrollTo(0,0);};
+}
+function hsDesc(code){ const s=SUBS.find(x=>x[0]===code); return s?s[1]:(HEADINGS[code.slice(0,4)]||code); }
+function nepalView(){
+  if(NEP===null||PROD===null){ Promise.all([loadNep(),loadProd()]).then(()=>{ if(location.pathname.indexOf('/nepal')>=0) nepalView(); }); app.innerHTML='<main><div class="wrap"><div class="empty" style="padding-top:70px">Loading Nepal trade…</div></div></main>'; return; }
+  document.title='Nepal in world trade — imports, exports & opportunities — Customs Nepal';
+  const T=NEP._t||{im:0,ex:0}, bal=T.ex-T.im;
+  const row=(code,val,extra)=>`<button class="row" onclick="__go('/hs/code/${code}')"><span class="code">${fmtCode(code)}</span><span class="d">${esc(hsDesc(code))}${extra?`<small style="display:block;color:var(--muted)">${extra}</small>`:''}</span><span class="end"><b>${money(val*1e6)}</b> ${ic(I.right)}</span></button>`;
+  const over=[];
+  (NEP._im||[]).forEach(([code,val])=>{ const z=NEP[code],p=PROD[code]; if(z&&z.iu&&p&&p.u&&z.iu>p.u*1.2&&val>=1) over.push([code,val,Math.round((z.iu/p.u-1)*100),z.iu,p.u]); });
+  over.sort((a,b)=>b[1]*b[2]-a[1]*a[2]);
+  const open=[];
+  (NEP._ex||[]).forEach(([code,val])=>{ const p=PROD[code]; if(p&&p.w){ const sh=val/p.w*100; if(sh<20) open.push([code,val,p.w,sh]); } });
+  open.sort((a,b)=>b[2]-a[2]);
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/trade')">${ic(I.left)}Global trade</button>
+    <div class="ph"><h2>🇳🇵 Nepal in world trade</h2><p>Nepal's real merchandise trade by product (BACI 2024) — and where the data points to openings.</p></div>
+    <div class="statrow" style="margin-top:0">
+      <div class="s"><b class="im">${money(T.im*1e6)}</b><span>Imports (2024)</span></div>
+      <div class="s"><b class="ex">${money(T.ex*1e6)}</b><span>Exports (2024)</span></div>
+      <div class="s"><b style="color:var(--hi)">−${money(Math.abs(bal)*1e6).slice(1)}</b><span>Trade deficit</span></div>
+    </div>
+    <h3 class="h">Sourcing watch — imports Nepal may overpay for</h3>
+    <p class="fine" style="margin:0 0 8px">Products where Nepal's import price sits well above the world average — worth checking a cheaper origin.</p>
+    ${over.length?over.slice(0,12).map(([code,val,d,iu,u])=>row(code,val,`Nepal $${iu}/kg vs $${u}/kg world · ${d}% higher`)).join(''):'<p class="fine">—</p>'}
+    <h3 class="h">Export openings — big world demand, small Nepal share</h3>
+    <p class="fine" style="margin:0 0 8px">Products Nepal already exports, where world import demand dwarfs Nepal's current sales.</p>
+    ${open.length?open.slice(0,12).map(([code,val,w,sh])=>row(code,val,`World imports ${money(w*1e6)} · Nepal ${sh<1?'<1':Math.round(sh)}%`)).join(''):'<p class="fine">—</p>'}
+    <h3 class="h">Nepal's top imports</h3>${(NEP._im||[]).slice(0,10).map(([code,val])=>row(code,val)).join('')}
+    <h3 class="h">Nepal's top exports</h3>${(NEP._ex||[]).slice(0,10).map(([code,val])=>row(code,val)).join('')}
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;color:var(--muted);font-weight:600">2024</span></div>
+      <p>Nepal's bilateral trade from <b>BACI</b> (CEPII, reconciled from UN Comtrade). "Overpay" compares Nepal's import unit value to the world average — a signal to investigate, not proof (grade/quality and freight differ). For duty on any line, open the code → customsnepal.com.</p></div>
+  </div></main>`;
+}
+window.__go=nav;
+boot();
+})();
+</script>
+</body>
+</html>
