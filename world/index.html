@@ -223,6 +223,22 @@ const PGROUPS=[['Animal & animal products',1,5],['Vegetable products',6,15],['Fo
 const groupSlug=l=>l.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const chapterGroup=ch=>{ch=+ch;return PGROUPS.find(g=>ch>=g[1]&&ch<=g[2]);};
 function productTraders(label,flow){const key=flow==='exp'?'expProducts':'impProducts';const out=[];TRADE.countries.forEach(c=>{if(!c[key])return;const e=c[key].find(p=>p[0]===label);if(e&&e[1]>0)out.push([c.iso,c.name,c.flag,e[1]]);});out.sort((a,b)=>b[3]-a[3]);return out;}
+// Per-HS6 global trade (BACI 2024) — lazy-loaded; values stored in millions USD.
+let PROD=null, PRODp=null, curHS=null;
+function loadProd(){ if(PRODp)return PRODp; PRODp=fetch(BASE+'/data/prod.json').then(r=>r.ok?r.json():{}).then(d=>(PROD=d)).catch(()=>(PROD={})); return PRODp; }
+function isoMeta(iso){ const c=TRADE.countries.find(x=>x.iso===iso); return c?[c.name,c.flag]:[iso,'']; }
+function prodBlock(code){
+  if(PROD===null){ loadProd().then(()=>{ if(curHS===code) hsDetail(code,true); }); return '<p class="fine" style="margin-top:var(--s4)">Loading global trade for this product…</p>'; }
+  const p=PROD[code]; if(!p||!(p.x&&p.x.length)) return '';
+  const mk=a=>a.map(([iso,v])=>{const m=isoMeta(iso);return [iso,m[0],m[1],v*1e6];});
+  const ex=mk(p.x), im=mk(p.m||[]);
+  return `<h3 class="h">Who trades this worldwide</h3>
+    <p class="fine" style="margin:0 0 10px">World trade in HS ${fmtCode(code)} was <b style="color:var(--fg)">${money(p.w*1e6)}</b> in 2024. Leading exporters and importers:</p>
+    <p class="fine" style="margin:0 0 6px"><b style="color:var(--exp)">Top exporters</b></p>${leaderboard(ex,'var(--exp)')}
+    ${im.length?`<p class="fine" style="margin:14px 0 6px"><b style="color:var(--imp)">Top importers</b></p>${leaderboard(im,'var(--imp)')}`:''}
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;font-weight:600;color:var(--muted)">2024</span></div>
+      <p><b>BACI</b> (CEPII) — bilateral trade at HS 6-digit, reconciled from <b>UN Comtrade</b> across ~200 countries. Values in current US$.</p></div>`;
+}
 let HS=null, TRADE=null, SUBS=[], HEADINGS={}, CHByNum={}, SECByRoman={};
 async function boot(){
   try{
@@ -243,6 +259,7 @@ function route(){
   let p=decodeURIComponent(location.pathname);
   if(BASE&&p.indexOf(BASE)===0)p=p.slice(BASE.length)||'/';
   let m;
+  if(p.indexOf('/hs')===0) loadProd();
   if(p==='/'||p===''){ setNav(''); return home(); }
   if(p==='/hs'){ setNav('hs'); return hsHome(); }
   if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); return hsChapter(m[1]); }
@@ -319,6 +336,7 @@ function hsChapter(ch){
 }
 
 function hsDetail(code){
+  curHS=code;
   const s=SUBS.find(x=>x[0]===code); if(!s)return hsHome();
   const ch=code.slice(0,2), head=code.slice(0,4), cn=CHByNum[ch]||[ch,'',''], sec=SECByRoman[cn[2]]||['','',''];
   const np=s[3];
@@ -339,6 +357,7 @@ function hsDetail(code){
       <tr><td>Section</td><td>${cn[2]}</td></tr>
     </tbody></table>
     <p class="crumb" style="margin-top:14px"><b>Heading ${head.slice(0,2)}.${head.slice(2)}:</b> ${esc(HEADINGS[head]||'')}</p>
+    ${prodBlock(code)}
     <div class="src"><div class="src-h">${ic(I.shield)}<span>International standard</span></div>
       <p>This is the global 6-digit Harmonized System code (${HS.edition}), identical across 200+ countries. Each country adds its own 8–10 digit extension and duty rates. <a href="https://www.wcoomd.org/en/topics/nomenclature/overview.aspx" target="_blank" rel="noopener">About the HS ↗</a></p></div>
     ${chapterGroup(ch)?`<button class="nepalcard" onclick="__go('/trade/product/${groupSlug(chapterGroup(ch)[0])}')"><span class="fl">${ic(I.globe)}</span><span><b>Global trade in ${esc(chapterGroup(ch)[0])}</b> — see the world's top exporters &amp; importers ${ic(I.right)}</span></button>`:''}

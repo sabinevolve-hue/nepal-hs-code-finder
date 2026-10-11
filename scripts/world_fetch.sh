@@ -31,4 +31,12 @@ done
 
 python3 -I scripts/world_data.py  "$RAW/hs.csv" "$RAW" data/tariff.json world/data   # -> hs.json (also writes a trade.json, overwritten next)
 python3 -I scripts/world_trade.py "$RAW" world/data                                   # -> trade.json (v2: world overview + all economies)
+
+# Per-HS6 global top exporters/importers from BACI (CEPII — reconciled Comtrade, HS-6 bilateral).
+# ~287 MB zip (HS22 = 2022–2024). Bump the version when CEPII releases a newer one.
+BV="202601"; BZ="$RAW/baci_hs22.zip"
+curl -sS --max-time 600 "https://www.cepii.fr/DATA_DOWNLOAD/baci/data/BACI_HS22_V${BV}.zip" -o "$BZ"
+unzip -o -q "$BZ" "BACI_HS22_Y2024_V${BV}.csv" "country_codes_V${BV}.csv" -d "$RAW"
+python3 -I scripts/world_products.py "$RAW/BACI_HS22_Y2024_V${BV}.csv" "$RAW/country_codes_V${BV}.csv" world/data/prod.json  # -> prod.json
+
 echo "done. If chapters or the country set changed, regenerate world/sitemap.xml."
