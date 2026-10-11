@@ -4,14 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>World HS Codes & Global Trade — Customs Nepal</title>
-<meta name="description" content="Search the international Harmonized System (HS) nomenclature — 5,600+ six-digit codes — and explore import/export trade profiles of the world's largest economies. From the makers of Customs Nepal.">
+<meta name="description" content="Search the international Harmonized System (HS) — 5,613 six-digit codes — and explore the import/export trade of 207 economies, with per-product world prices and Nepal's landed cost by origin. From the makers of Customs Nepal.">
 <link rel="canonical" href="https://world.customsnepal.com/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#1B2A45">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%231B2A45%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27monospace%27 font-size=%2713%27 font-weight=%27700%27 fill=%27white%27 text-anchor=%27middle%27%3EHS%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">
+<meta property="og:site_name" content="Customs Nepal">
 <meta property="og:title" content="World HS Codes & Global Trade — Customs Nepal">
-<meta property="og:description" content="The international HS nomenclature plus trade profiles of the US, EU, China, India, Japan and Russia.">
+<meta property="og:description" content="The international HS nomenclature plus the import/export trade of 207 economies, per-product world prices, and Nepal's landed cost by origin.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://world.customsnepal.com/">
-<meta name="theme-color" content="#1B2A45">
-<meta name="robots" content="index,follow">
+<meta property="og:image" content="https://www.customsnepal.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="World HS Codes & Global Trade — Customs Nepal">
+<meta name="twitter:description" content="The international HS nomenclature plus the import/export trade of 207 economies, world prices and Nepal's landed cost by origin.">
+<meta name="twitter:image" content="https://www.customsnepal.com/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://world.customsnepal.com/#website","url":"https://world.customsnepal.com/","name":"Customs Nepal — World HS & Trade","description":"International HS codes and global trade data.","inLanguage":"en","publisher":{"@id":"https://world.customsnepal.com/#org"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://world.customsnepal.com/hs?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@type":"Organization","@id":"https://world.customsnepal.com/#org","name":"Customs Nepal","url":"https://www.customsnepal.com/","logo":"https://www.customsnepal.com/icon-512.png","sameAs":["https://www.customsnepal.com/"]}]}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>
 <style>
 :root{
   --bg:#F8FAFC; --card:#FFFFFF; --muted-bg:#EEF2F6; --fg:#0B1220; --fg-2:#334155; --muted:#5B6878; --border:#E2E8F0;
@@ -162,6 +173,7 @@ footer a{font-weight:600}
 </style>
 </head>
 <body>
+<noscript><div style="max-width:760px;margin:0 auto;padding:24px 16px;font-family:system-ui,sans-serif"><h1>World HS Codes &amp; Global Trade — Customs Nepal</h1><p>The interactive tools need JavaScript. Explore the sections: <a href="https://world.customsnepal.com/hs">World HS Code Finder</a> — 5,613 international six-digit codes · <a href="https://world.customsnepal.com/trade">Global Trade Data</a> — 207 economies · <a href="https://world.customsnepal.com/nepal">Nepal in World Trade</a> · <a href="https://www.customsnepal.com/">Customs Nepal</a> — Nepal duty &amp; landed-cost calculator.</p></div></noscript>
 <header class="bar"><div class="wrap">
   <a class="logo" href="/" data-nav><span class="mk">HS</span><span>Customs Nepal<small>World HS &amp; Trade</small></span></a>
   <nav class="nav">
@@ -294,20 +306,54 @@ document.addEventListener('click',e=>{ const a=e.target.closest('[data-nav]'); i
 
 function setNav(k){ document.querySelectorAll('.nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===k)); }
 
+/* ---------------- SEO + analytics (per-route meta, canonical, JSON-LD, GA4) ---------------- */
+const CANON='https://world.customsnepal.com';
+function setMeta(attr,key,val){ let el=document.head.querySelector(`meta[${attr}="${key}"]`); if(!el){ el=document.createElement('meta'); el.setAttribute(attr,key); document.head.appendChild(el); } el.setAttribute('content',val||''); }
+function setLink(rel,href){ let el=document.head.querySelector(`link[rel="${rel}"]`); if(!el){ el=document.createElement('link'); el.setAttribute('rel',rel); document.head.appendChild(el); } el.setAttribute('href',href); }
+function seoDesc(p){ let m;
+  if(p==='/'||p==='') return 'Search 5,613 international HS codes and explore the import/export trade of 207 economies — world prices, top exporters and importers, and Nepal\'s landed cost by origin.';
+  if(p==='/hs') return 'Search the full international Harmonized System — '+(SUBS?SUBS.length.toLocaleString():'5,613')+' six-digit codes'+(HS?' across '+HS.chapters.length+' chapters ('+HS.edition+')':'')+' — and see how Nepal taxes each one.';
+  if(p==='/nepal') return 'Nepal in world trade: $10.3B imports, $1.2B exports and a $9.1B deficit (2024) — where Nepal overpays versus the world price, and its biggest export openings.';
+  if(p==='/trade') return 'Global merchandise trade: world rankings, every economy\'s exports and imports, regional shares and trade by product group.';
+  if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ const c=CHByNum&&CHByNum[m[1]]; return c?('HS Chapter '+m[1]+' — '+c[1]+'. Browse every six-digit code in this chapter and how Nepal taxes them.'):'HS chapter — six-digit codes and Nepal duty.'; }
+  if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ const s=SUBS&&SUBS.find(x=>x[0]===m[1]); const pr=m[1].slice(0,4)+'.'+m[1].slice(4); return s?('HS code '+pr+' — '+s[1]+'. World trade, top exporters and importers, world price per kg, and Nepal import duty by origin.'):'HS code '+pr+' — world trade and Nepal import duty.'; }
+  if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ const iso=m[1].toUpperCase(); const c=TRADE&&TRADE.countries.find(x=>x.iso===iso); return c?(c.name+' trade profile: exports, imports, top partners and product mix, with its world rank.'):'Country trade profile — exports, imports and partners.'; }
+  if(p.indexOf('/trade/product/')===0) return 'Global trade in this product group — the world\'s top exporting and importing economies.';
+  return 'International HS codes and global trade data from Customs Nepal.';
+}
+function setBreadcrumb(p){ const B=CANON, cr=[['Home','/']]; let m;
+  if(p==='/hs') cr.push(['HS Codes','/hs']);
+  else if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ cr.push(['HS Codes','/hs']); const c=CHByNum&&CHByNum[m[1]]; cr.push(['Chapter '+m[1]+(c?' — '+c[1]:''),'/hs/chapter/'+m[1]]); }
+  else if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ cr.push(['HS Codes','/hs']); const ch=m[1].slice(0,2),c=CHByNum&&CHByNum[ch]; cr.push(['Chapter '+ch+(c?' — '+c[1]:''),'/hs/chapter/'+ch]); cr.push([m[1].slice(0,4)+'.'+m[1].slice(4),'/hs/code/'+m[1]]); }
+  else if(p==='/trade') cr.push(['Trade','/trade']);
+  else if(p==='/nepal'){ cr.push(['Trade','/trade']); cr.push(['Nepal','/nepal']); }
+  else if((m=p.match(/^\/trade\/product\/([a-z0-9-]+)$/))){ cr.push(['Trade','/trade']); cr.push(['Product group','/trade/product/'+m[1]]); }
+  else if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ cr.push(['Trade','/trade']); const iso=m[1].toUpperCase(),c=TRADE&&TRADE.countries.find(x=>x.iso===iso); cr.push([c?c.name:iso,'/trade/'+m[1].toLowerCase()]); }
+  const ld={'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':cr.map((x,i)=>({'@type':'ListItem','position':i+1,'name':x[0],'item':B+(x[1]==='/'?'/':x[1])}))};
+  let el=document.getElementById('bc-ld'); if(!el){ el=document.createElement('script'); el.type='application/ld+json'; el.id='bc-ld'; document.head.appendChild(el); } el.textContent=JSON.stringify(ld);
+}
+function seoSync(p){ const url=CANON+(p==='/'||p===''?'/':p); setLink('canonical',url); setMeta('property','og:url',url);
+  const t=document.title; setMeta('property','og:title',t); setMeta('name','twitter:title',t);
+  const d=seoDesc(p); setMeta('name','description',d); setMeta('property','og:description',d); setMeta('name','twitter:description',d);
+  try{ setBreadcrumb(p); }catch(e){} }
+function pageview(p){ try{ if(window.gtag) gtag('event','page_view',{page_path:p,page_location:CANON+(p==='/'||p===''?'/':p),page_title:document.title}); }catch(e){} }
+function track(n,params){ try{ if(window.gtag) gtag('event',n,params||{}); }catch(e){} }
+
 function route(){
   let p=decodeURIComponent(location.pathname);
   if(BASE&&p.indexOf(BASE)===0)p=p.slice(BASE.length)||'/';
   let m;
   if(p.indexOf('/hs')===0){ loadProd(); loadNep(); loadDuty(); }
-  if(p==='/'||p===''){ setNav(''); return home(); }
-  if(p==='/nepal'){ setNav('trade'); return nepalView(); }
-  if(p==='/hs'){ setNav('hs'); return hsHome(); }
-  if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); return hsChapter(m[1]); }
-  if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); return hsDetail(m[1]); }
-  if(p==='/trade'){ setNav('trade'); return tradeHome(); }
-  if((m=p.match(/^\/trade\/product\/([a-z0-9-]+)$/))){ setNav('trade'); return productView(m[1]); }
-  if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ setNav('trade'); return country(m[1].toUpperCase()); }
-  setNav(''); home();
+  if(p==='/'||p===''){ setNav(''); home(); }
+  else if(p==='/nepal'){ setNav('trade'); nepalView(); }
+  else if(p==='/hs'){ setNav('hs'); hsHome(); }
+  else if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); hsChapter(m[1]); }
+  else if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); hsDetail(m[1]); }
+  else if(p==='/trade'){ setNav('trade'); tradeHome(); }
+  else if((m=p.match(/^\/trade\/product\/([a-z0-9-]+)$/))){ setNav('trade'); productView(m[1]); }
+  else if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ setNav('trade'); country(m[1].toUpperCase()); }
+  else { setNav(''); home(); p='/'; }
+  try{ seoSync(p); pageview(p); }catch(e){}
 }
 
 /* ---------------- HOME ---------------- */
@@ -343,6 +389,7 @@ function hsHome(){
       const n=SUBS.filter(x=>{const ch=+x[0].slice(0,2);return ch>=s[2]&&ch<=s[3];}).length;
       return `<button class="sec" onclick="__go('/hs/chapter/${String(s[2]).padStart(2,'0')}')"><span class="n">Section ${s[0]}</span><span class="t">${esc(s[1])}</span><span class="c">Ch ${s[2]}–${s[3]} · ${n} codes</span></button>`;}).join('')}</div></div>`;
   const q=$('#q'); q.focus(); q.addEventListener('input',()=>runSearch(q.value));
+  try{ const uq=new URLSearchParams(location.search).get('q'); if(uq&&uq.trim()){ q.value=uq.trim(); runSearch(q.value); } }catch(e){}
 }
 function runSearch(qv){
   const res=$('#res'), br=$('#browse'); qv=qv.trim();
@@ -377,6 +424,7 @@ function hsChapter(ch){
 
 function hsDetail(code){
   curHS=code;
+  track('view_hs_code',{hs_code:code});
   const s=SUBS.find(x=>x[0]===code); if(!s)return hsHome();
   const ch=code.slice(0,2), head=code.slice(0,4), cn=CHByNum[ch]||[ch,'',''], sec=SECByRoman[cn[2]]||['','',''];
   const np=s[3];
@@ -475,6 +523,7 @@ function country(iso){
   const c=TRADE.countries.find(x=>x.iso===iso); if(!c)return tradeHome();
   const W=TRADE.world, deep=!!c.deep, bal=(c.exp||0)-(c.imp||0);
   document.title=`${c.name} trade profile — exports, imports${deep?', partners':''} — Customs Nepal`;
+  track('view_country',{country:iso});
   render();
   function render(){
     const parts=deep?(cFlow==='exp'?c.expPartners:c.impPartners):[];
@@ -510,6 +559,7 @@ function productView(slug){
   const g=PGROUPS.find(x=>groupSlug(x[0])===slug); if(!g)return tradeHome();
   const label=g[0], yr=(TRADE.countries.find(c=>c.deep)||{}).pYear;
   document.title=`Global trade in ${label} — top exporters & importers — Customs Nepal`;
+  track('view_product_group',{group:slug});
   render();
   function render(){
     const lb=productTraders(label,pFlow).slice(0,15), col=pFlow==='exp'?'var(--exp)':'var(--imp)';

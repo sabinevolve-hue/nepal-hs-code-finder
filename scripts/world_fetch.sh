@@ -42,4 +42,7 @@ python3 -I scripts/world_products.py "$RAW/BACI_HS22_Y2024_V${BV}.csv" "$RAW/cou
 # Nepal import duty per HS6 (general + SAARC/SAFTA) for the landed-cost-by-origin tool.
 python3 -I scripts/world_nepduty.py data/tariff.json world/data/nepduty.json   # -> nepduty.json
 
+# SEO sitemap (hubs + groups + chapters + countries + all 6-digit codes) from the fresh data.
+python3 -I scripts/world_sitemap.py                                            # -> world/sitemap.xml
+
 echo "done. If chapters or the country set changed, regenerate world/sitemap.xml."
