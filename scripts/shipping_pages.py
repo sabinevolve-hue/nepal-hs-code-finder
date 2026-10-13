@@ -318,6 +318,106 @@ for slug, n in NODES.items():
     out.append('</div>' + FOOT)
     (pub / 'shipping' / (slug + '.html')).write_text(''.join(out), encoding='utf-8')
 
+# ---------------- the smart one-box tracker (client-side) ----------------
+TRACKER_BOX = (
+    '<form class="trkbox" id="trkform" role="search" aria-label="Track a shipment">'
+    '<input id="trkin" type="search" inputmode="latin" autocomplete="off" spellcheck="false" '
+    'placeholder="Paste container no. (e.g. MSCU1234567) or B/L number" '
+    'aria-label="Container or bill-of-lading number">'
+    '<button type="submit" class="trkgo">Track</button></form>'
+    '<div id="trkresult" class="trkresult" aria-live="polite"></div>')
+
+TRACKER_SCRIPT = """<script>
+(function(){
+ var LINES={
+  maersk:{n:'Maersk',u:'https://www.maersk.com/tracking',t:'https://www.maersk.com/tracking/{n}'},
+  msc:{n:'MSC',u:'https://www.msc.com/en/track-a-shipment'},
+  cmacgm:{n:'CMA CGM',u:'https://www.cma-cgm.com/ebusiness/tracking',t:'https://www.cma-cgm.com/ebusiness/tracking/search?SearchBy=Container&Reference={n}'},
+  hapag:{n:'Hapag-Lloyd',u:'https://www.hapag-lloyd.com/en/online-business/track/track-by-container.html',t:'https://www.hapag-lloyd.com/en/online-business/track/track-by-container.html?container={n}'},
+  one:{n:'ONE',u:'https://ecomm.one-line.com/one-ecom/manage-shipment/cargo-tracking'},
+  cosco:{n:'COSCO',u:'https://elines.coscoshipping.com/ebusiness/cargoTracking'},
+  oocl:{n:'OOCL',u:'https://www.oocl.com/eng/ourservices/eservices/cargotracking/'},
+  evergreen:{n:'Evergreen',u:'https://www.shipmentlink.com/'},
+  yangming:{n:'Yang Ming',u:'https://www.yangming.com/e-service/Track_Trace/track_trace_cargo_tracking.aspx'},
+  hmm:{n:'HMM',u:'https://www.hmm21.com/'},
+  zim:{n:'ZIM',u:'https://www.zim.com/tools/track-a-shipment',t:'https://www.zim.com/tools/track-a-shipment?consnumber={n}'},
+  pil:{n:'PIL',u:'https://www.pilship.com/'},
+  wanhai:{n:'Wan Hai',u:'https://www.wanhai.com/'},
+  hamburgsud:{n:'Hamburg Sud',u:'https://www.hamburgsud-line.com/'},
+  sealand:{n:'Sealand (Maersk)',u:'https://www.sealandmaersk.com/tracking',t:'https://www.sealandmaersk.com/tracking/{n}'}
+ };
+ var PFX={MAEU:'maersk',MRKU:'maersk',MSKU:'maersk',MRSU:'maersk',MVIU:'maersk',MNBU:'maersk',MWCU:'maersk',
+  MSCU:'msc',MEDU:'msc',
+  CMAU:'cmacgm',CGMU:'cmacgm',CMCU:'cmacgm',ECMU:'cmacgm',APLU:'cmacgm',APHU:'cmacgm',
+  HLCU:'hapag',HLXU:'hapag',HPLU:'hapag',HASU:'hapag',
+  ONEU:'one',ONUU:'one',
+  COSU:'cosco',CBHU:'cosco',CCLU:'cosco',CSLU:'cosco',CSNU:'cosco',CXDU:'cosco',
+  OOLU:'oocl',OOCU:'oocl',
+  EGLV:'evergreen',EISU:'evergreen',EMCU:'evergreen',EGHU:'evergreen',
+  YMLU:'yangming',YMMU:'yangming',YMCU:'yangming',
+  HMMU:'hmm',HDMU:'hmm',
+  ZIMU:'zim',ZCSU:'zim',ZMOU:'zim',
+  PCIU:'pil',PABV:'pil',
+  WHLU:'wanhai',WHSU:'wanhai',
+  SUDU:'hamburgsud',
+  SEGU:'sealand',SEKU:'sealand',SEAU:'sealand'};
+ var V={A:10,B:12,C:13,D:14,E:15,F:16,G:17,H:18,I:19,J:20,K:21,L:23,M:24,N:25,O:26,P:27,Q:28,R:29,S:30,T:31,U:32,V:34,W:35,X:36,Y:37,Z:38};
+ function iso6346(cn){
+  if(!/^[A-Z]{4}[0-9]{7}$/.test(cn)) return null;
+  var sum=0,i,c,v;
+  for(i=0;i<10;i++){c=cn.charAt(i);v=(i<4)?V[c]:parseInt(c,10);sum+=v*Math.pow(2,i);}
+  var cd=sum%11; if(cd===10) cd=0;
+  return cd===parseInt(cn.charAt(10),10);
+ }
+ function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
+ function copy(t){try{if(navigator.clipboard)navigator.clipboard.writeText(t);}catch(e){}}
+ function norm(s){return(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
+ function btn(key,num){var L=LINES[key];var href=(L.t&&num)?L.t.replace('{n}',encodeURIComponent(num)):L.u;
+  return '<a class="btn trkopen" href="'+href+'" target="_blank" rel="noopener noreferrer nofollow" data-num="'+esc(num||'')+'">Track on '+esc(L.n)+' ↗</a>';}
+ function render(raw){
+  var box=document.getElementById('trkresult'); if(!box) return;
+  var cn=norm(raw);
+  if(!cn){box.innerHTML='';return;}
+  var isC=iso6346(cn);
+  var fmt=(cn.length===11)?(cn.slice(0,4)+' '+cn.slice(4,10)+'-'+cn.slice(10)):cn;
+  var h;
+  if(isC===true){
+   var key=PFX[cn.slice(0,4)];
+   if(key){
+    h='<div class="trkcard ok"><p class="trkhdr">✓ Looks like a <b>'+esc(LINES[key].n)+'</b> container <span class="trkchk">check digit valid</span></p>'
+      +'<p class="trknum">'+esc(fmt)+'</p><div class="trkbtns">'+btn(key,cn)+'</div>'
+      +'<p class="trkhint">Opens '+esc(LINES[key].n)+'’s own tracker and copies the number to your clipboard. Not '+esc(LINES[key].n)+'? Pick another line below.</p></div>';
+   }else{
+    copy(cn);
+    h='<div class="trkcard ok"><p class="trkhdr">✓ Valid container number <span class="trkchk">check digit valid</span></p>'
+      +'<p class="trknum">'+esc(fmt)+'</p>'
+      +'<p class="trkhint">This looks like a leased box, so the owner code doesn’t name the line. Pick your shipping line below — your number is already copied to the clipboard.</p></div>';
+   }
+  }else if(isC===false){
+   h='<div class="trkcard warn"><p class="trkhdr">⚠ That looks like a container number, but the check digit doesn’t match</p>'
+     +'<p class="trknum">'+esc(fmt)+'</p>'
+     +'<p class="trkhint">Check for a typo — a letter or digit may be swapped. You can still pick your line below and search manually.</p></div>';
+  }else if(/^[0-9]{3}-?[0-9]{8}$/.test(cn)){
+   h='<div class="trkcard"><p class="trkhdr">✈ That looks like an air waybill</p>'
+     +'<p class="trkhint">Air cargo is tracked by the airline (the first 3 digits are the airline prefix) or by your freight forwarder — not an ocean line.</p></div>';
+  }else{
+   copy(cn);
+   h='<div class="trkcard"><p class="trkhdr">That looks like a booking or B/L number</p>'
+     +'<p class="trknum">'+esc(cn)+'</p>'
+     +'<p class="trkhint">Container numbers are 4 letters + 7 digits. For a booking or bill-of-lading number, pick your carrier below and search there — your entry is copied to the clipboard.</p></div>';
+  }
+  box.innerHTML=h;
+  var o=box.querySelectorAll('.trkopen'),i;
+  for(i=0;i<o.length;i++){o[i].addEventListener('click',function(){var n=this.getAttribute('data-num');if(n)copy(n);});}
+ }
+ var form=document.getElementById('trkform'),inp=document.getElementById('trkin');
+ if(form&&inp){form.addEventListener('submit',function(e){e.preventDefault();render(inp.value);if(window.gtag){try{gtag('event','track_lookup');}catch(_){}}});}
+ var grid=document.querySelectorAll('.guidegrid a.chcard'),g;
+ for(g=0;g<grid.length;g++){grid[g].addEventListener('click',function(){var v=norm(inp&&inp.value);if(v)copy(v);});}
+ try{var q=new URLSearchParams(location.search).get('n');if(q&&inp){inp.value=q;render(q);}}catch(e){}
+})();
+</script>"""
+
 # ---------------- tracking directory ----------------
 path = '/shipping/track'
 title = 'Track a container to Nepal: carrier & cargo tracking | Customs Nepal'
@@ -326,8 +426,9 @@ desc = ("Track your ocean freight to Nepal. Links to every major shipping line's
 bc = [('Home', '/'), ('Shipping', '/shipping'), ('Track a container', '')]
 out = [page_head(title, desc, path, bc), crumb_html(bc)]
 out.append('<h1>Track a container to Nepal</h1>')
-out.append('<p class="lede">We don’t store live tracking data — these link straight to each carrier’s and '
-           'authority’s own authoritative tracker. Enter your container or bill-of-lading number there.</p>')
+out.append('<p class="lede">Paste your container number — we’ll detect the shipping line and take you straight '
+           'to its own tracker. We don’t store tracking data; the live status lives on the carrier’s site.</p>')
+out.append(TRACKER_BOX)
 out.append('<div class="note">Because Nepal is landlocked, the full journey is usually tracked in <b>two or three '
            'legs</b>, each by a different party:\n'
            '1. <b>The ocean line</b> (Maersk, MSC, …) — from the origin port to the Indian gateway (Kolkata / Vizag) '
@@ -350,7 +451,9 @@ out.append('</div>')
 out.append('<div class="tools"><a class="btn" href="/shipping">Shipping overview &amp; transit times</a>'
            '<a class="btn ghost" href="/calculator">Estimate landed cost</a></div>')
 out.append('<p class="fineprint">Carrier and authority links are provided for convenience and point to third-party '
-           'websites; Customs Nepal is not affiliated with them and does not control their content or availability.</p>')
+           'websites; Customs Nepal is not affiliated with them and does not control their content or availability. '
+           'Container-line detection is a best-effort guess from the owner code and is not guaranteed.</p>')
+out.append(TRACKER_SCRIPT)
 out.append('</div>' + FOOT)
 (pub / 'shipping' / 'track.html').write_text(''.join(out), encoding='utf-8')
 
@@ -448,6 +551,19 @@ SHIPCSS = """
 .chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:.5em 0 1.2em}
 .chain .seg{background:var(--accent-bg);color:var(--accent);font-weight:600;font-size:.82rem;padding:5px 10px;border-radius:8px;white-space:nowrap}
 .chain .ar{color:var(--muted);font-weight:700}
+.trkbox{display:flex;gap:8px;margin:1em 0 .4em;flex-wrap:wrap}
+.trkbox input{flex:1 1 240px;min-width:0;height:50px;padding:0 15px;border:1.5px solid var(--border);border-radius:12px;background:var(--card);color:var(--fg);font-size:1rem;outline:none}
+.trkbox input:focus{border-color:var(--accent)}
+.trkbox .trkgo{flex:0 0 auto;height:50px;padding:0 22px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
+.trkresult{margin:.2em 0 1em}
+.trkcard{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:14px 16px}
+.trkcard.ok{border-left-color:var(--free)}
+.trkcard.warn{border-left-color:var(--mid)}
+.trkhdr{margin:0 0 4px;font-weight:600}
+.trkchk{font-size:.7rem;font-weight:600;color:var(--free);background:var(--free-bg);padding:2px 7px;border-radius:6px;margin-left:6px;white-space:nowrap}
+.trknum{font-family:var(--mono);font-size:1.1rem;letter-spacing:.02em;margin:.2em 0 .6em}
+.trkbtns{display:flex;flex-wrap:wrap;gap:8px;margin:.3em 0}
+.trkhint{font-size:.82rem;color:var(--muted);margin:.4em 0 0}
 """
 css_path = pub / 'seo.css'
 cur = css_path.read_text(encoding='utf-8') if css_path.exists() else ''

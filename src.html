@@ -90,6 +90,12 @@ nav.tabbar{display:none}
 .hero-stats{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s5);font-size:.8rem;color:rgba(255,255,255,.7)}
 .hero-stats b{display:block;color:#fff;font-size:1.05rem;font-variant-numeric:tabular-nums}
 @media (min-width:760px){.hero:not(.compact){border-radius:0 0 var(--r-lg) var(--r-lg);margin-inline:0;padding-inline:var(--s6)}}
+.trackbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:var(--s3) 0 0;padding:10px 12px;background:var(--accent-bg);border:1px solid var(--border);border-radius:var(--r-lg)}
+.trackbar .tb-ic{font-size:1.15rem;line-height:1}
+.trackbar .tb-lb{font-weight:700;font-size:.9rem;color:var(--accent);white-space:nowrap}
+.trackbar input{flex:1 1 170px;min-width:0;height:42px;padding:0 12px;border:1.5px solid var(--border);border-radius:var(--r);background:var(--card);color:var(--fg);font-size:.92rem;outline:none}
+.trackbar input:focus{border-color:var(--accent)}
+.trackbar .tb-go{flex:0 0 auto;height:42px;padding:0 18px;border:0;border-radius:var(--r);background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
 .feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s3);margin-top:var(--s5)}
 .feat button{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s4);transition:transform var(--t),box-shadow var(--t),border-color var(--t);min-height:120px;display:flex;flex-direction:column;gap:8px}
 .feat button:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(41,60,85,.12);border-color:var(--accent)}
@@ -666,6 +672,12 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
       <div class="suggest" id="suggest"></div>
       <div class="hero-stats" id="hero-stats"></div>
     </div>
+    <form class="trackbar" id="home-track" role="search" aria-label="Track a shipment to Nepal" onsubmit="event.preventDefault();var v=(this.querySelector('input').value||'').trim();location.href='/shipping/track'+(v?('?n='+encodeURIComponent(v)):'');">
+      <span class="tb-ic" aria-hidden="true">📦</span>
+      <label class="tb-lb" for="home-track-n">Track a shipment</label>
+      <input id="home-track-n" name="n" type="search" inputmode="latin" autocomplete="off" spellcheck="false" placeholder="Paste container or B/L number" aria-label="Container or bill-of-lading number">
+      <button type="submit" class="tb-go">Track</button>
+    </form>
     <div class="toolbar" id="toolbar" hidden>
       <button class="chip" data-duty="all" aria-pressed="true">Any duty</button>
       <button class="chip" data-duty="free" aria-pressed="false">Duty free</button>

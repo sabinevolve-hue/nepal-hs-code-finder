@@ -69,3 +69,16 @@ ul.exdest li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;b
 .chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:.5em 0 1.2em}
 .chain .seg{background:var(--accent-bg);color:var(--accent);font-weight:600;font-size:.82rem;padding:5px 10px;border-radius:8px;white-space:nowrap}
 .chain .ar{color:var(--muted);font-weight:700}
+.trkbox{display:flex;gap:8px;margin:1em 0 .4em;flex-wrap:wrap}
+.trkbox input{flex:1 1 240px;min-width:0;height:50px;padding:0 15px;border:1.5px solid var(--border);border-radius:12px;background:var(--card);color:var(--fg);font-size:1rem;outline:none}
+.trkbox input:focus{border-color:var(--accent)}
+.trkbox .trkgo{flex:0 0 auto;height:50px;padding:0 22px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}
+.trkresult{margin:.2em 0 1em}
+.trkcard{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:14px 16px}
+.trkcard.ok{border-left-color:var(--free)}
+.trkcard.warn{border-left-color:var(--mid)}
+.trkhdr{margin:0 0 4px;font-weight:600}
+.trkchk{font-size:.7rem;font-weight:600;color:var(--free);background:var(--free-bg);padding:2px 7px;border-radius:6px;margin-left:6px;white-space:nowrap}
+.trknum{font-family:var(--mono);font-size:1.1rem;letter-spacing:.02em;margin:.2em 0 .6em}
+.trkbtns{display:flex;flex-wrap:wrap;gap:8px;margin:.3em 0}
+.trkhint{font-size:.82rem;color:var(--muted);margin:.4em 0 0}
