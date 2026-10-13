@@ -164,7 +164,7 @@ def page_head(title, desc, path, breadcrumb):
                               for i, b in enumerate(breadcrumb)]}
     ldj = json.dumps(ld, ensure_ascii=False).replace('</', '<\\/')
     NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-           ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/trade-data', 'Trade'), ('/browse', 'Browse'),
+           ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/safta', 'SAFTA'), ('/trade-data', 'Trade'), ('/browse', 'Browse'),
            ('/tariff', 'Tariff'), ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
     def _cur(h):
         return (path == h) or (h == '/tariff' and path.startswith('/tariff')) or (h == '/export' and path.startswith('/export')) or (h == '/shipping' and path.startswith('/shipping'))
