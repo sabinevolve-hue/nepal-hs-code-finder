@@ -4,6 +4,30 @@
   <url><loc>https://world.customsnepal.com/hs</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://world.customsnepal.com/trade</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://world.customsnepal.com/nepal</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/guide/cardamom</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/guide/carpets</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/aus</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/aut</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/can</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/che</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/chn</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/deu</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/dnk</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/fra</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/gbr</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/hkg</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/idn</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/ind</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/ita</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/jpn</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/kor</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/mac</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/nld</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/pak</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/sgp</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/tur</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://world.customsnepal.com/nepal/exports/usa</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://world.customsnepal.com/trade/product/animal-and-animal-products</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://world.customsnepal.com/trade/product/vegetable-products</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://world.customsnepal.com/trade/product/foodstuffs-beverages-and-tobacco</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
