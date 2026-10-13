@@ -164,10 +164,10 @@ def page_head(title, desc, path, breadcrumb):
                               for i, b in enumerate(breadcrumb)]}
     ldj = json.dumps(ld, ensure_ascii=False).replace('</', '<\\/')
     NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-           ('/export', 'Export guides'), ('/trade-data', 'Trade'), ('/browse', 'Browse'), ('/tariff', 'Tariff'),
-           ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
+           ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/trade-data', 'Trade'), ('/browse', 'Browse'),
+           ('/tariff', 'Tariff'), ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
     def _cur(h):
-        return (path == h) or (h == '/tariff' and path.startswith('/tariff')) or (h == '/export' and path.startswith('/export'))
+        return (path == h) or (h == '/tariff' and path.startswith('/tariff')) or (h == '/export' and path.startswith('/export')) or (h == '/shipping' and path.startswith('/shipping'))
     nav = ''.join('<a href="%s"%s>%s</a>' % (h, ' class="cur"' if _cur(h) else '', esc(l)) for h, l in NAV)
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
