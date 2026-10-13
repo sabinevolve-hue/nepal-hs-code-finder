@@ -361,6 +361,7 @@ TRACKER_SCRIPT = """<script>
   WHLU:'wanhai',WHSU:'wanhai',
   SUDU:'hamburgsud',
   SEGU:'sealand',SEKU:'sealand',SEAU:'sealand'};
+ var BLPFX={ONEY:'one',MEDU:'msc',MSCU:'msc',MAEU:'maersk',MRKU:'maersk',HLCU:'hapag',HLXU:'hapag',COSU:'cosco',CSNU:'cosco',CMDU:'cmacgm',CMAU:'cmacgm',APLU:'cmacgm',OOLU:'oocl',YMLU:'yangming',YMJA:'yangming',YMMU:'yangming',EGLV:'evergreen',EGHU:'evergreen',EISU:'evergreen',HDMU:'hmm',HMMU:'hmm',ZIMU:'zim',SUDU:'hamburgsud',SEAU:'sealand'};
  var V={A:10,B:12,C:13,D:14,E:15,F:16,G:17,H:18,I:19,J:20,K:21,L:23,M:24,N:25,O:26,P:27,Q:28,R:29,S:30,T:31,U:32,V:34,W:35,X:36,Y:37,Z:38};
  function iso6346(cn){
   if(!/^[A-Z]{4}[0-9]{7}$/.test(cn)) return null;
@@ -372,7 +373,7 @@ TRACKER_SCRIPT = """<script>
  function esc(s){var d=document.createElement('div');d.textContent=(s==null?'':s);return d.innerHTML;}
  function copy(t){try{if(navigator.clipboard)navigator.clipboard.writeText(t);}catch(e){}}
  function norm(s){return(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
- function btn(key,num){var L=LINES[key];var href=(L.t&&num)?L.t.replace('{n}',encodeURIComponent(num)):L.u;
+ function btn(key,num,useTpl){var L=LINES[key];var href=(useTpl&&L.t&&num)?L.t.replace('{n}',encodeURIComponent(num)):L.u;
   return '<a class="btn trkopen" href="'+href+'" target="_blank" rel="noopener noreferrer nofollow" data-num="'+esc(num||'')+'">Track on '+esc(L.n)+' ↗</a>';}
  function render(raw){
   var box=document.getElementById('trkresult'); if(!box) return;
@@ -385,7 +386,7 @@ TRACKER_SCRIPT = """<script>
    var key=PFX[cn.slice(0,4)];
    if(key){
     h='<div class="trkcard ok"><p class="trkhdr">✓ Looks like a <b>'+esc(LINES[key].n)+'</b> container <span class="trkchk">check digit valid</span></p>'
-      +'<p class="trknum">'+esc(fmt)+'</p><div class="trkbtns">'+btn(key,cn)+'</div>'
+      +'<p class="trknum">'+esc(fmt)+'</p><div class="trkbtns">'+btn(key,cn,true)+'</div>'
       +'<p class="trkhint">Opens '+esc(LINES[key].n)+'’s own tracker and copies the number to your clipboard. Not '+esc(LINES[key].n)+'? Pick another line below.</p></div>';
    }else{
     copy(cn);
@@ -401,10 +402,17 @@ TRACKER_SCRIPT = """<script>
    h='<div class="trkcard"><p class="trkhdr">✈ That looks like an air waybill</p>'
      +'<p class="trkhint">Air cargo is tracked by the airline (the first 3 digits are the airline prefix) or by your freight forwarder — not an ocean line.</p></div>';
   }else{
+   var p4=cn.slice(0,4),bkey=(/^[A-Z]{4}/.test(cn)&&cn.length>=10)?(BLPFX[p4]||PFX[p4]):null;
    copy(cn);
-   h='<div class="trkcard"><p class="trkhdr">That looks like a booking or B/L number</p>'
-     +'<p class="trknum">'+esc(cn)+'</p>'
-     +'<p class="trkhint">Container numbers are 4 letters + 7 digits. For a booking or bill-of-lading number, pick your carrier below and search there — your entry is copied to the clipboard.</p></div>';
+   if(bkey){
+    h='<div class="trkcard ok"><p class="trkhdr">✓ Looks like a <b>'+esc(LINES[bkey].n)+'</b> booking / B/L number</p>'
+      +'<p class="trknum">'+esc(cn)+'</p><div class="trkbtns">'+btn(bkey,cn,false)+'</div>'
+      +'<p class="trkhint">Opens '+esc(LINES[bkey].n)+'’s own tracker and copies your number to the clipboard — paste it there. Detected from the “'+esc(p4)+'” prefix (best-effort); not '+esc(LINES[bkey].n)+'? Pick another line below.</p></div>';
+   }else{
+    h='<div class="trkcard"><p class="trkhdr">That looks like a booking or B/L number</p>'
+      +'<p class="trknum">'+esc(cn)+'</p>'
+      +'<p class="trkhint">We couldn’t match it to a line automatically — container numbers are 4 letters + 7 digits. Pick your carrier below and search there; your entry is copied to the clipboard.</p></div>';
+   }
   }
   box.innerHTML=h;
   var o=box.querySelectorAll('.trkopen'),i;
