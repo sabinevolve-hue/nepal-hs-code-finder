@@ -65,3 +65,7 @@ ul.exdest{list-style:none;margin:.4em 0 1em;padding:0}
 ul.exdest li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
 .guidegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:.6em 0 1.4em}
 .fineprint{font-size:.8rem;color:var(--muted);margin:1.4em 0}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:.5em 0 1.2em}
+.chain .seg{background:var(--accent-bg);color:var(--accent);font-weight:600;font-size:.82rem;padding:5px 10px;border-radius:8px;white-space:nowrap}
+.chain .ar{color:var(--muted);font-weight:700}

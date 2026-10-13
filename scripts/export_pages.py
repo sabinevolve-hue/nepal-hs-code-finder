@@ -48,8 +48,8 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
 NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-       ('/export', 'Export guides'), ('/trade-data', 'Trade'), ('/browse', 'Browse'), ('/tariff', 'Tariff'),
-       ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
+       ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/trade-data', 'Trade'), ('/browse', 'Browse'),
+       ('/tariff', 'Tariff'), ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
