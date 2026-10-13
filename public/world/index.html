@@ -164,6 +164,8 @@ h3.h{font-size:1.05rem;margin:var(--s5) 0 var(--s2)}
 .sub2 button{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--fg-2)}
 .sub2 button.on{background:var(--accent-bg);color:var(--accent);border-color:transparent}
 .fine{font-size:.8rem;color:var(--muted);margin:var(--s3) 0 0}
+ol.exsteps{margin:4px 0 0;padding-left:20px;font-size:.9rem;line-height:1.65;color:var(--fg-2)}
+ol.exsteps li{margin-bottom:5px}
 .empty{text-align:center;color:var(--muted);padding:var(--s6) var(--s4)}
 footer{border-top:1px solid var(--border);margin-top:48px;padding:var(--s5) 0;color:var(--muted);font-size:.84rem}
 footer a{font-weight:600}
@@ -179,6 +181,7 @@ footer a{font-weight:600}
   <nav class="nav">
     <a href="/hs" data-nav data-k="hs">HS Codes</a>
     <a href="/trade" data-nav data-k="trade">Trade</a>
+    <a href="/nepal/exports" data-nav data-k="exports">Nepal Exports</a>
     <a class="ext" href="https://customsnepal.com" target="_blank" rel="noopener">Nepal tools ↗</a>
   </nav>
 </div></header>
@@ -314,6 +317,9 @@ function seoDesc(p){ let m;
   if(p==='/'||p==='') return 'Search 5,613 international HS codes and explore the import/export trade of 207 economies — world prices, top exporters and importers, and Nepal\'s landed cost by origin.';
   if(p==='/hs') return 'Search the full international Harmonized System — '+(SUBS?SUBS.length.toLocaleString():'5,613')+' six-digit codes'+(HS?' across '+HS.chapters.length+' chapters ('+HS.edition+')':'')+' — and see how Nepal taxes each one.';
   if(p==='/nepal') return 'Nepal in world trade: $10.3B imports, $1.2B exports and a $9.1B deficit (2024) — where Nepal overpays versus the world price, and its biggest export openings.';
+  if(p==='/nepal/exports') return 'What Nepal exports to the world — by destination country and by product, with world-price benchmarks. Total merchandise exports $1.24B (2024).';
+  if((m=p.match(/^\/nepal\/exports\/guide\/([a-z-]+)$/))){ const g=EXGUIDES[m[1]]; return g?g.sub:'How to export this product from Nepal, with the latest trade data.'; }
+  if((m=p.match(/^\/nepal\/exports\/([a-z]{3})$/i))){ const iso=m[1].toUpperCase(); const c=TRADE&&TRADE.countries.find(x=>x.iso===iso); return 'Nepal\'s exports to '+(c?c.name:iso)+' (2024) — every product Nepal ships there, with values and world-price benchmarks.'; }
   if(p==='/trade') return 'Global merchandise trade: world rankings, every economy\'s exports and imports, regional shares and trade by product group.';
   if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ const c=CHByNum&&CHByNum[m[1]]; return c?('HS Chapter '+m[1]+' — '+c[1]+'. Browse every six-digit code in this chapter and how Nepal taxes them.'):'HS chapter — six-digit codes and Nepal duty.'; }
   if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ const s=SUBS&&SUBS.find(x=>x[0]===m[1]); const pr=m[1].slice(0,4)+'.'+m[1].slice(4); return s?('HS code '+pr+' — '+s[1]+'. World trade, top exporters and importers, world price per kg, and Nepal import duty by origin.'):'HS code '+pr+' — world trade and Nepal import duty.'; }
@@ -326,6 +332,9 @@ function setBreadcrumb(p){ const B=CANON, cr=[['Home','/']]; let m;
   else if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ cr.push(['HS Codes','/hs']); const c=CHByNum&&CHByNum[m[1]]; cr.push(['Chapter '+m[1]+(c?' — '+c[1]:''),'/hs/chapter/'+m[1]]); }
   else if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ cr.push(['HS Codes','/hs']); const ch=m[1].slice(0,2),c=CHByNum&&CHByNum[ch]; cr.push(['Chapter '+ch+(c?' — '+c[1]:''),'/hs/chapter/'+ch]); cr.push([m[1].slice(0,4)+'.'+m[1].slice(4),'/hs/code/'+m[1]]); }
   else if(p==='/trade') cr.push(['Trade','/trade']);
+  else if(p==='/nepal/exports'){ cr.push(['Trade','/trade']); cr.push(['Nepal','/nepal']); cr.push(['Exports','/nepal/exports']); }
+  else if((m=p.match(/^\/nepal\/exports\/guide\/([a-z-]+)$/))){ cr.push(['Trade','/trade']); cr.push(['Nepal','/nepal']); cr.push(['Exports','/nepal/exports']); const g=EXGUIDES[m[1]]; cr.push([g?g.name:m[1],'/nepal/exports/guide/'+m[1]]); }
+  else if((m=p.match(/^\/nepal\/exports\/([a-z]{3})$/i))){ cr.push(['Trade','/trade']); cr.push(['Nepal','/nepal']); cr.push(['Exports','/nepal/exports']); const iso=m[1].toUpperCase(),c=TRADE&&TRADE.countries.find(x=>x.iso===iso); cr.push([(c?c.name:iso),'/nepal/exports/'+m[1].toLowerCase()]); }
   else if(p==='/nepal'){ cr.push(['Trade','/trade']); cr.push(['Nepal','/nepal']); }
   else if((m=p.match(/^\/trade\/product\/([a-z0-9-]+)$/))){ cr.push(['Trade','/trade']); cr.push(['Product group','/trade/product/'+m[1]]); }
   else if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ cr.push(['Trade','/trade']); const iso=m[1].toUpperCase(),c=TRADE&&TRADE.countries.find(x=>x.iso===iso); cr.push([c?c.name:iso,'/trade/'+m[1].toLowerCase()]); }
@@ -344,7 +353,11 @@ function route(){
   if(BASE&&p.indexOf(BASE)===0)p=p.slice(BASE.length)||'/';
   let m;
   if(p.indexOf('/hs')===0){ loadProd(); loadNep(); loadDuty(); }
+  if(p.indexOf('/nepal')===0){ loadNep(); loadProd(); }
   if(p==='/'||p===''){ setNav(''); home(); }
+  else if(p==='/nepal/exports'){ nepExportsHome(); }
+  else if((m=p.match(/^\/nepal\/exports\/guide\/([a-z-]+)$/))){ nepExportGuide(m[1]); }
+  else if((m=p.match(/^\/nepal\/exports\/([a-z]{3})$/i))){ nepExportMarket(m[1].toUpperCase()); }
   else if(p==='/nepal'){ setNav('trade'); nepalView(); }
   else if(p==='/hs'){ setNav('hs'); hsHome(); }
   else if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); hsChapter(m[1]); }
@@ -598,6 +611,7 @@ function nepalView(){
       <div class="s"><b class="ex">${money(T.ex*1e6)}</b><span>Exports (2024)</span></div>
       <div class="s"><b style="color:var(--hi)">−${money(Math.abs(bal)*1e6).slice(1)}</b><span>Trade deficit</span></div>
     </div>
+    <button class="nepalcard" onclick="__go('/nepal/exports')"><span class="fl">📦</span><span><b>Nepal Export Explorer</b> — what Nepal sells to each country, by product, with world-price benchmarks and export guides ${ic(I.right)}</span></button>
     <h3 class="h">Sourcing watch — imports Nepal may overpay for</h3>
     <p class="fine" style="margin:0 0 8px">Products where Nepal's import price sits well above the world average — worth checking a cheaper origin.</p>
     ${over.length?over.slice(0,12).map(([code,val,d,iu,u])=>row(code,val,`Nepal $${iu}/kg vs $${u}/kg world · ${d}% higher`)).join(''):'<p class="fine">—</p>'}
@@ -610,6 +624,143 @@ function nepalView(){
       <p>Nepal's bilateral trade from <b>BACI</b> (CEPII, reconciled from UN Comtrade). "Overpay" compares Nepal's import unit value to the world average — a signal to investigate, not proof (grade/quality and freight differ). For duty on any line, open the code → customsnepal.com.</p></div>
   </div></main>`;
 }
+/* ---------------- NEPAL EXPORT EXPLORER ---------------- */
+let NEPEXP=null;
+function nepExports(){
+  if(NEPEXP) return NEPEXP;
+  const cc={}, cp={};
+  for(const k in NEP){ if(k[0]==='_'||!NEP[k].exs) continue;
+    for(const d of NEP[k].exs){ const iso=d[0], val=d[1]; if(!(val>0)) continue; cc[iso]=(cc[iso]||0)+val; (cp[iso]=cp[iso]||[]).push([k,val]); } }
+  Object.keys(cp).forEach(i=>cp[i].sort((a,b)=>b[1]-a[1]));
+  NEPEXP={cc,cp, order:Object.keys(cc).sort((a,b)=>cc[b]-cc[a]),
+    tot:Object.keys(cc).reduce((s,i)=>s+cc[i],0),
+    nprod:Object.keys(NEP).filter(k=>k[0]!=='_'&&NEP[k].ex>0).length};
+  return NEPEXP;
+}
+function exReady(then){ if(NEP===null||PROD===null){ Promise.all([loadNep(),loadProd()]).then(()=>{ if(location.pathname.indexOf('/nepal/exports')>=0) then(); }); app.innerHTML='<main><div class="wrap"><div class="empty" style="padding-top:70px">Loading Nepal export data…</div></div></main>'; return false; } return true; }
+function exRow(code,val,extra){ return `<button class="row" onclick="__go('/hs/code/${code}')"><span class="code">${fmtCode(code)}</span><span class="d">${esc(hsDesc(code))}${extra?`<small style="display:block;color:var(--muted)">${extra}</small>`:''}</span><span class="end"><b class="ex">${money(val*1e6)}</b> ${ic(I.right)}</span></button>`; }
+function exsText(code){ const z=NEP[code]; if(!z||!z.exs) return ''; const d=z.exs.filter(x=>x[1]>0).slice(0,3).map(x=>esc(isoName(x[0]))); return d.length?('→ '+d.join(', ')):''; }
+function exDestRows(dests,X){ const mx=Math.max(...dests.map(i=>X.cc[i]),1);
+  return `<div class="bars">${dests.map((i,n)=>{const m=isoMeta(i);return `<button class="lbrow" onclick="__go('/nepal/exports/${i.toLowerCase()}')"><span class="rk">${n+1}</span><span class="lb">${m[1]} ${esc(m[0])}</span><span class="tr"><span class="fi" style="width:${Math.max(2,X.cc[i]/mx*100)}%;background:var(--exp)"></span></span><span class="vl">${money(X.cc[i]*1e6)}</span></button>`;}).join('')}</div>`; }
+
+const EXGUIDES = {
+  cardamom:{ hs:'090831', fl:'🌿', name:'Large cardamom (alaichi)',
+    h1:'Exporting large cardamom (alaichi) from Nepal',
+    sub:"Nepal is the world's largest producer of large (black) cardamom — here's the trade picture and how to ship it.",
+    body:`<h3 class="h">About the product</h3>
+      <p class="fine">Large cardamom (<i>Amomum subulatum</i>), known locally as <b>alaichi</b>, is grown in Nepal's eastern hill districts — Taplejung, Panchthar, Ilam and Sankhuwasabha. Nepal is the world's top producer, and cardamom is one of its highest-value agricultural exports.</p>
+      <h3 class="h">Nepal's position</h3>
+      <p class="fine">Almost all of Nepal's crop goes to <b>India</b>, which both consumes it and re-exports onward to the Middle East and beyond. Because the market is so India-concentrated, prices swing with Indian demand and with how the India–Nepal trade treaty treats the product in a given year — a key risk for growers and exporters.</p>
+      <h3 class="h">How to export from Nepal</h3>
+      <ol class="exsteps">
+        <li><b>Register for an EXIM code</b> with the Department of Customs (one-time exporter registration).</li>
+        <li><b>Phytosanitary certificate</b> from the National Plant Quarantine Program — required for agricultural produce.</li>
+        <li><b>Certificate of origin</b> from a recognised chamber of commerce or TEPC (a SAARC/SAFTA certificate for shipments to India).</li>
+        <li><b>Grading &amp; quality</b> to the buyer's specification (moisture, size, cleanliness).</li>
+        <li><b>File the export declaration</b> in the customs system and clear at the border/dry port.</li>
+      </ol>
+      <p class="fine">Agro exports may qualify for the government's <b>cash export-incentive scheme</b>; rates are set in the annual budget, so confirm the current figure with TEPC before you price a shipment.</p>`,
+    sources:'Trade &amp; Export Promotion Centre (tepc.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np), Department of Customs (customs.gov.np), National Plant Quarantine Program.' },
+  carpets:{ hs:'570110', fl:'🧶', name:'Hand-knotted woollen carpets',
+    h1:'Exporting hand-knotted woollen carpets from Nepal',
+    sub:"Nepal's signature manufactured export — here's who buys it and how to ship it.",
+    body:`<h3 class="h">About the product</h3>
+      <p class="fine">Hand-knotted Tibetan–Nepali <b>woollen carpets</b> are made around the Kathmandu Valley (Jawalakhel, Boudha, Sankhu). They are a flagship manufactured export and one of the country's larger formal-sector employers.</p>
+      <h3 class="h">Nepal's position</h3>
+      <p class="fine">The <b>United States</b> is Nepal's largest carpet market, followed by <b>Germany</b>, the <b>UK</b> and other EU countries. Western buyers increasingly require <b>child-labour-free certification</b> (GoodWeave), so that certification is effectively part of market access.</p>
+      <h3 class="h">How to export from Nepal</h3>
+      <ol class="exsteps">
+        <li><b>Register for an EXIM code</b> with the Department of Customs.</li>
+        <li><b>Certificate of origin</b> from a chamber or TEPC; a <b>GSP Form A</b> where the destination grants Nepal preferential access (eligibility varies by country — confirm the current status before quoting duty-free).</li>
+        <li><b>GoodWeave / quality certification</b>, valued or required by most Western importers.</li>
+        <li><b>File the export declaration</b> and clear through customs (usually air or sea freight via Kolkata/Haldia).</li>
+      </ol>
+      <p class="fine">Manufactured exports may qualify for the government's <b>cash export-incentive scheme</b> — check the current rate with TEPC, as it is reset annually.</p>`,
+    sources:'Nepal Carpet Exporters&#39; Association, Trade &amp; Export Promotion Centre (tepc.gov.np), Department of Customs (customs.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np).' }
+};
+
+function nepExportsHome(){
+  if(!exReady(nepExportsHome)) return;
+  setNav('exports');
+  document.title='Nepal Export Explorer — what Nepal exports & to which countries — Customs Nepal';
+  const X=nepExports(), T=NEP._t||{ex:0};
+  const dests=X.order.filter(i=>X.cc[i]>0);
+  const indiaShare=Math.round((X.cc['IND']||0)/(T.ex||X.tot)*100);
+  const open=[]; (NEP._ex||[]).forEach(d=>{ const code=d[0],val=d[1],p=PROD[code]; if(p&&p.w){ const sh=val/p.w*100; if(sh<20) open.push([code,val,p.w,sh]); } }); open.sort((a,b)=>b[2]-a[2]);
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/nepal')">${ic(I.left)}Nepal in world trade</button>
+    <div class="ph"><h2>🇳🇵 Nepal Export Explorer</h2><p>What Nepal sells to the world — by destination and by product, with world-price benchmarks (BACI 2024).</p></div>
+    <div class="statrow" style="margin-top:0">
+      <div class="s"><b class="ex">${money(T.ex*1e6)}</b><span>Total exports (2024)</span></div>
+      <div class="s"><b>${dests.length}</b><span>Destination markets</span></div>
+      <div class="s"><b>${X.nprod}</b><span>Products exported</span></div>
+    </div>
+    <div class="outcome" style="margin-top:var(--s4)">${ic(I.info)}<div><b>${indiaShare}% of Nepal's exports go to India</b> — and a large part of that is refined soybean &amp; palm oil re-exported after processing (a duty-driven flow, not domestic production). Nepal's real manufactured and agri exports — carpets, cardamom, pashmina, tea, felt — are spread across the US, the EU and beyond.</div></div>
+    <h3 class="h">Explore by market</h3>
+    <p class="fine" style="margin:0 0 8px">Nepal's biggest export destinations — open one to see every product Nepal ships there.</p>
+    ${exDestRows(dests.slice(0,15),X)}
+    <h3 class="h">Explore by product</h3>
+    <p class="fine" style="margin:0 0 8px">Nepal's top exports — open one for who buys it worldwide and the price Nepal gets.</p>
+    ${(NEP._ex||[]).filter(d=>d[1]>0).slice(0,15).map(d=>exRow(d[0],d[1],exsText(d[0]))).join('')}
+    <h3 class="h">Export guides</h3>
+    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<button class="sec" onclick="__go('/nepal/exports/guide/${s}')"><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">Trade data + how to export</span></button>`).join('')}</div>
+    <h3 class="h">Export openings — big world demand, small Nepal share</h3>
+    <p class="fine" style="margin:0 0 8px">Products Nepal already exports, where world import demand dwarfs Nepal's current sales.</p>
+    ${open.length?open.slice(0,10).map(o=>exRow(o[0],o[1],`World imports ${money(o[2]*1e6)} · Nepal ${o[3]<1?'<1':Math.round(o[3])}%`)).join(''):'<p class="fine">—</p>'}
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;color:var(--muted);font-weight:600">2024</span></div>
+      <p>Nepal's exports by product and partner from <b>BACI</b> (CEPII, reconciled from UN Comtrade). Destination totals cover the major flows (top partners per product) — about 87% of the headline total; the rest is a long tail of small shipments. For the official, 8-digit, fiscal-year figures see the <b>Department of Customs</b> and <b>TEPC</b>.</p></div>
+  </div></main>`;
+}
+
+function nepExportMarket(iso){
+  if(!exReady(()=>nepExportMarket(iso))) return;
+  setNav('exports');
+  const X=nepExports(), m=isoMeta(iso), name=m[0], prods=(X.cp[iso]||[]).filter(x=>x[1]>0);
+  document.title=`Nepal's exports to ${name} — products & values (2024) — Customs Nepal`;
+  track('view_nepal_export_market',{country:iso});
+  if(!prods.length){ app.innerHTML=`<main><div class="wrap"><button class="back" onclick="__go('/nepal/exports')">${ic(I.left)}Export Explorer</button><div class="empty" style="padding-top:40px"><b>${m[1]} ${esc(name)}</b><p>No tracked Nepali exports to this market in 2024.</p></div></div></main>`; return; }
+  const tot=X.cc[iso]||0, share=Math.round(tot/((NEP._t&&NEP._t.ex)||X.tot)*100);
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/nepal/exports')">${ic(I.left)}Export Explorer</button>
+    <div class="ph"><h2>${m[1]} Nepal → ${esc(name)}</h2><p>Every product Nepal exports to ${esc(name)} (BACI 2024), largest first.</p></div>
+    <div class="statrow" style="margin-top:0">
+      <div class="s"><b class="ex">${money(tot*1e6)}</b><span>Nepal's exports here</span></div>
+      <div class="s"><b>${prods.length}</b><span>Products</span></div>
+      <div class="s"><b>${share<1?'<1':share}%</b><span>of Nepal's exports</span></div>
+    </div>
+    <h3 class="h">Products Nepal exports to ${esc(name)}</h3>
+    ${prods.map(x=>{ const p=PROD[x[0]]; return exRow(x[0],x[1], p&&p.u?`world price $${p.u}/kg`:''); }).join('')}
+    <button class="nepalcard" onclick="__go('/trade/${iso.toLowerCase()}')"><span class="fl">${m[1]}</span><span><b>${esc(name)}'s full trade profile</b> — its total exports, imports &amp; top partners ${ic(I.right)}</span></button>
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;color:var(--muted);font-weight:600">2024</span></div>
+      <p>From <b>BACI</b> (CEPII, reconciled UN Comtrade). Values are Nepal→${esc(name)} merchandise exports at HS-6, current US$. For official 8-digit, fiscal-year figures, see Nepal's Department of Customs and TEPC.</p></div>
+  </div></main>`;
+}
+
+function nepExportGuide(slug){
+  const g=EXGUIDES[slug]; if(!g){ nepExportsHome(); return; }
+  if(!exReady(()=>nepExportGuide(slug))) return;
+  setNav('exports');
+  document.title=`${g.h1} — Customs Nepal`;
+  track('view_export_guide',{guide:slug});
+  const hs=g.hs, z=NEP[hs]||{}, p=PROD[hs]||{};
+  const dests=(z.exs||[]).filter(x=>x[1]>0).slice(0,5);
+  app.innerHTML=`<main><div class="wrap">
+    <button class="back" onclick="__go('/nepal/exports')">${ic(I.left)}Export Explorer</button>
+    <div class="ph"><h2>${g.fl} ${esc(g.h1)}</h2><p>${esc(g.sub)}</p></div>
+    <div class="statrow" style="margin-top:0">
+      <div class="s"><b class="ex">${z.ex?money(z.ex*1e6):'—'}</b><span>Nepal exports (2024)</span></div>
+      <div class="s"><b>${p.w?money(p.w*1e6):'—'}</b><span>World market</span></div>
+      <div class="s"><b>${p.u?'$'+p.u+'/kg':'—'}</b><span>World price</span></div>
+    </div>
+    ${g.body}
+    <h3 class="h">Where Nepal sells it (2024)</h3>
+    ${dests.length?`<div class="bars">${dests.map((x,i)=>{const mm=isoMeta(x[0]);return `<button class="lbrow" onclick="__go('/nepal/exports/${x[0].toLowerCase()}')"><span class="rk">${i+1}</span><span class="lb">${mm[1]} ${esc(mm[0])}</span><span class="tr"><span class="fi" style="width:${Math.max(2,x[1]/Math.max(dests[0][1],1)*100)}%;background:var(--exp)"></span></span><span class="vl">${money(x[1]*1e6)}</span></button>`;}).join('')}</div>`:'<p class="fine">—</p>'}
+    <h3 class="h">The HS code</h3>
+    <button class="row" onclick="__go('/hs/code/${hs}')"><span class="code">${fmtCode(hs)}</span><span class="d">${esc(hsDesc(hs))}</span><span class="end">${ic(I.right)}</span></button>
+    <div class="src"><div class="src-h">${ic(I.shield)}<span>Sources</span></div><p>Trade figures: <b>BACI</b> (CEPII / UN Comtrade), 2024. Export procedure: ${g.sources} Incentive rates and GSP eligibility change yearly — confirm current terms with the official source before relying on them.</p></div>
+  </div></main>`;
+}
+
 window.__go=nav;
 boot();
 })();
