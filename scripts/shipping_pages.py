@@ -36,7 +36,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
 NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-       ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/trade-data', 'Trade'),
+       ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/safta', 'SAFTA'), ('/trade-data', 'Trade'),
        ('/browse', 'Browse'), ('/tariff', 'Tariff'), ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
 
 def _cur(h, path):
