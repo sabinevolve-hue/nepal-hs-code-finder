@@ -291,7 +291,7 @@ h2.sec{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppe
   .itbl .c-del button::after{content:"Remove"}
 }
 .page-h{padding-block:var(--s5) var(--s3)}
-.page-h h1{margin:0;font-size:1.7rem;font-weight:700;line-height:1.12;letter-spacing:-.028em}
+.page-h h1,.page-h h2{margin:0;font-size:1.7rem;font-weight:700;line-height:1.12;letter-spacing:-.028em}
 .page-h p{margin:6px 0 0;color:var(--muted);font-size:.95rem;line-height:1.45;max-width:60ch}
 .acc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
 .acc + .acc{margin-top:var(--s2)}
@@ -707,7 +707,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
 
   <!-- AI ASSISTANT -->
   <section id="v-ai" hidden>
-    <div class="page-h"><h1>Not sure what to search? Describe it.</h1><p>Tell the assistant what you are importing in plain words, English or Nepali. It searches the tariff, ranks the likely codes, explains each one and asks when it needs more detail.</p></div>
+    <div class="page-h"><h2>Not sure what to search? Describe it.</h2><p>Tell the assistant what you are importing in plain words, English or Nepali. It searches the tariff, ranks the likely codes, explains each one and asks when it needs more detail.</p></div>
     <div class="ai-intro" id="ai-ex">
       <button data-ex="P2.5 indoor LED display modules with receiving cards and a Novastar controller, for a hotel lobby video wall, from China"><b>LED video wall parts</b>modules, receiving cards, controller</button>
       <button data-ex="Used 55 inch smart TV, Samsung, coming from India with my household goods"><b>Used smart TV</b>from India, household goods</button>
@@ -728,7 +728,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
 
   <!-- TRADE STATISTICS -->
   <section id="v-stats" hidden>
-    <div class="page-h"><h1 id="st-title">Nepal foreign trade</h1><p id="st-sub"></p></div>
+    <div class="page-h"><h2 id="st-title">Nepal foreign trade</h2><p id="st-sub"></p></div>
     <div class="yearsel" id="yearsel" aria-label="Fiscal year"></div>
     <div class="subnav" role="tablist" aria-label="Trade views">
       <button role="tab" data-sv="overview" aria-selected="true">Overview</button>
@@ -747,14 +747,14 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
 
   <!-- EXPORTS -->
   <section id="v-exports" hidden>
-    <div class="page-h"><h1>Nepal exports</h1><p id="ex-sub"></p></div>
+    <div class="page-h"><h2>Nepal exports</h2><p id="ex-sub"></p></div>
     <div id="ex-body"></div>
     <div class="fine" style="margin-top:var(--s4)">Source: Department of Customs, Nepal — Foreign Trade Statistics. Values as published; NPR.</div>
   </section>
 
   <!-- IMPORTS -->
   <section id="v-imports" hidden>
-    <div class="page-h"><h1>Nepal imports</h1><p id="im-sub"></p></div>
+    <div class="page-h"><h2>Nepal imports</h2><p id="im-sub"></p></div>
     <div id="im-body"></div>
     <div class="fine" style="margin-top:var(--s4)">Source: Department of Customs, Nepal — Foreign Trade Statistics. Values as published; NPR.</div>
   </section>
@@ -765,7 +765,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <!-- CALCULATOR -->
   <section id="v-calc" hidden>
     <div class="subnav toolsnav" role="tablist" aria-label="Costing tools"><button role="tab" data-toolt="calc" aria-selected="true">Quick estimate</button><button role="tab" data-toolt="invoice" aria-selected="false">Invoice<span class="beta">Beta</span></button></div>
-    <div class="page-h"><h1>Import tax calculator</h1><p>Estimate customs duty, VAT and landed cost. An example LED display shipment is loaded; replace it with your own figures.</p></div>
+    <div class="page-h"><h2>Import tax calculator</h2><p>Estimate customs duty, VAT and landed cost. An example LED display shipment is loaded; replace it with your own figures.</p></div>
     <div class="card">
       <h2><span class="n">1</span>Product</h2>
       <div class="field">
@@ -801,7 +801,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <!-- INVOICE GENERATOR -->
   <section id="v-invoice" hidden>
     <div class="subnav toolsnav" role="tablist" aria-label="Costing tools"><button role="tab" data-toolt="calc" aria-selected="false">Quick estimate</button><button role="tab" data-toolt="invoice" aria-selected="true">Invoice<span class="beta">Beta</span></button></div>
-    <div class="page-h"><h1>Invoice generator</h1><p>Create a Proforma or Commercial Invoice with a customs &amp; landed-cost estimate. Type your line items, or upload an invoice and let AI read the items and suggest the Nepal HS codes.</p></div>
+    <div class="page-h"><h2>Invoice generator</h2><p>Create a Proforma or Commercial Invoice with a customs &amp; landed-cost estimate. Type your line items, or upload an invoice and let AI read the items and suggest the Nepal HS codes.</p></div>
 
     <div class="card">
       <div class="seg2" id="inv-doc" role="tablist" aria-label="Document type">
@@ -909,7 +909,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <!-- ABOUT -->
   <section id="v-about" hidden>
     <div class="page-h">
-      <h1>About Customs Nepal</h1>
+      <h2>About Customs Nepal</h2>
       <p>Nepal's customs tariff, HS codes and trade data — in one simple place.</p>
     </div>
     <div class="about-body">
@@ -944,7 +944,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <!-- PRIVACY -->
   <section id="v-privacy" hidden>
     <div class="page-h">
-      <h1>Privacy Policy</h1>
+      <h2>Privacy Policy</h2>
       <p>How Customs Nepal handles your information.</p>
     </div>
     <div class="about-body">
@@ -1384,7 +1384,7 @@ function renderBrowse(){
     const c = browseChap, chap = D.chapters[c], sec = sectionOf(c);
     const heads = Object.keys(D.heads).filter(h => +h.slice(0,2) === c).sort();
     v.innerHTML = `<div class="page-h"><button class="back" id="b-back">${ic('i-left')}All chapters</button>
-      <p style="margin-top:8px">Section ${sec.n} · Chapter ${c}</p><h1 style="text-wrap:balance;font-size:1.35rem;line-height:1.25;font-weight:800">${esc(CHSHORT[c] || chap.t)}</h1><p style="font-size:.88rem">${esc(chap.t)}</p></div>
+      <p style="margin-top:8px">Section ${sec.n} · Chapter ${c}</p><h2 style="text-wrap:balance;font-size:1.35rem;line-height:1.25;font-weight:800">${esc(CHSHORT[c] || chap.t)}</h2><p style="font-size:.88rem">${esc(chap.t)}</p></div>
       <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Filter within chapter ${c}…" aria-label="Filter codes in this chapter" value="${esc(browseQ)}"></div>
       ${chap.n && !browseQ ? `<details class="notes"><summary>Chapter notes</summary><pre>${esc(reflow(chap.n))}</pre></details>` : ''}
       ${heads.filter(h => !browseQ || (BYHEAD[h] || []).some(r => bmatch(r))).map(h => { const rs = BYHEAD[h] || []; let lastG = null;
@@ -1396,12 +1396,12 @@ function renderBrowse(){
     return;
   }
   const sq = browseQ.toLowerCase();
-  if (browsePage === 'gri'){ v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">Rules of classification</h1><p>The six General Rules for the Interpretation of the Harmonized System, as printed in the Customs Tariff 2026/27. Customs applies them in order.</p></div><div class="card"><pre style="white-space:pre-wrap;font:inherit;font-size:.92rem;line-height:1.6;margin:0">${esc(reflow(D.gri))}</pre></div><details class="notes" style="margin-top:var(--s3)"><summary>Abbreviations and symbols used in the tariff</summary><pre>${esc(D.abbr)}</pre></details>`; return; }
+  if (browsePage === 'gri'){ v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h2 style="margin-top:8px">Rules of classification</h2><p>The six General Rules for the Interpretation of the Harmonized System, as printed in the Customs Tariff 2026/27. Customs applies them in order.</p></div><div class="card"><pre style="white-space:pre-wrap;font:inherit;font-size:.92rem;line-height:1.6;margin:0">${esc(reflow(D.gri))}</pre></div><details class="notes" style="margin-top:var(--s3)"><summary>Abbreviations and symbols used in the tariff</summary><pre>${esc(D.abbr)}</pre></details>`; return; }
   if (browsePage === 'offices'){ const q = browseQ.toLowerCase(); const TY = { india: 'India border', china: 'China border', airport: 'Airport', dryport: 'Dry port', office: 'Head office' };
     const list = OF.offices.filter(o => (offType === 'all' || o.type === offType) && (offProv === 'all' || o.province === offProv) && (!q || [o.name, o.location, o.district, o.province, o.border, o.np].join(' ').toLowerCase().includes(q)));
     const provs = [...new Set(OF.offices.map(o => o.province))].sort();
     const chief = o => o.chief ? o.chief.replace(/^(\S+\.)\s*/, (m, r) => (OF.roles[r] ? OF.roles[r] + ' · ' : '')).replace(/श्री\s*/, '') : '';
-    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">Customs offices</h1><p>${OF.offices.length} customs offices and border points of the Department of Customs, with addresses and contacts in English.</p></div>
+    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h2 style="margin-top:8px">Customs offices</h2><p>${OF.offices.length} customs offices and border points of the Department of Customs, with addresses and contacts in English.</p></div>
       <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Find an office: Birgunj, Kerung, airport…" aria-label="Find a customs office" value="${esc(browseQ)}"></div>
       <div class="toolbar" style="padding-top:var(--s2)">${[['all', 'All'], ['india', 'India border'], ['china', 'China border'], ['airport', 'Airports'], ['dryport', 'Dry port']].map(([k, l]) => `<button class="chip" data-otype="${k}" aria-pressed="${offType === k}">${l}</button>`).join('')}
         <select class="chip" id="oprov" aria-label="Province">${['all', ...provs].map(p => `<option value="${p}" ${offProv === p ? 'selected' : ''}>${p === 'all' ? 'All provinces' : p + ' Province'}</option>`).join('')}</select></div>
@@ -1415,17 +1415,17 @@ function renderBrowse(){
       ${!list.length ? '<div class="empty"><b>No office matches</b><p>Try another name or clear the filters.</p></div>' : ''}</div>
       <p style="margin-top:var(--s4);font-size:.78rem;color:var(--muted)">Source: ${esc(OF.source)}. Office heads change on transfer; call ahead to confirm.</p>`; return; }
   if (browsePage === 'about'){ const d = OF.department;
-    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">About Nepal Customs</h1><p>${esc(d.name)}</p></div>
+    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h2 style="margin-top:8px">About Nepal Customs</h2><p>${esc(d.name)}</p></div>
       <div class="card"><h3 style="margin:0 0 var(--s3);font-size:1rem">Contact the department</h3><dl class="kv"><dt>Address</dt><dd>${esc(d.address)}</dd><dt>Phone</dt><dd><a href="tel:${d.phone.replace(/\D/g, '')}">${esc(d.phone)}</a></dd><dt>Toll-free</dt><dd><a href="tel:${d.toll_free.replace(/\D/g, '')}">${esc(d.toll_free)}</a></dd><dt>Email</dt><dd><a href="mailto:${d.email}">${esc(d.email)}</a></dd><dt>Website</dt><dd><a href="https://${d.website}" target="_blank" rel="noopener">${esc(d.website)}</a></dd><dt>Hours</dt><dd>${esc(d.hours)}</dd></dl></div>
       <div class="card"><h3 style="margin:0 0 6px;font-size:1rem">What the department does</h3><p style="margin:0;font-size:.92rem;line-height:1.6;color:var(--fg-2)">${esc(d.about)}</p></div>
       <div class="card"><h3 style="margin:0 0 6px;font-size:1rem">Vision</h3><p style="margin:0;font-size:.92rem;color:var(--fg-2)">${esc(d.vision)}</p><div class="vals">${d.values.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>
       <div class="card"><h3 style="margin:0 0 6px;font-size:1rem">How import clearance works</h3><ol style="margin:0;padding-left:20px;font-size:.92rem;line-height:1.6;color:var(--fg-2)"><li>Goods arrive at a customs point (border, airport or dry port).</li><li>The importer or a licensed customs agent files a declaration in NECAS with the HS code, value, origin and invoices.</li><li>NECAS assesses customs duty, excise and VAT and assigns a risk lane (green, yellow or red).</li><li>Duty is paid electronically or at the bank counter; documents and goods are checked according to the lane.</li><li>Goods are released. Declarations can be audited after clearance.</li></ol><div class="suggest"><button data-page="offices">${ic('i-list')}Customs offices</button><button data-page="gri">${ic('i-info')}Rules of classification</button></div></div>
       <p style="margin-top:var(--s4);font-size:.78rem;color:var(--muted)">Source: ${esc(OF.source)}. Summarised in English from the department's Nepali pages.</p>`; return; }
   if (browsePage === 'export'){ const ks = Object.keys(D.export).sort(); const q = browseQ.toLowerCase();
-    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h1 style="margin-top:8px">Export duty schedule</h1><p>${ks.length} lines carry export customs duty. No export duty applies to goods not listed here.</p></div>
+    v.innerHTML = `<div class="page-h"><button class="back" data-page="">${ic('i-left')}Browse</button><h2 style="margin-top:8px">Export duty schedule</h2><p>${ks.length} lines carry export customs duty. No export duty applies to goods not listed here.</p></div>
       <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Filter export lines" aria-label="Filter export lines" value="${esc(browseQ)}"></div>
       <div class="group">${ks.filter(k => !q || k.includes(q) || D.export[k][0].toLowerCase().includes(q) || (BY[k] && BY[k].own.includes(q))).map(k => `<button class="row" data-code="${k}"><span class="code">${k}</span><span class="d">${esc(BY[k] ? label(BY[k]) : D.export[k][0])}</span><span class="end"><span class="duty d-spec"><b>${esc(D.export[k][1])}</b></span></span></button>`).join('')}</div>`; return; }
-  v.innerHTML = `<div class="page-h"><h1>Browse the tariff</h1><p>21 sections and 97 chapters. Open a section, pick a chapter, then open a heading to see its codes.</p></div>
+  v.innerHTML = `<div class="page-h"><h2>Browse the tariff</h2><p>21 sections and 97 chapters. Open a section, pick a chapter, then open a heading to see its codes.</p></div>
     <div class="bfilter">${ic('i-search')}<input id="bq" type="search" placeholder="Find a chapter: textiles, machinery, 85…" aria-label="Find a chapter" value="${esc(browseQ)}"></div>
     ${browseQ ? '' : `<div class="cats" style="margin-bottom:var(--s3)"><button class="cat" data-page="gri"><span class="ic">${ic('i-info')}</span><span>Rules of classification<small>General Rules 1–6</small></span></button><button class="cat" data-page="export"><span class="ic">${ic('i-up')}</span><span>Export duty schedule<small>${Object.keys(D.export).length} lines</small></span></button><button class="cat" data-page="offices"><span class="ic">${ic('i-list')}</span><span>Customs offices<small>${OF.offices.length} offices · contacts</small></span></button><button class="cat" data-page="about"><span class="ic">${ic('i-info')}</span><span>About Nepal Customs<small>Department, hours, NECAS</small></span></button></div>`}` +
     D.sections.filter(s => !sq || s.t.toLowerCase().includes(sq) || Object.keys(D.chapters).some(c => sectionOf(+c) === s && (D.chapters[c].t.toLowerCase().includes(sq) || c === sq))).map(s => { const chs = Object.keys(D.chapters).map(Number).filter(c => sectionOf(c) === s).sort((a,b)=>a-b); const open = openSec === s.n;
@@ -1876,7 +1876,7 @@ async function importInvoiceFile(file){
 /* saved */
 function renderSaved(){
   const s = store.get('saved', []).filter(c => BY[c]);
-  $('#v-saved').innerHTML = `<div class="page-h"><h1>Saved codes</h1><p>Kept in this browser for quick reference.</p></div>` + (s.length
+  $('#v-saved').innerHTML = `<div class="page-h"><h2>Saved codes</h2><p>Kept in this browser for quick reference.</p></div>` + (s.length
     ? `<div class="group">${s.map(c => rowHTML(BY[c])).join('')}</div>`
     : `<div class="empty"><b>Nothing saved yet</b><p>Open any HS code and tap the bookmark button to keep it here.</p><div class="suggest"><button data-go="search">Search codes</button></div></div>`);
 }

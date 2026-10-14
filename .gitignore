@@ -5,6 +5,8 @@ node_modules
 *.png
 !public/og.png
 !public/icon-*.png
+!public/screenshot-*.png
+!public/play-feature-graphic.png
 data/fts/
 
 # generated documents and business fixtures (never publish)

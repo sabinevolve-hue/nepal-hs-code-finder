@@ -197,6 +197,11 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - [Ask AI — HS code classifier](__SITE__/ask-ai): Describe a product in plain words and get ranked HS code suggestions with reasoning.
 - [Imports](__SITE__/imports): Nepal import data and duty by product category and partner country.
 - [Exports](__SITE__/exports): Nepal export data by product category and destination.
+- [Export guides](__SITE__/export): Step-by-step guides to exporting from Nepal — procedures, documents, EXIM code, certificate of origin and product-specific notes.
+- [SAFTA preferential duty](__SITE__/safta): How Nepal importers cut customs duty under the SAFTA agreement — eligible SAARC origins, rules of origin, certificate of origin, the sensitive list, and the product segments that benefit most.
+- [Shipping to Nepal](__SITE__/shipping): Landlocked Nepal's sea–land freight routes — the Indian and Bangladeshi gateway ports (Kolkata/Haldia, Visakhapatnam, Nhava Sheva, Mundra, Mongla, Chittagong) and the inland customs points (Birgunj, Biratnagar, Bhairahawa, Kakarbhitta, Chobhar).
+- [Track a shipment](__SITE__/shipping/track): Paste a container number or bill-of-lading number to identify the carrier (ISO 6346 check digit + owner-prefix / B/L-prefix match) and jump to the right carrier tracking page.
+- [World trade](__SITE__/world): Nepal's trade seen against world trade flows (BACI benchmark data).
 - [Trade data](__SITE__/trade-data): Multi-year Nepal foreign-trade statistics.
 - [FAQ](__SITE__/faq): Common questions on HS codes, customs duty, VAT and landed cost in Nepal.
 - [About](__SITE__/about): What Customs Nepal is, who it is for, and its data sources.
@@ -208,6 +213,19 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - A lower SAARC (SAFTA) preferential duty rate may apply to qualifying goods from SAARC countries, subject to rules of origin and a certificate of origin.
 - Depending on the product, imports may also attract excise duty and an agriculture reform fee.
 - Landed cost = product price + freight + insurance + customs duty + VAT + any other import taxes and fees.
+
+## Key facts about SAFTA (preferential duty)
+- SAFTA is the South Asian Free Trade Area agreement among SAARC members (India, Pakistan, Bangladesh, Sri Lanka, Nepal, Bhutan, Maldives, Afghanistan). Qualifying goods pay the lower SAARC duty column instead of the general rate.
+- To claim the SAARC rate, the importer needs a SAFTA Certificate of Origin issued in the exporting country. It is valid for 12 months from the date of issue.
+- Rules of origin: the general rule is a change of tariff heading (CTH) at 4-digit HS level plus at least 40% domestic value addition; for least-developed members (which include Nepal) the value-addition threshold is 30%.
+- Each country keeps a Sensitive List of products excluded from SAFTA concessions; goods on the importing country's sensitive list do not get the preferential rate.
+- Nepal is scheduled to graduate from least-developed-country (LDC) status in 2026, which gradually changes the concessions and thresholds it can use.
+
+## Key facts about shipping to Nepal
+- Nepal is landlocked, so almost all overseas cargo arrives by sea at an Indian or Bangladeshi port and then moves overland to an inland customs point in Nepal.
+- Main gateway ports: Kolkata and Haldia, Visakhapatnam, Nhava Sheva (JNPT) and Mundra in India, and Mongla and Chittagong in Bangladesh.
+- Main inland customs points / ICDs: Birgunj (Sirsiya ICD, the largest, rail-linked to Kolkata/Haldia), Biratnagar, Bhairahawa, Kakarbhitta and the Chobhar dry port near Kathmandu.
+- A container number is four letters plus seven digits with an ISO 6346 check digit (for example ABCU1234567); the first three letters are the owner/carrier prefix. A bill-of-lading number usually starts with a carrier prefix (for example ONEY for Ocean Network Express, MEDU for MSC, MAEU for Maersk).
 """.replace('__SITE__', SITE)
 (root / 'public' / 'llms.txt').write_text(llms, encoding='utf-8')
 

@@ -1,7 +1,9 @@
 # customsnepal.com — Project Documentation
 
-Maintainer & architecture guide for the **Nepal HS Code Finder / customsnepal.com** website.
-Last updated: 2026-09-30.
+Maintainer & architecture guide for **Customs Nepal** (customsnepal.com).
+Brand: the site is "Customs Nepal"; "Nepal HS Code Finder" is the descriptive alternate name / the HS-search
+feature, and the GitHub repository keeps its original `nepal-hs-code-finder` name for continuity.
+Last updated: 2026-10-14.
 
 ---
 
