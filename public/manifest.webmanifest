@@ -23,5 +23,11 @@
     { "name": "Calculator", "short_name": "Calculator", "url": "/calculator", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
     { "name": "Imports", "short_name": "Imports", "url": "/imports", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
     { "name": "Exports", "short_name": "Exports", "url": "/exports", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ],
+  "screenshots": [
+    { "src": "/screenshot-home.png", "sizes": "1080x2280", "type": "image/png", "form_factor": "narrow", "label": "Search any product for its Nepal HS code and customs duty" },
+    { "src": "/screenshot-track.png", "sizes": "1080x2280", "type": "image/png", "form_factor": "narrow", "label": "Track a container or bill of lading on its way to Nepal" },
+    { "src": "/screenshot-safta.png", "sizes": "1080x2280", "type": "image/png", "form_factor": "narrow", "label": "Cut import duty with SAFTA preferential rates" },
+    { "src": "/screenshot-home-wide.png", "sizes": "1280x800", "type": "image/png", "form_factor": "wide", "label": "Customs Nepal — HS codes, duty, trade data and shipping" }
   ]
 }

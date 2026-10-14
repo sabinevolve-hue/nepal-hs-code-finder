@@ -1,12 +1,20 @@
-# Nepal HS Code Finder
+# Customs Nepal
 
-**Live:** https://nepal-hs-code-finder-tzco.vercel.app · **Source:** https://github.com/sabinevolve-hue/nepal-hs-code-finder
+**Live:** https://www.customsnepal.com · **Source:** https://github.com/sabinevolve-hue/nepal-hs-code-finder
+
+> Brand: the site is "Customs Nepal" (customsnepal.com). "Nepal HS Code Finder" remains the descriptive
+> alternate name / the HS-search feature. The repository keeps its original name for continuity.
 
 Mobile-first search of the **Nepal Customs Tariff 2026/27** (FY 2083/84): all 6,340 import tariff lines with
 general and SAARC duty rates, the export duty schedule, chapter legal notes, an import-tax / landed-cost calculator,
-and an AI assistant that classifies a plain-language product description into likely HS codes.
+and an AI assistant that classifies a plain-language product description into likely HS codes. It also carries
+SAFTA preferential-duty guidance, export guides, a landlocked-Nepal shipping/route layer with a container &
+bill-of-lading tracker, and multi-year trade data.
 
-Single self-contained page (`public/index.html`, ~2.7 MB, ~600 KB gzipped) plus Apache ECharts from jsDelivr. No framework, no build step beyond a Python script.
+A self-contained SPA (`public/index.html`) plus a set of static, server-rendered SEO landing pages
+(`/tariff`, `/calculator`, `/imports`, `/exports`, `/export`, `/safta`, `/shipping`, `/shipping/track`,
+`/world`, `/faq`, `/about`), built by Python scripts. Apache ECharts loads from jsDelivr. Ships as an
+installable PWA (manifest + service worker) and is TWA-ready for Google Play.
 
 ## Features
 
@@ -27,6 +35,11 @@ Single self-contained page (`public/index.html`, ~2.7 MB, ~600 KB gzipped) plus 
   selector switches every view; Compare puts any two years side by side and tracks any product, chapter or country
   across all years. Views: Overview, Compare, Trends, Products, Chapters, Countries, Flows (sankey), Customs points, Duty bands, with per-product import/export
   figures, source countries and a seven-year sparkline inside every code's detail view. Charts by Apache ECharts.
+- **SAFTA** (`/safta`): how to pay the lower SAARC duty — eligible origins, rules of origin (CTH + 40 % value add, 30 % for LDCs), certificate of origin, the sensitive list, the product segments that benefit most, and the top duty-saving products.
+- **Export guides** (`/export`): exporting from Nepal — procedures, documents, EXIM code, certificate of origin, and per-product notes.
+- **Shipping to Nepal** (`/shipping`): the sea–land routes for landlocked Nepal — gateway ports (Kolkata/Haldia, Visakhapatnam, Nhava Sheva, Mundra, Mongla, Chittagong) and inland customs points (Birgunj, Biratnagar, Bhairahawa, Kakarbhitta, Chobhar), each on its own page.
+- **Tracker** (`/shipping/track`): paste a container or bill-of-lading number; client-side ISO 6346 check-digit validation + owner/B/L-prefix match identifies the carrier and links to its tracking page.
+- **PWA / mobile app**: installable (manifest + service worker + icons) and TWA-ready for Google Play (`com.customsnepal.app`, Digital Asset Links at `/.well-known/assetlinks.json`). See `PLAYSTORE.md`.
 - **Saved codes**, copy code, share link (`#hs-8528.59.00`), light/dark theme, keyboard and screen-reader friendly.
 
 ## Repository layout
@@ -43,18 +56,28 @@ data/
   stats.json                   compact multi-year trade statistics inlined into the page
   offices.json                 40 customs offices + department info (English), inlined into the page
 scripts/
-  parse.py     PDF text → parsed.json (handles the PDF's scrambled table columns)
-  aliases.py   everyday names → HS prefixes used by search hints
-  build.py     parsed.json → tariff.json
-  stats.py     data/fts/**/*.xlsx → stats.json (latest year detail + history + monthly)
-  assemble.py  src.html + tariff.json → public/index.html
+  parse.py          PDF text → parsed.json (handles the PDF's scrambled table columns)
+  aliases.py        everyday names → HS prefixes used by search hints
+  build.py          parsed.json → tariff.json
+  stats.py          data/fts/**/*.xlsx → stats.json (latest year detail + history + monthly)
+  assemble.py       src.html + tariff.json → public/index.html (+ robots.txt, llms.txt, sitemap.xml)
+  seo_pages.py      static SEO landing pages (/tariff, /calculator, /faq, /about, …)
+  export_pages.py   /exports hub + per-product export guides (/export/…)
+  shipping_pages.py /shipping hub + gateway/ICD node pages + /shipping/track tracker
+  safta_page.py     /safta preferential-duty page (segments, rules of origin, how to claim)
+  mount_world.py    mounts the /world BACI world-trade benchmark build
 api/classify.js        Vercel serverless proxy to the Anthropic API for the assistant
 ```
+
+All static-page generators share one `page_head()` pattern: canonical to `https://www.customsnepal.com`,
+GA4, shared `/seo.css`, a common NAV, the "Customs Nepal" header logo, and per-page JSON-LD
+(BreadcrumbList / FAQPage / HowTo / Place).
 
 ## Run locally
 
 ```
-python3 scripts/assemble.py      # rebuild public/index.html after editing src.html
+npm run build                    # full chain: assemble → seo_pages → export_pages → shipping_pages → safta_page → mount_world
+python3 scripts/assemble.py      # just rebuild public/index.html after editing src.html
 npm run dev                      # http://localhost:8080
 ```
 
