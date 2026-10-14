@@ -90,12 +90,11 @@ nav.tabbar{display:none}
 .hero-stats{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s5);font-size:.8rem;color:rgba(255,255,255,.7)}
 .hero-stats b{display:block;color:#fff;font-size:1.05rem;font-variant-numeric:tabular-nums}
 @media (min-width:760px){.hero:not(.compact){border-radius:0 0 var(--r-lg) var(--r-lg);margin-inline:0;padding-inline:var(--s6)}}
-.trackbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:var(--s3) 0 0;padding:10px 12px;background:var(--accent-bg);border:1px solid var(--border);border-radius:var(--r-lg)}
-.trackbar .tb-ic{font-size:1.15rem;line-height:1}
-.trackbar .tb-lb{font-weight:700;font-size:.9rem;color:var(--accent);white-space:nowrap}
-.trackbar input{flex:1 1 170px;min-width:0;height:42px;padding:0 12px;border:1.5px solid var(--border);border-radius:var(--r);background:var(--card);color:var(--fg);font-size:.92rem;outline:none}
-.trackbar input:focus{border-color:var(--accent)}
-.trackbar .tb-go{flex:0 0 auto;height:42px;padding:0 18px;border:0;border-radius:var(--r);background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
+.trackmini{display:flex;align-items:center;gap:8px;max-width:480px;margin:var(--s3) 0 0;padding:5px 5px 5px 13px;background:var(--card);border:1px solid var(--border);border-radius:999px}
+.trackmini>svg{flex:0 0 auto;width:18px;height:18px;color:var(--muted)}
+.trackmini input{flex:1 1 auto;min-width:0;height:34px;border:0;background:transparent;color:var(--fg);font-size:.9rem;outline:none}
+.trackmini input::placeholder{color:var(--muted)}
+.trackmini button{flex:0 0 auto;height:34px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;cursor:pointer}
 .explore{margin-top:var(--s5)}
 .xgroup+.xgroup{margin-top:var(--s4)}
 .xhead{display:flex;align-items:center;gap:10px;margin:0 0 var(--s2);font-size:.82rem;font-weight:800;letter-spacing:.01em;color:var(--fg)}
@@ -647,7 +646,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
 
 <header class="bar">
   <div class="wrap bar-row">
-    <a class="logo" href="/" data-tab="search" aria-label="Customs Nepal — home"><span class="mark">HS</span><span>Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></a>
+    <a class="logo" href="/" data-tab="search" aria-label="Customs Nepal — home"><span class="mark">HS</span><span>Customs Nepal<small>HS codes, duty &amp; trade</small></span></a>
     <div style="display:flex;align-items:center;gap:6px;min-width:0">
     <div class="nav-desk" role="tablist" aria-label="Sections">
       <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
@@ -689,6 +688,11 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
       <div class="suggest" id="suggest"></div>
       <div class="hero-stats" id="hero-stats"></div>
     </div>
+    <form class="trackmini" role="search" aria-label="Track a shipment" onsubmit="event.preventDefault();var v=(this.querySelector('input').value||'').trim();location.href='/shipping/track'+(v?('?n='+encodeURIComponent(v)):'');">
+      <svg class="i" aria-hidden="true"><use href="#i-box"/></svg>
+      <input type="search" inputmode="latin" autocomplete="off" spellcheck="false" placeholder="Track a container or B/L number" aria-label="Container or bill-of-lading number">
+      <button type="submit">Track</button>
+    </form>
     <div class="toolbar" id="toolbar" hidden>
       <button class="chip" data-duty="all" aria-pressed="true">Any duty</button>
       <button class="chip" data-duty="free" aria-pressed="false">Duty free</button>
@@ -2415,7 +2419,7 @@ $('#v-stats').addEventListener('input', e => { if (e.target.id === 'cmp-q'){ cmp
 
 /* ---------- tabs ---------- */
 const TITLES = {
-  search: 'Nepal HS Code Finder — Customs Tariff & Import Duty 2026/27',
+  search: 'Customs Nepal — Nepal HS Code, Import Duty & Customs Tariff 2026/27',
   ai: 'Ask AI — Nepal HS Code Classifier | Customs Nepal',
   stats: 'Nepal Foreign Trade Data — Imports & Exports | Customs Nepal',
   exports: 'Nepal Exports Data — by Product & Country | Customs Nepal',

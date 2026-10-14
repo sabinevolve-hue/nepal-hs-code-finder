@@ -20,7 +20,7 @@ DATA_FILES = [('tariff.json', 't.json'), ('stats.json', 'st.json'),
 # SEO constants
 # ---------------------------------------------------------------------------
 SITE = 'https://www.customsnepal.com'
-TITLE = 'Nepal HS Code Finder — Customs Tariff & Import Duty 2026/27'
+TITLE = 'Customs Nepal — Nepal HS Code, Import Duty & Customs Tariff 2026/27'
 DESC = ('Find the Nepal HS code, customs duty, VAT and landed cost for any product. '
         'Search the full Customs Tariff 2026/27, explore trade data and generate a '
         'proforma invoice — free.')
@@ -49,8 +49,8 @@ LD = {
          "knowsAbout": ["Nepal HS codes", "Nepal customs tariff", "import duty", "VAT",
                         "landed cost", "SAARC preferential duty", "customs classification",
                         "Nepal foreign trade statistics"]},
-        {"@type": "WebSite", "@id": SITE + "/#website", "name": "Nepal HS Code Finder",
-         "alternateName": "Customs Nepal", "url": SITE + "/", "inLanguage": "en",
+        {"@type": "WebSite", "@id": SITE + "/#website", "name": "Customs Nepal",
+         "alternateName": "Nepal HS Code Finder", "url": SITE + "/", "inLanguage": "en",
          "publisher": {"@id": SITE + "/#org"},
          "potentialAction": {"@type": "SearchAction",
                              "target": {"@type": "EntryPoint", "urlTemplate": SITE + "/?q={search_term_string}"},
@@ -122,7 +122,7 @@ head = (
     '<meta property="og:image" content="' + OGIMG + '">'
     '<meta property="og:image:width" content="1200">'
     '<meta property="og:image:height" content="630">'
-    '<meta property="og:image:alt" content="Nepal HS Code Finder — Customs Tariff, Import Duty & Landed Cost">'
+    '<meta property="og:image:alt" content="Customs Nepal — Customs Tariff, Import Duty & Landed Cost">'
     '<meta property="og:locale" content="en_NP">'
     # Twitter
     '<meta name="twitter:card" content="summary_large_image">'

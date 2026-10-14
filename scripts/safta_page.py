@@ -156,7 +156,7 @@ def page_head(title, desc, path, breadcrumb, extra_ld=None):
         + ldj + ANALYTICS +
         '</head><body>'
         '<header class="top"><div class="wrap topbar">'
-        '<a class="logo" href="/" aria-label="Customs Nepal — home"><span class="mark">HS</span><span class="lt">Nepal HS Code Finder<small>Customs Tariff 2026/27</small></span></a>'
+        '<a class="logo" href="/" aria-label="Customs Nepal — home"><span class="mark">HS</span><span class="lt">Customs Nepal<small>HS codes, duty &amp; trade</small></span></a>'
         '<nav class="topnav">' + nav + '</nav></div></header>'
         '<div class="wrap">'
     )
