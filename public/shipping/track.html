@@ -146,6 +146,7 @@
       +'<div class="trkbtns alt">'+tiles(COURIERS,cn)+'</div></div>';
    }
   }
+  h+='<p class="trkhint" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">Arriving into Nepal? <a href="/calculator">Estimate its customs duty &amp; landed cost →</a></p>';
   box.innerHTML=h;
   var o=box.querySelectorAll('.trkopen'),i;
   for(i=0;i<o.length;i++){o[i].addEventListener('click',function(){var n=this.getAttribute('data-num');if(n)copy(n);});}

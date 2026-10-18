@@ -2446,7 +2446,11 @@ function go(t, hist){
   $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
   try { $$('[data-toolt]').forEach(b => b.setAttribute('aria-selected', b.dataset.toolt === t)); if (t === 'invoice') $$('[data-tab="calc"]').forEach(b => b.setAttribute('aria-selected', 'true')); } catch(e){}
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc'){ calcTracked = false; calc(); } if (t === 'invoice') initInvoice();
-  try { var _p = TABPATH[t] || '/'; if (hist === 'push') history.pushState(null,'',_p); else if (hist !== false) history.replaceState(null,'',_p); } catch(e){}
+  try { var _p = TABPATH[t] || '/', _u = 'https://www.customsnepal.com' + _p;
+        var _c = document.querySelector('link[rel="canonical"]'); if (_c) _c.setAttribute('href', _u);
+        var _ou = document.querySelector('meta[property="og:url"]'); if (_ou) _ou.setAttribute('content', _u);
+        var _ot = document.querySelector('meta[property="og:title"]'); if (_ot) _ot.setAttribute('content', TITLES[t] || TITLES.search);
+        if (hist === 'push') history.pushState(null,'',_p); else if (hist !== false) history.replaceState(null,'',_p); } catch(e){}
   window.scrollTo({top:0});
 }
 $$('[data-tab]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); go(b.dataset.tab, 'push'); }));
