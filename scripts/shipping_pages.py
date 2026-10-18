@@ -244,6 +244,27 @@ INLAND = [
  ('Nepal Customs (ASYCUDA)', 'https://www.customs.gov.np/', 'Declaration and clearance status at the Nepal dry port.'),
  ('NITDB', 'https://nitdb.gov.np/', 'Nepal Intermodal Transport Development Board — the dry ports / ICDs.'),
 ]
+COURIER_DIR = [
+ ('DHL Express', 'https://www.dhl.com/global-en/home/tracking.html', 'Global air express — the most common door-to-door courier into Nepal.'),
+ ('FedEx', 'https://www.fedex.com/fedextrack/', 'Worldwide express parcels and documents.'),
+ ('UPS', 'https://www.ups.com/track', 'Global express; tracking numbers start “1Z”.'),
+ ('Aramex', 'https://www.aramex.com/track/results', 'Strong Gulf & South-Asia express — widely used for Nepal.'),
+ ('TNT (FedEx)', 'https://www.tnt.com/express/en_gc/site/shipping-tools/tracking.html', 'Europe-heavy express, now part of FedEx.'),
+ ('17TRACK — any carrier', 'https://www.17track.net/en', 'Universal tracker: couriers, post and air cargo in one place.'),
+]
+AIRCARGO_DIR = [
+ ('Qatar Airways Cargo', 'https://www.qrcargo.com/', 'AWB prefix 157 · Doha hub — a top gateway for Nepal air cargo.'),
+ ('Turkish Cargo', 'https://www.turkishcargo.com/', 'AWB prefix 235 · wide Europe–Asia air-cargo reach.'),
+ ('Emirates SkyCargo', 'https://www.skycargo.com/', 'AWB prefix 176 · Dubai hub into Kathmandu.'),
+ ('Etihad Cargo', 'https://www.etihadcargo.com/', 'AWB prefix 607 · Abu Dhabi hub.'),
+ ('Cathay Cargo', 'https://www.cathaycargo.com/', 'AWB prefix 160 · Hong Kong / East-Asia hub.'),
+ ('Track-Trace air cargo', 'https://www.track-trace.com/aircargo', 'Universal AWB lookup — auto-detects the airline from the prefix.'),
+]
+POSTAL_DIR = [
+ ('Nepal Post', 'https://www.nepalpost.gov.np/', 'The final-leg postal operator for EMS and mail into Nepal.'),
+ ('India Post', 'https://www.indiapost.gov.in/', 'Common transit for mail and EMS routed via India.'),
+ ('17TRACK — post & EMS', 'https://www.17track.net/en', 'Universal postal tracker across national carriers.'),
+]
 
 def chain_html(segs):
     inner = ' <span class="ar">→</span> '.join('<span class="seg">%s</span>' % esc(s) for s in segs)
@@ -322,8 +343,8 @@ for slug, n in NODES.items():
 TRACKER_BOX = (
     '<form class="trkbox" id="trkform" role="search" aria-label="Track a shipment">'
     '<input id="trkin" type="search" inputmode="latin" autocomplete="off" spellcheck="false" '
-    'placeholder="Paste container no. (e.g. MSCU1234567) or B/L number" '
-    'aria-label="Container or bill-of-lading number">'
+    'placeholder="Paste any tracking no. — container, air waybill, DHL / FedEx / UPS, EMS…" '
+    'aria-label="Tracking number — container, bill of lading, air waybill, courier or postal item">'
     '<button type="submit" class="trkgo">Track</button></form>'
     '<div id="trkresult" class="trkresult" aria-live="polite"></div>')
 
@@ -346,6 +367,18 @@ TRACKER_SCRIPT = """<script>
   hamburgsud:{n:'Hamburg Sud',u:'https://www.hamburgsud-line.com/'},
   sealand:{n:'Sealand (Maersk)',u:'https://www.sealandmaersk.com/tracking',t:'https://www.sealandmaersk.com/tracking/{n}'}
  };
+ var COURIERS={
+  dhl:{n:'DHL Express',u:'https://www.dhl.com/global-en/home/tracking.html',t:'https://www.dhl.com/global-en/home/tracking.html?tracking-id={n}&submit=1'},
+  fedex:{n:'FedEx',u:'https://www.fedex.com/fedextrack/',t:'https://www.fedex.com/fedextrack/?trknbr={n}'},
+  ups:{n:'UPS',u:'https://www.ups.com/track',t:'https://www.ups.com/track?loc=en_US&tracknum={n}'},
+  aramex:{n:'Aramex',u:'https://www.aramex.com/track/results',t:'https://www.aramex.com/track/results?ShipmentNumber={n}'},
+  tnt:{n:'TNT',u:'https://www.tnt.com/express/en_gc/site/shipping-tools/tracking.html',t:'https://www.tnt.com/express/en_gc/site/shipping-tools/tracking.html?searchType=con&cons={n}'}
+ };
+ var UNI={
+  t17:{n:'17TRACK',u:'https://www.17track.net/en',t:'https://www.17track.net/en/track?nums={n}'},
+  parcels:{n:'ParcelsApp',u:'https://parcelsapp.com/',t:'https://parcelsapp.com/en/tracking/{n}'}
+ };
+ var AIRLINES={'020':'Lufthansa Cargo','057':'Air France Cargo','074':'KLM Cargo','098':'Air India','125':'British Airways','131':'Japan Airlines','157':'Qatar Airways Cargo','160':'Cathay Cargo','176':'Emirates SkyCargo','180':'Korean Air Cargo','217':'Thai Airways','235':'Turkish Cargo','607':'Etihad Cargo','618':'Singapore Airlines Cargo','988':'Asiana'};
  var PFX={MAEU:'maersk',MRKU:'maersk',MSKU:'maersk',MRSU:'maersk',MVIU:'maersk',MNBU:'maersk',MWCU:'maersk',
   MSCU:'msc',MEDU:'msc',
   CMAU:'cmacgm',CGMU:'cmacgm',CMCU:'cmacgm',ECMU:'cmacgm',APLU:'cmacgm',APHU:'cmacgm',
@@ -375,6 +408,9 @@ TRACKER_SCRIPT = """<script>
  function norm(s){return(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
  function btn(key,num,useTpl){var L=LINES[key];var href=(useTpl&&L.t&&num)?L.t.replace('{n}',encodeURIComponent(num)):L.u;
   return '<a class="btn trkopen" href="'+href+'" target="_blank" rel="noopener noreferrer nofollow" data-num="'+esc(num||'')+'">Track on '+esc(L.n)+' ↗</a>';}
+ function obtn(L,num,label){if(!L)return '';var href=(L.t&&num)?L.t.replace('{n}',encodeURIComponent(num)):L.u;
+  return '<a class="btn trkopen" href="'+href+'" target="_blank" rel="noopener noreferrer nofollow" data-num="'+esc(num||'')+'">'+esc(label||('Track on '+L.n))+' ↗</a>';}
+ function tiles(map,num){var s='',k;for(k in map){if(Object.prototype.hasOwnProperty.call(map,k)){s+=obtn(map[k],num,map[k].n);}}return s;}
  function fmtDate(s){try{var d=new Date(s);if(isNaN(d.getTime()))return s;return d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return s;}}
  // Progressive enhancement: draw a live milestone timeline on this page IF the carrier is integrated
  // and the server has an API key. Otherwise the server returns {configured:false} and nothing renders —
@@ -400,9 +436,14 @@ TRACKER_SCRIPT = """<script>
   var cn=norm(raw);
   if(!cn){box.innerHTML='';return;}
   var isC=iso6346(cn);
-  var fmt=(cn.length===11)?(cn.slice(0,4)+' '+cn.slice(4,10)+'-'+cn.slice(10)):cn;
+  var fmt=/^[A-Z]{4}[0-9]{7}$/.test(cn)?(cn.slice(0,4)+' '+cn.slice(4,10)+'-'+cn.slice(10)):cn;
   var h,detected=null;
-  if(isC===true){
+  if(/^1Z[0-9A-Z]{16}$/.test(cn)){
+   copy(cn);
+   h='<div class="trkcard ok"><p class="trkhdr">📦 Looks like a <b>UPS</b> tracking number</p>'
+     +'<p class="trknum">'+esc(cn)+'</p><div class="trkbtns">'+obtn(COURIERS.ups,cn,'Track on UPS')+obtn(UNI.t17,cn,'17TRACK (any)')+'</div>'
+     +'<p class="trkhint">Opens UPS and copies your number to the clipboard. Not UPS? Pick another courier below.</p></div>';
+  }else if(isC===true){
    var key=PFX[cn.slice(0,4)];
    if(key){
     detected=key;
@@ -420,8 +461,20 @@ TRACKER_SCRIPT = """<script>
      +'<p class="trknum">'+esc(fmt)+'</p>'
      +'<p class="trkhint">Check for a typo — a letter or digit may be swapped. You can still pick your line below and search manually.</p></div>';
   }else if(/^[0-9]{3}-?[0-9]{8}$/.test(cn)){
-   h='<div class="trkcard"><p class="trkhdr">✈ That looks like an air waybill</p>'
-     +'<p class="trkhint">Air cargo is tracked by the airline (the first 3 digits are the airline prefix) or by your freight forwarder — not an ocean line.</p></div>';
+   var pfx=cn.slice(0,3),air=AIRLINES[pfx]||'',awb=pfx+'-'+cn.slice(cn.length-8);
+   copy(cn);
+   h='<div class="trkcard ok"><p class="trkhdr">✈ Looks like an <b>air waybill</b>'+(air?(' — <b>'+esc(air)+'</b>'):'')+'</p>'
+     +'<p class="trknum">'+esc(awb)+'</p>'
+     +'<div class="trkbtns">'+obtn(UNI.t17,cn,'Track AWB on 17TRACK')+obtn(UNI.parcels,cn,'ParcelsApp')+'</div>'
+     +'<p class="trkhint">The first three digits ('+esc(pfx)+') are the airline prefix'+(air?', '+esc(air):'')+'. Use a universal lookup above, or open the airline’s own cargo tracker below. Number copied to the clipboard.</p></div>';
+  }else if(/^[A-Z]{2}[0-9]{9}[A-Z]{2}$/.test(cn)){
+   var dest=cn.slice(-2),isNP=(dest==='NP');
+   copy(cn);
+   h='<div class="trkcard ok"><p class="trkhdr">✉ Looks like a <b>postal / EMS</b> item'+(isNP?' bound for <b>Nepal</b>':'')+'</p>'
+     +'<p class="trknum">'+esc(cn)+'</p>'
+     +'<div class="trkbtns">'+obtn(UNI.t17,cn,'Track on 17TRACK')+obtn(UNI.parcels,cn,'ParcelsApp')
+     +(isNP?'<a class="btn trkopen" href="https://www.nepalpost.gov.np/" target="_blank" rel="noopener noreferrer nofollow" data-num="'+esc(cn)+'">Nepal Post ↗</a>':'')+'</div>'
+     +'<p class="trkhint">A '+esc(cn.slice(0,2))+'… code is a Universal Postal Union item'+(isNP?'; Nepal Post handles the final leg':'')+'. The universal trackers above follow it across postal networks. Number copied to the clipboard.</p></div>';
   }else{
    var p4=cn.slice(0,4),bkey=(/^[A-Z]{4}/.test(cn)&&cn.length>=10)?(BLPFX[p4]||PFX[p4]):null;
    copy(cn);
@@ -431,9 +484,13 @@ TRACKER_SCRIPT = """<script>
       +'<p class="trknum">'+esc(cn)+'</p><div class="trkbtns">'+btn(bkey,cn,false)+'</div>'
       +'<p class="trkhint">Opens '+esc(LINES[bkey].n)+'’s own tracker and copies your number to the clipboard — paste it there. Detected from the “'+esc(p4)+'” prefix (best-effort); not '+esc(LINES[bkey].n)+'? Pick another line below.</p></div>';
    }else{
-    h='<div class="trkcard"><p class="trkhdr">That looks like a booking or B/L number</p>'
+    var guess=/^[0-9]{10}$/.test(cn)?'dhl':((/^[0-9]{12}$/.test(cn)||/^[0-9]{15}$/.test(cn)||/^[0-9]{20,22}$/.test(cn))?'fedex':'');
+    var gn=guess?COURIERS[guess].n:'';
+    h='<div class="trkcard'+(guess?' ok':'')+'"><p class="trkhdr">'+(guess?('📦 Looks like a <b>'+esc(gn)+'</b> courier number'):'Courier, parcel or booking number')+'</p>'
       +'<p class="trknum">'+esc(cn)+'</p>'
-      +'<p class="trkhint">We couldn’t match it to a line automatically — container numbers are 4 letters + 7 digits. Pick your carrier below and search there; your entry is copied to the clipboard.</p></div>';
+      +'<div class="trkbtns">'+(guess?obtn(COURIERS[guess],cn,'Track on '+gn):'')+obtn(UNI.t17,cn,'17TRACK (any carrier)')+'</div>'
+      +'<p class="trkhint">'+(guess?('Opens '+esc(gn)+' and copies your number. Not '+esc(gn)+'? '):'We couldn’t match it automatically — container numbers are 4 letters + 7 digits. ')+'Pick your courier or line below; your entry is copied to the clipboard.</p>'
+      +'<div class="trkbtns alt">'+tiles(COURIERS,cn)+'</div></div>';
    }
   }
   box.innerHTML=h;
@@ -451,14 +508,15 @@ TRACKER_SCRIPT = """<script>
 
 # ---------------- tracking directory ----------------
 path = '/shipping/track'
-title = 'Track a container to Nepal: carrier & cargo tracking | Customs Nepal'
-desc = ("Track your ocean freight to Nepal. Links to every major shipping line's own container tracker, plus the "
-        "India-rail (CONCOR) and Nepal Customs clearance legs — and how the full journey is tracked end to end.")
-bc = [('Home', '/'), ('Shipping', '/shipping'), ('Track a container', '')]
+title = 'Track a shipment to Nepal: sea, air cargo & courier | Customs Nepal'
+desc = ("Track any shipment to Nepal in one box — ocean containers and B/Ls, air waybills (AWB), DHL / FedEx / UPS / "
+        "Aramex couriers and EMS post. We detect the carrier and link to its own official tracker; no data is stored.")
+bc = [('Home', '/'), ('Shipping', '/shipping'), ('Track a shipment', '')]
 out = [page_head(title, desc, path, bc), crumb_html(bc)]
-out.append('<h1>Track a container to Nepal</h1>')
-out.append('<p class="lede">Paste your container number — we’ll detect the shipping line and take you straight '
-           'to its own tracker. We don’t store tracking data; the live status lives on the carrier’s site.</p>')
+out.append('<h1>Track a shipment to Nepal</h1>')
+out.append('<p class="lede">Paste any tracking number — a sea container or B/L, an air waybill, a DHL / FedEx / UPS / '
+           'Aramex courier number, or an EMS postal code. We detect what it is and take you straight to the carrier’s '
+           'own official tracker. We don’t store tracking data; the live status lives on the carrier’s site.</p>')
 out.append(TRACKER_BOX)
 out.append('<div class="note">Because Nepal is landlocked, the full journey is usually tracked in <b>two or three '
            'legs</b>, each by a different party:\n'
@@ -476,6 +534,30 @@ out.append('</div>')
 out.append('<h2 class="sec">Inland & clearance (the Nepal leg)</h2>')
 out.append('<div class="guidegrid">')
 for name, url, note in INLAND:
+    out.append('<a class="chcard" href="%s" target="_blank" rel="noopener noreferrer nofollow">'
+               '<span class="t">%s ↗</span><span class="c">%s</span></a>' % (url, esc(name), esc(note)))
+out.append('</div>')
+out.append('<h2 class="sec">Air couriers &amp; express</h2>')
+out.append('<p>For parcels and documents by air — DHL, FedEx, UPS, Aramex and TNT. Paste the number in the box above to '
+           'auto-detect the courier, or open one directly:</p>')
+out.append('<div class="guidegrid">')
+for name, url, note in COURIER_DIR:
+    out.append('<a class="chcard" href="%s" target="_blank" rel="noopener noreferrer nofollow">'
+               '<span class="t">%s ↗</span><span class="c">%s</span></a>' % (url, esc(name), esc(note)))
+out.append('</div>')
+out.append('<h2 class="sec">Air cargo (by airline)</h2>')
+out.append('<p>Air freight moves on an <b>air waybill (AWB)</b> — an 11-digit number whose first three digits identify the '
+           'airline. Track on the airline’s own cargo site, or use a universal AWB lookup that reads the prefix for you:</p>')
+out.append('<div class="guidegrid">')
+for name, url, note in AIRCARGO_DIR:
+    out.append('<a class="chcard" href="%s" target="_blank" rel="noopener noreferrer nofollow">'
+               '<span class="t">%s ↗</span><span class="c">%s</span></a>' % (url, esc(name), esc(note)))
+out.append('</div>')
+out.append('<h2 class="sec">Post &amp; EMS</h2>')
+out.append('<p>For postal and EMS items — a code like <span class="mono">RR123456789NP</span> (ending in the destination '
+           'country, e.g. <b>NP</b> for Nepal):</p>')
+out.append('<div class="guidegrid">')
+for name, url, note in POSTAL_DIR:
     out.append('<a class="chcard" href="%s" target="_blank" rel="noopener noreferrer nofollow">'
                '<span class="t">%s ↗</span><span class="c">%s</span></a>' % (url, esc(name), esc(note)))
 out.append('</div>')
@@ -607,6 +689,9 @@ SHIPCSS = """
 .trktl-l{display:block;font-size:.84rem;color:var(--fg-2)}
 .trktl-t{display:block;font-size:.76rem;color:var(--muted)}
 .trktl-src{font-size:.76rem;color:var(--muted);margin:10px 0 0}
+.trkbtns.alt{gap:6px;margin-top:4px}
+.trkbtns.alt .btn{font-size:.8rem;padding:7px 11px;background:var(--card);color:var(--fg-2);border:1px solid var(--border)}
+.trkbtns.alt .btn:hover{border-color:var(--accent);color:var(--accent)}
 """
 css_path = pub / 'seo.css'
 cur = css_path.read_text(encoding='utf-8') if css_path.exists() else ''
