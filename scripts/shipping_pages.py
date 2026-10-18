@@ -375,16 +375,37 @@ TRACKER_SCRIPT = """<script>
  function norm(s){return(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
  function btn(key,num,useTpl){var L=LINES[key];var href=(useTpl&&L.t&&num)?L.t.replace('{n}',encodeURIComponent(num)):L.u;
   return '<a class="btn trkopen" href="'+href+'" target="_blank" rel="noopener noreferrer nofollow" data-num="'+esc(num||'')+'">Track on '+esc(L.n)+' ↗</a>';}
+ function fmtDate(s){try{var d=new Date(s);if(isNaN(d.getTime()))return s;return d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return s;}}
+ // Progressive enhancement: draw a live milestone timeline on this page IF the carrier is integrated
+ // and the server has an API key. Otherwise the server returns {configured:false} and nothing renders —
+ // the "Track on <line>" route-out stays as-is.
+ function liveStatus(cn,key){
+  try{
+   fetch('/api/track?n='+encodeURIComponent(cn)+'&carrier='+encodeURIComponent(key)).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok||!d.configured||!d.events||!d.events.length)return;
+    var box=document.getElementById('trkresult');if(!box)return;
+    var card=box.querySelector('.trkcard');var nm=(LINES[key]&&LINES[key].n)||key;
+    var tl='<div class="trktl"><p class="trktl-h">Live status · '+esc(nm)+'</p><ol class="trktl-list">';
+    for(var i=d.events.length-1;i>=0;i--){var e=d.events[i];
+     tl+='<li class="'+(e.planned?'pln':'act')+'"><span class="trktl-m">'+esc(e.milestone)+'</span>'
+       +(e.location?'<span class="trktl-l">'+esc(e.location)+'</span>':'')
+       +(e.time?'<span class="trktl-t">'+esc(fmtDate(e.time))+(e.planned?' · expected':'')+'</span>':'')+'</li>';}
+    tl+='</ol><p class="trktl-src">Live from '+esc(nm)+'’s tracking API · newest first. Still moving? The Nepal-bound rail &amp; customs legs follow the sea leg.</p></div>';
+    (card||box).insertAdjacentHTML('beforeend',tl);
+   }).catch(function(){});
+  }catch(e){}
+ }
  function render(raw){
   var box=document.getElementById('trkresult'); if(!box) return;
   var cn=norm(raw);
   if(!cn){box.innerHTML='';return;}
   var isC=iso6346(cn);
   var fmt=(cn.length===11)?(cn.slice(0,4)+' '+cn.slice(4,10)+'-'+cn.slice(10)):cn;
-  var h;
+  var h,detected=null;
   if(isC===true){
    var key=PFX[cn.slice(0,4)];
    if(key){
+    detected=key;
     h='<div class="trkcard ok"><p class="trkhdr">✓ Looks like a <b>'+esc(LINES[key].n)+'</b> container <span class="trkchk">check digit valid</span></p>'
       +'<p class="trknum">'+esc(fmt)+'</p><div class="trkbtns">'+btn(key,cn,true)+'</div>'
       +'<p class="trkhint">Opens '+esc(LINES[key].n)+'’s own tracker and copies the number to your clipboard. Not '+esc(LINES[key].n)+'? Pick another line below.</p></div>';
@@ -405,6 +426,7 @@ TRACKER_SCRIPT = """<script>
    var p4=cn.slice(0,4),bkey=(/^[A-Z]{4}/.test(cn)&&cn.length>=10)?(BLPFX[p4]||PFX[p4]):null;
    copy(cn);
    if(bkey){
+    detected=bkey;
     h='<div class="trkcard ok"><p class="trkhdr">✓ Looks like a <b>'+esc(LINES[bkey].n)+'</b> booking / B/L number</p>'
       +'<p class="trknum">'+esc(cn)+'</p><div class="trkbtns">'+btn(bkey,cn,false)+'</div>'
       +'<p class="trkhint">Opens '+esc(LINES[bkey].n)+'’s own tracker and copies your number to the clipboard — paste it there. Detected from the “'+esc(p4)+'” prefix (best-effort); not '+esc(LINES[bkey].n)+'? Pick another line below.</p></div>';
@@ -417,6 +439,7 @@ TRACKER_SCRIPT = """<script>
   box.innerHTML=h;
   var o=box.querySelectorAll('.trkopen'),i;
   for(i=0;i<o.length;i++){o[i].addEventListener('click',function(){var n=this.getAttribute('data-num');if(n)copy(n);});}
+  if(detected){liveStatus(cn,detected);}
  }
  var form=document.getElementById('trkform'),inp=document.getElementById('trkin');
  if(form&&inp){form.addEventListener('submit',function(e){e.preventDefault();render(inp.value);if(window.gtag){try{gtag('event','track_lookup');}catch(_){}}});}
@@ -572,6 +595,18 @@ SHIPCSS = """
 .trknum{font-family:var(--mono);font-size:1.1rem;letter-spacing:.02em;margin:.2em 0 .6em}
 .trkbtns{display:flex;flex-wrap:wrap;gap:8px;margin:.3em 0}
 .trkhint{font-size:.82rem;color:var(--muted);margin:.4em 0 0}
+.trktl{margin:14px 0 2px;border-top:1px solid var(--border);padding-top:12px}
+.trktl-h{margin:0 0 10px;font-weight:700;font-size:.9rem}
+.trktl-list{list-style:none;margin:0;padding:0}
+.trktl-list li{position:relative;padding:0 0 14px 20px;border-left:2px solid var(--border)}
+.trktl-list li:last-child{padding-bottom:0}
+.trktl-list li:before{content:"";position:absolute;left:-7px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--free);border:2px solid var(--card)}
+.trktl-list li.pln:before{background:var(--muted)}
+.trktl-list li.pln{opacity:.75}
+.trktl-m{display:block;font-weight:600;font-size:.9rem}
+.trktl-l{display:block;font-size:.84rem;color:var(--fg-2)}
+.trktl-t{display:block;font-size:.76rem;color:var(--muted)}
+.trktl-src{font-size:.76rem;color:var(--muted);margin:10px 0 0}
 """
 css_path = pub / 'seo.css'
 cur = css_path.read_text(encoding='utf-8') if css_path.exists() else ''
