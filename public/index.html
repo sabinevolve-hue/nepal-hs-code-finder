@@ -2103,16 +2103,19 @@ function treemapChart(el, dir){
       levels: [{ itemStyle: { borderWidth: 0, gapWidth: 3 } }, { colorSaturation: [.35, .6], itemStyle: { gapWidth: 2, borderColorSaturation: .5 } }],
       data: Object.values(secs).map((x, i) => ({ name: x.name, children: x.children, itemStyle: { color: pal[i % pal.length] } })) }] });
 }
+function slugify(s){ return String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 function sankeyChart(el){
   const mob = window.innerWidth < 640, N = mob ? 8 : 12;
   const cos = Object.keys(ST.flow).slice(0, N);
   const chTot = {}; cos.forEach(c => ST.flow[c].forEach(([ch, v]) => chTot[ch] = (chTot[ch] || 0) + v));
   const topCh = Object.entries(chTot).sort((a, b) => b[1] - a[1]).slice(0, N).map(x => +x[0]);
   const links = []; cos.forEach(c => { let other = 0; ST.flow[c].forEach(([ch, v]) => { if (topCh.includes(ch)) links.push({ source: c, target: chapName(ch), value: v }); else other += v; }); if (other) links.push({ source: c, target: 'Other goods', value: other }); });
-  const nodes = [...cos.map(c => ({ name: c, itemStyle: { color: tok('--imp') }, label: { position: 'right' } })), ...topCh.map(ch => ({ name: chapName(ch), itemStyle: { color: tok('--exp') }, label: { position: 'left' } })), { name: 'Other goods', itemStyle: { color: tok('--muted') }, label: { position: 'left' } }];
-  return ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => p.data.source ? `${esc(p.data.source)} → ${esc(p.data.target)}<br><b>${rs(p.data.value)}</b>` : `${esc(p.name)}<br><b>${rs(p.value)}</b>` },
+  const nodes = [...cos.map(c => ({ name: c, co: c, itemStyle: { color: tok('--imp') }, label: { position: 'right' } })), ...topCh.map(ch => ({ name: chapName(ch), ch, itemStyle: { color: tok('--exp') }, label: { position: 'left' } })), { name: 'Other goods', itemStyle: { color: tok('--muted') }, label: { position: 'left' } }];
+  const chart = ecInit(el, { tooltip: { confine: true, backgroundColor: tok('--card'), borderColor: tok('--border'), textStyle: { color: tok('--fg'), fontSize: 12 }, formatter: p => (p.dataType === 'edge' || p.data.source) ? `${esc(p.data.source)} → ${esc(p.data.target)}<br><b>${rs(p.data.value)}</b>` : `${esc(p.name)}<br><b>${rs(p.value)}</b>${(p.data.co || p.data.ch != null) ? '<br><span style="opacity:.6;font-size:11px">tap to open trade page</span>' : ''}` },
     series: [{ type: 'sankey', left: 4, right: 4, top: 8, bottom: 8, nodeWidth: 10, nodeGap: mob ? 10 : 8, orient: 'horizontal', nodeAlign: 'justify', draggable: false, emphasis: { focus: 'adjacency' }, lineStyle: { color: 'gradient', opacity: .35, curveness: .5 },
       label: { fontSize: mob ? 9 : 11, color: tok('--fg') }, data: nodes, links }] });
+  if (chart) { try { chart.getZr().setCursorStyle('pointer'); } catch (e) {} chart.on('click', p => { const d = (p && p.data) || {}; if (d.co) location.href = '/trade/country/' + slugify(d.co); else if (d.ch != null) location.href = '/trade/category/' + String(d.ch).padStart(2, '0'); else if (d.name === 'Other goods') location.href = '/trade/categories'; }); }
+  return chart;
 }
 
 let stView = 'overview', stSort = 'imp', stCountry = null, stChapter = null, stQ = '';
@@ -2184,7 +2187,7 @@ function renderStats(){
   }
   if (stView === 'flows'){
     if (!isLatest()) h += `<p class="fine">Country-to-product flows are available for FY ${ST.fy}; showing that year.</p>`;
-    h += fig('Where imports come from, and what they are', 'Largest source countries (left) flowing into the largest import categories (right), FY ' + ST.fy, `<div class="ech tall" id="ec-sankey" style="height:${window.innerWidth < 640 ? 520 : 460}px"></div>`);
+    h += fig('Where imports come from, and what they are', 'Largest source countries (left) flowing into the largest import categories (right), FY ' + ST.fy + ' — tap any country or category to open its trade page', `<div class="ech tall" id="ec-sankey" style="height:${window.innerWidth < 640 ? 520 : 460}px"></div>`);
     h += fig('Import sources over time', 'Top 6 sources by year', `<div class="ech" id="ec-co"></div>`);
   }
   if (stView === 'compare'){
