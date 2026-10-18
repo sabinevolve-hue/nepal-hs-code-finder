@@ -95,6 +95,8 @@ nav.tabbar{display:none}
 .trackmini input{flex:1 1 auto;min-width:0;height:34px;border:0;background:transparent;color:var(--fg);font-size:.9rem;outline:none}
 .trackmini input::placeholder{color:var(--muted)}
 .trackmini button{flex:0 0 auto;height:34px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;cursor:pointer}
+.trackmini-note{max-width:520px;margin:7px 4px 0;font-size:.8rem;line-height:1.5;color:var(--muted)}
+.trackmini-note b{color:var(--fg);font-weight:600}
 .explore{margin-top:var(--s5)}
 .xgroup+.xgroup{margin-top:var(--s4)}
 .xhead{display:flex;align-items:center;gap:10px;margin:0 0 var(--s2);font-size:.82rem;font-weight:800;letter-spacing:.01em;color:var(--fg)}
@@ -690,9 +692,10 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
     </div>
     <form class="trackmini" role="search" aria-label="Track a shipment" onsubmit="event.preventDefault();var v=(this.querySelector('input').value||'').trim();location.href='/shipping/track'+(v?('?n='+encodeURIComponent(v)):'');">
       <svg class="i" aria-hidden="true"><use href="#i-box"/></svg>
-      <input type="search" inputmode="latin" autocomplete="off" spellcheck="false" placeholder="Track a container or B/L number" aria-label="Container or bill-of-lading number">
+      <input type="search" inputmode="latin" autocomplete="off" spellcheck="false" placeholder="Track a shipment — container, air waybill, courier or EMS" aria-label="Tracking number — container, bill of lading, air waybill, courier or postal item">
       <button type="submit">Track</button>
     </form>
+    <p class="trackmini-note">Paste any tracking number — we detect the carrier (<b>sea container</b>, <b>air waybill</b>, <b>DHL · FedEx · UPS · Aramex</b> or <b>EMS post</b>) and take you to its official tracker. No sign-in, nothing stored.</p>
     <div class="toolbar" id="toolbar" hidden>
       <button class="chip" data-duty="all" aria-pressed="true">Any duty</button>
       <button class="chip" data-duty="free" aria-pressed="false">Duty free</button>
