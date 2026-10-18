@@ -125,9 +125,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
-NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-       ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/safta', 'SAFTA'), ('/trade-data', 'Trade'),
-       ('/browse', 'Browse'), ('/tariff', 'Tariff'), ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
+from nav import render_nav
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -136,7 +134,7 @@ def page_head(title, desc, path, breadcrumb, extra_ld=None):
     if extra_ld:
         lds += extra_ld
     ldj = ''.join('<script type="application/ld+json">' + json.dumps(x, ensure_ascii=False).replace('</', '<\\/') + '</script>' for x in lds)
-    nav = ''.join('<a href="%s"%s>%s</a>' % (h, ' class="cur"' if (path == h) else '', esc(l)) for h, l in NAV)
+    nav = render_nav(path, esc)
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'

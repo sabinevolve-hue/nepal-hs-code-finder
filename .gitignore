@@ -14,3 +14,4 @@ out/
 scripts/_pi_fixture.json
 node_modules/
 *.aab
+scripts/__pycache__/

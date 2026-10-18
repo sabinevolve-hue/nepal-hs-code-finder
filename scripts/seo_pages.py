@@ -13,6 +13,7 @@ app (navy, system font stack, light/dark) but is self-contained. No change to th
 Run after assemble.py:  python3 scripts/seo_pages.py
 """
 import pathlib, json, re, datetime, html
+from nav import render_nav
 
 root = pathlib.Path(__file__).resolve().parents[1]
 D = json.loads((root / 'data' / 'tariff.json').read_text(encoding='utf-8'))
@@ -163,12 +164,7 @@ def page_head(title, desc, path, breadcrumb):
                                **({"item": SITE + b[1]} if b[1] else {})}
                               for i, b in enumerate(breadcrumb)]}
     ldj = json.dumps(ld, ensure_ascii=False).replace('</', '<\\/')
-    NAV = [('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-           ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/safta', 'SAFTA'), ('/trade-data', 'Trade'), ('/browse', 'Browse'),
-           ('/tariff', 'Tariff'), ('/calculator', 'Calculator'), ('/faq', 'FAQ')]
-    def _cur(h):
-        return (path == h) or (h == '/tariff' and path.startswith('/tariff')) or (h == '/export' and path.startswith('/export')) or (h == '/shipping' and path.startswith('/shipping'))
-    nav = ''.join('<a href="%s"%s>%s</a>' % (h, ' class="cur"' if _cur(h) else '', esc(l)) for h, l in NAV)
+    nav = render_nav(path, esc)
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
