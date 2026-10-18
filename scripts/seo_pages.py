@@ -208,7 +208,7 @@ FOOT = ('<footer><div class="wrap">'
         'customs assessment — confirm the final HS code and taxes with the customs office or your clearing agent.</p>'
         '<p><b>Not a government website.</b> Customs Nepal is an independent, privately operated reference tool. '
         'It is not affiliated with, endorsed by, or representing the Government of Nepal.</p>'
-        '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · <a href="/faq">FAQ</a> · '
+        '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · <a href="/import-duty">Import duty by product</a> · <a href="/faq">FAQ</a> · '
         '<a href="/#calc">Duty calculator</a> · <a href="/#ai">Ask AI</a> · <a href="/about">About</a> · '
         '© customsnepal.com</p></div></footer>'
         '</body></html>')
