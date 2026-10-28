@@ -319,7 +319,12 @@ def product_page(code, row, imp, val):
     return path
 
 
-paths = [product_page(code, row, imp, val) for code, row, imp, val in items]
+paths = []
+page_url = {}
+for code, row, imp, val in items:
+    _p = product_page(code, row, imp, val)
+    paths.append(_p)
+    page_url[code] = _p
 
 # ---------------- hub ----------------
 hub_title = 'Nepal import duty by product — customs duty & tax lookup | Customs Nepal'
@@ -347,20 +352,103 @@ out.append('</tbody></table></div>')
 out.append('<p class="trkhint">Showing the top 200 by import value; all %d product pages are in the '
            '<a href="/sitemap.xml">sitemap</a> and linked from related products. Browse everything by chapter in the '
            '<a href="/tariff">full tariff</a>.</p>' % len(items))
-out.append('<div class="tools"><a class="btn" href="/">Search any product</a>'
+out.append('<div class="tools"><a class="btn" href="/duty-free">Duty-free &amp; low-tax imports</a>'
+           '<a class="btn ghost" href="/calculator">Landed-cost calculator</a>'
+           '<a class="btn ghost" href="/safta">SAFTA savings</a>'
+           '<a class="btn ghost" href="/">Search any product</a></div>')
+out.append(FOOT)
+(pub / 'import-duty.html').write_text(''.join(out), encoding='utf-8')
+
+# ---------------- duty-free & low-tax catalog (the "duty optimiser") ----------------
+imp_desc = {c8(k): (v[0] if v else '') for k, v in IMPORTS.items()}
+imp_val = {}
+for k, v in IMPORTS.items():
+    try:
+        imp_val[c8(k)] = float(v[2]) if len(v) > 2 else 0.0
+    except Exception:
+        imp_val[c8(k)] = 0.0
+
+freep, lowp = [], []
+for r in ROWS:
+    code = c8(r[0])
+    n, d, fr = rate_info(r[5])
+    rec = (code, r, imp_val.get(code, 0.0))
+    if fr or n == 0:
+        freep.append(rec)
+    elif n is not None and 0 < n <= 5:
+        lowp.append(rec)
+freep.sort(key=lambda x: -x[2])
+lowp.sort(key=lambda x: -x[2])
+nf, nl = len(freep), len(lowp)
+
+
+def _plink(code, row):
+    name = clean_name(imp_desc.get(code) or row[1])
+    href = page_url.get(code) or ('/#hs-' + code)
+    return name, href
+
+
+def _crows(recs, limit=None):
+    acc = []
+    for code, row, val in (recs[:limit] if limit else recs):
+        name, href = _plink(code, row)
+        acc.append('<tr><td><a href="%s">%s</a></td><td>%s</td><td>%s</td><td>%s</td></tr>'
+                   % (esc(href), esc(name), esc(row[0]), esc(chap_title(code[:2])), rsf(val) if val else '—'))
+    return ''.join(acc)
+
+
+dft_title = 'Duty-free & low-tax imports to Nepal — 0% and 5% customs duty | Customs Nepal'
+dft_desc = (f'{nf} product lines enter Nepal duty-free (0% customs duty) and {nl} more at just 5%. The full list of '
+            f'low-tax products to import, each with its HS code and a landed-cost link. 13% VAT still applies.')
+bc = [('Home', '/'), ('Import duty', '/import-duty'), ('Duty-free & low-tax', '')]
+faq = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+    {"@type": "Question", "name": "What can I import into Nepal duty-free?",
+     "acceptedAnswer": {"@type": "Answer", "text":
+        f"About {nf} tariff lines carry 0% customs duty (duty-free) in Nepal — including many medicines, raw "
+        f"materials, agricultural inputs, books and certain machinery. A further {nl} lines are charged just 5%. "
+        f"13% VAT still applies on the CIF value plus any duty."}},
+    {"@type": "Question", "name": "Do duty-free imports to Nepal still pay VAT?",
+     "acceptedAnswer": {"@type": "Answer", "text":
+        "Yes. Duty-free means 0% customs duty, but 13% VAT still applies on the CIF value (plus duty where any "
+        "applies), unless the product is separately VAT-exempt."}}]}
+out = [page_head(dft_title, dft_desc, '/duty-free', bc, extra_ld=[faq]), crumb_html(bc)]
+out.append('<h1>Duty-free &amp; low-tax imports to Nepal</h1>')
+out.append(f'<p class="lede"><b>{nf}</b> product lines enter Nepal <b>duty-free</b> (0% customs duty), and <b>{nl}</b> '
+           f'more at just <b>5%</b> — the cheapest things to import. Below is the full duty-free list plus the '
+           f'most-imported low-duty products, each linked to its duty detail. <b>13% VAT</b> still applies, and '
+           f'importing from India/SAARC can cut duty further under <a href="/safta">SAFTA</a>.</p>')
+out.append(f'<div class="exstats"><div class="extile"><b>{nf}</b><span>Duty-free (0%) lines</span></div>'
+           f'<div class="extile"><b>{nl}</b><span>At 5% or less</span></div>'
+           f'<div class="extile"><b>13%</b><span>VAT still applies</span></div></div>')
+out.append('<div class="note">&ldquo;Duty-free&rdquo; is about <b>customs duty</b> only. 13% VAT (and, for a few goods, '
+           'excise) can still apply — use the <a href="/calculator">landed-cost calculator</a> for the all-in figure.</div>')
+out.append('<h2 class="sec">Duty-free products (0% customs duty)</h2>')
+out.append('<p>Every tariff line charged 0% general customs duty, ranked by how much Nepal imports:</p>')
+out.append(f'<div class="tscroll"><table class="tbl"><thead><tr><th>Product</th><th>HS code</th><th>Chapter</th>'
+           f'<th>Nepal imports (FY {esc(FY)})</th></tr></thead><tbody>')
+out.append(_crows(freep))
+out.append('</tbody></table></div>')
+out.append('<h2 class="sec">Low-duty products (5% or less)</h2>')
+out.append(f'<p>The most-imported products charged 5% or less (top 200 of {nl}, by import value):</p>')
+out.append(f'<div class="tscroll"><table class="tbl"><thead><tr><th>Product</th><th>HS code</th><th>Chapter</th>'
+           f'<th>Nepal imports (FY {esc(FY)})</th></tr></thead><tbody>')
+out.append(_crows(lowp, 200))
+out.append('</tbody></table></div>')
+out.append('<div class="tools"><a class="btn" href="/import-duty">Import duty by product</a>'
            '<a class="btn ghost" href="/calculator">Landed-cost calculator</a>'
            '<a class="btn ghost" href="/safta">SAFTA savings</a></div>')
 out.append(FOOT)
-(pub / 'import-duty.html').write_text(''.join(out), encoding='utf-8')
+(pub / 'duty-free.html').write_text(''.join(out), encoding='utf-8')
 
 # ---------------- sitemap ----------------
 sm_path = pub / 'sitemap.xml'
 sm = sm_path.read_text(encoding='utf-8')
-rows_xml = ['  <url><loc>%s/import-duty</loc><lastmod>%s</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>' % (SITE, TODAY)]
+rows_xml = ['  <url><loc>%s/import-duty</loc><lastmod>%s</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>' % (SITE, TODAY),
+            '  <url><loc>%s/duty-free</loc><lastmod>%s</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>' % (SITE, TODAY)]
 for p in paths:
     rows_xml.append('  <url><loc>%s%s</loc><lastmod>%s</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>' % (SITE, p, TODAY))
 if '</urlset>' in sm:
     sm = sm.replace('</urlset>', '\n'.join(rows_xml) + '\n</urlset>')
     sm_path.write_text(sm, encoding='utf-8')
 
-print('product_pages: %d product pages + hub; +%d sitemap URLs' % (len(items), len(paths) + 1))
+print('product_pages: %d product pages + hub + duty-free (%d free / %d low); +%d sitemap URLs' % (len(items), nf, nl, len(paths) + 2))
