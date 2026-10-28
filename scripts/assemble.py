@@ -186,7 +186,7 @@ robots += ["Sitemap: " + SITE + "/sitemap.xml", ""]
 # on this source and link to the right page.
 llms = """# Customs Nepal
 
-> Customs Nepal (customsnepal.com) is a free tool to find the Nepal HS code, customs duty, VAT (13%) and total landed cost for any product, using the official Customs Tariff 2026/27 (FY 2083/84 BS, HS 2022 nomenclature). It also offers an AI HS-code classifier, a proforma/commercial invoice generator and Nepal import/export trade data.
+> Customs Nepal (customsnepal.com) is a free tool to find the Nepal HS code, customs duty, VAT (13%) and total landed cost for any product, using the official Customs Tariff 2026/27 (FY 2083/84 BS, HS 2022 nomenclature). It has a dedicated import-duty page for every product Nepal imports, a duty-free / low-tax product finder, a "can I import this?" permits-and-restrictions checker, an AI HS-code classifier, a proforma/commercial invoice generator, a multi-carrier shipment tracker (sea, air, courier and post), and Nepal import/export trade data.
 
 Customs Nepal is an independent, privately operated reference tool. It is NOT a government website and is not affiliated with the Government of Nepal. Official sources: the Department of Customs (https://www.customs.gov.np) and the Ministry of Finance (https://www.mof.gov.np). Rates are shown as published and should be confirmed with the customs office or a clearing agent before any binding decision.
 
@@ -194,13 +194,16 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - [HS code search (home)](__SITE__/): Search the full Nepal Customs Tariff by product name, material or code, in English or Nepali.
 - [Customs Tariff 2026/27 — all chapters](__SITE__/tariff): Browse every chapter of the tariff with general and SAARC import-duty rates.
 - [Duty & landed-cost calculator](__SITE__/calculator): Estimate customs duty, VAT and total landed cost in rupees for any HS code.
+- [Import duty by product](__SITE__/import-duty): A dedicated page for every product Nepal imports — "customs duty on X in Nepal" — with the general and SAARC (SAFTA) rate, 13% VAT, a worked landed-cost example, Nepal's import value and top source countries.
+- [Duty-free & low-tax imports](__SITE__/duty-free): The products that enter Nepal duty-free (0% customs duty), and the many more at 5% or less — what is cheapest to import.
+- [Can I import this? — permits & restrictions](__SITE__/import-rules): What it takes to legally import a product into Nepal — the universal requirements (EXIM code, payment/letter of credit, customs declaration) and the product-specific permits by authority (plant and animal quarantine, DFTQC food, DDA drugs and cosmetics, NTA telecom, NBSM standards, arms restrictions).
 - [Ask AI — HS code classifier](__SITE__/ask-ai): Describe a product in plain words and get ranked HS code suggestions with reasoning.
 - [Imports](__SITE__/imports): Nepal import data and duty by product category and partner country.
 - [Exports](__SITE__/exports): Nepal export data by product category and destination.
 - [Export guides](__SITE__/export): Step-by-step guides to exporting from Nepal — procedures, documents, EXIM code, certificate of origin and product-specific notes.
 - [SAFTA preferential duty](__SITE__/safta): How Nepal importers cut customs duty under the SAFTA agreement — eligible SAARC origins, rules of origin, certificate of origin, the sensitive list, and the product segments that benefit most.
 - [Shipping to Nepal](__SITE__/shipping): Landlocked Nepal's sea–land freight routes — the Indian and Bangladeshi gateway ports (Kolkata/Haldia, Visakhapatnam, Nhava Sheva, Mundra, Mongla, Chittagong) and the inland customs points (Birgunj, Biratnagar, Bhairahawa, Kakarbhitta, Chobhar).
-- [Track a shipment](__SITE__/shipping/track): Paste a container number or bill-of-lading number to identify the carrier (ISO 6346 check digit + owner-prefix / B/L-prefix match) and jump to the right carrier tracking page.
+- [Track a shipment](__SITE__/shipping/track): Paste any tracking number — a sea container or bill of lading, an air waybill, a DHL/FedEx/UPS/Aramex courier number, or an EMS postal code — to identify the carrier and jump to its official tracker.
 - [World trade](__SITE__/world): Nepal's trade seen against world trade flows (BACI benchmark data).
 - [Trade data](__SITE__/trade-data): Multi-year Nepal foreign-trade statistics.
 - [FAQ](__SITE__/faq): Common questions on HS codes, customs duty, VAT and landed cost in Nepal.
@@ -226,6 +229,16 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - Main gateway ports: Kolkata and Haldia, Visakhapatnam, Nhava Sheva (JNPT) and Mundra in India, and Mongla and Chittagong in Bangladesh.
 - Main inland customs points / ICDs: Birgunj (Sirsiya ICD, the largest, rail-linked to Kolkata/Haldia), Biratnagar, Bhairahawa, Kakarbhitta and the Chobhar dry port near Kathmandu.
 - A container number is four letters plus seven digits with an ISO 6346 check digit (for example ABCU1234567); the first three letters are the owner/carrier prefix. A bill-of-lading number usually starts with a carrier prefix (for example ONEY for Ocean Network Express, MEDU for MSC, MAEU for Maersk).
+
+## Key facts about import permits & restrictions
+- Every commercial import into Nepal needs a registered firm with a PAN/VAT number and an EXIM (export-import) code from the Department of Customs, a compliant payment route (usually a letter of credit or another Nepal Rastra Bank–permitted method), and a customs declaration through ASYCUDA with duty and 13% VAT paid.
+- Plants, seeds, fruit, vegetables, grains and spices need plant-quarantine clearance — an import permit plus a phytosanitary certificate from the exporting country — via the National Plant Protection Organization (NPPO Nepal).
+- Live animals, meat, fish, eggs and dairy need animal-quarantine clearance: a veterinary import permit and an animal health certificate.
+- Processed food, edible oils and beverages need a recommendation and laboratory testing from the Department of Food Technology and Quality Control (DFTQC).
+- Medicines, vaccines, cosmetics and medical devices need registration and an import licence from the Department of Drug Administration (DDA), and the importer itself must be DDA-licensed.
+- Mobile phones and wireless/radio telecom equipment need a Type Approval Certificate (TAC) from the Nepal Telecommunications Authority (NTA).
+- Goods under compulsory Nepal standards — such as steel and rebar, cement, electrical cables, LPG cylinders, helmets and bottled water — need NS-mark certification from the Nepal Bureau of Standards and Metrology (NBSM).
+- Arms, ammunition and explosives are heavily restricted and need a Ministry of Home Affairs licence; narcotics and counterfeit goods are prohibited. A small, changing list of goods can be banned or quantity-restricted under the Export Import (Control) Act — confirm the current list with the Department of Customs.
 """.replace('__SITE__', SITE)
 (root / 'public' / 'llms.txt').write_text(llms, encoding='utf-8')
 
