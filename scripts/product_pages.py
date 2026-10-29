@@ -152,6 +152,7 @@ FOOT = ('<footer><div class="wrap">'
         '</body></html>')
 
 from nav import render_nav
+from permits_data import permits_for
 
 # ---------------- join + filter ----------------
 TMAP = {c8(r[0]): r for r in ROWS}
@@ -282,6 +283,14 @@ def product_page(code, row, imp, val):
                    '<a href="/calculator">calculator</a> for the exact figure; 13%% VAT still applies on the CIF value '
                    'plus duty.</div>' % esc(gen_d))
 
+    perms = permits_for(code)
+    if perms:
+        pl = '; '.join('<b>%s</b> — %s' % (esc(p['n']), esc(p['p'])) for p in perms)
+        out.append('<h2 class="sec">Import permits for this product</h2>')
+        out.append('<div class="note">Beyond customs duty, this is a <b>controlled import</b>. On top of the universal '
+                   'requirements (an EXIM code, a payment route and a customs declaration), it is likely to need: %s. '
+                   '<a href="/import-rules?hs=%s">Full permit &amp; restriction details for this product &rarr;</a></div>' % (pl, code))
+
     srcs = top_sources(imp)
     out.append('<h2 class="sec">Nepal&rsquo;s imports of %s</h2>' % esc(name))
     ctx = 'Nepal imported about <b>%s</b> of %s in FY&nbsp;%s' % (rsf(val), esc(name), esc(FY))
@@ -312,8 +321,9 @@ def product_page(code, row, imp, val):
         out.append('</div>')
 
     out.append('<div class="tools"><a class="btn" href="/calculator">Full landed-cost calculator</a>'
+               '<a class="btn ghost" href="/import-rules?hs=%s">Can I import this? Permits</a>'
                '<a class="btn ghost" href="/#hs-%s">Open %s in the tariff</a>'
-               '<a class="btn ghost" href="/tariff/%02d">Chapter %s</a></div>' % (code, esc(dotted), int(ch2), esc(ch2)))
+               '<a class="btn ghost" href="/tariff/%02d">Chapter %s</a></div>' % (code, code, esc(dotted), int(ch2), esc(ch2)))
     out.append(FOOT)
     (pub / 'import-duty' / (slug(name) + '-' + code + '.html')).write_text(''.join(out), encoding='utf-8')
     return path
