@@ -213,9 +213,46 @@ Playwright scripts were used per feature (route ECharts/ExcelJS/SheetJS from loc
 - **Trade values look wrong:** remember source is Rs. thousand → page ×1000; 1 Arab = NPR 1 billion.
 - **SSL/"No SSL" warning at Nest Nepal:** ignore — SSL is issued by Vercel (nameservers point to Vercel). Never buy SSL at Nest Nepal.
 
+## 14. world.customsnepal.com (prerendered SPA)
+
+Separate Vercel project `customsnepal-world` (Root Directory `world`, Framework **Other**, **no build step** —
+it serves the committed files as-is). Every public URL is a **prerendered static page**; the SPA boots on top.
+
+```
+world-src/app.js     SPA source (edit here — NOT world/index.html, which is generated)
+world-src/app.css    SPA styles
+world-src/meta.json  shared data: official sources, product groups, export guides (EXGUIDES)
+world/data/*.json    hs / trade / prod / nepal / nepduty (from world_data.py, world_trade.py, world_products.py, world_nepduty.py)
+
+python3 scripts/world_prerender.py     # ALWAYS run after editing world-src/* or refreshing world/data/*, then commit world/
+```
+
+What it writes (all committed):
+- `world/index.html` + `world/<route>.html` for all 5,961 routes (`/hs`, `/hs/chapter/NN`, `/hs/code/NNNNNN`, `/trade`,
+  `/trade/<iso3>`, `/trade/product/<group>`, `/nepal`, `/nepal/exports[/<iso3>|/guide/<slug>]`). `cleanUrls` serves
+  them extension-less. Each has its own `<title>`, description, self-canonical, OG, JSON-LD (WebPage + BreadcrumbList +
+  DefinedTerm / Dataset / Article) and the full server-rendered content with plain `<a href>` links.
+- `world/404.html` — unknown URLs get a real **404** (no SPA catch-all rewrite any more).
+- `world/assets/world.<hash>.css|js` — shared, immutable-cached; pages stay ~15 KB each.
+- `world/sitemap.xml` = sitemap **index** → `sitemap-{hubs,product-groups,hs-chapters,countries,nepal-exports,hs-codes}.xml`.
+  `<lastmod>` is honest: `scripts/world_lastmod.json` stores each URL's content hash and the date it last changed.
+- `world/vercel.json` (generated): cleanUrls, no trailing slash, redirects for codes the data links to that HS 2022 lacks.
+
+Rules: page titles exist twice (`PT` in app.js and `T` in world_prerender.py) and view markup is mirrored in Python —
+change both. On first load the SPA keeps the server-rendered `<head>` (`<meta name="cn-route">`) and waits for the
+per-product JSON before rendering, so there is no flash or layout shift. World pages must not target "hs code nepal"
+(the main site owns it) — Nepal-specific facts link to customsnepal.com.
+
+**`customsnepal.com/world` mount** (`scripts/mount_world.py`, part of `npm run build`): a single SPA shell with CSS/JS
+inlined and **no static canonical** — the SPA sets the canonical to the matching `world.customsnepal.com` URL, so the
+mount never competes with the subdomain.
+
+Local check: serve `world/` with any static server that maps `/x` → `x.html` and falls back to `404.html`.
+
+
 ---
 
-## 14. Roadmap / possible next steps
+## 15. Roadmap / possible next steps
 
 - Per-IP rate limiting on `/api/classify` (Vercel KV/Upstash) + DeepSeek spend cap.
 - Optional cookie-consent banner for international visitors.
