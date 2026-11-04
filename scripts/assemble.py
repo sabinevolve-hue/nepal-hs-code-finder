@@ -20,10 +20,11 @@ DATA_FILES = [('tariff.json', 't.json'), ('stats.json', 'st.json'),
 # SEO constants
 # ---------------------------------------------------------------------------
 SITE = 'https://www.customsnepal.com'
-TITLE = 'Customs Nepal — Nepal HS Code, Import Duty & Customs Tariff 2026/27'
-DESC = ('Find the Nepal HS code, customs duty, VAT and landed cost for any product. '
-        'Search the full Customs Tariff 2026/27, explore trade data and generate a '
-        'proforma invoice — free.')
+# Head terms from Search Console: "hs code nepal", "nepal customs tariff", "custom tariff nepal",
+# "nepal bhansar rate". Tariff = Customs Tariff 2026/27 published by the Department of Customs = FY 2083/84 BS.
+TITLE = 'HS Code Nepal & Nepal Customs Tariff 2083/84 | Customs Nepal'
+DESC = ('Search any HS code in the official Nepal Customs Tariff 2083/84 (2026/27): import duty (bhansar rate), '
+        'SAARC rate, 13% VAT and landed cost for all 6,340 tariff lines. Free calculator and AI HS classifier.')
 OGIMG = SITE + '/og.png'
 TODAY = datetime.date.today().isoformat()
 # Google Search Console HTML-tag verification (optional fallback; GA4 verification needs none).
@@ -219,7 +220,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - To claim the SAARC rate, the importer needs a SAFTA Certificate of Origin issued in the exporting country. It is valid for 12 months from the date of issue.
 - Rules of origin: the general rule is a change of tariff heading (CTH) at 4-digit HS level plus at least 40% domestic value addition; for least-developed members (which include Nepal) the value-addition threshold is 30%.
 - Each country keeps a Sensitive List of products excluded from SAFTA concessions; goods on the importing country's sensitive list do not get the preferential rate.
-- Nepal is scheduled to graduate from least-developed-country (LDC) status in 2026, which gradually changes the concessions and thresholds it can use.
+- Nepal's graduation from least-developed-country (LDC) status was originally due in November 2026; on 29-30 October 2026 the UN General Assembly extended its preparatory period by three years, so Nepal now remains an LDC until 24 November 2029. Until then the LDC concessions (such as the 30% SAFTA value-addition threshold) continue to apply.
 
 ## Key facts about shipping to Nepal
 - Nepal is landlocked, so almost all overseas cargo arrives by sea at an Indian or Bangladeshi port and then moves overland to an inland customs point in Nepal.

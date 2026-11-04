@@ -1,7 +1,7 @@
 /* Customs Nepal service worker — offline shell + fresh-on-online.
    Bump CACHE when the caching strategy changes. The app itself auto-updates
    because navigations are network-first (latest deploy always wins online). */
-const CACHE = 'cn-v2';
+const CACHE = 'cn-v3';
 const CORE = ['/', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/seo.css'];
 
 self.addEventListener('install', (e) => {
@@ -31,7 +31,8 @@ self.addEventListener('fetch', (e) => {
   if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req)
-        .then((r) => { const cp = r.clone(); caches.open(CACHE).then((c) => c.put('/', cp)); return r; })
+        // cache only successful pages, each under its own URL (never a 404 or another page as the '/' shell)
+        .then((r) => { if (r.ok) { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(url.pathname === '/' ? '/' : req, cp)); } return r; })
         .catch(() => caches.match(req).then((m) => m || caches.match('/')))
     );
     return;

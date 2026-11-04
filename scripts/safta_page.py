@@ -264,15 +264,16 @@ out.append('<p>For imports <b>from India</b>, the bilateral <b>Nepal–India Tre
            'SAFTA route for the specific product.</p>')
 
 out.append('<h2 class="sec">Policy watch: Nepal’s LDC graduation</h2>')
-out.append('<div class="note">Nepal is scheduled to <b>graduate from Least Developed Country (LDC) status in 2026</b>. '
-           'Graduation mainly affects Nepal’s <b>exports</b> — it phases out LDC-specific preferences (EU EBA, GSP) '
+out.append('<div class="note">Nepal&rsquo;s graduation from <b>Least Developed Country (LDC)</b> status was due in November 2026, '
+           'but in late October 2026 the <b>UN General Assembly extended Nepal&rsquo;s preparatory period to 24 November 2029</b>. '
+           'Nepal therefore stays an LDC — with its LDC concessions — until then. When it does graduate, the change mainly affects Nepal’s <b>exports</b> — it phases out LDC-specific preferences (EU EBA, GSP) '
            'and raises the SAFTA Rules-of-Origin value-addition threshold Nepali <b>exporters</b> must meet (from 30% '
            'toward 40%). The SAFTA duty Nepali <b>importers</b> pay on SAARC goods is set by Nepal’s own tariff '
            'schedule and is not changed by graduation itself, but the wider preferential-trade picture shifts — '
            'worth planning for.</div>')
 
 out.append('<div class="tools"><a class="btn" href="/calculator">Landed-cost calculator (SAARC rate)</a>'
-           '<a class="btn ghost" href="/imports">Import duty &amp; HS codes</a>'
+           '<a class="btn ghost" href="/import-duty">Import duty by product</a>'
            '<a class="btn ghost" href="/tariff">Full tariff</a></div>')
 out.append('<p class="fineprint">Figures computed from the Nepal Customs Tariff 2026/27 (general vs SAARC rate per HS '
            'line; specific/compound-rate lines excluded). The SAARC rate applies only with a valid certificate of '
