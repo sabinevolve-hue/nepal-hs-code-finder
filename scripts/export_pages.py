@@ -24,7 +24,7 @@ HSDESC = {s[0]: s[1] for s in HS['subs']}
 ISO = {c['iso']: c['name'] for c in TRADE['countries']}
 
 SITE = 'https://www.customsnepal.com'
-WORLD = '/world/nepal/exports'           # interactive explorer (same domain, subdirectory)
+WORLD = 'https://world.customsnepal.com/nepal/exports'   # interactive explorer (world.customsnepal.com owns these pages)
 TODAY = datetime.date.today().isoformat()
 
 def esc(s):
@@ -47,7 +47,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
-from nav import render_nav
+from nav import render_nav, OTHER_SITES
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -93,7 +93,7 @@ FOOT = ('<footer><div class="wrap">'
         '<a href="https://nepaltradeportal.gov.np" target="_blank" rel="noopener noreferrer">Nepal Trade Information Portal</a> before you ship.</p>'
         '<p><b>Not a government website.</b> Customs Nepal is an independent reference tool, not affiliated with the Government of Nepal.</p>'
         '<p><a href="/">Home</a> · <a href="/export">Export guides</a> · <a href="' + WORLD + '">Export Explorer</a> · '
-        '<a href="/tariff">Tariff</a> · <a href="/faq">FAQ</a> · © customsnepal.com</p></div></footer>'
+        '<a href="/tariff">Tariff</a> · <a href="/faq">FAQ</a> · © customsnepal.com</p>' + OTHER_SITES + '</div></footer>'
         '</body></html>')
 
 # ---------------- guide content (prose; stats computed from data) ----------------

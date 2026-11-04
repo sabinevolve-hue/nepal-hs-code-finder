@@ -13,7 +13,7 @@ app (navy, system font stack, light/dark) but is self-contained. No change to th
 Run after assemble.py:  python3 scripts/seo_pages.py
 """
 import pathlib, json, re, datetime, html
-from nav import render_nav
+from nav import render_nav, OTHER_SITES
 
 root = pathlib.Path(__file__).resolve().parents[1]
 D = json.loads((root / 'data' / 'tariff.json').read_text(encoding='utf-8'))
@@ -211,7 +211,7 @@ FOOT = ('<footer><div class="wrap">'
         'It is not affiliated with, endorsed by, or representing the Government of Nepal.</p>'
         '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · <a href="/import-duty">Import duty by product</a> · <a href="/faq">FAQ</a> · '
         '<a href="/#calc">Duty calculator</a> · <a href="/#ai">Ask AI</a> · <a href="/about">About</a> · '
-        '© customsnepal.com</p></div></footer>'
+        '© customsnepal.com</p>' + OTHER_SITES + '</div></footer>'
         '</body></html>')
 
 # ---- chapter pages ----

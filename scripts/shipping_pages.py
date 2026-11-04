@@ -35,7 +35,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
-from nav import render_nav
+from nav import render_nav, OTHER_SITES
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -83,7 +83,7 @@ FOOT = ('<footer><div class="wrap">'
         'clearance is by the <a href="https://www.customs.gov.np" target="_blank" rel="noopener noreferrer nofollow">Department of Customs</a>.</p>'
         '<p><b>Not a government website.</b> Customs Nepal is an independent reference tool, not affiliated with the Government of Nepal.</p>'
         '<p><a href="/">Home</a> · <a href="/shipping">Shipping</a> · <a href="/shipping/track">Track a container</a> · '
-        '<a href="/imports">Imports</a> · <a href="/export">Export guides</a> · <a href="/calculator">Landed-cost calculator</a> · © customsnepal.com</p></div></footer>'
+        '<a href="/imports">Imports</a> · <a href="/export">Export guides</a> · <a href="/calculator">Landed-cost calculator</a> · © customsnepal.com</p>' + OTHER_SITES + '</div></footer>'
         '</body></html>')
 
 # ---------------- nodes (curated reference) ----------------

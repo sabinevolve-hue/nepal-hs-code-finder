@@ -1,0 +1,33 @@
+# Customs Nepal — World HS Codes & Global Trade
+
+> world.customsnepal.com is a free reference to the international Harmonized System (HS 2022: 5,613 six-digit codes in 97 chapters) and to the merchandise trade of 207 economies — world trade value, top exporters and importers and world unit prices for every HS code, country trade profiles, trade by product group, and what Nepal exports to each market. It is the international companion to customsnepal.com.
+
+## Key facts
+- Publisher: Customs Nepal (https://www.customsnepal.com/), an independent, privately operated reference tool. It is NOT a government website and is not affiliated with the Government of Nepal, the World Customs Organization or any other official body.
+- HS nomenclature: HS 2022, © World Customs Organization. Six-digit codes are international; national tariff lines (for example Nepal's 8-digit codes) are on customsnepal.com.
+- Trade data: World Bank and World Bank WITS (sourced from UN Comtrade) for country totals and partners; BACI (CEPII), reconciled UN Comtrade data, for 2024 product-level flows, world prices and Nepal's exports.
+- Figures are indicative — verify against official national sources before commercial decisions.
+- Every page is a static, server-rendered HTML page with its own canonical URL.
+
+## Main pages
+- [Home](https://world.customsnepal.com/): Search world HS codes and jump to global trade data.
+- [World HS code finder](https://world.customsnepal.com/hs): Search all 5,613 six-digit HS 2022 codes by product or number.
+- [HS chapter example — Chapter 09, coffee, tea, mate and spices](https://world.customsnepal.com/hs/chapter/09): Every six-digit code in a chapter, grouped by heading. URL pattern: /hs/chapter/NN (01–97).
+- [HS code example — 0908.31 cardamom](https://world.customsnepal.com/hs/code/090831): One six-digit code with world trade, top exporters/importers and world price. URL pattern: /hs/code/NNNNNN.
+- [Global trade](https://world.customsnepal.com/trade): World merchandise trade, rankings of exporters and importers, regional shares and product groups.
+- [Country profile example — India](https://world.customsnepal.com/trade/ind): Exports, imports, trade balance, trend, partners and products for one economy. URL pattern: /trade/<ISO3 lowercase>.
+- [Country profile — China](https://world.customsnepal.com/trade/chn): China trade profile.
+- [Country profile — United States](https://world.customsnepal.com/trade/usa): United States trade profile.
+- [Trade by product group — machinery & electronics](https://world.customsnepal.com/trade/product/machinery-and-electronics): Top exporters and importers for an HS product group (16 groups).
+- [Trade by product group — textiles & clothing](https://world.customsnepal.com/trade/product/textiles-and-clothing): Top exporters and importers of textiles and clothing.
+- [Nepal in world trade](https://world.customsnepal.com/nepal): Nepal's imports, exports and deficit, where Nepal pays more than the world price, and export openings.
+- [Nepal Export Explorer](https://world.customsnepal.com/nepal/exports): What Nepal exports, to which markets, with world-price benchmarks.
+- [Nepal exports to India](https://world.customsnepal.com/nepal/exports/ind): Every product Nepal shipped to its largest market. URL pattern: /nepal/exports/<ISO3 lowercase>.
+- [Nepal exports to the United States](https://world.customsnepal.com/nepal/exports/usa): Products Nepal ships to the US.
+- [Export guide — large cardamom](https://world.customsnepal.com/nepal/exports/guide/cardamom): Exporting large cardamom (alaichi) from Nepal.
+- [Export guide — hand-knotted carpets](https://world.customsnepal.com/nepal/exports/guide/carpets): Exporting hand-knotted woollen carpets from Nepal.
+- [Sitemap](https://world.customsnepal.com/sitemap.xml): Sitemap index of all pages.
+
+## Related sites
+- [customsnepal.com](https://www.customsnepal.com/): Nepal HS codes, customs tariff 2083/84 (2026/27) and import-duty calculator — the place for Nepal-specific duty, VAT and landed cost.
+- [nepalpublicdata.com](https://nepalpublicdata.com/): Nepal public statistics — population, budget, trade and places (budget explainer at https://nepalpublicdata.com/budget/).

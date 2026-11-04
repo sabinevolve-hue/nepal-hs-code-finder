@@ -16,6 +16,7 @@ Outputs (committed; the customsnepal-world Vercel project has no build step)
   world/index.html, world/<route>.html (served extension-less via cleanUrls), world/404.html
   world/assets/world.<hash>.css|js (immutable, shared by every page), world/favicon.svg
   world/sitemap.xml (sitemap index) + world/sitemap-*.xml (one per page type, honest <lastmod>)
+  world/llms.txt, world/robots.txt are hand-maintained static files (not generated) — served as text/plain
   world/vercel.json    (static-first routing; redirects for codes the data links to but HS 2022 doesn't have)
   scripts/world_lastmod.json  per-URL content hash + date it last changed (drives <lastmod>/dateModified)
 
@@ -643,7 +644,12 @@ def header(k):
     return (f'<header class="bar"><div class="wrap"><a class="logo" href="/" data-nav><span class="mk">HS</span><span>Customs Nepal<small>World HS &amp; Trade</small></span></a>'
             f'<nav class="nav">{links}<a class="ext" href="{MAIN}" target="_blank" rel="noopener">Nepal tools ↗</a></nav></div></header>')
 
-FOOTER = ('<footer><div class="wrap"><p style="margin:0 0 6px"><b style="color:var(--fg-2)">world.customsnepal.com</b> — an international companion to <a href="https://customsnepal.com">customsnepal.com</a>.</p>'
+# "Our other sites": the Nepal-data cluster siblings (AI-search / site-network spec) — plain followed links whose anchor is
+# the site's role + domain. Same wording as OTHER_SITES in scripts/nav.py (main site). No links to unrelated sites.
+OTHER_SITES = ('<p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other sites:</b> '
+               '<a href="https://www.customsnepal.com/">Nepal HS codes, customs tariff 2083/84 &amp; import-duty calculator — customsnepal.com</a> · '
+               '<a href="https://nepalpublicdata.com/">Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com</a></p>')
+FOOTER = ('<footer><div class="wrap"><p style="margin:0 0 6px"><b style="color:var(--fg-2)">world.customsnepal.com</b> — the international companion to Customs Nepal.</p>' + OTHER_SITES +
           '<p style="margin:0">HS nomenclature © World Customs Organization. Trade figures: World Bank &amp; World Bank WITS (sourced from UN Comtrade). This is an independent reference tool, not affiliated with any government or the WCO. Figures are indicative — verify against official sources before commercial decisions.</p></div></footer>')
 
 GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script>'
@@ -719,6 +725,8 @@ def write_vercel_json():
             {'source': '/assets/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]},
             {'source': '/data/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'},
                                                  {'key': 'X-Robots-Tag', 'value': 'noindex'}]},
+            {'source': '/(llms\\.txt|robots\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
+                                                                {'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             {'source': '/(sitemap.*\\.xml)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             {'source': '/(.*)', 'headers': [{'key': 'X-Content-Type-Options', 'value': 'nosniff'},
                                             {'key': 'Referrer-Policy', 'value': 'strict-origin-when-cross-origin'}]}]}
