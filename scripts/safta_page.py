@@ -125,7 +125,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
-from nav import render_nav
+from nav import render_nav, OTHER_SITES
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -171,7 +171,7 @@ FOOT = ('<footer><div class="wrap">'
         '<a href="https://www.saarc-sec.org" target="_blank" rel="noopener noreferrer nofollow">SAARC Secretariat</a> before you import.</p>'
         '<p><b>Not a government website.</b> Customs Nepal is an independent reference tool, not affiliated with the Government of Nepal or SAARC.</p>'
         '<p><a href="/">Home</a> · <a href="/safta">SAFTA</a> · <a href="/imports">Imports</a> · <a href="/calculator">Landed-cost calculator</a> · '
-        '<a href="/tariff">Tariff</a> · <a href="/faq">FAQ</a> · © customsnepal.com</p></div></footer>'
+        '<a href="/tariff">Tariff</a> · <a href="/faq">FAQ</a> · © customsnepal.com</p>' + OTHER_SITES + '</div></footer>'
         '</body></html>')
 
 MEMBERS = "Afghanistan, Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan and Sri Lanka"

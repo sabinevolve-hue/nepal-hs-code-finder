@@ -9,6 +9,8 @@
 2. Every sitemap URL is a real page (its own file, not the SPA fallback) whose canonical is itself.
 3. Internal links on generated pages resolve to a real file, an SPA route, or a known rewrite —
    unknown paths return 404, so a broken link would be a real 404.
+4. Links to https://world.customsnepal.com/... resolve to a prerendered page in world/, and every generated page
+   with a footer carries the "Our other sites" block (world.customsnepal.com + nepalpublicdata.com).
 
 Run last:  python3 scripts/check_pages.py
 """
@@ -123,6 +125,24 @@ for f in [pub / 'index.html'] + sorted(p for p in pub.rglob('*.html') if 'world'
         bad_links.setdefault(href, []).append(str(f.relative_to(pub)))
 for href, where in sorted(bad_links.items()):
     errors.append('broken internal link %s (on %d pages, e.g. %s)' % (href, len(where), where[0]))
+
+# ---------------- 4. links to world.customsnepal.com + "Our other sites" footer ----------------
+# Links into the world subdomain must hit a prerendered page in world/ (unknown world URLs are real 404s).
+WORLD_SITE = 'https://world.customsnepal.com'
+wdir = root / 'world'
+bad_world, no_block = {}, []
+for f in [pub / 'index.html'] + sorted(p for p in pub.rglob('*.html') if 'world' not in p.parts):
+    h = f.read_text(encoding='utf-8')
+    for href in set(re.findall(r'href="' + re.escape(WORLD_SITE) + r'(/[^"#?]*)', h)):
+        p = href.rstrip('/')
+        if not (p == '' or (wdir / (p.lstrip('/') + '.html')).is_file() or (wdir / p.lstrip('/')).is_file()):
+            bad_world.setdefault(href, []).append(str(f.relative_to(pub)))
+    if '<footer' in h and not ('href="%s/"' % WORLD_SITE in h and 'href="https://nepalpublicdata.com/"' in h and 'Our other sites' in h):
+        no_block.append(str(f.relative_to(pub)))
+for href, where in sorted(bad_world.items()):
+    errors.append('broken link %s%s (on %d pages, e.g. %s)' % (WORLD_SITE, href, len(where), where[0]))
+if no_block:
+    errors.append('%d page(s) with a footer but no "Our other sites" block, e.g. %s' % (len(no_block), no_block[0]))
 
 print('check_pages: %d import-duty pages (%d country rows), %d sitemap URLs, links checked'
       % (len(pages), n_rows, len(set(locs))))

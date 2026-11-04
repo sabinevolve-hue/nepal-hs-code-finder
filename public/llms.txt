@@ -15,7 +15,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - [SAFTA preferential duty](https://www.customsnepal.com/safta): How Nepal importers cut customs duty under the SAFTA agreement — eligible SAARC origins, rules of origin, certificate of origin, the sensitive list, and the product segments that benefit most.
 - [Shipping to Nepal](https://www.customsnepal.com/shipping): Landlocked Nepal's sea–land freight routes — the Indian and Bangladeshi gateway ports (Kolkata/Haldia, Visakhapatnam, Nhava Sheva, Mundra, Mongla, Chittagong) and the inland customs points (Birgunj, Biratnagar, Bhairahawa, Kakarbhitta, Chobhar).
 - [Track a shipment](https://www.customsnepal.com/shipping/track): Paste a container number or bill-of-lading number to identify the carrier (ISO 6346 check digit + owner-prefix / B/L-prefix match) and jump to the right carrier tracking page.
-- [World trade](https://www.customsnepal.com/world): Nepal's trade seen against world trade flows (BACI benchmark data).
+- [World HS codes & global trade](https://world.customsnepal.com/): International HS 2022 codes and the trade of 207 economies, with Nepal's trade seen against world flows (BACI benchmark data).
 - [Trade data](https://www.customsnepal.com/trade-data): Multi-year Nepal foreign-trade statistics.
 - [FAQ](https://www.customsnepal.com/faq): Common questions on HS codes, customs duty, VAT and landed cost in Nepal.
 - [About](https://www.customsnepal.com/about): What Customs Nepal is, who it is for, and its data sources.
@@ -40,3 +40,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - Main gateway ports: Kolkata and Haldia, Visakhapatnam, Nhava Sheva (JNPT) and Mundra in India, and Mongla and Chittagong in Bangladesh.
 - Main inland customs points / ICDs: Birgunj (Sirsiya ICD, the largest, rail-linked to Kolkata/Haldia), Biratnagar, Bhairahawa, Kakarbhitta and the Chobhar dry port near Kathmandu.
 - A container number is four letters plus seven digits with an ISO 6346 check digit (for example ABCU1234567); the first three letters are the owner/carrier prefix. A bill-of-lading number usually starts with a carrier prefix (for example ONEY for Ocean Network Express, MEDU for MSC, MAEU for Maersk).
+
+## Related sites
+- [world.customsnepal.com](https://world.customsnepal.com/): World HS codes and global trade data by country and product — the international companion to this site (its own llms.txt: https://world.customsnepal.com/llms.txt).
+- [nepalpublicdata.com](https://nepalpublicdata.com/): Nepal public statistics — population, budget, trade and places (budget explainer at https://nepalpublicdata.com/budget/).

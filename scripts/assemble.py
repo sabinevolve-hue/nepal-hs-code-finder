@@ -167,6 +167,7 @@ for _src, _out in DATA_FILES:
 # against accidental AI blocking, so ChatGPT, Claude, Perplexity, Gemini, Copilot, Apple
 # Intelligence, etc. may crawl, index and cite the tariff data.
 AI_AGENTS = [
+    "Googlebot",                                          # Google Search (AI Overviews / AI Mode)
     "GPTBot", "OAI-SearchBot", "ChatGPT-User",            # OpenAI (training, search, browsing)
     "ClaudeBot", "anthropic-ai", "Claude-Web", "Claude-User", "Claude-SearchBot",  # Anthropic
     "PerplexityBot", "Perplexity-User",                   # Perplexity
@@ -202,7 +203,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - [SAFTA preferential duty](__SITE__/safta): How Nepal importers cut customs duty under the SAFTA agreement — eligible SAARC origins, rules of origin, certificate of origin, the sensitive list, and the product segments that benefit most.
 - [Shipping to Nepal](__SITE__/shipping): Landlocked Nepal's sea–land freight routes — the Indian and Bangladeshi gateway ports (Kolkata/Haldia, Visakhapatnam, Nhava Sheva, Mundra, Mongla, Chittagong) and the inland customs points (Birgunj, Biratnagar, Bhairahawa, Kakarbhitta, Chobhar).
 - [Track a shipment](__SITE__/shipping/track): Paste a container number or bill-of-lading number to identify the carrier (ISO 6346 check digit + owner-prefix / B/L-prefix match) and jump to the right carrier tracking page.
-- [World trade](__SITE__/world): Nepal's trade seen against world trade flows (BACI benchmark data).
+- [World HS codes & global trade](https://world.customsnepal.com/): International HS 2022 codes and the trade of 207 economies, with Nepal's trade seen against world flows (BACI benchmark data).
 - [Trade data](__SITE__/trade-data): Multi-year Nepal foreign-trade statistics.
 - [FAQ](__SITE__/faq): Common questions on HS codes, customs duty, VAT and landed cost in Nepal.
 - [About](__SITE__/about): What Customs Nepal is, who it is for, and its data sources.
@@ -227,6 +228,10 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - Main gateway ports: Kolkata and Haldia, Visakhapatnam, Nhava Sheva (JNPT) and Mundra in India, and Mongla and Chittagong in Bangladesh.
 - Main inland customs points / ICDs: Birgunj (Sirsiya ICD, the largest, rail-linked to Kolkata/Haldia), Biratnagar, Bhairahawa, Kakarbhitta and the Chobhar dry port near Kathmandu.
 - A container number is four letters plus seven digits with an ISO 6346 check digit (for example ABCU1234567); the first three letters are the owner/carrier prefix. A bill-of-lading number usually starts with a carrier prefix (for example ONEY for Ocean Network Express, MEDU for MSC, MAEU for Maersk).
+
+## Related sites
+- [world.customsnepal.com](https://world.customsnepal.com/): World HS codes and global trade data by country and product — the international companion to this site (its own llms.txt: https://world.customsnepal.com/llms.txt).
+- [nepalpublicdata.com](https://nepalpublicdata.com/): Nepal public statistics — population, budget, trade and places (budget explainer at https://nepalpublicdata.com/budget/).
 """.replace('__SITE__', SITE)
 (root / 'public' / 'llms.txt').write_text(llms, encoding='utf-8')
 

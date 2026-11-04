@@ -17,6 +17,7 @@ Run after seo_pages.py (needs seo.css):  python3 scripts/product_pages.py
 """
 import pathlib, json, datetime, html, re, unicodedata, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from nav import OTHER_SITES
 from statsfields import IMP_VALUE, IMP_UNIT, IMP_DESC, IMP_PARTNERS, IMP_NPARTNERS, TARIFF_FY, TARIFF_FY_AD, validate_import_rows, slug, clean_name
 
 root = pathlib.Path(__file__).resolve().parents[1]
@@ -137,7 +138,7 @@ FOOT = ('<footer><div class="wrap">'
         'customs valuation and taxes with the <a href="https://www.customs.gov.np" target="_blank" rel="noopener noreferrer">Department of Customs</a> '
         'or your clearing agent before you import.</p>'
         '<p><a href="/">Home</a> · <a href="/import-duty">Import duty by product</a> · <a href="/tariff">Tariff</a> · '
-        '<a href="/calculator">Calculator</a> · <a href="/safta">SAFTA</a> · © customsnepal.com</p></div></footer>'
+        '<a href="/calculator">Calculator</a> · <a href="/safta">SAFTA</a> · © customsnepal.com</p>' + OTHER_SITES + '</div></footer>'
         '</body></html>')
 
 from nav import render_nav

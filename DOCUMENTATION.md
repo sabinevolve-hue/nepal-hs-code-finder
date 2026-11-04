@@ -261,6 +261,18 @@ per-product JSON before rendering, so there is no flash or layout shift. World p
 inlined and **no static canonical** — the SPA sets the canonical to the matching `world.customsnepal.com` URL, so the
 mount never competes with the subdomain.
 
+- `world/llms.txt` and `world/robots.txt` are **hand-maintained** static files (not generated); `world/vercel.json` serves both
+  as `text/plain`. robots.txt keeps search and AI crawlers allowed — never add disallows.
+
+**Site network ("Our other sites").** customsnepal.com, world.customsnepal.com and nepalpublicdata.com form one cluster
+(Nepal data). Every page footer links the two siblings with plain followed links whose anchor is the site's role:
+main site → `OTHER_SITES` in `scripts/nav.py` (static generators) + the footer in `src.html` (SPA/app pages);
+world → `OTHER_SITES` in `scripts/world_prerender.py`. Both llms.txt files end with a "Related sites" section
+(main: generated in `scripts/assemble.py`). Do not link the LED/AV business sites from here. `check_pages.py` fails the
+build if a generated page with a footer lacks the block, or if a link to `https://world.customsnepal.com/...` has no
+prerendered page in `world/`. The main site links world pages on the subdomain directly (nav "World ↗", export guides →
+`/nepal/exports/...`); the `/world` mount stays for old links.
+
 Local check: serve `world/` with any static server that maps `/x` → `x.html` and falls back to `404.html`.
 
 
