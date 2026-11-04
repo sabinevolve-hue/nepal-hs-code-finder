@@ -1,0 +1,206 @@
+{
+ "OFFICIAL": {
+  "CHN": [
+   "General Administration of Customs (GACC)",
+   "http://english.customs.gov.cn"
+  ],
+  "USA": [
+   "U.S. Census Bureau — Foreign Trade",
+   "https://www.census.gov/foreign-trade/data/index.html"
+  ],
+  "DEU": [
+   "Destatis — Foreign Trade",
+   "https://www.destatis.de/EN/Themes/Economy/Foreign-Trade/_node.html"
+  ],
+  "NLD": [
+   "CBS — International trade",
+   "https://www.cbs.nl/en-gb/economy/international-trade"
+  ],
+  "JPN": [
+   "Japan Customs / Ministry of Finance",
+   "https://www.customs.go.jp/toukei/info/index_e.htm"
+  ],
+  "FRA": [
+   "French Customs (Douane) — open data",
+   "https://www.douane.gouv.fr/la-douane/opendata"
+  ],
+  "KOR": [
+   "Korea Customs Service",
+   "https://tradedata.go.kr"
+  ],
+  "ITA": [
+   "ISTAT — Foreign trade (Coeweb)",
+   "https://www.coeweb.istat.it"
+  ],
+  "IND": [
+   "Dept. of Commerce — Export Import Data Bank",
+   "https://tradestat.commerce.gov.in"
+  ],
+  "GBR": [
+   "HMRC — uktradeinfo",
+   "https://www.uktradeinfo.com/trade-data/"
+  ],
+  "RUS": [
+   "Federal Customs Service",
+   "https://customs.gov.ru"
+  ],
+  "ESP": [
+   "Datacomex / Aduanas",
+   "https://datacomex.comercio.es"
+  ],
+  "CAN": [
+   "Statistics Canada — Trade",
+   "https://www150.statcan.gc.ca/n1/en/subjects/international_trade"
+  ],
+  "MEX": [
+   "INEGI — Balanza comercial",
+   "https://www.inegi.org.mx/temas/balanza/"
+  ],
+  "BRA": [
+   "ComexStat — Secex",
+   "https://comexstat.mdic.gov.br/en/home"
+  ],
+  "AUS": [
+   "ABS — International trade",
+   "https://www.abs.gov.au/statistics/economy/international-trade"
+  ],
+  "CHE": [
+   "Swiss-Impex — Federal Customs",
+   "https://www.gate.estv.admin.ch/swissimpex/"
+  ],
+  "TUR": [
+   "TurkStat — Foreign trade",
+   "https://data.tuik.gov.tr/Kategori/GetKategori?p=foreign-trade-104"
+  ],
+  "IDN": [
+   "BPS / Statistics Indonesia",
+   "https://www.bps.go.id/en"
+  ],
+  "THA": [
+   "Thai Customs",
+   "http://www.customs.go.th"
+  ],
+  "VNM": [
+   "Vietnam Customs",
+   "https://www.customs.gov.vn"
+  ],
+  "SGP": [
+   "Enterprise Singapore / SingStat",
+   "https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment"
+  ],
+  "SAU": [
+   "GASTAT — International trade",
+   "https://www.stats.gov.sa/en"
+  ],
+  "NPL": [
+   "Dept. of Customs, Nepal",
+   "https://www.customs.gov.np"
+  ]
+ },
+ "EUROSTAT": [
+  "Eurostat — Comext (EU-wide)",
+  "https://ec.europa.eu/eurostat/web/international-trade-in-goods/database"
+ ],
+ "PGROUPS": [
+  [
+   "Animal & animal products",
+   1,
+   5
+  ],
+  [
+   "Vegetable products",
+   6,
+   15
+  ],
+  [
+   "Foodstuffs, beverages & tobacco",
+   16,
+   24
+  ],
+  [
+   "Minerals",
+   25,
+   26
+  ],
+  [
+   "Mineral fuels & oils",
+   27,
+   27
+  ],
+  [
+   "Chemicals & allied",
+   28,
+   38
+  ],
+  [
+   "Plastics & rubber",
+   39,
+   40
+  ],
+  [
+   "Hides, skins & leather",
+   41,
+   43
+  ],
+  [
+   "Wood & paper",
+   44,
+   49
+  ],
+  [
+   "Textiles & clothing",
+   50,
+   63
+  ],
+  [
+   "Footwear & headgear",
+   64,
+   67
+  ],
+  [
+   "Stone, glass & precious metals",
+   68,
+   71
+  ],
+  [
+   "Base metals",
+   72,
+   83
+  ],
+  [
+   "Machinery & electronics",
+   84,
+   85
+  ],
+  [
+   "Transport equipment",
+   86,
+   89
+  ],
+  [
+   "Instruments, arms & misc.",
+   90,
+   99
+  ]
+ ],
+ "EXGUIDES": {
+  "cardamom": {
+   "hs": "090831",
+   "fl": "🌿",
+   "name": "Large cardamom (alaichi)",
+   "h1": "Exporting large cardamom (alaichi) from Nepal",
+   "sub": "Nepal is the world's largest producer of large (black) cardamom — here's the trade picture and how to ship it.",
+   "body": "<h3 class=\"h\">About the product</h3>\n      <p class=\"fine\">Large cardamom (<i>Amomum subulatum</i>), known locally as <b>alaichi</b>, is grown in Nepal's eastern hill districts — Taplejung, Panchthar, Ilam and Sankhuwasabha. Nepal is the world's top producer, and cardamom is one of its highest-value agricultural exports.</p>\n      <h3 class=\"h\">Nepal's position</h3>\n      <p class=\"fine\">Almost all of Nepal's crop goes to <b>India</b>, which both consumes it and re-exports onward to the Middle East and beyond. Because the market is so India-concentrated, prices swing with Indian demand and with how the India–Nepal trade treaty treats the product in a given year — a key risk for growers and exporters.</p>\n      <h3 class=\"h\">How to export from Nepal</h3>\n      <ol class=\"exsteps\">\n        <li><b>Register for an EXIM code</b> with the Department of Customs (one-time exporter registration).</li>\n        <li><b>Phytosanitary certificate</b> from the National Plant Quarantine Program — required for agricultural produce.</li>\n        <li><b>Certificate of origin</b> from a recognised chamber of commerce or TEPC (a SAARC/SAFTA certificate for shipments to India).</li>\n        <li><b>Grading &amp; quality</b> to the buyer's specification (moisture, size, cleanliness).</li>\n        <li><b>File the export declaration</b> in the customs system and clear at the border/dry port.</li>\n      </ol>\n      <p class=\"fine\">Agro exports may qualify for the government's <b>cash export-incentive scheme</b>; rates are set in the annual budget, so confirm the current figure with TEPC before you price a shipment.</p>",
+   "sources": "Trade &amp; Export Promotion Centre (tepc.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np), Department of Customs (customs.gov.np), National Plant Quarantine Program."
+  },
+  "carpets": {
+   "hs": "570110",
+   "fl": "🧶",
+   "name": "Hand-knotted woollen carpets",
+   "h1": "Exporting hand-knotted woollen carpets from Nepal",
+   "sub": "Nepal's signature manufactured export — here's who buys it and how to ship it.",
+   "body": "<h3 class=\"h\">About the product</h3>\n      <p class=\"fine\">Hand-knotted Tibetan–Nepali <b>woollen carpets</b> are made around the Kathmandu Valley (Jawalakhel, Boudha, Sankhu). They are a flagship manufactured export and one of the country's larger formal-sector employers.</p>\n      <h3 class=\"h\">Nepal's position</h3>\n      <p class=\"fine\">The <b>United States</b> is Nepal's largest carpet market, followed by <b>Germany</b>, the <b>UK</b> and other EU countries. Western buyers increasingly require <b>child-labour-free certification</b> (GoodWeave), so that certification is effectively part of market access.</p>\n      <h3 class=\"h\">How to export from Nepal</h3>\n      <ol class=\"exsteps\">\n        <li><b>Register for an EXIM code</b> with the Department of Customs.</li>\n        <li><b>Certificate of origin</b> from a chamber or TEPC; a <b>GSP Form A</b> where the destination grants Nepal preferential access (eligibility varies by country — confirm the current status before quoting duty-free).</li>\n        <li><b>GoodWeave / quality certification</b>, valued or required by most Western importers.</li>\n        <li><b>File the export declaration</b> and clear through customs (usually air or sea freight via Kolkata/Haldia).</li>\n      </ol>\n      <p class=\"fine\">Manufactured exports may qualify for the government's <b>cash export-incentive scheme</b> — check the current rate with TEPC, as it is reset annually.</p>",
+   "sources": "Nepal Carpet Exporters&#39; Association, Trade &amp; Export Promotion Centre (tepc.gov.np), Department of Customs (customs.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np)."
+  }
+ }
+}

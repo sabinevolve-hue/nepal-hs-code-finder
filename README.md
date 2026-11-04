@@ -71,7 +71,8 @@ scripts/
   export_pages.py   /exports hub + per-product export guides (/export/…)
   shipping_pages.py /shipping hub + gateway/ICD node pages + /shipping/track tracker
   safta_page.py     /safta preferential-duty page (segments, rules of origin, how to claim)
-  mount_world.py    mounts the /world BACI world-trade benchmark build
+  mount_world.py    mounts the /world SPA shell (canonical → world.customsnepal.com)
+  world_prerender.py world-src/* + world/data → 5,961 static pages, 404, sitemaps for world.customsnepal.com
 api/classify.js        Vercel serverless proxy to the Anthropic API for the assistant
 ```
 
