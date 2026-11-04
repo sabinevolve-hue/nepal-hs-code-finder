@@ -15,7 +15,9 @@ www.customsnepal.com, shared seo.css, GA4, shared nav).
 
 Run after seo_pages.py (needs seo.css):  python3 scripts/product_pages.py
 """
-import pathlib, json, datetime, html, re, unicodedata
+import pathlib, json, datetime, html, re, unicodedata, sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from statsfields import IMP_VALUE, IMP_UNIT, IMP_DESC, IMP_PARTNERS, IMP_NPARTNERS, TARIFF_FY, TARIFF_FY_AD, validate_import_rows, slug, clean_name
 
 root = pathlib.Path(__file__).resolve().parents[1]
 pub = root / 'public'
@@ -27,13 +29,13 @@ ROWS = TARIFF['rows']
 STRS = TARIFF.get('strs', [])
 CH = TARIFF.get('chapters', {})
 IMPORTS = STATS.get('imports', {})
-FY = STATS.get('fy', '2082/83')
+FY = STATS.get('fy', '2082/83')          # trade-statistics year (Department of Customs FTS)
+TY = TARIFF_FY                           # tariff year the duty rates come from (see statsfields.py)
 
 SITE = 'https://www.customsnepal.com'
 TODAY = datetime.date.today().isoformat()
-TY = '2082/83'
 VAT = 0.13
-THRESHOLD = 1000       # Rs thousand (Rs 10 lakh): products imported at real volume
+THRESHOLD = 1000       # Rs thousand of import VALUE (Rs 10 lakh): products imported at real volume
 EXBASE = 100000.0      # worked-example CIF value, Rs
 FREE = {'free', 'nil', 'exempt'}
 
@@ -42,21 +44,8 @@ def esc(s):
     return html.escape(str(s if s is not None else ''), quote=True)
 
 
-def slug(s):
-    s = unicodedata.normalize('NFKD', str(s)).encode('ascii', 'ignore').decode('ascii')
-    s = re.sub(r'[^a-zA-Z0-9]+', '-', s).strip('-').lower()
-    return (re.sub(r'-{2,}', '-', s)[:60].strip('-')) or 'product'
-
-
 def c8(code):
     return re.sub(r'\D', '', str(code))
-
-
-def clean_name(s):
-    s = re.sub(r'\s+', ' ', str(s)).strip()
-    s = re.sub(r'\s*\.\s*$', '', s)             # drop a trailing " ."
-    s = s.strip(' ,;:-')
-    return s or 'product'
 
 
 def rate_info(x):
@@ -140,7 +129,7 @@ def crumb_html(breadcrumb):
 
 
 FOOT = ('<footer><div class="wrap">'
-        '<p><b>Duty source:</b> Nepal Customs Tariff ' + TY + ' (HS 2022), Department of Customs. Figures are the '
+        '<p><b>Duty source:</b> Nepal Customs Tariff ' + TY + ' (' + TARIFF_FY_AD + ', HS 2022), Department of Customs. Figures are the '
         'statutory customs duty (general and India/SAARC under SAFTA); 13% VAT applies on (CIF value + duty). '
         'Some goods also carry excise duty, a road-development fee or other charges — use the '
         '<a href="/calculator">calculator</a> for the full figure.</p>'
@@ -156,21 +145,33 @@ from nav import render_nav
 # ---------------- join + filter ----------------
 TMAP = {c8(r[0]): r for r in ROWS}
 
+# Codes whose page is already live: keep publishing them so indexed URLs never vanish.
+PUBLISHED = set(json.loads((root / 'data/import_duty_published.json').read_text(encoding='utf-8'))['codes'])
+
 items = []
 for raw, imp in IMPORTS.items():
     code = c8(raw)
-    val = imp[2] if len(imp) > 2 else 0
+    # imp = [desc, unit, quantity, value, revenue, partners, n_partners]; VALUE is index 3 (Rs thousand).
+    # (Index 2 is the QUANTITY — using it here was the bug that printed e.g. 154,991 laptops as "Rs 15.50 Crore".)
     try:
-        valf = float(val)
+        valf = float(imp[IMP_VALUE])
     except Exception:
         valf = 0.0
-    if valf < THRESHOLD:
+    if valf <= 0 or (valf < THRESHOLD and code not in PUBLISHED):
         continue
     row = TMAP.get(code)
     if not row:
         continue
     items.append((code, row, imp, valf))
 items.sort(key=lambda x: -x[3])
+
+# Build-time data check: fail the build rather than publish a page whose numbers contradict each other.
+_errs = validate_import_rows({c: imp for c, _, imp, _ in items}, STATS)
+if _errs:
+    sys.exit('product_pages: data check FAILED for %d product(s):\n  ' % len(_errs) + '\n  '.join(_errs[:50]))
+_missing = PUBLISHED - {c for c, *_ in items}
+if _missing:
+    print('product_pages: WARNING %d previously published codes no longer in the data: %s' % (len(_missing), sorted(_missing)[:20]))
 
 by_head = {}
 for it in items:
@@ -182,7 +183,7 @@ def chap_title(ch2):
 
 
 def top_sources(imp):
-    src = imp[5] if len(imp) > 5 and isinstance(imp[5], list) else []
+    src = imp[IMP_PARTNERS] if len(imp) > IMP_PARTNERS and isinstance(imp[IMP_PARTNERS], list) else []
     out = []
     for s in src[:5]:
         if isinstance(s, list) and s:
@@ -213,7 +214,7 @@ def product_page(code, row, imp, val):
     gen, gen_d, gen_free = rate_info(row[5])
     saarc, saarc_d, saarc_free = rate_info(row[4])
     numeric = gen is not None
-    unit = row[3] or (imp[1] if len(imp) > 1 else '') or ''
+    unit = row[3] or (imp[IMP_UNIT] if len(imp) > IMP_UNIT else '') or ''
     ch2 = code[:2]
     path = '/import-duty/' + slug(name) + '-' + code
     title = 'Customs duty on %s in Nepal (HS %s) | Customs Nepal' % (name, dotted)
@@ -291,6 +292,12 @@ def product_page(code, row, imp, val):
         out.append('<div class="tscroll"><table class="tbl"><thead><tr><th>Source country</th><th>Import value (FY %s)</th></tr></thead><tbody>' % esc(FY))
         for nm, v in srcs:
             out.append('<tr><td>%s</td><td>%s</td></tr>' % (esc(nm), rsf(v) if v is not None else '—'))
+        npart = int(imp[IMP_NPARTNERS]) if len(imp) > IMP_NPARTNERS and str(imp[IMP_NPARTNERS]).isdigit() else len(srcs)
+        rest = val - sum(v or 0 for _, v in srcs)
+        if npart > len(srcs) and rest >= 1:
+            k = npart - len(srcs)
+            out.append('<tr class="other"><td>Other countries (%d)</td><td>%s</td></tr>' % (k, rsf(rest)))
+        out.append('<tr class="total"><td><b>All countries</b></td><td><b>%s</b></td></tr>' % rsf(val))
         out.append('</tbody></table></div>')
 
     rel = [x for x in by_head.get(code[:6], []) if x[0] != code]

@@ -16,7 +16,9 @@ Appends trade styles to /seo.css and the new URLs to /sitemap.xml.
 
 Run after safta_page.py:  python3 scripts/trade_pages.py
 """
-import pathlib, json, datetime, html, re, unicodedata
+import pathlib, json, datetime, html, re, unicodedata, sys
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from statsfields import IMP_DESC, IMP_VALUE
 
 root = pathlib.Path(__file__).resolve().parents[1]
 pub = root / 'public'
@@ -263,7 +265,7 @@ for ch in sorted(CH_IMP, key=lambda c: -CH_IMP[c]):
     hist = HCH.get(str(ch))
     srcs = sorted(ch_sources.get(ch, []), key=lambda x: -x[1])[:12]
     dests = sorted(ch_dest.get(ch, []), key=lambda x: -x[1])[:10]
-    topcodes = sorted([(k, v) for k, v in S['imports'].items() if k[:2] == nn], key=lambda x: -(x[1][2] or 0))[:20]
+    topcodes = sorted([(k, v) for k, v in S['imports'].items() if k[:2] == nn], key=lambda x: -(x[1][IMP_VALUE] or 0))[:20]
 
     title = 'Nepal %s imports & exports %s (HS Chapter %d) | Customs Nepal' % (short, FY, ch)
     desc = ('Nepal %s trade in FY %s: imports %s, exports %s. Top source countries, top products (HS codes), import '
@@ -300,7 +302,7 @@ for ch in sorted(CH_IMP, key=lambda c: -CH_IMP[c]):
     if topcodes:
         o.append('<h2>Top imported products in this category</h2>')
         rr = ''.join('<tr><td class="mono"><a href="/#hs-%s">%s</a></td><td>%s</td><td>%s</td></tr>'
-                     % (dotted(k), dotted(k), esc((v[0] or '')[:70]), rsf(v[2])) for k, v in topcodes)
+                     % (dotted(k), dotted(k), esc((v[IMP_DESC] or '')[:70]), rsf(v[IMP_VALUE])) for k, v in topcodes)
         o.append('<table class="dtable"><thead><tr><th>HS code</th><th>Product</th><th>Import value</th></tr></thead><tbody>%s</tbody></table>' % rr)
     o.append('<p class="fine">Trade value ≠ retail price. The duty shown is the general customs-duty range; VAT (usually '
              '13%%) and any excise are extra. HS classification is decided by customs — confirm the exact line in the '
