@@ -195,6 +195,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 ## Main pages
 - [HS code search (home)](__SITE__/): Search the full Nepal Customs Tariff by product name, material or code, in English or Nepali.
 - [Customs Tariff 2026/27 — all chapters](__SITE__/tariff): Browse every chapter of the tariff with general and SAARC import-duty rates.
+- [Customs Tariff 2083/84 (2026/27): what changed](__SITE__/tariff/2083-84-changes): What changed in Nepal's customs tariff for FY 2083/84 — duty tiers cut from 11 to 7, lower duty on 273 industrial raw materials, customs-point levies merged into a green tax, the 50% fuel duty concession — with the official PDF link and cited sources.
 - [Duty & landed-cost calculator](__SITE__/calculator): Estimate customs duty, VAT and total landed cost in rupees for any HS code.
 - [Ask AI — HS code classifier](__SITE__/ask-ai): Describe a product in plain words and get ranked HS code suggestions with reasoning.
 - [Imports](__SITE__/imports): Nepal import data and duty by product category and partner country.
