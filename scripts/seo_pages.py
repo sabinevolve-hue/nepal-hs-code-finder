@@ -209,7 +209,7 @@ FOOT = ('<footer><div class="wrap">'
         'customs assessment — confirm the final HS code and taxes with the customs office or your clearing agent.</p>'
         '<p><b>Not a government website.</b> Customs Nepal is an independent, privately operated reference tool. '
         'It is not affiliated with, endorsed by, or representing the Government of Nepal.</p>'
-        '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · <a href="/import-duty">Import duty by product</a> · <a href="/faq">FAQ</a> · '
+        '<p><a href="/">Home</a> · <a href="/tariff">All chapters</a> · <a href="/tariff/2083-84-changes">What changed in 2083/84</a> · <a href="/import-duty">Import duty by product</a> · <a href="/faq">FAQ</a> · '
         '<a href="/#calc">Duty calculator</a> · <a href="/#ai">Ask AI</a> · <a href="/about">About</a> · '
         '© customsnepal.com</p>' + OTHER_SITES + '</div></footer>'
         '</body></html>')
@@ -293,6 +293,9 @@ out.append('<p>Need the official document? The Department of Customs publishes t
            '<a href="https://customs.gov.np/content/50/customs-tarrif/" target="_blank" rel="noopener noreferrer">Customs Tariff %s PDF '
            '(FY %s)</a> on customs.gov.np. Every line on this site is transcribed from it, with the source page noted in each '
            'code&rsquo;s detail view.</p>' % (YEAR, FY_BS))
+out.append('<p><b>New this year:</b> <a href="/tariff/2083-84-changes">what changed in the %s tariff</a> — customs '
+           'duty tiers cut from 11 to 7, lower duty on industrial raw materials, the new green tax and the fuel duty '
+           'concession, with sources.</p>' % FY_BS)
 out.append('<div class="tools"><a class="btn" href="/">Search by product or code</a>'
            '<a class="btn ghost" href="/#calc">Duty & landed-cost calculator</a></div>')
 for sec in sections:
