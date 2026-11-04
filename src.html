@@ -674,7 +674,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <section id="v-search">
     <div class="hero" id="hero">
       <h1>What are you importing into Nepal?</h1>
-      <p>Find the HS code and customs duty for any product. Search by name, material or code, in English or Nepali.</p>
+      <p>Find the HS code and customs duty for any product in the Nepal Customs Tariff 2083/84 (2026/27). Search by name, material or code, in English or Nepali.</p>
       <div class="sbox">
         <svg class="i"><use href="#i-search"/></svg>
         <input id="q" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Try “LED display”, “8528” or “मोबाइल”" aria-label="Search product, material or HS code">
@@ -2349,7 +2349,7 @@ function renderExports(){
     + '<li><b>No export duty on most goods.</b> It applies only to a set list of raw materials (hides, wool, aggregates, some scrap) — finished goods usually leave duty-free.</li>'
     + '<li><b>Exports are zero-rated for VAT</b>, and exporters reclaim VAT paid on inputs.</li>'
     + '<li><b>Cash incentive:</b> the government pays about 3–5% cash back on export value, scaled by domestic value addition.</li>'
-    + '<li><b>LDC-graduation watch:</b> duty-free access to the EU and other markets rests on Nepal&rsquo;s LDC status; graduation (a deferral to 2029 is being sought) would phase those out. Access to India is treaty-based and unaffected.</li></ul></div>';
+    + '<li><b>LDC-graduation watch:</b> duty-free access to the EU and other markets rests on Nepal&rsquo;s LDC status; the UN has extended Nepal&rsquo;s LDC preparatory period to November 2029, after which graduation would phase those out. Access to India is treaty-based and unaffected.</li></ul></div>';
   h += fig('Exports by month', 'Monthly export value, recent fiscal years', '<div class="ech" id="ecx-month"></div>');
   exb.innerHTML = h;
   if (!HAS_EC) return;
@@ -2426,13 +2426,13 @@ $('#v-stats').addEventListener('input', e => { if (e.target.id === 'cmp-q'){ cmp
 
 /* ---------- tabs ---------- */
 const TITLES = {
-  search: 'Customs Nepal — Nepal HS Code, Import Duty & Customs Tariff 2026/27',
+  search: 'HS Code Nepal & Nepal Customs Tariff 2083/84 | Customs Nepal',
   ai: 'Ask AI — Nepal HS Code Classifier | Customs Nepal',
   stats: 'Nepal Foreign Trade Data — Imports & Exports | Customs Nepal',
   exports: 'Nepal Exports Data — by Product & Country | Customs Nepal',
   imports: 'Nepal Imports Data — by Product & Country | Customs Nepal',
   browse: 'Browse the Nepal Customs Tariff 2026/27 | Customs Nepal',
-  calc: 'Nepal Import Tax & Landed Cost Calculator | Customs Nepal',
+  calc: 'Nepal Import Duty & Landed Cost Calculator 2083/84 | Customs Nepal',
   invoice: 'Proforma & Commercial Invoice Generator | Customs Nepal',
   saved: 'Saved HS Codes | Customs Nepal',
   about: 'About Customs Nepal — Nepal HS Code, Customs Tariff & Trade Portal',
@@ -2442,7 +2442,8 @@ const TABPATH = { search:'/', ai:'/ask-ai', stats:'/trade-data', exports:'/expor
 let curTab = 'search';
 function go(t, hist){
   curTab = t;
-  try { document.title = TITLES[t] || TITLES.search; } catch(e){}
+  // hist === 'init': first paint of a route that has its own static page (scripts/app_pages.py) — keep its server <title>
+  try { if (hist !== 'init') document.title = TITLES[t] || TITLES.search; } catch(e){}
   ['search','ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
   if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else if (t === 'imports') renderImports(); else ecClear();
   if (t === 'ai') initAI();
@@ -2452,7 +2453,7 @@ function go(t, hist){
   try { var _p = TABPATH[t] || '/', _u = 'https://www.customsnepal.com' + _p;
         var _c = document.querySelector('link[rel="canonical"]'); if (_c) _c.setAttribute('href', _u);
         var _ou = document.querySelector('meta[property="og:url"]'); if (_ou) _ou.setAttribute('content', _u);
-        var _ot = document.querySelector('meta[property="og:title"]'); if (_ot) _ot.setAttribute('content', TITLES[t] || TITLES.search);
+        var _ot = document.querySelector('meta[property="og:title"]'); if (_ot && hist !== 'init') _ot.setAttribute('content', TITLES[t] || TITLES.search);
         if (hist === 'push') history.pushState(null,'',_p); else if (hist !== false) history.replaceState(null,'',_p); } catch(e){}
   window.scrollTo({top:0});
 }
@@ -2465,7 +2466,7 @@ renderResults();
 try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.trim()) runQuery(uq.trim()); } catch(e){}
 const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved','/about':'about','/privacy':'privacy' };
 const _pt = PATHS[location.pathname];
-if (_pt && _pt !== 'search') go(_pt);
+if (_pt && _pt !== 'search') go(_pt, 'init');
 window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));

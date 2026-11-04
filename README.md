@@ -61,7 +61,13 @@ scripts/
   build.py          parsed.json → tariff.json
   stats.py          data/fts/**/*.xlsx → stats.json (latest year detail + history + monthly)
   assemble.py       src.html + tariff.json → public/index.html (+ robots.txt, llms.txt, sitemap.xml)
-  seo_pages.py      static SEO landing pages (/tariff, /calculator, /faq, /about, …)
+  seo_pages.py      static SEO landing pages (/tariff, /tariff/NN, /faq, /404)
+  app_pages.py      own static HTML for the app routes (/calculator, /imports, /exports, /trade-data, /ask-ai,
+                    /browse, /about, /privacy): unique title/meta, self-canonical, server-rendered intro
+  product_pages.py  /import-duty hub + one page per imported product (data/import_duty_published.json keeps live URLs)
+  statsfields.py    stats.json field layout (imports[c][3] is VALUE, [2] is QUANTITY) + data sanity checks
+  check_pages.py    last build step: fails the build if a product page's countries exceed its total, a sitemap URL
+                    has no page/self-canonical, or an internal link would 404
   export_pages.py   /exports hub + per-product export guides (/export/…)
   shipping_pages.py /shipping hub + gateway/ICD node pages + /shipping/track tracker
   safta_page.py     /safta preferential-duty page (segments, rules of origin, how to claim)
@@ -76,7 +82,7 @@ GA4, shared `/seo.css`, a common NAV, the "Customs Nepal" header logo, and per-p
 ## Run locally
 
 ```
-npm run build                    # full chain: assemble → seo_pages → export_pages → shipping_pages → safta_page → mount_world
+npm run build                    # full chain: assemble → seo_pages → app_pages → export/shipping/safta/trade/product pages → mount_world → check_pages
 python3 scripts/assemble.py      # just rebuild public/index.html after editing src.html
 npm run dev                      # http://localhost:8080
 ```

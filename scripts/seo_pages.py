@@ -23,7 +23,8 @@ pub = root / 'public'
 
 SITE = 'https://www.customsnepal.com'
 TODAY = datetime.date.today().isoformat()
-YEAR = '2026/27'
+YEAR = '2026/27'      # as printed on the Department of Customs tariff ("Customs Tariff 2026/2027")
+FY_BS = '2083/84'     # the same tariff year in Nepal's Bikram Sambat fiscal year
 
 def esc(s):
     return html.escape(str(s if s is not None else ''), quote=True)
@@ -278,16 +279,20 @@ for idx, ch in enumerate(CHAPTERS):
     (pub / 'tariff' / (nn + '.html')).write_text(''.join(out), encoding='utf-8')
 
 # ---- tariff index ----
-title = 'Nepal Customs Tariff %s — All Chapters & HS Codes | Customs Nepal' % YEAR
-desc = ('Browse the full Nepal Customs Tariff %s by chapter: HS codes, general and SAARC import duty for all '
-        '%d chapters and %d tariff lines. Free search, duty calculator and AI classifier.'
-        % (YEAR, len(CHAPTERS), len(D['rows'])))
+title = 'Nepal Customs Tariff %s (%s) — All HS Codes & Duty Rates' % (FY_BS, YEAR)
+desc = ('Nepal customs tariff %s (%s) by chapter: every HS code with its general and SAARC import duty '
+        '(bhansar rate) — %d chapters, %s tariff lines, from the Department of Customs. Free search and calculator.'
+        % (FY_BS, YEAR, len(CHAPTERS), format(len(D['rows']), ',')))
 bc = [('Home', '/'), ('Tariff ' + YEAR, '')]
 out = [page_head(title, desc, '/tariff', bc), crumb_html(bc)]
-out.append('<h1>Nepal Customs Tariff %s — all chapters</h1>' % YEAR)
-out.append('<p class="lede">Every chapter of the Nepal Customs Tariff %s (HS 2022), with %s HS code lines and '
-           'their general and SAARC import duty. Pick a chapter, or search any product on the '
-           '<a href="/">home page</a>.</p>' % (YEAR, format(len(D['rows']), ',')))
+out.append('<h1>Nepal Customs Tariff %s (%s) — all chapters</h1>' % (FY_BS, YEAR))
+out.append('<p class="lede">Every chapter of the Nepal Customs Tariff %s (%s, HS 2022), with %s HS code lines and '
+           'their general and SAARC import duty (bhansar rate). Pick a chapter, or search any product on the '
+           '<a href="/">home page</a>.</p>' % (FY_BS, YEAR, format(len(D['rows']), ',')))
+out.append('<p>Need the official document? The Department of Customs publishes the '
+           '<a href="https://customs.gov.np/content/50/customs-tarrif/" target="_blank" rel="noopener noreferrer">Customs Tariff %s PDF '
+           '(FY %s)</a> on customs.gov.np. Every line on this site is transcribed from it, with the source page noted in each '
+           'code&rsquo;s detail view.</p>' % (YEAR, FY_BS))
 out.append('<div class="tools"><a class="btn" href="/">Search by product or code</a>'
            '<a class="btn ghost" href="/#calc">Duty & landed-cost calculator</a></div>')
 for sec in sections:
@@ -328,16 +333,26 @@ out.append('<script type="application/ld+json">' + json.dumps(faq_ld, ensure_asc
 out.append('</div>' + FOOT)
 (pub / 'faq.html').write_text(''.join(out), encoding='utf-8')
 
+# ---- 404 page (Vercel serves public/404.html for any path with no file and no rewrite) ----
+bc = [('Home', '/'), ('Page not found', '')]
+h404 = page_head('Page not found | Customs Nepal', 'This page does not exist on Customs Nepal.', '/404', bc)
+h404 = h404.replace('<link rel="canonical" href="' + SITE + '/404">', '').replace(
+    '<meta name="robots" content="index,follow,max-image-preview:large">', '<meta name="robots" content="noindex">')
+out = [h404, crumb_html(bc), '<h1>Page not found</h1>',
+       '<p class="lede">There is no page at this address. It may have moved, or the link may be mistyped.</p>',
+       '<div class="tools"><a class="btn" href="/">Search HS codes</a><a class="btn ghost" href="/tariff">Customs Tariff %s</a>'
+       '<a class="btn ghost" href="/import-duty">Import duty by product</a><a class="btn ghost" href="/calculator">Calculator</a></div>' % YEAR,
+       '</div>' + FOOT]
+(pub / '404.html').write_text(''.join(out), encoding='utf-8')
+
 # ---- shared stylesheet ----
 (pub / 'seo.css').write_text(CSS.strip(), encoding='utf-8')
 
 # ---- sitemap (homepage + tariff index + every chapter) ----
-urls = [(SITE + '/', '1.0', 'weekly'),
-        (SITE + '/imports', '0.8', 'weekly'), (SITE + '/exports', '0.8', 'weekly'),
-        (SITE + '/trade-data', '0.7', 'monthly'), (SITE + '/tariff', '0.9', 'monthly'),
-        (SITE + '/faq', '0.7', 'monthly'),
-        (SITE + '/about', '0.6', 'monthly'),
-        (SITE + '/privacy', '0.3', 'yearly')]
+# App routes (/calculator, /imports, /exports, /trade-data, /ask-ai, /browse, /about, /privacy) are added by
+# app_pages.py, which gives each its own static HTML. Never list a path here that has no real page of its own.
+urls = [(SITE + '/', '1.0', 'weekly'), (SITE + '/tariff', '0.9', 'monthly'),
+        (SITE + '/faq', '0.7', 'monthly')]
 for ch in CHAPTERS:
     urls.append((SITE + '/tariff/%02d' % ch, '0.7', 'monthly'))
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',

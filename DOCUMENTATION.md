@@ -83,6 +83,16 @@ npm run build               # assemble.py → public/index.html
 npm run dev                 # serves public/ at http://localhost:8080
 ```
 
+`npm run build` ends with `scripts/check_pages.py`, which **fails the build** if any `/import-duty` page's country rows add
+up to more than its total (or the total disagrees with `stats.json`), if a sitemap URL has no page of its own or a wrong
+canonical, or if an internal link would 404. `product_pages.py` also refuses to build when `statsfields.validate_import_rows`
+finds contradictory data (partners > total, product > its chapter, mismatch with the multi-year history).
+
+**Routing (vercel.json):** real files win (cleanUrls); only the app routes listed in the rewrite go to `/`; old
+world-SPA root paths (`/hs…`, `/nepal…`, `/trade`, `/trade/<iso3>`, `/trade/product/…`) redirect to `/world/…`;
+every other unknown path returns `public/404.html` with a real 404 status. Add a new SPA route to both `src.html`
+`PATHS` and the vercel.json rewrite (check_pages flags a mismatch).
+
 **Golden rule:** never hand-edit `public/index.html`. Edit `src.html` (or the data), then run `npm run build`. Commit both `src.html` and the regenerated `public/index.html`.
 
 ---
@@ -148,6 +158,10 @@ Source: Department of Customs Foreign Trade Statistics (FTS) Excel workbooks, pu
 3. Commit `data/stats.json` and `public/index.html`, push → deploys.
 
 `scripts/refresh.py` automates crawl+download+rebuild, but the manual path above is the reliable one. Values in the workbooks are in **Rs. thousand**; the page multiplies by 1,000 and shows **Arab / Crore** (1 Arab = 100 Crore = NPR 1 billion), with a Billion/Million toggle.
+
+`stats.json` stores per-code rows positionally: `imports[c] = [desc, unit, quantity, value, revenue, partners, n_partners]`.
+Index 2 is the **quantity**, index 3 the **value** — use the names in `scripts/statsfields.py`. The FTS commodity sheets can
+list one code on several rows (one per declared unit); `stats.py` sums them (and merges duplicate partner-country rows).
 
 Per-country product drill-down data (`country_prod` in stats.json, latest full year, top-20 products/country/direction) is produced inside `stats.py`'s `read()`.
 
