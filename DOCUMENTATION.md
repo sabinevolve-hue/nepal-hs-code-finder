@@ -3,7 +3,7 @@
 Maintainer & architecture guide for **Customs Nepal** (customsnepal.com).
 Brand: the site is "Customs Nepal"; "Nepal HS Code Finder" is the descriptive alternate name / the HS-search
 feature, and the GitHub repository keeps its original `nepal-hs-code-finder` name for continuity.
-Last updated: 2026-10-14.
+Last updated: 2026-11-05.
 
 ---
 
@@ -170,7 +170,7 @@ Per-country product drill-down data (`country_prod` in stats.json, latest full y
 ## 8. Updating the tariff (new tariff year)
 
 1. Replace the source text `data/customs-tariff-2026-27.txt` with the new tariff's extracted text.
-2. Run `python3 scripts/parse.py` (PDF text → parsed.json), then `python3 scripts/build.py` (→ tariff.json). Adjust `scripts/aliases.py` for new everyday-name → HS mappings.
+2. Run `python3 scripts/parse.py` (PDF text → parsed.json), then `python3 scripts/build.py` (→ tariff.json). Adjust `scripts/aliases.py` for new everyday-name → HS mappings. Look every code up in `data/parsed.json` first (never guess). In the browser an alias term matches a longer query only on word boundaries, and an exact local name beats prefix guesses — so short names like `til` (sesame) do not fire inside `textile`/`tiles`.
 3. `python3 scripts/assemble.py`, commit, push.
 
 Known limitation: the Nepali integrated-tariff PDF uses a non-Unicode font, so per-line VAT/excise couldn't be extracted. The site uses the printed **customs duty** rate; VAT is applied at the flat 13% and excise is a user input in the calculator.
@@ -192,6 +192,15 @@ Two trackers, injected by `assemble.py` **only on the live domain** (customsnepa
 
 To change the GA ID, edit `G-T1FQWWL2VV` in `scripts/assemble.py` and rebuild. The footer discloses the analytics cookies.
 
+### GA4 custom events (src.html `track()`)
+| Event | Params | Notes |
+|---|---|---|
+| `hs_search` | `search_term` (≤80 chars), `results` (number of codes the result list shows — same `search()` + duty/chapter filters as the UI), `zero_results` (bool), `search_lang` (`ne` if the query has Devanagari, else `en`) | Sent by `remember()` on Enter / suggestion click. Register `results` as a custom metric and the others as custom dimensions in GA4 to report zero-result searches (→ new aliases). |
+| `ask_ai` | `ai_topic` (`duty_rate`, `calculation`, `classification`, `documents`, `vat`, `export`, `shipping`, `other`), `ai_turn` (`first`/`follow_up`), `search_lang`, `hs_chapter` (2-digit, only when the question names a code/chapter) | Topic comes from local keyword rules (`AI_TOPICS` / `aiTopic()`); a plain product description counts as `classification`. **The question text is never sent.** |
+| `ai_answer` | `ai_topic`, `ai_result` (`codes`/`questions`/`none`), `hs_chapter` (chapter of the top suggested code that exists in the tariff, else the question's) | Sent after a successful assistant reply. No answer text. |
+
+world.customsnepal.com search (`world-src/app.js runSearch`) sends no search event; only view events (`view_hs_code`, `view_country`, …).
+
 ---
 
 ## 11. Privacy & data handling
@@ -199,7 +208,7 @@ To change the GA ID, edit `G-T1FQWWL2VV` in `scripts/assemble.py` and rebuild. T
 - The site is **static** — there is **no server database**. Everything a user types stays in their **own browser**.
 - The **invoice generator** keeps its draft in `sessionStorage` (cleared when the tab/browser closes), so a new visitor — or the next person on a shared computer — starts from a blank form. Any legacy `localStorage` draft is wiped on load. A "New / clear" button wipes it on demand.
 - Calculator/saved-codes preferences use `localStorage` (non-sensitive).
-- The only data that leaves the browser: (a) analytics pageview pings (Vercel/GA), and (b) when a user uses the AI reader or "Suggest HS codes", the **invoice/product text** is sent to the DeepSeek API to process that request (not stored by the site).
+- The only data that leaves the browser: (a) analytics pings (Vercel/GA: page views, search terms typed into HS search, and for Ask AI only a coarse topic + 2-digit chapter — never the question text; see §10), and (b) when a user uses the AI reader or "Suggest HS codes", the **invoice/product text** is sent to the DeepSeek API to process that request (not stored by the site).
 
 ---
 
@@ -278,7 +287,33 @@ Local check: serve `world/` with any static server that maps `/x` → `x.html` a
 
 ---
 
-## 15. Roadmap / possible next steps
+## 15. IndexNow (Bing / Yandex instant indexing)
+
+Both hosts carry an IndexNow ownership key: `public/<key>.txt` (www.customsnepal.com) and `world/<key>.txt`
+(world.customsnepal.com) — the same random 32-hex key, the file content is the key itself. These are hand-placed static
+files: the build does not generate or delete them. `vercel.json` (main) and the generated `world/vercel.json`
+(`write_vercel_json()` in `scripts/world_prerender.py`) serve `/<32 hex>.txt` as `text/plain`; real files win over
+rewrites, so they never 404. To rotate the key: delete both files, add a new `<new key>.txt` to both roots, deploy.
+
+`scripts/indexnow_submit.py` submits the sitemap URLs whose built page changed since the last run:
+
+```bash
+# after the deploy is live (both Vercel projects)
+python3 scripts/indexnow_submit.py --dry-run     # what would be sent
+python3 scripts/indexnow_submit.py               # submit both hosts → https://api.indexnow.org/indexnow
+python3 scripts/indexnow_submit.py --site world  # one host (www | world)
+git add scripts/indexnow_state.json && git commit -m "chore: IndexNow state"
+```
+
+- Change detection: each sitemap URL is mapped to its file in `public/` or `world/` and hashed (ISO dates blanked, so a
+  rebuild that only bumps "updated" stamps is not a change); new URLs count as changed; state lives in
+  `scripts/indexnow_state.json` (created on the first run — the first run therefore submits every URL once).
+- Batches of ≤10,000 URLs per POST; a host's state is saved only when all its batches return 200/202.
+- `--mark-only` records a baseline without submitting. Google does not use IndexNow (keep using Search Console sitemaps).
+
+---
+
+## 16. Roadmap / possible next steps
 
 - Per-IP rate limiting on `/api/classify` (Vercel KV/Upstash) + DeepSeek spend cap.
 - Optional cookie-consent banner for international visitors.
