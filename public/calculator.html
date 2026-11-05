@@ -1135,15 +1135,19 @@ function wordHit(hay, w){
   }
   return 0;
 }
-const ALL_TERMS = D.aliases.flatMap(([terms, pref], k) => terms.map(t => ({ t, tl: t.toLowerCase(), k })));
+// A term matches inside a longer query only on word boundaries (plural s/es allowed for terms of 4+ chars), so
+// short local names such as "til" (sesame) or "car" do not fire inside "textile" or "carpet".
+const ALL_TERMS = D.aliases.flatMap(([terms, pref], k) => terms.map(t => { const tl = t.toLowerCase();
+  return { t, tl, k, re: new RegExp('(^|[^\\p{L}\\p{M}\\p{N}])' + tl.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + (tl.length >= 4 ? '(?:e?s)?' : '') + '(?=$|[^\\p{L}\\p{M}\\p{N}])', 'u') }; }));
 function aliasHits(q){
   const ql = q.toLowerCase().trim(); if (ql.length < 2) return [];
   const best = new Map();
-  ALL_TERMS.forEach(({t, tl, k}) => {
-    const sc = tl === ql ? 3 : (tl.startsWith(ql) && ql.length >= 3) ? 2 : (ql.includes(tl) && tl.length >= 3) ? 2 : 0;
+  ALL_TERMS.forEach(({t, tl, k, re}) => {
+    const sc = tl === ql ? 3 : (tl.startsWith(ql) && ql.length >= 3) ? 2 : (tl.length >= 3 && re.test(ql)) ? 2 : 0;
     if (sc && (!best.has(k) || best.get(k).sc < sc)) best.set(k, { sc, term: t, pref: D.aliases[k][1] });
   });
-  return [...best.values()].sort((a,b) => b.sc - a.sc).slice(0, 3);
+  const hits = [...best.values()], exact = hits.filter(h => h.sc === 3);
+  return (exact.length ? exact : hits).sort((a,b) => b.sc - a.sc).slice(0, 3); // an exact local name wins over prefix guesses ("til" ≠ "tiles")
 }
 function termSuggest(q){
   const ql = q.toLowerCase().trim(); if (ql.length < 2 || /^\d/.test(ql)) return [];
@@ -1234,6 +1238,7 @@ function renderHome(){
 }
 function track(n,p){ try{ if(window.gtag) gtag('event', n, p||{}); }catch(e){} }
 let calcTracked = false;
+let lastShown = { q: null, n: 0 }; // last count shown by renderResults(), reused by remember() for hs_search
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
   $('#qclear').hidden = !q;
@@ -1245,6 +1250,7 @@ function renderResults(){
   $('#hero-stats').innerHTML = '';
   const res = search(q);
   const rows = res.rows.filter(r => passDuty(r) && (!chapF || r.ch === +chapF));
+  lastShown = { q: q.trim(), n: rows.length };
   let html = '';
   if (res.aliases.length){
     const prefs = [...new Set(res.aliases.flatMap(a => a.pref))].slice(0, 5);
@@ -1276,7 +1282,10 @@ let tmr;
 $('#q').addEventListener('input', () => { shown = 40; clearTimeout(tmr); tmr = setTimeout(renderResults, 110); });
 $('#q').addEventListener('keydown', e => { if (e.key === 'Enter'){ $('#q').blur(); remember($('#q').value.trim()); } });
 $('#qclear').addEventListener('click', () => { $('#q').value = ''; renderResults(); $('#q').focus(); });
-function remember(q){ if (q.length < 2) return; track('hs_search', { search_term: q.slice(0,80) }); const r = store.get('recent', []).filter(x => x.toLowerCase() !== q.toLowerCase()); r.unshift(q); store.set('recent', r.slice(0, 6)); }
+// Matches the count line in renderResults(): search() + the duty-band and chapter filters in effect.
+function shownCount(q){ if (lastShown.q === q) return lastShown.n; return search(q).rows.filter(r => passDuty(r) && (!chapF || r.ch === +chapF)).length; }
+const searchLang = q => /[\u0900-\u097F]/.test(q) ? 'ne' : 'en';
+function remember(q){ if (q.length < 2) return; const n = shownCount(q); track('hs_search', { search_term: q.slice(0,80), results: n, zero_results: n === 0, search_lang: searchLang(q) }); const r = store.get('recent', []).filter(x => x.toLowerCase() !== q.toLowerCase()); r.unshift(q); store.set('recent', r.slice(0, 6)); }
 function runQuery(q){ $('#q').value = q; shown = 40; renderResults(); remember(q); window.scrollTo({top:0}); }
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -1958,8 +1967,31 @@ $('#ai-ex').addEventListener('click', e => { const b = e.target.closest('[data-e
 $('#ai-photo').addEventListener('change', e => { aiPhoto = e.target.files[0] || null; $('#ai-photo-l').classList.toggle('has', !!aiPhoto); $('#ai-photo-t').textContent = aiPhoto ? aiPhoto.name.slice(0, 18) : 'Add photo'; });
 $('#ai-go').addEventListener('click', () => { const q = $('#ai-q').value.trim(); if (!q && !aiPhoto) { $('#ai-q').focus(); return; } aiTurns = []; aiAnswers = {}; askAI(q || 'Identify the product in the photo and classify it.'); });
 const AI_COPY = { not_granted: 'You have not allowed this page to use Claude, so the assistant is off. Search and Browse still work.', sampling_disabled: 'Claude is not available on this account.', rate_limited: 'Too many requests right now. Wait a minute and try again.', refused: 'The assistant could not answer this request. Try describing the product differently.', invalid_json: 'The answer came back in an unexpected form. Try again or shorten the description.', empty_completion: 'No answer came back. Try a shorter description.', upstream_error: 'The connection dropped. Try again.', prompt_too_large: 'The description is too long. Shorten it.', session_expired: 'Your Claude session expired. Sign in again and retry.', tools_unavailable: 'This viewer cannot run the assistant tools yet.' };
+// Analytics for the assistant: only a coarse topic worked out here in the browser and a 2-digit HS chapter.
+// The question text, the answer and anything personal never go to analytics.
+const AI_TOPICS = [
+  ['vat', /\bvat\b|value added|भ्याट|मूल्य अभिवृद्धि/i],
+  ['export', /\bexport|निर्यात/i],
+  ['documents', /\bdocument|certificate|licen[cs]e|permit|\bpan\b|exim|invoice|packing list|bill of lading|\bl\/?c\b|कागजात|प्रमाणपत्र|इजाजत/i],
+  ['shipping', /\bship|freight|container|transit|courier|cargo|kolkata|birgunj|\bport\b|ढुवानी/i],
+  ['calculation', /calculat|landed cost|how much (duty|tax)|total (duty|tax|cost)|\bcif\b|हिसाब|कति (कर|भन्सार)/i],
+  ['duty_rate', /\bduty|tariff|\btax|\brate\b|customs charge|भन्सार|महसुल|कर /i],
+  ['classification', /\bhs\b|h\.s\.|classif|which code|what code|\bcode\b|heading|chapter|कोड|वर्गीकरण/i]
+];
+// Anything else that reads as a general question is 'other'; a plain product description is 'classification'.
+function aiTopic(t){ for (const [k, re] of AI_TOPICS) if (re.test(t)) return k; return /\?|^\s*(how|what|why|when|where|who|can|is|are|do|does|should)\b|कसरी|किन|के हो/i.test(t) ? 'other' : 'classification'; }
+function hsChapterOf(t){
+  t = String(t || '');
+  let m = /chapter\s*(\d{1,2})(?!\d)/i.exec(t);
+  if (!m){ const re = /(?:^|[^\d])(\d{2})(\d{2}|[.\s]\d{2})((?:[.\s]?\d{2}){0,2})(?!\d)/g; let x;
+    while ((x = re.exec(t))){ if (/^\d{4}$/.test(x[1] + x[2]) && !x[3] && /^(19|20)/.test(x[1])) continue; m = x; break; } } // skip bare years like 2082
+  if (!m) return ''; const c = +m[1]; return c >= 1 && c <= 97 && D.chapters[c] ? String(c).padStart(2, '0') : ''; }
+let aiTopicNow = 'other';
 async function askAI(userText){
-  track('ask_ai');
+  const firstTurn = !aiTurns.length;
+  if (firstTurn || aiTopicNow === 'other') aiTopicNow = aiTopic(userText);
+  const askCh = hsChapterOf(userText);
+  track('ask_ai', Object.assign({ ai_topic: aiTopicNow, ai_turn: firstTurn ? 'first' : 'follow_up', search_lang: searchLang(userText) }, askCh ? { hs_chapter: askCh } : {}));
   const out = $('#ai-out'), go = $('#ai-go');
   aiTurns.push({ role: 'user', content: userText });
   go.disabled = true;
@@ -1980,6 +2012,11 @@ async function askAI(userText){
     const data = await sampleFn.json(input, opts);
     aiTurns.push({ role: 'assistant', content: JSON.stringify(data) });
     renderAI(data);
+    try {
+      const top = (Array.isArray(data.items) ? data.items : []).flatMap(it => Array.isArray(it && it.candidates) ? it.candidates : []).map(c => BY[String(c && c.code || '').trim()]).find(Boolean);
+      const ch = top ? String(top.ch).padStart(2, '0') : askCh;
+      track('ai_answer', Object.assign({ ai_topic: aiTopicNow, ai_result: top ? 'codes' : (Array.isArray(data.questions) && data.questions.length ? 'questions' : 'none') }, ch ? { hs_chapter: ch } : {}));
+    } catch(e){}
   } catch (e) {
     const code = e && e.code || 'upstream_error';
     if (code === 'cancelled'){ out.innerHTML = `<div class="ai-off">Stopped.</div>`; }

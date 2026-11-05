@@ -727,6 +727,9 @@ def write_vercel_json():
                                                  {'key': 'X-Robots-Tag', 'value': 'noindex'}]},
             {'source': '/(llms\\.txt|robots\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
                                                                 {'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
+            # IndexNow ownership key (<32 hex>.txt, hand-placed, see scripts/indexnow_submit.py) — plain text, short cache
+            {'source': '/([0-9a-f]{32}\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
+                                                          {'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             {'source': '/(sitemap.*\\.xml)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             {'source': '/(.*)', 'headers': [{'key': 'X-Content-Type-Options', 'value': 'nosniff'},
                                             {'key': 'Referrer-Policy', 'value': 'strict-origin-when-cross-origin'}]}]}
