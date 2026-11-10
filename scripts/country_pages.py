@@ -313,8 +313,30 @@ for iso in order:
                   "temporalCoverage": "Nepali FY %s" % FY,
                   "creator": {"@type": "GovernmentOrganization", "name": "Department of Customs, Nepal"},
                   "isAccessibleForFree": True}
+    _ti = c.get('impP') or []; _te = c.get('expP') or []
+    qa = [('How much does Nepal import from %s?' % name,
+           'Nepal imported goods worth %s from %s in FY %s, %.1f%% of Nepal’s total imports, according to the Department of Customs.'
+           % (money(c['imp']), name, FY, (c['imp'] / timp * 100) if timp else 0)),
+          ('How much does Nepal export to %s?' % name,
+           'Nepal exported goods worth %s to %s in FY %s, %.1f%% of Nepal’s total exports.'
+           % (money(c['exp']), name, FY, (c['exp'] / texp * 100) if texp else 0)),
+          ('What is Nepal’s trade balance with %s?' % name,
+           'Nepal ran a trade %s of %s with %s in FY %s (exports minus imports).'
+           % ('deficit' if c['exp'] < c['imp'] else 'surplus', money(abs(c['exp'] - c['imp'])), name, FY))]
+    if _ti:
+        qa.append(('What does Nepal import most from %s?' % name,
+                   'The largest imports from %s in FY %s were %s.' % (name, FY, '; '.join('%s (%s)' % (viz.cut(x[1], 60), money(x[2])) for x in _ti[:3]))))
+    if _te:
+        qa.append(('What does Nepal export most to %s?' % name,
+                   'The largest exports to %s in FY %s were %s.' % (name, FY, '; '.join('%s (%s)' % (viz.cut(x[1], 60), money(x[2])) for x in _te[:3]))))
+    if c.get('rev', 0) > 0:
+        qa.append(('How much customs revenue does Nepal collect on goods from %s?' % name,
+                   'Nepal collected %s at customs on imports from %s in FY %s (customs duty plus other taxes charged at the border).'
+                   % (money(c['rev']), name, FY)))
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
     og = '/og/trade-%s.jpg' % slug
-    out = [page_head(title, desc, path, bc, extra_ld=[dataset_ld], og=og if (pub / og.lstrip('/')).exists() else None), crumb_html(bc)]
+    out = [page_head(title, desc, path, bc, extra_ld=[dataset_ld, faq_ld], og=og if (pub / og.lstrip('/')).exists() else None), crumb_html(bc)]
     bal = c['exp'] - c['imp']
     rank = order.index(iso) + 1
     p_imp = (c['imp'] / timp * 100) if timp else 0
@@ -495,6 +517,9 @@ for iso in order:
                'same as profit — treat these figures as a starting point for research.' % esc(name))
     out.append('<p>%s</p>' % opp)
 
+    out.append('<h2 class="sec">Quick answers</h2><dl class="qa">' + ''.join(
+        '<dt>%s</dt><dd>%s</dd>' % (esc(q), esc(a)) for q, a in qa) +
+        '</dl><p class="fineprint">Source: Department of Customs, Nepal — Foreign Trade Statistics FY %s.</p>' % FY)
     hist = links.HISTORY.get(iso)
     out.append('<p class="xlink"><b>Keep going:</b> ' + ' · '.join(x for x in [
         '<a href="%s">%s: 7-year import and export trend</a>' % (hist, esc(name)) if hist else '',

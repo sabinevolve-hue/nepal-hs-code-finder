@@ -48,7 +48,17 @@ for o, t in recs:
           "address": {"@type": "PostalAddress", "addressLocality": o.get('location', ''), "addressRegion": o.get('province', ''), "addressCountry": "NP"}}
     if o.get('phone'):
         ld['telephone'] = o['phone']
-    out = [k.page_head(title, desc, path, bc, extra_ld=[ld]), k.crumb_html(bc)]
+    qa = [('How much trade passes through %s customs?' % nm,
+           '%s cleared imports worth %s and exports worth %s in FY %s, according to the Department of Customs.' % (o['name'], money(t['imp']), money(t['exp']), FY)),
+          ('What share of Nepal’s imports comes through %s?' % nm,
+           '%.1f%% of Nepal’s imports and %.1f%% of its exports by value were cleared at %s in FY %s. It ranks #%d of %d customs offices by total trade.'
+           % (pct(t['imp'], timp), pct(t['exp'], texp), nm, FY, rank[oid], len(recs)))]
+    if o.get('location'):
+        qa.append(('Where is %s?' % o['name'], '%s is in %s%s%s.' % (o['name'], o['location'],
+                   (', ' + o['province'] + ' Province') if o.get('province') else '', (' — ' + o['border']) if o.get('border') else '')))
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
+    out = [k.page_head(title, desc, path, bc, extra_ld=[ld, faq_ld]), k.crumb_html(bc)]
     out.append('<h1>%s Customs Office: trade in FY %s</h1>' % (esc(nm), FY))
     if o.get('np'):
         out.append('<p class="lede" lang="ne">%s</p>' % esc(o['np']))
@@ -75,6 +85,7 @@ for o, t in recs:
     out.append('<h2 class="sec">Office details</h2><div class="tblwrap"><table class="ptbl"><tbody>' + ''.join(
         '<tr><th scope="row">%s</th><td>%s</td></tr>' % (lab, ('<a href="https://%s" target="_blank" rel="noopener noreferrer">%s</a>' % (esc(v), esc(v))) if lab == 'Website' else esc(v))
         for lab, v in rows if v) + '</tbody></table></div>')
+    out.append('<h2 class="sec">Quick answers</h2><dl class="qa">' + ''.join('<dt>%s</dt><dd>%s</dd>' % (esc(q), esc(a)) for q, a in qa) + '</dl>')
     more = []
     if (pub / 'shipping' / (oid + '.html')).exists():
         more.append('<a href="/shipping/%s">%s dry port and shipping guide</a>' % (oid, esc(nm)))

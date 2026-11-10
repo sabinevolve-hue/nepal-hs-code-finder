@@ -192,6 +192,7 @@ svg.vz.wmap{min-width:640px}
 @media(prefers-color-scheme:dark){.vz .wm1{fill:#1c3558}.vz .wm2{fill:#234a80}.vz .wm3{fill:#2d64ad}.vz .wm4{fill:#4a8be0}.vz .wm5{fill:#9cc6f8}}
 .xlink{margin:1em 0;background:var(--accent-bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.93rem;line-height:1.55}
 footer p.explore{line-height:1.7}
+dl.qa{margin:.6em 0 1em}dl.qa dt{font-weight:700;margin-top:.9em}dl.qa dd{margin:.25em 0 0;color:var(--fg2);line-height:1.6}
 table.ptbl a.dguide{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:600;color:var(--accent);border:1px solid var(--border);border-radius:999px;padding:1px 8px;text-decoration:none;white-space:nowrap}
 table.ptbl a.dguide:hover{border-color:var(--accent)}
 table.ptbl .tk{display:block;font-size:.7rem;color:var(--muted);font-weight:400}

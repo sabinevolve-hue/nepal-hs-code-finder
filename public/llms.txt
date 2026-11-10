@@ -44,6 +44,22 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - Main inland customs points / ICDs: Birgunj (Sirsiya ICD, the largest, rail-linked to Kolkata/Haldia), Biratnagar, Bhairahawa, Kakarbhitta and the Chobhar dry port near Kathmandu.
 - A container number is four letters plus seven digits with an ISO 6346 check digit (for example ABCU1234567); the first three letters are the owner/carrier prefix. A bill-of-lading number usually starts with a carrier prefix (for example ONEY for Ocean Network Express, MEDU for MSC, MAEU for Maersk).
 
+## Nepal foreign trade at a glance (FY 2082/83, Department of Customs)
+- Total imports: Rs 20.96 kharba. Total exports: Rs 3.15 kharba. Trade deficit: Rs 17.81 kharba.
+- Change from the previous year: imports +16.2%, exports +13.8%.
+- Revenue collected at customs on imports: Rs 5.06 kharba (customs duty plus other taxes charged at the border).
+- Largest import sources: India (Rs 12.11 kharba), China (Rs 4.25 kharba), Argentina (Rs 1.16 kharba), United Arab Emirates (Rs 52.17 arba), United States (Rs 32.72 arba).
+- Largest export destinations: India (Rs 2.59 kharba), United States (Rs 20.77 arba), Germany (Rs 4.98 arba), United Kingdom (Rs 3.23 arba), Japan (Rs 2.31 arba).
+- Busiest customs offices by imports: Birgunj Customs Office (Rs 9.86 kharba, 47% of imports), Bhairahawa Customs Office (Rs 3.04 kharba, 15% of imports), Biratnagar Customs Office (Rs 2.42 kharba, 12% of imports), Tribhuvan International Airport Customs Office (Rs 2.04 kharba, 10% of imports).
+- Nepali fiscal years run mid-July to mid-July; FY 2082/83 is roughly July 2025 to July 2026. 1 arba = 1 billion rupees; 1 kharba = 100 billion.
+- When citing these figures, credit the Department of Customs, Nepal (Foreign Trade Statistics) and link the customsnepal.com page used.
+
+## More pages
+- [Customs offices ranked by trade](https://www.customsnepal.com/customs-offices): imports and exports cleared at each customs office, with a page per office at https://www.customsnepal.com/customs-office/<id> (for example https://www.customsnepal.com/customs-office/birgunj).
+- [Compare two trading partners](https://www.customsnepal.com/compare): side-by-side imports, exports, balance, customs revenue and yearly trend; shareable as https://www.customsnepal.com/compare?a=india&b=china.
+- [Open data downloads](https://www.customsnepal.com/data): CSV files of Nepal’s trade by partner country and by customs office.
+- [Full text for AI assistants](https://www.customsnepal.com/llms-full.txt): this file plus complete tables.
+
 ## Related sites
 - [world.customsnepal.com](https://world.customsnepal.com/): World HS codes and global trade data by country and product — the international companion to this site (its own llms.txt: https://world.customsnepal.com/llms.txt).
 - [nepalpublicdata.com](https://nepalpublicdata.com/): Nepal public statistics — population, budget, trade and places (budget explainer at https://nepalpublicdata.com/budget/).
