@@ -290,7 +290,7 @@ def worldmap(shapes, total, href, label, money):
 
 
 # ---------------------------------------------------------------- trend: imports vs exports over the years
-def trend(years, hist, money, name):
+def trend(years, hist, money, name, heads=('Imports from %s', 'Exports to %s')):
     """years: ['2079/80', ...]; hist: [[imp, exp], ...] in Rs '000. Two lines, every point labelled."""
     n = len(years); mx = max(max(h) for h in hist) or 1.0
     X0, X1, Y0, Y1 = 60.0, 540.0, 34.0, 190.0
@@ -312,7 +312,7 @@ def trend(years, hist, money, name):
             b.append('<circle cx="%.1f" cy="%.1f" r="4.5" class="%s"/>' % (x, y, cls))
             b.append('<text x="%.1f" y="%.1f" class="t" font-size="11.5" font-weight="600" text-anchor="middle">%s</text>'
                      % (x, ly, esc(money(hist[i][k]).replace('Rs ', ''))))
-    tsv = 'Fiscal year\tImports from %s\tExports to %s\n' % (name, name) + '\n'.join(
+    tsv = 'Fiscal year\t%s\t%s\n' % (heads[0] % name, heads[1] % name) + '\n'.join(
         '%s\t%s\t%s' % (years[i], money(hist[i][0]), money(hist[i][1])) for i in range(n))
     return _svg(216, ''.join(b), 'Nepal’s imports from and exports to %s by fiscal year' % name), tsv
 

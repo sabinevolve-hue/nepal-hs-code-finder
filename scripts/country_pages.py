@@ -499,6 +499,7 @@ for iso in order:
     out.append('<p class="xlink"><b>Keep going:</b> ' + ' · '.join(x for x in [
         '<a href="%s">%s: 7-year import and export trend</a>' % (hist, esc(name)) if hist else '',
         '<a href="/safta">how the SAFTA rate works</a>' if iso in SAARC else '',
+        '<a href="/compare?a=%s&amp;b=%s">compare %s with %s</a>' % ((slug, 'india' if iso != 'IND' else 'china', esc(name), 'India' if iso != 'IND' else 'China')),
         '<a href="/calculator">landed-cost calculator</a>',
         '<a href="/import-duty#popular-names">import duty by product name</a>',
         '<a href="/shipping">shipping &amp; container tracking</a>'] if x) + '</p>')
