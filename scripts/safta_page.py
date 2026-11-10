@@ -126,6 +126,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
 from nav import render_nav, OTHER_SITES
+import links
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -262,6 +263,9 @@ out.append('<p>For imports <b>from India</b>, the bilateral <b>Nepal–India Tre
            'generous than SAFTA, so it is usually used instead. SAFTA matters most for imports from <b>Bangladesh, '
            'Sri Lanka and Pakistan</b> (and Bhutan, Maldives, Afghanistan). Always compare the bilateral route with the '
            'SAFTA route for the specific product.</p>')
+out.append('<p class="xlink"><b>What Nepal trades with each SAARC partner:</b> ' + ' · '.join(
+    '<a href="%s">%s</a>' % (h, esc(n)) for h, n in
+    ((links.partner_href(c), c) for c in ('India', 'Bangladesh', 'Sri Lanka', 'Pakistan', 'Bhutan', 'Maldives', 'Afghanistan')) if h) + '</p>')
 
 out.append('<h2 class="sec">Policy watch: Nepal’s LDC graduation</h2>')
 out.append('<div class="note">Nepal&rsquo;s graduation from <b>Least Developed Country (LDC)</b> status was due in November 2026, '

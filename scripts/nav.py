@@ -46,5 +46,8 @@ OTHER_SITES_LINKS = [
     (WORLD_SITE + '/', 'World HS codes &amp; global trade data by country and product — world.customsnepal.com'),
     ('https://nepalpublicdata.com/', 'Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com'),
 ]
-OTHER_SITES = ('<p class="other-sites"><b>Our other sites:</b> '
+# The "Explore" lines (trade partners + duty-by-product-name) ride in the same constant so every main-site
+# footer gets them without touching each generator. world_prerender.py has its own FOOTER (other host).
+from links import explore_footer
+OTHER_SITES = explore_footer() + ('<p class="other-sites"><b>Our other sites:</b> '
                + ' · '.join('<a href="%s">%s</a>' % (h, l) for h, l in OTHER_SITES_LINKS) + '</p>')

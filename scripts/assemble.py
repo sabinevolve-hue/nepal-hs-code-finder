@@ -8,6 +8,11 @@ Nothing below changes the site's visual design, layout or fonts.
 import pathlib, re, json, datetime, os
 root = pathlib.Path(__file__).resolve().parents[1]
 src = (root / 'src.html').read_text(encoding='utf-8')
+# keep the SPA footer's "Explore" links identical to the static pages' (single source: scripts/links.py)
+import sys
+sys.path.insert(0, str(root / 'scripts'))
+import links as _links
+src = re.sub(r'<!--EXPLORE-->.*?<!--/EXPLORE-->', lambda m: '<!--EXPLORE-->' + _links.explore_footer() + '<!--/EXPLORE-->', src, flags=re.S)
 # Data (tariff/stats/offices/integrated) is no longer inlined into the HTML. It is written to
 # separate files below and fetched async by the app (__boot), so the HTML shell stays small and
 # paints fast — important on Nepal mobile networks. Keeps the big 1.7 MB trade stats off the

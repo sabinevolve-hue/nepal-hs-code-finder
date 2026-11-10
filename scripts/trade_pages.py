@@ -111,6 +111,7 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV');"
              "})();</script>")
 from nav import render_nav, OTHER_SITES
+import links
 
 def page_head(title, desc, path, breadcrumb, extra_ld=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -222,6 +223,11 @@ for name in sorted(CO_IMP, key=lambda n: -CO_IMP[n]):
         ('Trade balance', ('+' if bal >= 0 else '−') + rsf(abs(bal)).replace('Rs ', 'Rs '), 'surplus for Nepal' if bal >= 0 else 'deficit for Nepal'),
         ('Two-way trade', rsf(imp + exp), ''),
     ]))
+    ph = links.partner_href(name)
+    if ph:
+        o.append('<p class="xlink"><a href="%s"><b>Nepal–%s trade profile →</b></a> the same trade as pictures: where every '
+                 'Rs 100 goes, product flows, customs revenue, the route goods take, and charts you can copy or download.</p>'
+                 % (ph, esc(name)))
     if is_saarc:
         o.append('<div class="note"><b>%s is a SAARC member.</b> Qualifying goods can be imported at the lower '
                  '<b>SAFTA</b> customs-duty rate with a certificate of origin — often well below the general rate. '
@@ -324,7 +330,8 @@ co_rows = [('/trade/country/' + slug(n), n, rsf(CO_IMP[n] + CO_EXP.get(n, 0)))
            for n in sorted(CO_IMP, key=lambda n: -(CO_IMP[n] + CO_EXP.get(n, 0))) if CO_IMP[n] or CO_EXP.get(n, 0)]
 index_page('/trade/countries', 'Nepal trade by country %s — every trading partner | Customs Nepal' % FY,
            'Nepal\'s imports and exports with every trading-partner country in FY %s. Open any country for its top products, categories and 7-year trend.' % FY,
-           'Nepal trade by country', 'Every country Nepal traded with in FY %s, by two-way trade. Open any for its top imports, exports, products and trend.' % esc(FY),
+           'Nepal trade by country', 'Every country Nepal traded with in FY %s, by two-way trade. Open any for its top imports, exports, products and trend. '
+           'For charts, maps and shareable profiles of the main partners, see <a href="/trade-partners">Nepal&rsquo;s trading partners</a>.' % esc(FY),
            co_rows, 'Countries')
 
 ch_rows = [('/trade/category/%02d' % ch, '%s (Ch %d)' % (CHSHORT.get(ch, ''), ch), rsf(CH_IMP[ch] + CH_EXP.get(ch, 0)))

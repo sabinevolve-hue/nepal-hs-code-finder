@@ -24,6 +24,7 @@ TAR = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 SITE = 'https://www.customsnepal.com'
 TODAY = datetime.date.today().isoformat()
 FY = CO.get('fy', '2081/82')
+NP_FY = FY.translate(str.maketrans('0123456789', '०१२३४५६७८९'))
 
 # duty lookup: 8-digit (digits only) -> (general, saarc)
 DUTY = {}
@@ -122,9 +123,11 @@ ANALYTICS = ("<script>(function(){var h=location.hostname;"
 import sys
 sys.path.insert(0, str(root / 'scripts'))
 from nav import render_nav, OTHER_SITES
+import links
 import viz
+import viz_story as story
 
-def page_head(title, desc, path, breadcrumb, extra_ld=None):
+def page_head(title, desc, path, breadcrumb, extra_ld=None, og=None):
     lds = [{"@context": "https://schema.org", "@type": "BreadcrumbList",
             "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": b[0],
                                  **({"item": SITE + b[1]} if b[1] else {})} for i, b in enumerate(breadcrumb)]}]
@@ -144,9 +147,12 @@ def page_head(title, desc, path, breadcrumb, extra_ld=None):
         '<meta property="og:title" content="' + esc(title) + '">'
         '<meta property="og:description" content="' + esc(desc) + '">'
         '<meta property="og:url" content="' + SITE + path + '">'
-        '<meta property="og:image" content="' + SITE + '/og.png">'
+        '<meta property="og:image" content="' + SITE + (og or '/og.png') + '">'
+        + ('<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">' if og else '') +
         '<meta name="twitter:card" content="summary_large_image">'
         '<link rel="icon" href="' + FAVICON + '"><link rel="apple-touch-icon" href="/icon-180.png">'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap">'
         '<link rel="stylesheet" href="/seo.css">'
         + ldj + ANALYTICS +
         '</head><body>'
@@ -199,12 +205,12 @@ def cbars(rows, total, cls):
     out.append('</div>')
     return ''.join(out)
 
-def product_table(rows, iso, direction):
+def product_table(rows, iso, direction, rev=None):
     if not rows:
         return '<p class="fineprint">Negligible — no significant %s recorded this year.</p>' % direction
     saarc = iso in SAARC
     head = '<tr><th>Product</th><th>HS code</th><th class="r">Value (FY %s)</th>%s</tr>' % (
-        FY, '<th class="r">Import duty</th>' if direction == 'imports' else '')
+        FY, ('<th class="r">Duty rate</th>' + ('<th class="r">Collected at customs</th>' if rev else '')) if direction == 'imports' else '')
     body = []
     for code, desc, val in rows:
         c8 = re.sub(r'\D', '', str(code))[:8]
@@ -222,8 +228,13 @@ def product_table(rows, iso, direction):
                     if st and st != gt:
                         badge += ' <span class="sfx">SAFTA %s</span>' % esc(st)
                 cell = '<td class="r">%s</td>' % badge
-        body.append('<tr><td>%s <a href="%s">%s</a></td><td class="mono">%s.%s.%s</td><td class="r">%s</td>%s</tr>'
-                    % (viz.chap_icon(c8[:2]), hs_link, esc(desc[:52]), c8[:4], c8[4:6], c8[6:8], money(val), cell))
+            if rev:
+                rv = rev.get(str(code), 0.0)
+                cell += ('<td class="r">%s<span class="tk">%.1f%% of value</span></td>' % (money(rv), rv / val * 100)) if (rv > 0 and val > 0) else '<td class="r">—</td>'
+        al = links.alias_for(c8) if direction == 'imports' else None
+        guide = ' <a class="dguide" href="%s">%s duty guide</a>' % (al[0], esc(al[1])) if al else ''
+        body.append('<tr><td>%s <a href="%s">%s</a>%s</td><td class="mono">%s.%s.%s</td><td class="r">%s</td>%s</tr>'
+                    % (viz.chap_icon(c8[:2]), hs_link, esc(desc[:52]), guide, c8[:4], c8[4:6], c8[6:8], money(val), cell))
     return '<div class="tscroll"><table class="tbl ptbl">' + head + ''.join(body) + '</table></div>'
 
 SRC = 'Source: Department of Customs, Nepal — Foreign Trade Statistics FY %s · customsnepal.com' % FY
@@ -260,6 +271,7 @@ countries = CO['countries']
 order = CO['order']
 timp = CO['totals'].get('imp', 0)
 texp = CO['totals'].get('exp', 0)
+trev = CO['totals'].get('rev', 0) or 1.0
 have_page = {iso for iso in countries if 'impP' in countries[iso]}
 slug_of = {iso: slugify(countries[iso]['name']) for iso in countries}
 
@@ -298,29 +310,72 @@ for iso in order:
                   "temporalCoverage": "Nepali FY %s" % FY,
                   "creator": {"@type": "GovernmentOrganization", "name": "Department of Customs, Nepal"},
                   "isAccessibleForFree": True}
-    out = [page_head(title, desc, path, bc, extra_ld=[dataset_ld]), crumb_html(bc)]
-    h1np = (' <span class="h1np">%s</span>' % esc(NEPALI[iso])) if iso in NEPALI else ''
-    out.append('<h1>%s Nepal–%s trade%s</h1>' % (c['flag'], esc(name), h1np))
-    lede = ('Nepal and %s traded about %s in imports and %s in exports in FY %s. '
-            'Here is what actually crosses the border, the duty it carries and how it moves.'
-            % (esc(name), money(c['imp']), money(c['exp']), FY))
-    out.append('<p class="lede">%s</p>' % lede)
+    og = '/og/trade-%s.jpg' % slug
+    out = [page_head(title, desc, path, bc, extra_ld=[dataset_ld], og=og if (pub / og.lstrip('/')).exists() else None), crumb_html(bc)]
     bal = c['exp'] - c['imp']
-    snap = viz.snapshot(c['flag'], name, FY, money(c['imp']), money(c['exp']), money(bal), c['imp'], c['exp'], bal < 0)
-    snap_tsv = 'Measure\tValue\nNepal imports from %s\t%s\nNepal exports to %s\t%s\nTrade balance\t%s' % (
-        name, money(c['imp']), name, money(c['exp']), money(bal))
-    out.append(viz.figure('Nepal–%s trade at a glance' % name, snap, snap_tsv, SRC, bare=True))
+    rank = order.index(iso) + 1
+    p_imp = (c['imp'] / timp * 100) if timp else 0
+    p_exp = (c['exp'] / texp * 100) if texp else 0
     keytxt = ('Nepal–%s trade, FY %s (Department of Customs, Nepal): imports %s, exports %s, balance %s. '
               'Source: %s%s' % (name, FY, money(c['imp']), money(c['exp']), money(bal), SITE, path))
-    out.append('<button type="button" class="keycopy" data-act="text" data-text="%s">Copy key figures as text</button>' % esc(keytxt))
-    rg, rg_tsv = viz.rings((c['imp'] / timp * 100) if timp else 0, (c['exp'] / texp * 100) if texp else 0, name)
-    out.append(viz.figure('%s’s share of Nepal’s trade' % name, rg, rg_tsv, SRC))
+    np_line = ('<div class="cpnp">%s · आर्थिक वर्ष %s</div>' % (esc(NEPALI[iso]), NP_FY)) if iso in NEPALI else ''
+    out.append('</div><section class="cphero"><div class="wrap"><div>'
+               '<div class="cpkick">Trade partner #%d of %d · FY %s</div>'
+               '<h1>Nepal <span class="arr">⇄</span> %s trade</h1>%s'
+               '<p class="cplede">What actually crosses the border between Nepal and %s — the goods, the duty they carry '
+               'and the route they take. Official Department of Customs figures.</p>'
+               '<div class="cpstats">'
+               '<div class="cpstat i"><span>Nepal imports</span><b data-count>%s</b></div>'
+               '<div class="cpstat e"><span>Nepal exports</span><b data-count>%s</b></div>'
+               '<div class="cpstat %s"><span>Trade balance</span><b data-count>%s</b></div></div>'
+               '<button type="button" class="keycopy" data-act="text" data-text="%s">Copy key figures as text</button>'
+               '</div><div>%s</div></div></section><div class="wrap">'
+               % (rank, len(order), FY, esc(name), np_line, esc(name), money(c['imp']), money(c['exp']),
+                  'neg' if bal < 0 else 'pos', money(bal), esc(keytxt),
+                  story.flow(c['flag'], name, c['imp'], c['exp'], money(c['imp']), money(c['exp']))))
+
+    # fact cards
+    ti = c.get('impP') or []; te = c.get('expP') or []
+    facts = ['<div class="cpfact"><div class="ic">\U0001F3C6</div><span>Rank</span><b>#%d of %d partners</b><small>by total trade with Nepal</small></div>' % (rank, len(order))]
+    if ti:
+        facts.append('<div class="cpfact"><div class="ic">%s</div><span>Top import</span><b>%s</b><small>%s</small></div>'
+                     % (viz.chap_icon(str(ti[0][0])[:2]), esc(viz.cut(ti[0][1], 34)), money(ti[0][2])))
+    if te:
+        facts.append('<div class="cpfact"><div class="ic">%s</div><span>Top export</span><b>%s</b><small>%s</small></div>'
+                     % (viz.chap_icon(str(te[0][0])[:2]), esc(viz.cut(te[0][1], 34)), money(te[0][2])))
+    else:
+        facts.append('<div class="cpfact"><div class="ic">\U0001F4E4</div><span>Top export</span><b>Negligible</b><small>no significant exports</small></div>')
+    facts.append('<div class="cpfact"><div class="ic">%s</div><span>Duty treatment</span><b>%s</b><small>%s</small></div>'
+                 % (('\U0001F91D', 'SAFTA rate may apply', 'SAARC member') if saarc else ('\U0001F9FE', 'Full general duty', 'no SAFTA preference')))
+    out.append('<div class="cpfacts">' + ''.join(facts) + '</div>')
+
+    wf, wf_tsv = story.waffle(p_imp, p_exp, name)
+    out.append('<h2 class="sec">The Rs 100 test</h2>')
+    out.append(viz.figure('Of every Rs 100 Nepal trades — the %s share' % name, wf, wf_tsv, SRC))
+
+    def flows(chs, prods, total, src_label, note, t1, t2, fname, direction):
+        chmap = {}
+        items = []
+        for k, (ch, v) in enumerate(chs[:5]):
+            chmap[ch] = story.CLS[k]
+            items.append((viz.chap_short(ch, chap_name(ch)), viz.chap_icon(ch), v, story.CLS[k]))
+        other = total - sum(v for _, v in chs[:5])
+        if other > total * 0.005:
+            items.append(('Other groups', '\U0001F4E6', other, 'cg'))
+        if items:
+            sk, sk_tsv = story.sankey(src_label, items, money, t1, note)
+            out.append(viz.figure(t1, sk, sk_tsv, SRC))
+        if prods:
+            cells = [(desc, viz.chap_icon(str(code)[:2]), val, chmap.get(str(code)[:2], 'cg')) for code, desc, val in prods]
+            cov = sum(val for _, _, val in prods) / total * 100 if total else 0
+            t2f = '%s — top %d products, %.0f%% of the total' % (t2, len(prods), cov)
+            tm, tm_tsv = story.treemap(cells, money, t2f)
+            out.append(viz.figure(t2f, tm, tm_tsv, SRC))
 
     # imports
     out.append('<h2 class="sec">What Nepal imports from %s</h2>' % esc(name))
-    if c.get('impC'):
-        sg, sg_tsv = viz.segbar(seg_items(c['impC'], c['imp']), 'Import mix by product group')
-        out.append(viz.figure('What Nepal buys from %s — by product group' % name, sg, sg_tsv, SRC))
+    flows(c.get('impC', []), ti, c['imp'], '%s %s' % (c['flag'], esc(viz.cut(name, 18))), 'flows into Nepal as…',
+          'From %s into Nepal — by product group' % name, 'What’s in the containers from %s' % name, slug, 'imports')
     if saarc:
         out.append('<div class="note"><b>SAFTA may apply.</b> %s is a SAARC member, so many goods qualify for the lower '
                    '<b>SAARC/SAFTA preferential duty</b> with a valid Certificate of Origin — see the <a href="/safta">SAFTA guide</a>. '
@@ -329,32 +384,84 @@ for iso in order:
         out.append('<div class="note warn"><b>No SAFTA / preferential rate.</b> %s is not a SAARC member, so its goods pay '
                    'Nepal’s <b>full general (MFN) duty</b> — the rates shown below apply in full.</div>' % esc(name))
     out.append('<p>The largest products Nepal buys from %s, by value. Each links to its full HS classification, duty and a landed-cost calculator.</p>' % esc(name))
-    if c.get('impP'):
-        hb, hb_tsv = viz.hbars(prod_items(c['impP']), 'c1', 'Top imports', ('Product', 'Import value'))
-        out.append(viz.figure('Top products Nepal imports from %s' % name, hb, hb_tsv, SRC))
+    if ti:
         out.append(viz.table_tools('nepal-imports-from-%s-fy-%s' % (slug, FY.replace('/', '-'))))
-    out.append(product_table(c.get('impP', []), iso, 'imports'))
+    out.append(product_table(ti, iso, 'imports', c.get('impR')))
+    if c.get('impR'):
+        out.append('<p class="fineprint">“Collected at customs” is the revenue the Department of Customs reports against each product '
+                   'from %s — customs duty plus the other taxes charged at the border (such as VAT and excise) — so it can be '
+                   'well above the duty rate alone, and is not zero just because the duty rate is.</p>' % esc(name))
+
+    # what the border earns
+    if c.get('rev', 0) > 0 and c['imp'] > 0 and timp:
+        take = c['rev'] / c['imp'] * 100; avg = trev / timp * 100
+        out.append('<h2 class="sec">What Nepal collects at the border</h2>')
+        rvf, rv_tsv = story.revenue(take, avg, name, money(c['rev']))
+        out.append(viz.figure('Customs revenue on goods from %s — %s in FY %s' % (name, money(c['rev']), FY), rvf, rv_tsv, SRC))
+        out.append('<p>Nepal collected <b>%s</b> at customs on goods from %s — <b>%.1f%%</b> of everything customs collected on '
+                   'imports that year. That is about Rs %.1f for every Rs 100 of goods, %s the Rs %.1f average across all '
+                   'imports. The mix explains it: fuel, vehicles and consumer goods are taxed heavily; raw materials, '
+                   'machinery and many electronics lightly.</p>'
+                   % (money(c['rev']), esc(name), c['rev'] / trev * 100, take,
+                      'above' if take > avg * 1.05 else ('below' if take < avg * 0.95 else 'close to'), avg))
+
+    # who else sells it
+    comp = c.get('comp') or {}
+    rrows = []
+    for code, pdesc, _v in ti[:6]:
+        cc = comp.get(str(code))
+        if not cc:
+            continue
+        segs = [(countries[k]['name'] if k in countries else k, pct, k == iso) for k, pct in cc['t']]
+        if not any(m for _, _, m in segs) and cc['s'] > 0:
+            segs.append((name, cc['s'], True))
+        rrows.append(('%s %s' % (viz.chap_icon(str(code)[:2]), pdesc), str(code), segs))
+    if rrows:
+        out.append('<h2 class="sec">Who else sells it to Nepal</h2>')
+        out.append('<p>For the biggest products Nepal buys from %s: how much of Nepal’s total import of that product comes '
+                   'from %s (blue) and who the other main suppliers are (grey). A full blue bar means Nepal depends on one source.</p>'
+                   % (esc(name), esc(name)))
+        rf, rf_tsv = story.rivals(rrows, name)
+        out.append(viz.figure('%s’s share of Nepal’s imports, product by product' % name, rf, rf_tsv, SRC))
+        rl = []
+        for k in dict.fromkeys(k for code, _, _ in ti[:6] for k, _ in (comp.get(str(code)) or {'t': []})['t']):
+            if k != iso and k in have_page:
+                rl.append('<a href="/trade-partner/%s">%s %s</a>' % (slug_of[k], countries[k]['flag'], esc(countries[k]['name'])))
+        if rl:
+            out.append('<p class="xlink"><b>Compare the competing suppliers:</b> ' + ' · '.join(rl[:6]) + '</p>')
+
 
     # exports
     out.append('<h2 class="sec">What Nepal exports to %s</h2>' % esc(name))
-    if c.get('expP'):
-        if c.get('expC'):
-            sg, sg_tsv = viz.segbar(seg_items(c['expC'], c['exp']), 'Export mix by product group')
-            out.append(viz.figure('What Nepal sells to %s — by product group' % name, sg, sg_tsv, SRC))
-        hb, hb_tsv = viz.hbars(prod_items(c['expP']), 'c2', 'Top exports', ('Product', 'Export value'))
-        out.append(viz.figure('Top products Nepal exports to %s' % name, hb, hb_tsv, SRC))
+    if te:
+        flows(c.get('expC', []), te, c['exp'], '\U0001F1F3\U0001F1F5 Nepal', 'flows to %s as…' % viz.cut(name, 18),
+              'From Nepal to %s — by product group' % name, 'What Nepal ships to %s' % name, slug, 'exports')
         out.append(viz.table_tools('nepal-exports-to-%s-fy-%s' % (slug, FY.replace('/', '-'))))
-        out.append(product_table(c.get('expP', []), iso, 'exports'))
+        out.append(product_table(te, iso, 'exports'))
     else:
         out.append('<p class="fineprint">Nepal’s exports to %s are negligible this year.</p>' % esc(name))
 
     # how goods move
     out.append('<h2 class="sec">How goods move between Nepal and %s</h2>' % esc(name))
-    rt, rt_tsv = viz.route(route_nodes(iso, name), 'Route between %s and Nepal' % name)
-    out.append(viz.figure('The route: %s → Nepal' % name, rt, rt_tsv, 'customsnepal.com/shipping'))
+    kind = {'IND': 'land', 'CHN': 'himalaya', 'BGD': 'corridor'}.get(iso, 'sea')
+    jr, jr_tsv = story.journey(kind, [(lab, sub) for _, lab, sub in route_nodes(iso, name)], 'Route between %s and Nepal' % name)
+    out.append(viz.figure('The journey: %s → Nepal' % name, jr, jr_tsv, 'customsnepal.com/shipping'))
     out.append('<p><b>%s.</b> %s</p>' % (esc(chd), esc(cpara % name if '%s' in cpara else cpara)))
     out.append('<div class="tools"><a class="btn" href="/calculator">Estimate landed cost</a>'
                '<a class="btn ghost" href="/shipping">Shipping routes to Nepal</a></div>')
+
+    # shareable poster
+    pst = story.poster(c['flag'], name, FY, money(c['imp']), money(c['exp']), money(bal), c['imp'], c['exp'], bal < 0,
+                       [(viz.chap_icon(str(a)[:2]), b_, money(v)) for a, b_, v in ti[:4]],
+                       [(viz.chap_icon(str(a)[:2]), b_, money(v)) for a, b_, v in te[:4]], rank, len(order))
+    out.append('<h2 class="sec">Share it</h2><div class="cpshare">'
+               '<figure class="vzfig" data-title="Nepal %s trade poster" data-src="" data-bare="1" data-pad="0">'
+               '<div class="vzwrap">%s</div></figure>'
+               '<div><h3>One image, the whole story</h3><p>A ready-made portrait poster of Nepal–%s trade — sized for Instagram, '
+               'Facebook, LinkedIn or a slide. Figures are the official FY %s numbers.</p>'
+               '<span class="vzbtns" style="margin:0"><button type="button" data-act="pngsib">Download poster (PNG)</button>'
+               '<button type="button" data-act="text" data-text="%s">Copy caption</button></span></div></div>'
+               % (esc(name), pst, esc(name), FY, esc(keytxt)))
 
     # opportunity
     out.append('<h2 class="sec">The opportunity, honestly</h2>')
@@ -368,6 +475,14 @@ for iso in order:
                'where Nepal has genuine product (herbs, carpets, felt, pashmina, specialty agro). Import demand is not the '
                'same as profit — treat these figures as a starting point for research.' % esc(name))
     out.append('<p>%s</p>' % opp)
+
+    hist = links.HISTORY.get(iso)
+    out.append('<p class="xlink"><b>Keep going:</b> ' + ' · '.join(x for x in [
+        '<a href="%s">%s: 7-year import and export trend</a>' % (hist, esc(name)) if hist else '',
+        '<a href="/safta">how the SAFTA rate works</a>' if iso in SAARC else '',
+        '<a href="/calculator">landed-cost calculator</a>',
+        '<a href="/import-duty#popular-names">import duty by product name</a>',
+        '<a href="/shipping">shipping &amp; container tracking</a>'] if x) + '</p>')
 
     # related
     out.append('<h2 class="sec">Other trade partners</h2>')
@@ -384,17 +499,43 @@ title = 'Nepal’s trade partners — who Nepal trades with & how much | Customs
 desc = ('Nepal’s trade with every partner country (FY %s, Dept. of Customs): imports, exports and balance, with '
         'per-country guides to products, duty and shipping. India and China dominate.' % FY)
 bc = [('Home', '/'), ('Trade partners', '')]
-out = [page_head(title, desc, '/trade-partners', bc), crumb_html(bc)]
-out.append('<h1>Nepal’s trade partners</h1>')
-out.append('<p class="lede">In FY %s Nepal imported <b>%s</b> and exported <b>%s</b> — a trade deficit of <b>%s</b>. '
-           'Two neighbours dominate: India and China together are most of what Nepal buys. Open any partner for what '
-           'Nepal trades with them, the duty, and how goods move.</p>'
-           % (FY, money(timp), money(texp), money(texp - timp)))
-out.append('<div class="scards">'
-           '<div class="scard imp"><span class="l">Total imports</span><b>%s</b><span class="d">FY %s</span></div>'
-           '<div class="scard exp"><span class="l">Total exports</span><b>%s</b><span class="d">FY %s</span></div>'
-           '<div class="scard bal"><span class="l">Trade deficit</span><b>%s</b><span class="d">Imports are %.0f× exports</span></div>'
-           '</div>' % (money(timp), FY, money(texp), FY, money(texp - timp), (timp / texp) if texp else 0))
+out = [page_head(title, desc, '/trade-partners', bc, og='/og/trade-partners.jpg' if (pub / 'og/trade-partners.jpg').exists() else None), crumb_html(bc)]
+hub_key = ('Nepal foreign trade, FY %s (Department of Customs, Nepal): imports %s, exports %s, deficit %s. Source: %s/trade-partners'
+           % (FY, money(timp), money(texp), money(texp - timp), SITE))
+out.append('</div><section class="cphero"><div class="wrap"><div>'
+           '<div class="cpkick">%d trade partners · FY %s</div>'
+           '<h1>Who Nepal trades with</h1>'
+           '<p class="cplede">Every country Nepal buys from and sells to — the money, the goods and the routes. '
+           'India and China together are most of what Nepal buys. Official Department of Customs figures.</p>'
+           '<div class="cpstats">'
+           '<div class="cpstat i"><span>Total imports</span><b data-count>%s</b></div>'
+           '<div class="cpstat e"><span>Total exports</span><b data-count>%s</b></div>'
+           '<div class="cpstat neg"><span>Trade deficit</span><b data-count>%s</b></div></div>'
+           '<button type="button" class="keycopy" data-act="text" data-text="%s">Copy key figures as text</button>'
+           '</div><div>%s</div></div></section><div class="wrap">'
+           % (len(order), FY, money(timp), money(texp), money(texp - timp), esc(hub_key),
+              story.flow('\U0001F30D', 'The world', timp, texp, money(timp), money(texp))))
+_wm = root / 'world/data/worldmap.json'
+if _wm.exists():
+    shapes = json.loads(_wm.read_text(encoding='utf-8'))
+    wm = story.worldmap(shapes, {i: countries[i]['imp'] + countries[i]['exp'] for i in countries},
+                        {i: '/trade-partner/' + slug_of[i] for i in have_page},
+                        {i: countries[i]['name'] for i in countries}, money)
+    wm_tsv = 'Country\tImports\tExports\tTwo-way trade\n' + '\n'.join(
+        '%s\t%s\t%s\t%s' % (countries[i]['name'], money(countries[i]['imp']), money(countries[i]['exp']),
+                             money(countries[i]['imp'] + countries[i]['exp'])) for i in order)
+    out.append('<h2 class="sec">The map — tap a country</h2>')
+    out.append(viz.figure('Nepal’s trade with the world, FY %s — darker means more trade' % FY, wm, wm_tsv, SRC))
+out.append('<h2 class="sec">Top partners — open a country</h2><div class="cpcards">')
+_mx = max(countries[i]['imp'] for i in order[:12])
+for i in order[:12]:
+    x = countries[i]
+    out.append('<a class="cpcard" href="/trade-partner/%s"><div class="fl">%s</div><b>%s</b>'
+               '<div class="mb"><i class="a" style="width:%.1f%%"></i></div><div class="mb"><i class="b" style="width:%.1f%%"></i></div>'
+               '<small><span>In %s</span><span>Out %s</span></small></a>'
+               % (slug_of[i], x['flag'], esc(x['name']), max(1.5, x['imp'] / _mx * 100), max(1.5, x['exp'] / _mx * 100), money(x['imp']), money(x['exp'])))
+out.append('</div>')
+
 top = [countries[i] for i in order[:10]]
 gb, gb_tsv = viz.grouped([('%s %s' % (x['flag'], x['name']), x['imp'], x['exp']) for x in top], 'Top 10 partners', money)
 out.append('<h2 class="sec">Nepal’s top 10 trade partners</h2>')
@@ -455,6 +596,7 @@ if '.scards{' not in cur:
     css_path.write_text(cur + '\n' + CSS.strip() + '\n', encoding='utf-8')
 
 viz.write_assets(pub)
+story.write_assets(pub)
 
 # ------------------------------------------------------------------ sitemap
 sm_path = pub / 'sitemap.xml'

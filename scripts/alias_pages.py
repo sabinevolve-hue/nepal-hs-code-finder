@@ -19,6 +19,7 @@ pub = root / 'public'
 (pub / 'import-duty').mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(root / 'scripts'))
 from nav import render_nav, OTHER_SITES
+import links
 
 TAR = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 ROWS = TAR['rows']
@@ -166,6 +167,7 @@ for terms, codes in ALIASES:
         used[slug] = 1
     records.append((slug, canonical, en, np, codes, covered, primary))
 
+assert [r[0] for r in records] == links.ALIAS_SLUGS, 'links.py alias slugs drifted from alias_pages.py'
 slug_by_idx = {i: rec[0] for i, rec in enumerate(records)}
 CANON = {rec[0]: rec[1] for rec in records}
 
@@ -274,6 +276,18 @@ for rec in records:
     out.append('<div class="tools"><a class="btn" href="/calculator">Landed-cost calculator</a>'
                '<a class="btn ghost" href="/import-duty">All products</a>'
                '<a class="btn ghost" href="/">Search the tariff</a></div>')
+
+    sup_row = next((r for r in [primary] + covered if links.suppliers_for(r[0])), None)
+    if sup_row:
+        sups = links.suppliers_for(sup_row[0])
+        out.append('<h2 class="sec">Who sells it to Nepal</h2>')
+        out.append('<p>For HS %s (%s), Nepal&rsquo;s biggest suppliers by import value in FY %s were %s. '
+                   'Open a country to see everything Nepal buys from it.</p>'
+                   % (esc(sup_row[0]), esc(clean(sup_row[1])[:70]), esc(links._C['fy']),
+                      ', '.join(('<a href="%s">%s</a>' % (h, esc(n)) if h else esc(n)) + ' (%s%%)' % ('%g' % p) for n, h, p in sups)))
+    out.append('<p class="xlink"><b>See also:</b> <a href="/trade/category/%s">Nepal&rsquo;s imports and exports in this category</a> · '
+               '<a href="/trade-partners">Nepal&rsquo;s trading partners</a> · <a href="/tariff/%s">Chapter %d tariff table</a></p>'
+               % (cur_ch, cur_ch, int(cur_ch)))
 
     out.append('<h2 class="sec">Related products</h2>')
     out.append(related(slug, cur_ch))
