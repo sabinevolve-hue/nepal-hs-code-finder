@@ -289,6 +289,34 @@ def worldmap(shapes, total, href, label, money):
             'xmlns="http://www.w3.org/2000/svg">%s</svg>' % ''.join(b))
 
 
+# ---------------------------------------------------------------- trend: imports vs exports over the years
+def trend(years, hist, money, name):
+    """years: ['2079/80', ...]; hist: [[imp, exp], ...] in Rs '000. Two lines, every point labelled."""
+    n = len(years); mx = max(max(h) for h in hist) or 1.0
+    X0, X1, Y0, Y1 = 60.0, 540.0, 34.0, 190.0
+    xs = [X0 + (X1 - X0) * i / max(n - 1, 1) for i in range(n)]
+    yy = lambda v: Y1 - (Y1 - Y0) * v / mx
+    b = ['<line x1="0" y1="%.0f" x2="600" y2="%.0f" class="ax"/>' % (Y1, Y1)]
+    for i, y in enumerate(years):
+        b.append('<text x="%.1f" y="%.0f" class="m" font-size="12" text-anchor="middle">%s</text>' % (xs[i], Y1 + 20, esc(y)))
+    for k, cls in ((0, 'c1'), (1, 'c2')):
+        pts = [(xs[i], yy(hist[i][k])) for i in range(n)]
+        b.append('<polyline points="%s" fill="none" class="s%s" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'
+                 % (' '.join('%.1f,%.1f' % p for p in pts), cls[1]))
+        for i, (x, y) in enumerate(pts):
+            other = yy(hist[i][1 - k])
+            above = y <= other                       # the higher line labels above, the lower one below
+            ly = y - 10 if above else y + 20
+            if not above and ly > Y1 - 4:
+                ly = y - 10 if abs(y - other) > 30 else Y1 - 6
+            b.append('<circle cx="%.1f" cy="%.1f" r="4.5" class="%s"/>' % (x, y, cls))
+            b.append('<text x="%.1f" y="%.1f" class="t" font-size="11.5" font-weight="600" text-anchor="middle">%s</text>'
+                     % (x, ly, esc(money(hist[i][k]).replace('Rs ', ''))))
+    tsv = 'Fiscal year\tImports from %s\tExports to %s\n' % (name, name) + '\n'.join(
+        '%s\t%s\t%s' % (years[i], money(hist[i][0]), money(hist[i][1])) for i in range(n))
+    return _svg(216, ''.join(b), 'Nepal’s imports from and exports to %s by fiscal year' % name), tsv
+
+
 CSS = """
 .cphero{background:linear-gradient(135deg,#0A1530,#13306B 60%,#0D5A6B);color:#fff;margin-top:12px;padding:34px 0 28px;position:relative;overflow:hidden}
 .cphero::before{content:"";position:absolute;right:-120px;top:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(90,162,255,.28),transparent 65%)}
@@ -326,6 +354,7 @@ svg.vz.poster{min-width:0;border-radius:10px}
 .cpcard .mb{height:7px;border-radius:5px;background:var(--border);overflow:hidden;margin-top:4px}.cpcard .mb i{display:block;height:100%;border-radius:5px}
 .cpcard .mb .a{background:var(--v1)}.cpcard .mb .b{background:var(--v2)}
 .cpcard small{display:flex;justify-content:space-between;color:var(--muted);font-size:.74rem;margin-top:6px}
+.vz .s1{stroke:var(--v1)}.vz .s2{stroke:var(--v2)}.vz .ax{stroke:var(--border);stroke-width:1}
 .vz .wmsea{fill:var(--bg)}
 .vz .wm0{fill:var(--border)}.vz .wm1{fill:#cfe1f7}.vz .wm2{fill:#9cc2ee}.vz .wm3{fill:#6aa2e3}.vz .wm4{fill:#3a7fd2}.vz .wm5{fill:#184e9e}
 .vz .wmnp{fill:var(--v2)}.vz .wmring{fill:none;stroke:var(--v2);stroke-width:2}

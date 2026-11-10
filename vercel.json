@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
   "redirects": [
+    { "source": "/trade-partner/togo", "destination": "/trade-partners", "permanent": false },
     { "source": "/hs", "destination": "/world/hs", "permanent": false },
     { "source": "/hs/:path*", "destination": "/world/hs/:path*", "permanent": false },
     { "source": "/nepal", "destination": "/world/nepal", "permanent": false },

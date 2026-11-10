@@ -5,18 +5,31 @@ OFFLINE / yearly refresh step (needs openpyxl, reads the committed .xlsx) — NO
 part of `npm run build`. Run it when a new FTS is dropped in, then commit the
 JSON it writes; country_pages.py (stdlib only) reads that JSON at build time.
 
-  Input : data/FTS_Annual_2081_82.xlsx  (Dept. of Customs, FY 2081/82 annual)
+  Input : data/fts/<fy>/*.xlsx — official Department of Customs FTS workbooks (kept out of git; fetch with
+          scripts/refresh.py or by hand from customs.gov.np). MAIN_FY is the latest COMPLETE year and
+          drives every figure on the page; HIST_FYS add the per-partner trend; YTD_FY (optional) is the
+          running year's latest cumulative workbook.
   Output: world/data/country.json
 
-Run:  python3 scripts/world_country.py
+Yearly: bump MAIN_FY / HIST_FYS / YTD_*, then
+  python3 scripts/world_country.py && node scripts/og_images.mjs <playwright>
 """
-import pathlib, json, datetime
+import pathlib, json, datetime, re
 import openpyxl
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-XLSX = ROOT / 'data' / 'FTS_Annual_2081_82.xlsx'
+FTS = ROOT / 'data' / 'fts'
+MAIN_FY = '2082-83'
+HIST_FYS = ['2076-77', '2077-78', '2078-79', '2079-80', '2080-81', '2081-82', '2082-83']
+YTD_FY, YTD_LABEL = '2083-84', 'Shrawan–Bhadra (first 2 months)'
+
+def book(fy):
+    fs = sorted((FTS / fy).glob('*.xlsx'))
+    return fs[-1] if fs else None
+
+XLSX = book(MAIN_FY)
 OUT = ROOT / 'world' / 'data' / 'country.json'
-FY = '2081/82'
+FY = MAIN_FY.replace('-', '/')
 TOPN = 12          # top products kept per direction per partner
 TOPCH = 8          # top chapters kept per direction per partner
 PROD_MIN_TH = 100000.0   # keep product/chapter detail for partners whose total >= Rs 100M (value in Rs '000)
@@ -169,7 +182,9 @@ for iso, c in countries.items():
     total = c['imp'] + c['exp']
     rec = {'name': c['name'], 'iso': iso, 'flag': c['flag'],
            'imp': round(c['imp'], 1), 'exp': round(c['exp'], 1), 'rev': round(c.get('rev', 0.0), 1)}
-    if total >= PROD_MIN_TH:
+    # never retire a published URL: a partner that already has a page keeps its detail even if it dips under the bar
+    _slug = re.sub(r'-+', '-', re.sub(r'[^a-z0-9]+', '-', c['name'].lower())).strip('-')
+    if total >= PROD_MIN_TH or (total > 0 and (ROOT / 'public' / 'trade-partner' / (_slug + '.html')).exists()):
         ip = sorted(([code, d[0], round(d[1], 1)] for code, d in c['impP'].items()), key=lambda x: -x[2])[:TOPN]
         ep = sorted(([code, d[0], round(d[1], 1)] for code, d in c['expP'].items()), key=lambda x: -x[2])[:TOPN]
         ic = sorted(([ch, round(v, 1)] for ch, v in c['impC'].items()), key=lambda x: -x[1])[:TOPCH]
@@ -187,11 +202,55 @@ for iso, c in countries.items():
         rec['aka'] = aka
     out_countries[iso] = rec
 
+# ---- history: per-partner imports/exports for each complete year (sheet 3 only) ----
+def partner_totals(path):
+    w = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    sn = next((n for n in w.sheetnames if n.lower().startswith('3_')), None)
+    res = {}
+    if not sn:
+        return res
+    for r in w[sn].iter_rows(min_row=4, values_only=True):
+        if not r[1] or len(r) < 4:
+            continue
+        iso, _ = resolve(str(r[1]))
+        if iso is None:
+            continue
+        try:
+            i = float(r[2] or 0); e = float(r[3] or 0)
+        except (TypeError, ValueError):
+            continue
+        a = res.setdefault(iso, [0.0, 0.0]); a[0] += i; a[1] += e
+    return res
+
+hist_years = []
+for fy in HIST_FYS:
+    b = book(fy)
+    if not b:
+        print('  (no workbook for', fy, '— skipped in trend)'); continue
+    print('History', fy, b.name)
+    pt = partner_totals(b)
+    if fy == MAIN_FY:          # sanity: history must agree with the main parse
+        for iso in ('IND', 'CHN'):
+            assert abs(pt[iso][0] - countries[iso]['imp']) < 1, 'history/main mismatch ' + iso
+    hist_years.append(fy.replace('-', '/'))
+    for iso, rec in out_countries.items():
+        v = pt.get(iso, [0.0, 0.0])
+        rec.setdefault('hist', []).append([round(v[0], 1), round(v[1], 1)])
+ytd = None
+if YTD_FY and book(YTD_FY):
+    print('Year to date', YTD_FY, book(YTD_FY).name)
+    pt = partner_totals(book(YTD_FY))
+    ytd = {'fy': YTD_FY.replace('-', '/'), 'label': YTD_LABEL}
+    for iso, rec in out_countries.items():
+        if iso in pt:
+            rec['ytd'] = [round(pt[iso][0], 1), round(pt[iso][1], 1)]
+
 ranked = sorted(out_countries.values(), key=lambda c: -(c['imp'] + c['exp']))
 data = {
     'source': 'Department of Customs, Nepal — Foreign Trade Statistics',
     'fy': FY, 'unit': "Rs '000", 'updated': datetime.date.today().isoformat(),
     'totals': dict({k: round(v, 1) for k, v in tot.items()}, rev=round(sum(c.get('rev', 0.0) for c in countries.values()), 1)),
+    'hist_years': hist_years, 'ytd': ytd,
     'order': [c['iso'] for c in ranked],
     'countries': out_countries,
 }
