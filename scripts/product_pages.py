@@ -18,6 +18,7 @@ Run after seo_pages.py (needs seo.css):  python3 scripts/product_pages.py
 import pathlib, json, datetime, html, re, unicodedata, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from nav import OTHER_SITES
+import links
 from statsfields import IMP_VALUE, IMP_UNIT, IMP_DESC, IMP_PARTNERS, IMP_NPARTNERS, TARIFF_FY, TARIFF_FY_AD, validate_import_rows, slug, clean_name
 
 root = pathlib.Path(__file__).resolve().parents[1]
@@ -289,10 +290,14 @@ def product_page(code, row, imp, val):
     ctx = 'Nepal imported about <b>%s</b> of %s in FY&nbsp;%s' % (rsf(val), esc(name), esc(FY))
     ctx += (', mainly from ' + ', '.join('<b>%s</b>' % esc(s[0]) for s in srcs[:3]) + '.') if srcs else '.'
     out.append('<p>%s</p>' % ctx)
+    _al = links.alias_for(code)
+    if _al:
+        out.append('<p class="xlink">Plain-language guide: <a href="%s">import duty on %s in Nepal</a> — every HS line '
+                   'people mean by that name, with a worked example.</p>' % (_al[0], esc(_al[1])))
     if srcs:
         out.append('<div class="tscroll"><table class="tbl"><thead><tr><th>Source country</th><th>Import value (FY %s)</th></tr></thead><tbody>' % esc(FY))
         for nm, v in srcs:
-            out.append('<tr><td>%s</td><td>%s</td></tr>' % (esc(nm), rsf(v) if v is not None else '—'))
+            out.append('<tr><td>%s</td><td>%s</td></tr>' % (links.partner_link(nm, esc), rsf(v) if v is not None else '—'))
         npart = int(imp[IMP_NPARTNERS]) if len(imp) > IMP_NPARTNERS and str(imp[IMP_NPARTNERS]).isdigit() else len(srcs)
         rest = val - sum(v or 0 for _, v in srcs)
         if npart > len(srcs) and rest >= 1:

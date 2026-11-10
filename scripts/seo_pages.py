@@ -14,6 +14,7 @@ Run after assemble.py:  python3 scripts/seo_pages.py
 """
 import pathlib, json, re, datetime, html
 from nav import render_nav, OTHER_SITES
+import links
 
 root = pathlib.Path(__file__).resolve().parents[1]
 D = json.loads((root / 'data' / 'tariff.json').read_text(encoding='utf-8'))
@@ -241,6 +242,10 @@ for idx, ch in enumerate(CHAPTERS):
                % (YEAR, len(rows), esc(ctitle), (' (Section %s — %s)' % (sec['n'], esc(sec['t'])) if sec else '')))
     out.append('<div class="tools"><a class="btn" href="/">Search all HS codes</a>'
                '<a class="btn ghost" href="/#calc">Import duty calculator</a></div>')
+    _al = links.aliases_in_chapter(nn, 10)
+    if _al:
+        out.append('<p class="xlink"><b>Duty by product name in this chapter:</b> ' +
+                   ' · '.join('<a href="%s">%s</a>' % (h, esc(n)) for h, n in _al) + '</p>')
 
     # group by heading
     seen = []

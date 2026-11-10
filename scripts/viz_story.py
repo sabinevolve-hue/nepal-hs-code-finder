@@ -200,6 +200,95 @@ def poster(pflag, name, fy, imp_s, exp_s, bal_s, imp, exp, deficit, top_imp, top
     return ('<svg class="vz poster" viewBox="0 0 540 675" role="img" aria-label="Nepal–%s trade poster" xmlns="http://www.w3.org/2000/svg">%s</svg>'
             % (esc(name), ''.join(b)))
 
+# ---------------------------------------------------------------- customs take: revenue per Rs 100 of goods
+def revenue(take, avg, name, rev_s):
+    """take / avg: revenue collected at customs as % of import value (this partner / all imports)."""
+    mx = max(take, avg, 1.0) * 1.18
+    def bar(y, p, cls, l1):
+        w = max(4.0, 600.0 * p / mx)
+        inside = w > 190
+        return ('<text x="0" y="%d" class="m" font-size="12">%s</text>'
+                '<rect x="0" y="%d" width="600" height="30" rx="8" class="wf0"/>'
+                '<rect x="0" y="%d" width="%.1f" height="30" rx="8" class="%s"/>'
+                '<text x="%.1f" y="%d" class="%s" font-size="14" font-weight="700"%s>Rs %.1f per Rs 100</text>'
+                % (y, esc(l1), y + 8, y + 8, w, cls,
+                   (w - 10) if inside else (w + 10), y + 28, ('onc' if cls == 'c1' else 'ond') if inside else 't',
+                   ' text-anchor="end"' if inside else '', p))
+    body = bar(12, take, 'c1', 'Goods from %s — collected at customs' % name) + \
+           bar(72, avg, 'cg', 'All of Nepal’s imports — average')
+    tsv = ('Measure\tValue\nRevenue collected at customs on imports from %s\t%s\n'
+           'Collected per Rs 100 of goods from %s\t%.1f\nCollected per Rs 100, all imports\t%.1f' % (name, rev_s, name, take, avg))
+    return _svg(116, body, 'Revenue collected at customs on goods from %s' % name), tsv
+
+# ---------------------------------------------------------------- who else sells it: supplier share per product
+def rivals(rows, me):
+    """rows: [(label, code, [(supplier name, pct, is_me)])] — one 100% bar per product."""
+    b = []; tsv = ['Product\tHS code\tSupplier\tShare of Nepal imports %']
+    for i, (lab, code, segs) in enumerate(rows):
+        y = i * 62
+        b.append('<text x="0" y="%d" class="t" font-size="13" font-weight="600">%s</text>' % (y + 14, esc(cut(lab, 62))))
+        b.append('<rect x="0" y="%d" width="600" height="22" rx="6" class="wf0"/>' % (y + 21))
+        x = 0.0; k = 0
+        for nm, pct, is_me in segs:
+            w = 600.0 * min(pct, 100.0) / 100.0
+            if w < 1.2:
+                tsv.append('%s\t%s\t%s\t%.1f' % (lab, code, nm, pct)); continue
+            cls = 'c1' if is_me else 'cg'
+            op = '' if is_me else ' opacity="%.2f"' % (0.95, 0.68, 0.45)[min(k, 2)]
+            if not is_me:
+                k += 1
+            b.append('<rect x="%.1f" y="%d" width="%.1f" height="22" rx="%d" class="%s"%s><title>%s — %.1f%%</title></rect>'
+                     % (x, y + 21, max(w - 1.5, 1), 6 if w > 14 else 2, cls, op, esc(nm), pct))
+            txt = '%s %.0f%%' % (cut(nm, 16), pct)
+            if w > len(txt) * 7.2 + 12:
+                b.append('<text x="%.1f" y="%d" class="%s" font-size="12" font-weight="600">%s</text>'
+                         % (x + 8, y + 37, 'onc' if is_me else 'ond', esc(txt)))
+            x += w
+            tsv.append('%s\t%s\t%s\t%.1f' % (lab, code, nm, pct))
+        rest = 100.0 - sum(p for _, p, _ in segs)
+        if rest > 0.05:
+            tsv.append('%s\t%s\tAll other countries\t%.1f' % (lab, code, rest))
+            if 600 - x > 96:
+                b.append('<text x="592" y="%d" class="m" font-size="11" text-anchor="end">others %.0f%%</text>' % (y + 37, rest))
+    return _svg(len(rows) * 62 - 12, ''.join(b), 'Supplier shares for the top products Nepal buys from %s' % me), '\n'.join(tsv)
+
+# ---------------------------------------------------------------- hub world map (choropleth, links to partner pages)
+WM_BINS = [(1e8, 'Rs 1 kharba +'), (1e7, 'Rs 10 arba +'), (1e6, 'Rs 1 arba +'), (1e5, 'Rs 10 crore +'), (0, 'under Rs 10 crore')]
+
+def worldmap(shapes, total, href, label, money):
+    """shapes: iso -> svg path; total: iso -> two-way trade (Rs '000); href: iso -> partner page; label: iso -> name."""
+    def cls(v):
+        for i, (th, _) in enumerate(WM_BINS):
+            if v >= th and v > 0:
+                return 'wm%d' % (5 - i)
+        return 'wm0'
+    b = ['<rect x="0" y="0" width="960" height="500" rx="14" class="wmsea"/>']
+    for iso, d in shapes.items():
+        if iso == 'NPL':
+            continue
+        v = total.get(iso, 0.0)
+        tip = '%s — %s two-way trade with Nepal' % (label.get(iso, iso), money(v)) if v else '%s — no recorded trade' % label.get(iso, iso)
+        path = '<path d="%s" class="%s"><title>%s</title></path>' % (d, cls(v), esc(tip))
+        b.append('<a href="%s" aria-label="%s">%s</a>' % (href[iso], esc(tip), path) if iso in href else path)
+    if 'NPL' in shapes:
+        b.append('<path d="%s" class="wmnp"><title>Nepal</title></path>' % shapes['NPL'])
+    if 'NPL' in shapes:
+        import re as _re
+        pts = [(float(x), float(y)) for x, y in _re.findall(r'(-?[\d.]+),(-?[\d.]+)', shapes['NPL'])]
+        cx = sum(x for x, _ in pts) / len(pts); cy = sum(y for _, y in pts) / len(pts)
+        b.append('<circle cx="%.1f" cy="%.1f" r="15" class="wmring"/>'
+                 '<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" class="wmring"/>'
+                 '<text x="%.1f" y="%.1f" class="t wmlab" font-size="14" font-weight="700" text-anchor="middle">Nepal</text>'
+                 % (cx, cy, cx, cy - 15, cx, cy - 44, cx, cy - 50))
+    x = 24
+    for i, (_, lab) in enumerate(reversed(WM_BINS)):
+        b.append('<rect x="%d" y="462" width="16" height="12" rx="3" class="wm%d"/><text x="%d" y="472" class="m" font-size="11">%s</text>'
+                 % (x, i + 1, x + 21, esc(lab)))
+        x += 30 + len(lab) * 6
+    return ('<svg class="vz wmap" viewBox="0 0 960 500" role="img" aria-label="World map shaded by each country’s trade with Nepal" '
+            'xmlns="http://www.w3.org/2000/svg">%s</svg>' % ''.join(b))
+
+
 CSS = """
 .cphero{background:linear-gradient(135deg,#0A1530,#13306B 60%,#0D5A6B);color:#fff;margin-top:12px;padding:34px 0 28px;position:relative;overflow:hidden}
 .cphero::before{content:"";position:absolute;right:-120px;top:-140px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(90,162,255,.28),transparent 65%)}
@@ -237,6 +326,19 @@ svg.vz.poster{min-width:0;border-radius:10px}
 .cpcard .mb{height:7px;border-radius:5px;background:var(--border);overflow:hidden;margin-top:4px}.cpcard .mb i{display:block;height:100%;border-radius:5px}
 .cpcard .mb .a{background:var(--v1)}.cpcard .mb .b{background:var(--v2)}
 .cpcard small{display:flex;justify-content:space-between;color:var(--muted);font-size:.74rem;margin-top:6px}
+.vz .wmsea{fill:var(--bg)}
+.vz .wm0{fill:var(--border)}.vz .wm1{fill:#cfe1f7}.vz .wm2{fill:#9cc2ee}.vz .wm3{fill:#6aa2e3}.vz .wm4{fill:#3a7fd2}.vz .wm5{fill:#184e9e}
+.vz .wmnp{fill:var(--v2)}.vz .wmring{fill:none;stroke:var(--v2);stroke-width:2}
+svg.wmap path{stroke:var(--card);stroke-width:.5;vector-effect:non-scaling-stroke}
+svg.wmap a path{cursor:pointer;transition:opacity .12s}svg.wmap a:hover path,svg.wmap a:focus path{opacity:.72;stroke:var(--fg);stroke-width:1.2}
+svg.vz.wmap{min-width:640px}
+.vz .wmlab{paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+@media(prefers-color-scheme:dark){.vz .wm1{fill:#1c3558}.vz .wm2{fill:#234a80}.vz .wm3{fill:#2d64ad}.vz .wm4{fill:#4a8be0}.vz .wm5{fill:#9cc6f8}}
+.xlink{margin:1em 0;background:var(--accent-bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.93rem;line-height:1.55}
+footer p.explore{line-height:1.7}
+table.ptbl a.dguide{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:600;color:var(--accent);border:1px solid var(--border);border-radius:999px;padding:1px 8px;text-decoration:none;white-space:nowrap}
+table.ptbl a.dguide:hover{border-color:var(--accent)}
+table.ptbl .tk{display:block;font-size:.7rem;color:var(--muted);font-weight:400}
 @media(max-width:860px){.cphero .wrap{grid-template-columns:1fr}.cpfacts{grid-template-columns:repeat(2,minmax(0,1fr))}.cpshare{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){svg.flow .dash{animation:none}}
 """

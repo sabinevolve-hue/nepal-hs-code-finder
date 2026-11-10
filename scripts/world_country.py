@@ -114,6 +114,7 @@ for r in wb['3_Trade_Balance_Country'].iter_rows(min_row=4, values_only=True):
     c = countries.setdefault(iso, {'name': clean(r[1]), 'iso': iso, 'flag': flag,
                                    'imp': 0.0, 'exp': 0.0, 'impP': {}, 'expP': {}, 'impC': {}, 'expC': {}})
     c['imp'] += imp; c['exp'] += exp
+    c.setdefault('aka', set()).add(clean(r[1]))
     # prefer a clean well-known name from the trade set
     tn = next((x['name'] for x in TRADE['countries'] if x['iso'] == iso), None)
     if tn:
@@ -144,6 +145,21 @@ def accumulate(sheet, pcol, vcol, pkey, ckey):
 
 print('Aggregating imports by partner…')
 accumulate('4_Imports_By_Commodity_Partner', 2, 5, 'impP', 'impC')
+print('Customs revenue + supplier shares per product…')
+code_tot = {}   # HS code -> {iso: import value}, across all partners
+for r in wb['4_Imports_By_Commodity_Partner'].iter_rows(min_row=4, values_only=True):
+    if not r[0] or not r[2]:
+        continue
+    iso, _ = resolve(r[2])
+    v = float(r[5] or 0); rv = float(r[6] or 0)
+    code = str(r[0]).strip()
+    d = code_tot.setdefault(code, {})
+    d[iso or '_'] = d.get(iso or '_', 0.0) + v
+    if iso in countries:
+        c = countries[iso]
+        c['rev'] = c.get('rev', 0.0) + rv
+        c.setdefault('revP', {})
+        c['revP'][code] = c['revP'].get(code, 0.0) + rv
 print('Aggregating exports by partner…')
 accumulate('6_Exports_By_Commodity_Partner', 2, 5, 'expP', 'expC')
 
@@ -152,20 +168,30 @@ out_countries = {}
 for iso, c in countries.items():
     total = c['imp'] + c['exp']
     rec = {'name': c['name'], 'iso': iso, 'flag': c['flag'],
-           'imp': round(c['imp'], 1), 'exp': round(c['exp'], 1)}
+           'imp': round(c['imp'], 1), 'exp': round(c['exp'], 1), 'rev': round(c.get('rev', 0.0), 1)}
     if total >= PROD_MIN_TH:
         ip = sorted(([code, d[0], round(d[1], 1)] for code, d in c['impP'].items()), key=lambda x: -x[2])[:TOPN]
         ep = sorted(([code, d[0], round(d[1], 1)] for code, d in c['expP'].items()), key=lambda x: -x[2])[:TOPN]
         ic = sorted(([ch, round(v, 1)] for ch, v in c['impC'].items()), key=lambda x: -x[1])[:TOPCH]
         ec = sorted(([ch, round(v, 1)] for ch, v in c['expC'].items()), key=lambda x: -x[1])[:TOPCH]
         rec.update(impP=ip, expP=ep, impC=ic, expC=ec)
+        rec['impR'] = {q[0]: round(c.get('revP', {}).get(q[0], 0.0), 1) for q in ip}
+        comp = {}
+        for q in ip:
+            d = code_tot.get(q[0], {}); tot_c = sum(d.values()) or 1.0
+            top3 = sorted(((k, v) for k, v in d.items() if k != '_'), key=lambda x: -x[1])[:3]
+            comp[q[0]] = {'s': round(d.get(iso, 0.0) / tot_c * 100, 1), 't': [[k, round(v / tot_c * 100, 1)] for k, v in top3]}
+        rec['comp'] = comp
+    aka = sorted(a for a in c.get('aka', ()) if a.lower() != c['name'].lower())
+    if aka:
+        rec['aka'] = aka
     out_countries[iso] = rec
 
 ranked = sorted(out_countries.values(), key=lambda c: -(c['imp'] + c['exp']))
 data = {
     'source': 'Department of Customs, Nepal — Foreign Trade Statistics',
     'fy': FY, 'unit': "Rs '000", 'updated': datetime.date.today().isoformat(),
-    'totals': {k: round(v, 1) for k, v in tot.items()},
+    'totals': dict({k: round(v, 1) for k, v in tot.items()}, rev=round(sum(c.get('rev', 0.0) for c in countries.values()), 1)),
     'order': [c['iso'] for c in ranked],
     'countries': out_countries,
 }
