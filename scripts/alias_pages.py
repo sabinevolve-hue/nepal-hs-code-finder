@@ -223,12 +223,21 @@ for rec in records:
     rates = sorted({rate_text(r[5]) for r in covered if rate_text(r[5])}, key=lambda x: (x != 'Free', x))
     rate_phrase = gt if gt else 'a varying rate'
 
-    title = '%s import duty in Nepal | Customs Nepal' % disp
-    if len(title) > 62:
-        title = '%s customs duty Nepal | Customs Nepal' % disp
-    desc = ('Customs duty and VAT on importing %s into Nepal: general and India/SAARC (SAFTA) rate, 13%% VAT and a '
-            'worked landed-cost example. HS code%s %s.'
-            % (disp.lower(), 's' if len(covered) > 1 else '', ', '.join(dict.fromkeys(str(r[0]) for r in covered[:3]))))
+    # SEO (10 Nov 2026): put the tariff year and, when every line under this name shares one general rate and no
+    # excise note applies, that rate in the title; keep titles <= 70 and descriptions <= 160 characters.
+    one_rate = rates[0] if len(rates) == 1 and gt and 'Excise duty also applies' not in workblock else None
+    rate_t = ('0% duty' if one_rate == 'Free' else '%s duty' % one_rate) if one_rate else None
+    cands = (['%s Import Duty in Nepal 2083/84: %s + 13%% VAT | Customs Nepal' % (disp, rate_t),
+              '%s Import Duty Nepal: %s + 13%% VAT | Customs Nepal' % (disp, rate_t)] if rate_t else []) + [
+             '%s Import Duty in Nepal 2083/84 | Customs Nepal' % disp,
+             '%s import duty in Nepal | Customs Nepal' % disp,
+             '%s customs duty Nepal | Customs Nepal' % disp]
+    title = next((t for t in cands if len(t) <= 70), cands[-1])
+    codes = ', '.join(dict.fromkeys(str(r[0]) for r in covered[:3]))
+    lead = ('%s import duty in Nepal (Customs Tariff %s): %sgeneral rate, India/SAARC (SAFTA) rate, 13%% VAT and a '
+            'worked landed-cost example.' % (disp, TVER, (one_rate.replace('Free', '0%') + ' ') if one_rate else ''))
+    desc = next((d for d in (lead + ' HS %s.' % codes, lead) if len(d) <= 160),
+                lead[:157].rsplit(' ', 1)[0] + '…')
     bc = [('Home', '/'), ('Import duty', '/import-duty'), (disp, '')]
     faq = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": "What is the customs duty on %s in Nepal?" % disp.lower(),

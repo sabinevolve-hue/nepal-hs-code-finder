@@ -301,8 +301,11 @@ for iso in order:
     if len(title) > 66:
         title = 'Nepal–%s trade, imports & duty | Customs Nepal' % name
     ratio = (c['imp'] / c['exp']) if c['exp'] > 0 else None
-    desc = ('What Nepal imports from and exports to %s (FY %s, Dept. of Customs): %s imports, %s exports. '
-            'Top products, import duty and how goods move.' % (name, FY, money(c['imp']), money(c['exp'])))
+    # <= 160 characters (SEO pass 10 Nov 2026): the figures first, the rest only if it fits
+    lead = ('Nepal–%s trade, FY %s (Dept. of Customs): imports %s, exports %s.'
+            % (name, FY, money(c['imp']), money(c['exp'])))
+    desc = next((d for d in (lead + ' Top products, import duty and how goods move.', lead + ' Top products and duty.', lead)
+                 if len(d) <= 160), lead)
     bc = [('Home', '/'), ('Trade partners', '/trade-partners'), (name, '')]
     dataset_ld = {"@context": "https://schema.org", "@type": "Dataset",
                   "name": "Nepal–%s bilateral trade, FY %s" % (name, FY),
