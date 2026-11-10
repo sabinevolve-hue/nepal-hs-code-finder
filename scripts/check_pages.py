@@ -45,7 +45,10 @@ pages = sorted((pub / 'import-duty').glob('*.html'))
 n_rows = 0
 for f in pages:
     h = f.read_text(encoding='utf-8')
-    code = re.search(r'-(\d{8})\.html$', f.name).group(1)
+    m_code = re.search(r'-(\d{8})\.html$', f.name)
+    if not m_code:
+        continue  # consumer-term landing page (e.g. /import-duty/mobile), not a per-HS product page
+    code = m_code.group(1)
     m = re.search(r'Nepal imported about <b>(Rs [^<]+)</b>', h)
     if not m:
         errors.append('%s: no import total' % f.name); continue

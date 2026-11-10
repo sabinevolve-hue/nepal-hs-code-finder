@@ -13,14 +13,14 @@ WORLD_SITE = 'https://world.customsnepal.com'
 # (href, label) in the SAME order the SPA desktop nav uses.
 NAV = [
     ('/', 'Search'), ('/ask-ai', 'Ask AI'), ('/imports', 'Imports'), ('/exports', 'Exports'),
-    ('/trade-data', 'Trade'), ('/browse', 'Browse'), ('/tariff', 'Tariff'), ('/calculator', 'Calculator'),
+    ('/trade-data', 'Trade'), ('/trade-partners', 'Partners'), ('/browse', 'Browse'), ('/tariff', 'Tariff'), ('/calculator', 'Calculator'),
     ('/export', 'Export guides'), ('/shipping', 'Shipping'), ('/safta', 'SAFTA'), (WORLD_SITE + '/', 'World ↗'),
 ]
 
 # A nav item is "current" on its own page and on any page beneath it.
 _PREFIX = {
     '/tariff': '/tariff', '/export': '/export', '/shipping': '/shipping',
-    '/trade-data': '/trade', '/safta': '/safta',
+    '/trade-data': '/trade-data', '/trade-partners': '/trade-partner', '/safta': '/safta',
 }
 
 
