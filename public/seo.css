@@ -181,6 +181,7 @@ svg.vz.poster{min-width:0;border-radius:10px}
 .cpcard .mb{height:7px;border-radius:5px;background:var(--border);overflow:hidden;margin-top:4px}.cpcard .mb i{display:block;height:100%;border-radius:5px}
 .cpcard .mb .a{background:var(--v1)}.cpcard .mb .b{background:var(--v2)}
 .cpcard small{display:flex;justify-content:space-between;color:var(--muted);font-size:.74rem;margin-top:6px}
+.vz .s1{stroke:var(--v1)}.vz .s2{stroke:var(--v2)}.vz .ax{stroke:var(--border);stroke-width:1}
 .vz .wmsea{fill:var(--bg)}
 .vz .wm0{fill:var(--border)}.vz .wm1{fill:#cfe1f7}.vz .wm2{fill:#9cc2ee}.vz .wm3{fill:#6aa2e3}.vz .wm4{fill:#3a7fd2}.vz .wm5{fill:#184e9e}
 .vz .wmnp{fill:var(--v2)}.vz .wmring{fill:none;stroke:var(--v2);stroke-width:2}

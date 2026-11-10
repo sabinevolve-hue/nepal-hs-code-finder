@@ -352,6 +352,22 @@ for iso in order:
                  % (('\U0001F91D', 'SAFTA rate may apply', 'SAARC member') if saarc else ('\U0001F9FE', 'Full general duty', 'no SAFTA preference')))
     out.append('<div class="cpfacts">' + ''.join(facts) + '</div>')
 
+    # trend over the years + the running year so far
+    hy = CO.get('hist_years') or []; hh = c.get('hist') or []
+    if len(hy) >= 3 and len(hh) == len(hy) and any(x[0] or x[1] for x in hh):
+        out.append('<h2 class="sec">%d years of trade</h2>' % len(hy))
+        tf, tf_tsv = story.trend(hy, hh, money, name)
+        out.append(viz.figure('Nepal–%s trade, FY %s to %s' % (name, hy[0], hy[-1]), tf, tf_tsv, SRC, legend=viz.LEGEND_IE))
+        def chg(a, b):
+            return ('%s%.0f%%' % ('+' if b >= a else '−', abs(b - a) / a * 100)) if a > 0 else 'new'
+        out.append('<p>Since FY %s, Nepal’s imports from %s moved from %s to %s (%s) and exports from %s to %s (%s).</p>'
+                   % (hy[0], esc(name), money(hh[0][0]), money(hh[-1][0]), chg(hh[0][0], hh[-1][0]),
+                      money(hh[0][1]), money(hh[-1][1]), chg(hh[0][1], hh[-1][1])))
+    yt = CO.get('ytd'); cy = c.get('ytd')
+    if yt and cy and (cy[0] or cy[1]):
+        out.append('<p class="xlink"><b>FY %s so far</b> (%s): imports %s · exports %s. Provisional, from the latest monthly '
+                   'release; it will be replaced by the full-year figure.</p>' % (yt['fy'], esc(yt['label']), money(cy[0]), money(cy[1])))
+
     wf, wf_tsv = story.waffle(p_imp, p_exp, name)
     out.append('<h2 class="sec">The Rs 100 test</h2>')
     out.append(viz.figure('Of every Rs 100 Nepal trades — the %s share' % name, wf, wf_tsv, SRC))
@@ -612,4 +628,8 @@ if '/trade-partners</loc>' not in sm:
     sm = sm.replace('</urlset>', '\n'.join(rows_xml) + '\n</urlset>')
     sm_path.write_text(sm, encoding='utf-8')
 
+_live = {slug_of[i] + '.html' for i in have_page}
+for _f in sorted((pub / 'trade-partner').glob('*.html')):
+    if _f.name not in _live:
+        _f.unlink(); print('  removed stale partner page (add a redirect in vercel.json):', _f.name)
 print('country_pages: %d partner pages + hub; styles + %d sitemap URLs' % (made, made + 1))
