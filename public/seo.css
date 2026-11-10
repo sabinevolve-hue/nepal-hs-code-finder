@@ -153,3 +153,5 @@ table.ptbl .mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82
 .cta{display:flex;flex-wrap:wrap;gap:10px;margin:1em 0 1.4em}
 .cta .btn{display:inline-block;background:var(--accent);color:#fff;font-weight:700;font-size:.92rem;padding:11px 18px;border-radius:12px;text-decoration:none}
 .cta .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--border)}
+
+.nepsum{color:var(--ink);background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:10px 14px;margin:.4em 0 1em;font-size:.95rem}
