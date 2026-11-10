@@ -310,7 +310,11 @@ for iso in order:
     dataset_ld = {"@context": "https://schema.org", "@type": "Dataset",
                   "name": "Nepal–%s bilateral trade, FY %s" % (name, FY),
                   "description": desc,
+                  "url": SITE + path,
                   "temporalCoverage": "Nepali FY %s" % FY,
+                  "spatialCoverage": [{"@type": "Country", "name": "Nepal"}, {"@type": "Country", "name": name}],
+                  "keywords": ["Nepal %s trade" % name, "Nepal imports from %s" % name, "Nepal exports to %s" % name,
+                               "Nepal customs", "FY %s" % FY],
                   "creator": {"@type": "GovernmentOrganization", "name": "Department of Customs, Nepal"},
                   "isAccessibleForFree": True}
     _ti = c.get('impP') or []; _te = c.get('expP') or []
@@ -540,11 +544,27 @@ for iso in order:
     made += 1
 
 # ------------------------------------------------------------------ hub
-title = 'Nepal’s trade partners — who Nepal trades with & how much | Customs Nepal'
-desc = ('Nepal’s trade with every partner country (FY %s, Dept. of Customs): imports, exports and balance, with '
-        'per-country guides to products, duty and shipping. India and China dominate.' % FY)
+# <= 70 / <= 160 characters (SEO pass 10 Nov 2026)
+title = 'Nepal’s Trade Partners FY %s: Imports & Exports | Customs Nepal' % FY
+if len(title) > 70:
+    title = 'Nepal’s trade partners: imports & exports | Customs Nepal'
+desc = ('Nepal’s trade with %d partner countries, FY %s (Dept. of Customs): imports, exports and balance, '
+        'with a page per country on products and duty.' % (len(order), FY))
+if len(desc) > 160:
+    desc = 'Nepal’s trade with %d partner countries, FY %s (Dept. of Customs): imports, exports and balance.' % (len(order), FY)
 bc = [('Home', '/'), ('Trade partners', '')]
-out = [page_head(title, desc, '/trade-partners', bc, og='/og/trade-partners.jpg' if (pub / 'og/trade-partners.jpg').exists() else None), crumb_html(bc)]
+hub_ld = [{"@context": "https://schema.org", "@type": "Dataset",
+           "name": "Nepal foreign trade by partner country, FY %s" % FY, "description": desc,
+           "url": SITE + '/trade-partners', "temporalCoverage": "Nepali FY %s" % FY,
+           "spatialCoverage": {"@type": "Country", "name": "Nepal"},
+           "creator": {"@type": "GovernmentOrganization", "name": "Department of Customs, Nepal"},
+           "isAccessibleForFree": True},
+          {"@context": "https://schema.org", "@type": "ItemList", "name": "Nepal’s trade partners, FY %s" % FY,
+           "numberOfItems": len([i for i in order if i in have_page]),
+           "itemListElement": [{"@type": "ListItem", "position": n + 1, "name": countries[i]['name'],
+                                "url": SITE + '/trade-partner/' + slug_of[i]}
+                               for n, i in enumerate([i for i in order if i in have_page])]}]
+out = [page_head(title, desc, '/trade-partners', bc, extra_ld=hub_ld, og='/og/trade-partners.jpg' if (pub / 'og/trade-partners.jpg').exists() else None), crumb_html(bc)]
 hub_key = ('Nepal foreign trade, FY %s (Department of Customs, Nepal): imports %s, exports %s, deficit %s. Source: %s/trade-partners'
            % (FY, money(timp), money(texp), money(texp - timp), SITE))
 out.append('</div><section class="cphero"><div class="wrap"><div>'
