@@ -32,6 +32,7 @@ GROUPS = [
     ]),
     ('trade', 'Trade', '🌍', 'Who, what and how much', [
         ('/trade-partners', 'Countries', 'Nepal’s trade with each country', ''),
+        ('/insights', 'Insights', 'Data articles on what Nepal trades', ''),
         ('/sectors', 'Sectors', 'Import markets and export industries', ''),
         ('/customs-offices', 'Customs offices', 'What each border point handles', ''),
         ('/compare', 'Compare two countries', 'Side by side', ''),
@@ -52,7 +53,7 @@ NAV = [(h, l) for _, _, _, _, items in GROUPS for h, l, _, _ in items]
 
 # which door lights up for a path that is not itself a menu item
 _GROUP_PREFIX = [('/tariff/2083-84-changes', 'cost'), ('/tariff', 'find'), ('/import-duty', 'find'), ('/faq', 'find'),
-                 ('/safta', 'cost'), ('/duty-free', 'cost'), ('/trade-partner', 'trade'), ('/sector', 'trade'), ('/customs-office', 'trade'),
+                 ('/insights', 'trade'), ('/safta', 'cost'), ('/duty-free', 'cost'), ('/trade-partner', 'trade'), ('/sector', 'trade'), ('/customs-office', 'trade'),
                  ('/compare', 'trade'), ('/trade', 'trade'), ('/shipping', 'move'), ('/export', 'move'), ('/the-border', 'move')]
 
 
