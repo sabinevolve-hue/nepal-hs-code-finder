@@ -21,7 +21,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 FTS = ROOT / 'data' / 'fts'
 MAIN_FY = '2082-83'
 HIST_FYS = ['2076-77', '2077-78', '2078-79', '2079-80', '2080-81', '2081-82', '2082-83']
-YTD_FY, YTD_LABEL = '2083-84', 'Shrawan–Bhadra (first 2 months)'
+YTD_FY, YTD_LABEL = '2083-84', 'Shrawan–Asoj (first 3 months)'
 
 def book(fy):
     fs = sorted((FTS / fy).glob('*.xlsx'))
