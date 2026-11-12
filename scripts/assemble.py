@@ -18,6 +18,11 @@ src = re.sub(r'/\*GNAVCSS\*/.*?/\*/GNAVCSS\*/', lambda m: '/*GNAVCSS*/' + _nav.N
 import home_info as _home
 src = re.sub(r'<!--HOMEINFO-->.*?<!--/HOMEINFO-->', lambda m: '<!--HOMEINFO-->' + _home.build() + '<!--/HOMEINFO-->', src, flags=re.S)
 src = re.sub(r'/\*HOMECSS\*/.*?/\*/HOMECSS\*/', lambda m: '/*HOMECSS*/' + _home.CSS + '/*/HOMECSS*/', src, flags=re.S)
+import footer as _footer
+_fsrc = re.search(r'<!--SFOOTSRC-->(.*?)<!--/SFOOTSRC-->', src, flags=re.S)
+src = re.sub(r'<!--SFOOT-->.*?<!--/SFOOT-->', lambda m: '<!--SFOOT-->' + _footer.site_footer(_fsrc.group(1) if _fsrc else '') + '<!--/SFOOT-->', src, flags=re.S)
+src = re.sub(r'<!--SFOOTSRC-->.*?<!--/SFOOTSRC-->', '', src, flags=re.S)
+src = re.sub(r'/\*SFOOTCSS\*/.*?/\*/SFOOTCSS\*/', lambda m: '/*SFOOTCSS*/' + _footer.FOOTER_CSS + '/*/SFOOTCSS*/', src, flags=re.S)
 src = re.sub(r'<!--EXPLORE-->.*?<!--/EXPLORE-->', lambda m: '<!--EXPLORE-->' + _links.explore_footer() + '<!--/EXPLORE-->', src, flags=re.S)
 # Data (tariff/stats/offices/integrated) is no longer inlined into the HTML. It is written to
 # separate files below and fetched async by the app (__boot), so the HTML shell stays small and
