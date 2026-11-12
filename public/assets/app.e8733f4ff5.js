@@ -232,6 +232,34 @@ function costSplit(code, r, k){
   const vat = (TI && TI.vat === 0) ? 0 : (base + cd + ex + fees) * ((TI && TI.vat) || 13) / 100;
   return { duty: cd + ex + fees, vat, total: cd + ex + fees + vat, excise: ex > 0 || fees > 0 };
 }
+/* family ladder: every line in the heading, its duty as a bar, and only the words that decide between them */
+function famWords(x, me){ const p = [...x.path, x.d], m = [...me.path, me.d]; let k = 0;
+  while (k < Math.min(p.length, m.length) - 1 && p[k] === m[k]) k++;
+  return p.slice(k).map(s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s); }
+function famShared(x, me){ const p = [...x.path, x.d], m = [...me.path, me.d]; let k = 0; while (k < Math.min(p.length, m.length) && p[k] === m[k]) k++; return k; }
+function famCheaper(r){ const sib = BYHEAD[r.h] || [], mine = num(rateOf(r)); if (isNaN(mine)) return [];
+  return sib.filter(x => x.code !== r.code && !isNaN(num(rateOf(x))) && num(rateOf(x)) < mine)
+    .sort((a, b) => famShared(b, r) - famShared(a, r) || num(rateOf(a)) - num(rateOf(b))); }
+function familyHTML(r){
+  const sib = BYHEAD[r.h] || []; if (sib.length < 2) return '';
+  const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), hi = Math.max(...vals), top = Math.max(hi, 1);
+  const groups = []; const gi = {};
+  sib.forEach(x => { const g = x.path[0] || ''; if (!(g in gi)){ gi[g] = groups.length; groups.push([g, []]); } groups[gi[g]][1].push(x); });
+  const many = sib.length > 14, myG = r.path[0] || '';
+  let h = `<p class="fine" style="margin:0 0 8px">The bar is the ${origin === 'saarc' ? 'SAARC' : 'general'} customs duty. The text is what decides between the lines, in the tariff's own words.</p>`;
+  h += groups.map(([g, xs]) => `<details class="fl-g" ${!many || g === myG ? 'open' : ''}><summary>${esc(g || 'Lines in this heading')}<span>${xs.length}</span></summary>${xs.map(x => {
+      const v = rateOf(x), n = num(v), me = x.code === r.code, words = (g ? [...x.path.slice(1), x.d] : [...x.path, x.d]).map(s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s).join(' › ');
+      const tone = isNaN(n) ? 'sp' : n === 0 ? 'fr' : n <= 10 ? 'lo' : n <= 20 ? 'md' : 'hi';
+      const w = isNaN(n) ? 0 : Math.max(1.5, 55 * n / top);
+      const badge = me ? '<em class="fl-b me">This line</em>' : (!isNaN(n) && n === lo && lo !== hi ? '<em class="fl-b lw">Lowest</em>' : '');
+      return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="fl-t"><span class="c">${x.code}</span>${badge}<span class="d">${esc(words)}</span></span><span class="fl-bar"><i class="${tone}" style="width:${w.toFixed(1)}%"></i><b>${esc(pct(v))}</b></span></button>`; }).join('')}</details>`).join('');
+  const tips = [], mine = num(rateOf(r)), other = num(origin === 'saarc' ? r.g : r.s);
+  if (origin !== 'saarc' && !isNaN(mine) && !isNaN(other) && other < mine) tips.push(`<li><b>Origin:</b> made in India or another SAARC country, with a certificate of origin, this line pays <b>${esc(pct(r.s))}</b> instead of ${esc(pct(r.g))} under SAFTA.</li>`);
+  famCheaper(r).slice(0, 3).forEach(x => tips.push(`<li><b>${x.code} at ${esc(pct(rateOf(x)))}</b> applies only if your goods are: <i>${esc(famWords(x, r).join(' › '))}</i>.</li>`));
+  if (tips.length) h += `<div class="fl-pay"><b>Ways the duty can be lower, and the condition for each</b><ul>${tips.join('')}</ul><p class="fine" style="margin:6px 0 0">The code follows from what the goods are; it is not a choice. Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference, a fine and possible seizure. When unsure, ask the Department of Customs for an advance ruling.</p></div>`;
+  else if (!isNaN(mine) && mine === lo) h += `<p class="fine" style="color:var(--free);font-weight:600">This is already the lowest duty in its family.</p>`;
+  return h;
+}
 function answerCard(r){
   try {
     const code = r.code, d = r.digits, im = ST.imports[d], hist = (typeof H !== 'undefined' && H.codes) ? H.codes[d] : null;
@@ -254,7 +282,9 @@ function answerCard(r){
       h += `<div><h4>Nepal imported ${rs(im[3], true)} last year</h4>${top.map(x => `<div class="ac-sup"><span>${esc(x[0])}</span><i style="width:${(x[1] / m * 100).toFixed(0)}%"></i><b>${Math.round(x[1] / im[3] * 100)}%</b></div>`).join('')}`
         + (hist && hist.some(x => x[0]) ? `<p class="ac-k" style="margin-top:8px">Imports, FY ${FY[0]}–${FY[FY.length - 1]}</p>${sparkHTML(hist.map(x => x[0]), 0, '')}` : '') + `</div>`;
     } else h += `<div><h4>Nepal trade</h4><p class="fine" style="margin:0">No recorded imports under this exact line last year.</p></div>`;
-    h += `</div><div class="ac-act"><button class="btn" data-code="${code}">Full details &amp; nearby lines</button><button class="btn ghost" data-calc="${code}">Calculate for my shipment</button></div>
+    const ch = famCheaper(r);
+    const famLine = !ch.length ? '' : `<p class="ac-fam">Lines in the same family start at <b>${esc(pct(rateOf(ch.slice().sort((a, b) => num(rateOf(a)) - num(rateOf(b)))[0])))}</b>. Whether one fits depends on what your goods are: <button class="lnk" data-code="${code}">compare the family</button>.</p>`;
+    h += `</div>${famLine}<div class="ac-act"><button class="btn" data-code="${code}">Full details &amp; nearby lines</button><button class="btn ghost" data-calc="${code}">Calculate for my shipment</button></div>
       <p class="fine" style="margin:8px 0 0">Not your product? Pick the right line from the list below — the code depends on what it is made of and how it is used.</p></article>`;
     return h;
   } catch (e) { return ''; }
@@ -324,7 +354,7 @@ document.addEventListener('click', e => {
     if (b.dataset.sec){ browseChap = null; browsePage = ''; browseQ = ''; openSec = b.dataset.sec; go('browse'); setTimeout(() => { const el = document.querySelector(`[data-sec="${b.dataset.sec}"][aria-expanded]`); if (el) el.scrollIntoView({ block: 'start' }); }, 50); return; }
     if (b.dataset.duty){ dutyF = b.dataset.duty; $$('[data-duty]').forEach(x => x.setAttribute('aria-pressed', x === b)); shown = 40; renderResults(); return; }
     if (b.dataset.calc){ remember($('#q').value.trim()); pickCalc(b.dataset.calc); go('calc', 'push'); window.scrollTo({ top: 0 }); return; }
-    if (b.dataset.code){ remember($('#q').value.trim()); openDetail(b.dataset.code); }
+    if (b.dataset.code){ remember($('#q').value.trim()); openDetail(b.dataset.code); if (b.classList.contains('lnk')){ const f = document.getElementById('sh-fam'); if (f) f.scrollIntoView({ block: 'start' }); } }
   }
 });
 const fchap = $('#fchap');
@@ -380,8 +410,8 @@ function openDetail(code, keep){
       ${r.path.map(p => `<li>${esc(p)}</li>`).join('')}
       <li class="me"><small>${r.code}</small>${esc(r.d)}</li>
     </ol>
-    <h3 class="h">Not quite right? Compare the ${sib.length} lines in heading ${r.h}</h3>
-    <div class="sibs">${sib.map(x => `<button class="sib ${x.code === code ? 'cur' : ''}" data-code="${x.code}" ${x.code === code ? 'aria-current="true"' : ''}><span><span class="c">${x.code}</span>${esc(label(x))}</span>${dutyTag(rateOf(x))}</button>`).join('')}</div>
+    <h3 class="h" id="sh-fam">Same family: the ${sib.length} lines in heading ${r.h}</h3>
+    ${familyHTML(r)}
     <h3 class="h">How import tax is worked out</h3>
     <div class="flow"><span>CIF value</span><i>+</i><span>Customs duty</span><i>+</i><span>Excise</span><i>→</i><span>VAT 13%</span><i>=</i><span>Landed cost</span></div>
     <p class="fine">Customs duty is charged on the CIF value. Excise, where it applies, is charged on value plus duty. VAT is charged on the total. SAARC rates generally need a valid certificate of origin.</p>
