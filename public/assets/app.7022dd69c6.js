@@ -240,23 +240,40 @@ function famShared(x, me){ const p = [...x.path, x.d], m = [...me.path, me.d]; l
 function famCheaper(r){ const sib = BYHEAD[r.h] || [], mine = num(rateOf(r)); if (isNaN(mine)) return [];
   return sib.filter(x => x.code !== r.code && !isNaN(num(rateOf(x))) && num(rateOf(x)) < mine)
     .sort((a, b) => famShared(b, r) - famShared(a, r) || num(rateOf(a)) - num(rateOf(b))); }
-let famOrd = 'd';
+let famOrd = 'd', famStep = null, famFor = null;
 function familyHTML(r){
   const sib = BYHEAD[r.h] || []; if (sib.length < 2) return '';
+  if (famFor !== r.h){ famFor = r.h; famStep = null; }
   const N = x => { const n = num(rateOf(x)); return isNaN(n) ? 1e9 : n; };
+  const key = x => { const n = num(rateOf(x)); return isNaN(n) ? 'spec' : String(n); };
   const tone = v => { const n = num(v); return isNaN(n) ? 'sp' : n === 0 ? 'fr' : n <= 10 ? 'lo' : n <= 20 ? 'md' : 'hi'; };
   const chip = v => `<span class="fl-chip ${tone(v)}">${esc(pct(v))}</span>`;
-  const list = famOrd === 'd' ? sib.map((x, i) => [x, i]).sort((a, b) => N(a[0]) - N(b[0]) || a[1] - b[1]).map(a => a[0]) : sib;
-  const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), mine = num(rateOf(r));
-  const rows = list.map(x => { const me = x.code === r.code;
-    const pth = [...x.path, x.d].map(s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s), k = pth.length > 2 && pth[pth.length - 1].length < 28 ? 2 : 1;
+  const fix = s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s;
+  const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), hi = Math.max(...vals), mine = num(rateOf(r));
+  // 1. staircase: one step per duty rate, this line's step marked; a step filters the table
+  const steps = {}; sib.forEach(x => { (steps[key(x)] = steps[key(x)] || []).push(x); });
+  const ks = Object.keys(steps).sort((a, b) => (a === 'spec') - (b === 'spec') || a - b);
+  let h = '';
+  if (ks.length > 1) h += `<div class="fl-stairs" role="group" aria-label="Duty rates in this family">${ks.map(k => { const n = k === 'spec' ? NaN : +k, me = key(r) === k, c = steps[k].length;
+      return `<button class="fl-step ${tone(rateOf(steps[k][0]))}${me ? ' me' : ''}${famStep === k ? ' sel' : ''}" data-famstep="${k}" aria-pressed="${famStep === k}" style="height:${isNaN(n) ? 34 : 34 + Math.round(70 * n / Math.max(hi, 1))}px">${me ? '<em>This line</em>' : ''}<b>${isNaN(n) ? 'Per unit' : esc(pct(rateOf(steps[k][0])))}</b><small>${c} line${c === 1 ? '' : 's'}</small></button>`; }).join('')}</div>
+    <p class="fine" style="margin:6px 0 10px">Each step is a duty rate in this family. Tap a step to see only its lines.</p>`;
+  else h += `<p class="fine" style="margin:0 0 10px">Every line in this family pays the same duty.</p>`;
+  // 2. table
+  let list = famOrd === 'd' ? sib.map((x, i) => [x, i]).sort((a, b) => N(a[0]) - N(b[0]) || a[1] - b[1]).map(a => a[0]) : sib;
+  if (famStep !== null) list = list.filter(x => key(x) === famStep);
+  const rows = list.map(x => { const me = x.code === r.code, pth = [...x.path, x.d].map(fix), k = pth.length > 2 && pth[pth.length - 1].length < 28 ? 2 : 1;
     return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="c">${x.code}${me ? '<em class="fl-b">This line</em>' : ''}</span><span class="n">${chip(x.g)}</span><span class="n">${chip(x.s)}</span><span class="d"><b>${esc(pth.slice(-k).join(' › '))}</b>${pth.length > k ? `<small>${esc(pth.slice(0, -k).join(' › '))}</small>` : ''}</span></button>`; }).join('');
-  const notes = [], sa = num(r.s), ge = num(r.g);
-  if (!isNaN(sa) && !isNaN(ge) && sa < ge) notes.push(`From India or another SAARC country, with a certificate of origin, this line pays <b>${esc(pct(r.s))}</b> instead of ${esc(pct(r.g))}.`);
-  if (!isNaN(mine) && mine === lo) notes.push('This line already has the lowest duty in its family.');
+  h += `<div class="fl-tools" role="group" aria-label="Order"><button data-famord="d" class="${famOrd === 'd' ? 'on' : ''}">Lowest duty first</button><button data-famord="o" class="${famOrd === 'o' ? 'on' : ''}">Tariff order</button></div>
+    <div class="fl-tb"><div class="fl-h"><span>HS code and what the goods must be</span><span>General</span><span>SAARC</span></div>${rows}</div>`;
+  // 3. closest cheaper lines, each with its condition
+  const cards = [], sa = num(r.s), ge = num(r.g);
+  if (!isNaN(sa) && !isNaN(ge) && sa < ge) cards.push(`<div class="fl-card">${chip(r.s)}<span class="was">instead of ${esc(pct(r.g))}</span><b>Same goods, made in India or SAARC</b><span class="if">Needs a SAFTA certificate of origin. The code stays ${r.code}.</span></div>`);
+  famCheaper(r).slice(0, 3).forEach(x => cards.push(`<button class="fl-card" data-code="${x.code}">${chip(rateOf(x))}<span class="was">instead of ${esc(pct(rateOf(r)))}</span><b class="mono">HS ${x.code}</b><span class="if">Only if your goods are: ${esc(famWords(x, r).join(' › '))}</span></button>`));
+  if (cards.length) h += `<h3 class="h" style="margin-top:14px">Closest lines with lower duty, and the condition for each</h3><div class="fl-cards">${cards.join('')}</div>`;
+  const notes = [];
+  if (!isNaN(mine) && mine === lo && ks.length > 1) notes.push('This line already has the lowest duty in its family.');
   notes.push('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. When unsure, ask the Department of Customs for an advance ruling.');
-  return `<div class="fl-tools" role="group" aria-label="Order"><button data-famord="d" class="${famOrd === 'd' ? 'on' : ''}">Lowest duty first</button><button data-famord="o" class="${famOrd === 'o' ? 'on' : ''}">Tariff order</button></div>
-    <div class="fl-tb"><div class="fl-h"><span>HS code and what the goods must be</span><span>General</span><span>SAARC</span></div>${rows}</div><p class="fine" style="margin:8px 0 0">${notes.join(' ')}</p>`;
+  return h + `<p class="fine" style="margin:8px 0 0">${notes.join(' ')}</p>`;
 }
 function answerCard(r){
   try {
@@ -433,6 +450,7 @@ $('#scrim').onclick = closeDetail; $('#sh-x').onclick = closeDetail;
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) closeDetail(); });
 $('#sh-body').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'sh-copy') return copy(curDetail, 'Copied ' + curDetail);
+  if (b.dataset.famstep !== undefined){ famStep = famStep === b.dataset.famstep ? null : b.dataset.famstep; const st = $('#sh-body').scrollTop; openDetail(curDetail, true); $('#sh-body').scrollTop = st; return; }
   if (b.dataset.famord){ famOrd = b.dataset.famord; const st = $('#sh-body').scrollTop; openDetail(curDetail, true); $('#sh-body').scrollTop = st; return; }
   if (b.dataset.code) openDetail(b.dataset.code); });
 $('#sh-save').onclick = () => { let s = store.get('saved', []); const had = s.includes(curDetail); s = had ? s.filter(x => x !== curDetail) : [curDetail, ...s]; store.set('saved', s); openDetail(curDetail, true); toast(had ? 'Removed from saved' : 'Saved'); if (curTab === 'saved') renderSaved(); };
