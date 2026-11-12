@@ -30,7 +30,7 @@ def book(fy):
 XLSX = book(MAIN_FY)
 OUT = ROOT / 'world' / 'data' / 'country.json'
 FY = MAIN_FY.replace('-', '/')
-TOPN = 12          # top products kept per direction per partner
+TOPN = 20          # top products kept per direction per partner
 TOPCH = 8          # top chapters kept per direction per partner
 PROD_MIN_TH = 100000.0   # keep product/chapter detail for partners whose total >= Rs 100M (value in Rs '000)
 
