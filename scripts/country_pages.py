@@ -317,8 +317,30 @@ for iso in order:
                                "Nepal customs", "FY %s" % FY],
                   "creator": {"@type": "GovernmentOrganization", "name": "Department of Customs, Nepal"},
                   "isAccessibleForFree": True}
+    _ti = c.get('impP') or []; _te = c.get('expP') or []
+    qa = [('How much does Nepal import from %s?' % name,
+           'Nepal imported goods worth %s from %s in FY %s, %.1f%% of Nepal’s total imports, according to the Department of Customs.'
+           % (money(c['imp']), name, FY, (c['imp'] / timp * 100) if timp else 0)),
+          ('How much does Nepal export to %s?' % name,
+           'Nepal exported goods worth %s to %s in FY %s, %.1f%% of Nepal’s total exports.'
+           % (money(c['exp']), name, FY, (c['exp'] / texp * 100) if texp else 0)),
+          ('What is Nepal’s trade balance with %s?' % name,
+           'Nepal ran a trade %s of %s with %s in FY %s (exports minus imports).'
+           % ('deficit' if c['exp'] < c['imp'] else 'surplus', money(abs(c['exp'] - c['imp'])), name, FY))]
+    if _ti:
+        qa.append(('What does Nepal import most from %s?' % name,
+                   'The largest imports from %s in FY %s were %s.' % (name, FY, '; '.join('%s (%s)' % (viz.cut(x[1], 60), money(x[2])) for x in _ti[:3]))))
+    if _te:
+        qa.append(('What does Nepal export most to %s?' % name,
+                   'The largest exports to %s in FY %s were %s.' % (name, FY, '; '.join('%s (%s)' % (viz.cut(x[1], 60), money(x[2])) for x in _te[:3]))))
+    if c.get('rev', 0) > 0:
+        qa.append(('How much customs revenue does Nepal collect on goods from %s?' % name,
+                   'Nepal collected %s at customs on imports from %s in FY %s (customs duty plus other taxes charged at the border).'
+                   % (money(c['rev']), name, FY)))
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
     og = '/og/trade-%s.jpg' % slug
-    out = [page_head(title, desc, path, bc, extra_ld=[dataset_ld], og=og if (pub / og.lstrip('/')).exists() else None), crumb_html(bc)]
+    out = [page_head(title, desc, path, bc, extra_ld=[dataset_ld, faq_ld], og=og if (pub / og.lstrip('/')).exists() else None), crumb_html(bc)]
     bal = c['exp'] - c['imp']
     rank = order.index(iso) + 1
     p_imp = (c['imp'] / timp * 100) if timp else 0
@@ -358,6 +380,11 @@ for iso in order:
 
     # trend over the years + the running year so far
     hy = CO.get('hist_years') or []; hh = c.get('hist') or []
+    lh = links.LONG_HIST.get(iso)
+    # stats.json carries more years; use it only when its latest year agrees with this page's own figures
+    if lh and links.LONG_YEARS and links.LONG_YEARS[-1] == FY and len(links.LONG_YEARS) > len(hy) \
+            and abs(lh[-1][0] - c['imp']) <= max(1.0, c['imp'] * 0.002) and abs(lh[-1][1] - c['exp']) <= max(1.0, c['exp'] * 0.002):
+        hy, hh = links.LONG_YEARS, lh
     if len(hy) >= 3 and len(hh) == len(hy) and any(x[0] or x[1] for x in hh):
         out.append('<h2 class="sec">%d years of trade</h2>' % len(hy))
         tf, tf_tsv = story.trend(hy, hh, money, name)
@@ -397,7 +424,7 @@ for iso in order:
 
     # imports
     out.append('<h2 class="sec">What Nepal imports from %s</h2>' % esc(name))
-    flows(c.get('impC', []), ti, c['imp'], '%s %s' % (c['flag'], esc(viz.cut(name, 18))), 'flows into Nepal as…',
+    flows(c.get('impC', []), ti[:12], c['imp'], '%s %s' % (c['flag'], esc(viz.cut(name, 18))), 'flows into Nepal as…',
           'From %s into Nepal — by product group' % name, 'What’s in the containers from %s' % name, slug, 'imports')
     if saarc:
         out.append('<div class="note"><b>SAFTA may apply.</b> %s is a SAARC member, so many goods qualify for the lower '
@@ -457,7 +484,7 @@ for iso in order:
     # exports
     out.append('<h2 class="sec">What Nepal exports to %s</h2>' % esc(name))
     if te:
-        flows(c.get('expC', []), te, c['exp'], '\U0001F1F3\U0001F1F5 Nepal', 'flows to %s as…' % viz.cut(name, 18),
+        flows(c.get('expC', []), te[:12], c['exp'], '\U0001F1F3\U0001F1F5 Nepal', 'flows to %s as…' % viz.cut(name, 18),
               'From Nepal to %s — by product group' % name, 'What Nepal ships to %s' % name, slug, 'exports')
         out.append(viz.table_tools('nepal-exports-to-%s-fy-%s' % (slug, FY.replace('/', '-'))))
         out.append(product_table(te, iso, 'exports'))
@@ -499,7 +526,21 @@ for iso in order:
                'same as profit — treat these figures as a starting point for research.' % esc(name))
     out.append('<p>%s</p>' % opp)
 
-    hist = links.HISTORY.get(iso)
+    out.append('<h2 class="sec">Quick answers</h2><dl class="qa">' + ''.join(
+        '<dt>%s</dt><dd>%s</dd>' % (esc(q), esc(a)) for q, a in qa) +
+        '</dl><p class="fineprint">Source: Department of Customs, Nepal — Foreign Trade Statistics FY %s.</p>' % FY)
+    hist = None
+    # category lists (carried over from the older /trade/country page this profile replaced)
+    def _cats(rows, label):
+        if not rows:
+            return ''
+        return ('<div><h3 class="sub">%s</h3><ul class="catl">' % label + ''.join(
+            '<li><a href="/trade/category/%s">%s %s <span>Chapter %d</span></a><b>%s</b></li>'
+            % (str(ch).zfill(2), viz.chap_icon(str(ch).zfill(2)), esc(viz.chap_short(str(ch).zfill(2))), int(ch), money(v))
+            for ch, v in rows[:8]) + '</ul></div>')
+    cats = _cats(c.get('impC'), 'Top import categories from %s' % esc(name)) + _cats(c.get('expC'), 'Top export categories to %s' % esc(name))
+    if cats:
+        out.append('<h2 class="sec">By category</h2><div class="catg">' + cats + '</div>')
     out.append('<p class="xlink"><b>Keep going:</b> ' + ' · '.join(x for x in [
         '<a href="%s">%s: 7-year import and export trend</a>' % (hist, esc(name)) if hist else '',
         '<a href="/safta">how the SAFTA rate works</a>' if iso in SAARC else '',

@@ -63,4 +63,22 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: Google-CloudVertexBot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: PetalBot
+Allow: /
+
 Sitemap: https://www.customsnepal.com/sitemap.xml

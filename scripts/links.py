@@ -50,14 +50,30 @@ import unicodedata as _ud
 def _tslug(n):
     n = _ud.normalize('NFKD', str(n)).encode('ascii', 'ignore').decode()
     return re.sub(r'[^a-z0-9]+', '-', n.lower()).strip('-')
-HISTORY = {}
-try:
-    for _row in json.loads((_root / 'data/stats.json').read_text(encoding='utf-8'))['countries']:
-        _i = _PARTNER.get(str(_row[0]).strip().lower())
-        if _i and (_row[1] or _row[2]):
-            HISTORY[_i] = '/trade/country/' + _tslug(_row[0])
-except Exception:
-    pass
+# /trade/country/<slug> (trade_pages.py) is the older, plainer country page. Where a partner profile exists it
+# REPLACES that page: trade_pages.py skips it, vercel.json 301s the old URL, and country_href() points links
+# at the profile. Countries without a profile keep their /trade/country page.
+_S = json.loads((_root / 'data/stats.json').read_text(encoding='utf-8'))
+OLD_COUNTRY = {}        # '/trade/country/<slug>' -> '/trade-partner/<slug>'
+LONG_HIST = {}          # iso -> [[imp, exp] per year in LONG_YEARS], summed over every spelling of the country
+LONG_YEARS = _S.get('history', {}).get('years', [])
+for _n, _h in _S.get('history', {}).get('countries', {}).items():
+    _i = _PARTNER.get(str(_n).strip().lower())
+    if not _i:
+        continue
+    OLD_COUNTRY['/trade/country/' + _tslug(_n)] = PARTNER_PAGE[_i][0]
+    _a = LONG_HIST.setdefault(_i, [[0.0, 0.0] for _ in LONG_YEARS])
+    for _k, _v in enumerate(_h[:len(LONG_YEARS)]):
+        _a[_k][0] += float(_v[0] or 0); _a[_k][1] += float(_v[1] or 0)
+for _row in _S['countries']:
+    _i = _PARTNER.get(str(_row[0]).strip().lower())
+    if _i:
+        OLD_COUNTRY['/trade/country/' + _tslug(_row[0])] = PARTNER_PAGE[_i][0]
+
+
+def country_href(name):
+    """Best page for a country name: its partner profile if there is one, else the plain /trade/country page."""
+    return partner_href(name) or ('/trade/country/' + _tslug(name))
 
 
 # ---------- consumer-name duty pages ----------
@@ -141,6 +157,6 @@ def explore_footer():
     part = ' · '.join('<a href="%s">%s</a>' % (PARTNER_PAGE[i][0], PARTNER_PAGE[i][1]) for i in TOP_PARTNERS[:8])
     duty = ' · '.join('<a href="/import-duty/%s">%s</a>' % (s, l) for s, l in _POPULAR if s in _ALIAS_NAME)
     return ('<p class="explore"><b>Nepal&rsquo;s trade by country:</b> ' + part +
-            ' · <a href="/trade-partners">all %d trading partners</a> · <a href="/customs-offices">by customs office</a> · <a href="/compare">compare two countries</a></p>'
+            ' · <a href="/trade-partners">all %d trading partners</a> · <a href="/customs-offices">by customs office</a> · <a href="/compare">compare two countries</a> · <a href="/data">download the data</a></p>'
             '<p class="explore"><b>Import duty by product name:</b> ' + duty +
             ' · <a href="/import-duty#popular-names">all %d products</a></p>') % (len(PARTNER_PAGE), len(ALIAS_RECS))

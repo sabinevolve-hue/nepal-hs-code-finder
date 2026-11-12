@@ -1,0 +1,582 @@
+# Customs Nepal
+
+> Customs Nepal (customsnepal.com) is a free tool to find the Nepal HS code, customs duty, VAT (13%) and total landed cost for any product, using the official Customs Tariff 2026/27 (FY 2083/84 BS, HS 2022 nomenclature). It also offers an AI HS-code classifier, a proforma/commercial invoice generator and Nepal import/export trade data.
+
+Customs Nepal is an independent, privately operated reference tool. It is NOT a government website and is not affiliated with the Government of Nepal. Official sources: the Department of Customs (https://www.customs.gov.np) and the Ministry of Finance (https://www.mof.gov.np). Rates are shown as published and should be confirmed with the customs office or a clearing agent before any binding decision.
+
+## Main pages
+- [HS code search (home)](https://www.customsnepal.com/): Search the full Nepal Customs Tariff by product name, material or code, in English or Nepali.
+- [Customs Tariff 2026/27 — all chapters](https://www.customsnepal.com/tariff): Browse every chapter of the tariff with general and SAARC import-duty rates.
+- [Customs Tariff 2083/84 (2026/27): what changed](https://www.customsnepal.com/tariff/2083-84-changes): What changed in Nepal's customs tariff for FY 2083/84 — duty tiers cut from 11 to 7, lower duty on 273 industrial raw materials, customs-point levies merged into a green tax, the 50% fuel duty concession — with the official PDF link and cited sources.
+- [Duty & landed-cost calculator](https://www.customsnepal.com/calculator): Estimate customs duty, VAT and total landed cost in rupees for any HS code.
+- [Ask AI — HS code classifier](https://www.customsnepal.com/ask-ai): Describe a product in plain words and get ranked HS code suggestions with reasoning.
+- [Nepal's trade partners](https://www.customsnepal.com/trade-partners): Nepal's imports, exports and balance with each trading partner country (Department of Customs), with a page per country at https://www.customsnepal.com/trade-partner/<country> (for example https://www.customsnepal.com/trade-partner/india, https://www.customsnepal.com/trade-partner/china): top products, customs revenue collected, competing suppliers and how goods move.
+- [Import duty by product name](https://www.customsnepal.com/import-duty): Plain-name pages (air conditioner, laptop, solar panel, gold, car…) at https://www.customsnepal.com/import-duty/<name> that group every HS line for that product with its general and SAARC duty, 13% VAT and a worked landed-cost example; plus one page per 8-digit tariff line.
+- [Imports](https://www.customsnepal.com/imports): Nepal import data and duty by product category and partner country.
+- [Exports](https://www.customsnepal.com/exports): Nepal export data by product category and destination.
+- [Export guides](https://www.customsnepal.com/export): Step-by-step guides to exporting from Nepal — procedures, documents, EXIM code, certificate of origin and product-specific notes.
+- [SAFTA preferential duty](https://www.customsnepal.com/safta): How Nepal importers cut customs duty under the SAFTA agreement — eligible SAARC origins, rules of origin, certificate of origin, the sensitive list, and the product segments that benefit most.
+- [Shipping to Nepal](https://www.customsnepal.com/shipping): Landlocked Nepal's sea–land freight routes — the Indian and Bangladeshi gateway ports (Kolkata/Haldia, Visakhapatnam, Nhava Sheva, Mundra, Mongla, Chittagong) and the inland customs points (Birgunj, Biratnagar, Bhairahawa, Kakarbhitta, Chobhar).
+- [Track a shipment](https://www.customsnepal.com/shipping/track): Paste a container number or bill-of-lading number to identify the carrier (ISO 6346 check digit + owner-prefix / B/L-prefix match) and jump to the right carrier tracking page.
+- [World HS codes & global trade](https://world.customsnepal.com/): International HS 2022 codes and the trade of 207 economies, with Nepal's trade seen against world flows (BACI benchmark data).
+- [Trade data](https://www.customsnepal.com/trade-data): Multi-year Nepal foreign-trade statistics.
+- [FAQ](https://www.customsnepal.com/faq): Common questions on HS codes, customs duty, VAT and landed cost in Nepal.
+- [About](https://www.customsnepal.com/about): What Customs Nepal is, who it is for, and its data sources.
+
+## Key facts about Nepal customs
+- Nepal HS codes are 8 digits, written in dotted groups (for example 0101.21.00). The first 6 digits are the international HS subheading; Nepal adds the last 2 for national tariff lines.
+- The standard VAT rate in Nepal is 13%. On imports, VAT is charged on the assessable value plus customs duty (plus excise where it applies).
+- Customs duty is a percentage of the assessable (CIF) value of the goods. Each HS code has its own general rate.
+- A lower SAARC (SAFTA) preferential duty rate may apply to qualifying goods from SAARC countries, subject to rules of origin and a certificate of origin.
+- Depending on the product, imports may also attract excise duty and an agriculture reform fee.
+- Landed cost = product price + freight + insurance + customs duty + VAT + any other import taxes and fees.
+
+## Key facts about SAFTA (preferential duty)
+- SAFTA is the South Asian Free Trade Area agreement among SAARC members (India, Pakistan, Bangladesh, Sri Lanka, Nepal, Bhutan, Maldives, Afghanistan). Qualifying goods pay the lower SAARC duty column instead of the general rate.
+- To claim the SAARC rate, the importer needs a SAFTA Certificate of Origin issued in the exporting country. It is valid for 12 months from the date of issue.
+- Rules of origin: the general rule is a change of tariff heading (CTH) at 4-digit HS level plus at least 40% domestic value addition; for least-developed members (which include Nepal) the value-addition threshold is 30%.
+- Each country keeps a Sensitive List of products excluded from SAFTA concessions; goods on the importing country's sensitive list do not get the preferential rate.
+- Nepal's graduation from least-developed-country (LDC) status was originally due in November 2026; on 29-30 October 2026 the UN General Assembly extended its preparatory period by three years, so Nepal now remains an LDC until 24 November 2029. Until then the LDC concessions (such as the 30% SAFTA value-addition threshold) continue to apply.
+
+## Key facts about shipping to Nepal
+- Nepal is landlocked, so almost all overseas cargo arrives by sea at an Indian or Bangladeshi port and then moves overland to an inland customs point in Nepal.
+- Main gateway ports: Kolkata and Haldia, Visakhapatnam, Nhava Sheva (JNPT) and Mundra in India, and Mongla and Chittagong in Bangladesh.
+- Main inland customs points / ICDs: Birgunj (Sirsiya ICD, the largest, rail-linked to Kolkata/Haldia), Biratnagar, Bhairahawa, Kakarbhitta and the Chobhar dry port near Kathmandu.
+- A container number is four letters plus seven digits with an ISO 6346 check digit (for example ABCU1234567); the first three letters are the owner/carrier prefix. A bill-of-lading number usually starts with a carrier prefix (for example ONEY for Ocean Network Express, MEDU for MSC, MAEU for Maersk).
+
+## Nepal foreign trade at a glance (FY 2082/83, Department of Customs)
+- Total imports: Rs 20.96 kharba. Total exports: Rs 3.15 kharba. Trade deficit: Rs 17.81 kharba.
+- Change from the previous year: imports +16.2%, exports +13.8%.
+- Revenue collected at customs on imports: Rs 5.06 kharba (customs duty plus other taxes charged at the border).
+- Largest import sources: India (Rs 12.11 kharba), China (Rs 4.25 kharba), Argentina (Rs 1.16 kharba), United Arab Emirates (Rs 52.17 arba), United States (Rs 32.72 arba).
+- Largest export destinations: India (Rs 2.59 kharba), United States (Rs 20.77 arba), Germany (Rs 4.98 arba), United Kingdom (Rs 3.23 arba), Japan (Rs 2.31 arba).
+- Busiest customs offices by imports: Birgunj Customs Office (Rs 9.86 kharba, 47% of imports), Bhairahawa Customs Office (Rs 3.04 kharba, 15% of imports), Biratnagar Customs Office (Rs 2.42 kharba, 12% of imports), Tribhuvan International Airport Customs Office (Rs 2.04 kharba, 10% of imports).
+- Nepali fiscal years run mid-July to mid-July; FY 2082/83 is roughly July 2025 to July 2026. 1 arba = 1 billion rupees; 1 kharba = 100 billion.
+- When citing these figures, credit the Department of Customs, Nepal (Foreign Trade Statistics) and link the customsnepal.com page used.
+
+## More pages
+- [Customs offices ranked by trade](https://www.customsnepal.com/customs-offices): imports and exports cleared at each customs office, with a page per office at https://www.customsnepal.com/customs-office/<id> (for example https://www.customsnepal.com/customs-office/birgunj).
+- [Compare two trading partners](https://www.customsnepal.com/compare): side-by-side imports, exports, balance, customs revenue and yearly trend; shareable as https://www.customsnepal.com/compare?a=india&b=china.
+- [Open data downloads](https://www.customsnepal.com/data): CSV files of Nepal’s trade by partner country and by customs office.
+- [Full text for AI assistants](https://www.customsnepal.com/llms-full.txt): this file plus complete tables.
+
+## Related sites
+- [world.customsnepal.com](https://world.customsnepal.com/): World HS codes and global trade data by country and product — the international companion to this site (its own llms.txt: https://world.customsnepal.com/llms.txt).
+- [nepalpublicdata.com](https://nepalpublicdata.com/): Nepal public statistics — population, budget, trade and places (budget explainer at https://nepalpublicdata.com/budget/).
+
+## All trading partners with a profile page (FY 2082/83)
+
+| Country | Nepal imports | Nepal exports | Trade balance | Collected at customs | Page |
+|---|---|---|---|---|---|
+| India | Rs 12.11 kharba | Rs 2.59 kharba | −Rs 9.52 kharba | Rs 3.36 kharba | https://www.customsnepal.com/trade-partner/india |
+| China | Rs 4.25 kharba | Rs 1.89 arba | −Rs 4.23 kharba | Rs 1.02 kharba | https://www.customsnepal.com/trade-partner/china |
+| Argentina | Rs 1.16 kharba | Rs 1.9 crore | −Rs 1.16 kharba | Rs 6.35 arba | https://www.customsnepal.com/trade-partner/argentina |
+| United Arab Emirates | Rs 52.17 arba | Rs 1.84 arba | −Rs 50.33 arba | Rs 5.97 arba | https://www.customsnepal.com/trade-partner/united-arab-emirates |
+| United States | Rs 32.72 arba | Rs 20.77 arba | −Rs 11.94 arba | Rs 4.73 arba | https://www.customsnepal.com/trade-partner/united-states |
+| Australia | Rs 20.39 arba | Rs 2.12 arba | −Rs 18.27 arba | Rs 3.26 arba | https://www.customsnepal.com/trade-partner/australia |
+| Indonesia | Rs 22.19 arba | Rs 26.1 crore | −Rs 21.93 arba | Rs 5.74 arba | https://www.customsnepal.com/trade-partner/indonesia |
+| Thailand | Rs 18.37 arba | Rs 4.2 crore | −Rs 18.33 arba | Rs 5.88 arba | https://www.customsnepal.com/trade-partner/thailand |
+| Brazil | Rs 17.76 arba | Rs 6.0 crore | −Rs 17.70 arba | Rs 48.1 crore | https://www.customsnepal.com/trade-partner/brazil |
+| Malaysia | Rs 15.51 arba | Rs 24.6 crore | −Rs 15.26 arba | Rs 4.00 arba | https://www.customsnepal.com/trade-partner/malaysia |
+| Japan | Rs 9.35 arba | Rs 2.31 arba | −Rs 7.04 arba | Rs 4.63 arba | https://www.customsnepal.com/trade-partner/japan |
+| Germany | Rs 6.51 arba | Rs 4.98 arba | −Rs 1.53 arba | Rs 1.35 arba | https://www.customsnepal.com/trade-partner/germany |
+| France | Rs 8.04 arba | Rs 2.21 arba | −Rs 5.83 arba | Rs 1.42 arba | https://www.customsnepal.com/trade-partner/france |
+| Hong Kong | Rs 9.53 arba | Rs 46.6 crore | −Rs 9.07 arba | Rs 1.04 arba | https://www.customsnepal.com/trade-partner/hong-kong |
+| Bangladesh | Rs 9.15 arba | Rs 48.8 crore | −Rs 8.66 arba | Rs 1.05 arba | https://www.customsnepal.com/trade-partner/bangladesh |
+| Canada | Rs 8.02 arba | Rs 1.55 arba | −Rs 6.47 arba | Rs 1.17 arba | https://www.customsnepal.com/trade-partner/canada |
+| Saudi Arabia | Rs 9.27 arba | Rs 24.0 crore | −Rs 9.03 arba | Rs 1.21 arba | https://www.customsnepal.com/trade-partner/saudi-arabia |
+| Ukraine | Rs 8.98 arba | Rs 29 lakh | −Rs 8.98 arba | Rs 1.56 arba | https://www.customsnepal.com/trade-partner/ukraine |
+| Vietnam | Rs 8.23 arba | Rs 4.1 crore | −Rs 8.19 arba | Rs 2.30 arba | https://www.customsnepal.com/trade-partner/vietnam |
+| United Kingdom | Rs 4.85 arba | Rs 3.23 arba | −Rs 1.62 arba | Rs 3.45 arba | https://www.customsnepal.com/trade-partner/united-kingdom |
+| Singapore | Rs 6.72 arba | Rs 1.29 arba | −Rs 5.43 arba | Rs 2.21 arba | https://www.customsnepal.com/trade-partner/singapore |
+| Italy | Rs 5.68 arba | Rs 1.60 arba | −Rs 4.08 arba | Rs 65.4 crore | https://www.customsnepal.com/trade-partner/italy |
+| South Korea | Rs 6.35 arba | Rs 49.3 crore | −Rs 5.86 arba | Rs 1.86 arba | https://www.customsnepal.com/trade-partner/south-korea |
+| Israel | Rs 4.68 arba | Rs 6.4 crore | −Rs 4.62 arba | Rs 42.4 crore | https://www.customsnepal.com/trade-partner/israel |
+| Brunei | Rs 4.69 arba | Rs 12 lakh | −Rs 4.69 arba | Rs 13 lakh | https://www.customsnepal.com/trade-partner/brunei |
+| Russia | Rs 4.29 arba | Rs 13.7 crore | −Rs 4.15 arba | Rs 64 lakh | https://www.customsnepal.com/trade-partner/russia |
+| Qatar | Rs 3.89 arba | Rs 14.7 crore | −Rs 3.75 arba | Rs 19.9 crore | https://www.customsnepal.com/trade-partner/qatar |
+| Netherlands | Rs 2.34 arba | Rs 1.46 arba | −Rs 88.0 crore | Rs 35.1 crore | https://www.customsnepal.com/trade-partner/netherlands |
+| Turkiye | Rs 2.16 arba | Rs 1.39 arba | −Rs 77.2 crore | Rs 63.3 crore | https://www.customsnepal.com/trade-partner/turkiye |
+| Poland | Rs 2.58 arba | Rs 16.8 crore | −Rs 2.41 arba | Rs 43.0 crore | https://www.customsnepal.com/trade-partner/poland |
+| Bhutan | Rs 1.52 arba | Rs 77.1 crore | −Rs 74.7 crore | Rs 29.4 crore | https://www.customsnepal.com/trade-partner/bhutan |
+| Taiwan, Province of China | Rs 1.99 arba | Rs 27.8 crore | −Rs 1.71 arba | Rs 45.6 crore | https://www.customsnepal.com/trade-partner/taiwan-province-of-china |
+| Belgium | Rs 1.57 arba | Rs 49.8 crore | −Rs 1.07 arba | Rs 15.4 crore | https://www.customsnepal.com/trade-partner/belgium |
+| Myanmar | Rs 2.03 arba | Rs 82 lakh | −Rs 2.02 arba | Rs 21.9 crore | https://www.customsnepal.com/trade-partner/myanmar |
+| Spain | Rs 1.66 arba | Rs 37.1 crore | −Rs 1.29 arba | Rs 33.4 crore | https://www.customsnepal.com/trade-partner/spain |
+| New Zealand | Rs 1.77 arba | Rs 26.6 crore | −Rs 1.50 arba | Rs 22.9 crore | https://www.customsnepal.com/trade-partner/new-zealand |
+| Switzerland | Rs 1.31 arba | Rs 60.9 crore | −Rs 70.5 crore | Rs 31.4 crore | https://www.customsnepal.com/trade-partner/switzerland |
+| Paraguay | Rs 1.91 arba | Rs 10 lakh | −Rs 1.91 arba | Rs 6.5 crore | https://www.customsnepal.com/trade-partner/paraguay |
+| Kenya | Rs 1.54 arba | Rs 7.8 crore | −Rs 1.46 arba | Rs 33 lakh | https://www.customsnepal.com/trade-partner/kenya |
+| Afghanistan | Rs 1.14 arba | Rs 25.7 crore | −Rs 88.1 crore | Rs 28.9 crore | https://www.customsnepal.com/trade-partner/afghanistan |
+| Ireland | Rs 1.02 arba | Rs 22.6 crore | −Rs 79.3 crore | Rs 30.6 crore | https://www.customsnepal.com/trade-partner/ireland |
+| Denmark | Rs 21.6 crore | Rs 1.02 arba | Rs 80.5 crore | Rs 4.7 crore | https://www.customsnepal.com/trade-partner/denmark |
+| South Africa | Rs 1.11 arba | Rs 7.9 crore | −Rs 1.03 arba | Rs 33.5 crore | https://www.customsnepal.com/trade-partner/south-africa |
+| Austria | Rs 63.0 crore | Rs 41.4 crore | −Rs 21.6 crore | Rs 12.0 crore | https://www.customsnepal.com/trade-partner/austria |
+| Nigeria | Rs 1.04 arba | Rs 16900 | −Rs 1.04 arba | Rs 23.9 crore | https://www.customsnepal.com/trade-partner/nigeria |
+| Philippines | Rs 97.6 crore | Rs 5.9 crore | −Rs 91.7 crore | Rs 23.9 crore | https://www.customsnepal.com/trade-partner/philippines |
+| Sweden | Rs 61.5 crore | Rs 32.7 crore | −Rs 28.8 crore | Rs 31.6 crore | https://www.customsnepal.com/trade-partner/sweden |
+| Greece | Rs 91.1 crore | Rs 2.0 crore | −Rs 89.0 crore | Rs 1.6 crore | https://www.customsnepal.com/trade-partner/greece |
+| Sudan | Rs 78.8 crore | Rs 1 lakh | −Rs 78.8 crore | Rs 19.2 crore | https://www.customsnepal.com/trade-partner/sudan |
+| Mexico | Rs 74.4 crore | Rs 4.1 crore | −Rs 70.3 crore | Rs 25.4 crore | https://www.customsnepal.com/trade-partner/mexico |
+| Czechia | Rs 54.2 crore | Rs 19.9 crore | −Rs 34.3 crore | Rs 10.1 crore | https://www.customsnepal.com/trade-partner/czechia |
+| Oman | Rs 58.0 crore | Rs 6.4 crore | −Rs 51.7 crore | Rs 11.1 crore | https://www.customsnepal.com/trade-partner/oman |
+| Chile | Rs 59.5 crore | Rs 53 lakh | −Rs 59.0 crore | Rs 14.7 crore | https://www.customsnepal.com/trade-partner/chile |
+| Ethiopia | Rs 55.5 crore | Rs 4200 | −Rs 55.5 crore | Rs 5.6 crore | https://www.customsnepal.com/trade-partner/ethiopia |
+| Hungary | Rs 33.4 crore | Rs 20.3 crore | −Rs 13.2 crore | Rs 5.1 crore | https://www.customsnepal.com/trade-partner/hungary |
+| Pakistan | Rs 30.3 crore | Rs 21.5 crore | −Rs 8.8 crore | Rs 7.6 crore | https://www.customsnepal.com/trade-partner/pakistan |
+| Uruguay | Rs 45.9 crore | Rs 94 lakh | −Rs 45.0 crore | Rs 3 lakh | https://www.customsnepal.com/trade-partner/uruguay |
+| Finland | Rs 30.7 crore | Rs 11.4 crore | −Rs 19.3 crore | Rs 1.5 crore | https://www.customsnepal.com/trade-partner/finland |
+| Cameroon | Rs 41.4 crore | Rs 0 | −Rs 41.4 crore | Rs 15 lakh | https://www.customsnepal.com/trade-partner/cameroon |
+| Sri Lanka | Rs 34.9 crore | Rs 5.4 crore | −Rs 29.6 crore | Rs 6.5 crore | https://www.customsnepal.com/trade-partner/sri-lanka |
+| Bulgaria | Rs 38.2 crore | Rs 1.6 crore | −Rs 36.6 crore | Rs 6.5 crore | https://www.customsnepal.com/trade-partner/bulgaria |
+| Bahrain | Rs 37.1 crore | Rs 88 lakh | −Rs 36.2 crore | Rs 7.4 crore | https://www.customsnepal.com/trade-partner/bahrain |
+| Norway | Rs 13.0 crore | Rs 21.8 crore | Rs 8.8 crore | Rs 3.4 crore | https://www.customsnepal.com/trade-partner/norway |
+| Egypt | Rs 32.8 crore | Rs 14200 | −Rs 32.8 crore | Rs 7.1 crore | https://www.customsnepal.com/trade-partner/egypt |
+| Guatemala | Rs 31.6 crore | Rs 52 lakh | −Rs 31.0 crore | Rs 4.9 crore | https://www.customsnepal.com/trade-partner/guatemala |
+| Portugal | Rs 27.0 crore | Rs 3.4 crore | −Rs 23.6 crore | Rs 8.7 crore | https://www.customsnepal.com/trade-partner/portugal |
+| Kuwait | Rs 16.7 crore | Rs 5.8 crore | −Rs 10.9 crore | Rs 6.3 crore | https://www.customsnepal.com/trade-partner/kuwait |
+| Laos | Rs 10.9 crore | Rs 4.0 crore | −Rs 6.9 crore | Rs 2.6 crore | https://www.customsnepal.com/trade-partner/laos |
+| Slovenia | Rs 12.4 crore | Rs 1.5 crore | −Rs 10.8 crore | Rs 2.5 crore | https://www.customsnepal.com/trade-partner/slovenia |
+| Rwanda | Rs 13.7 crore | Rs 0 | −Rs 13.7 crore | Rs 1.4 crore | https://www.customsnepal.com/trade-partner/rwanda |
+| Romania | Rs 4.6 crore | Rs 8.8 crore | Rs 4.2 crore | Rs 99 lakh | https://www.customsnepal.com/trade-partner/romania |
+| Cambodia | Rs 11.5 crore | Rs 1.6 crore | −Rs 9.9 crore | Rs 3.6 crore | https://www.customsnepal.com/trade-partner/cambodia |
+| Dominican Republic | Rs 10.6 crore | Rs 51 lakh | −Rs 10.1 crore | Rs 1.9 crore | https://www.customsnepal.com/trade-partner/dominican-republic |
+| Mongolia | Rs 10.3 crore | Rs 82 lakh | −Rs 9.5 crore | Rs 12 lakh | https://www.customsnepal.com/trade-partner/mongolia |
+| Lithuania | Rs 9.2 crore | Rs 1.3 crore | −Rs 7.9 crore | Rs 2.5 crore | https://www.customsnepal.com/trade-partner/lithuania |
+| Costa Rica | Rs 9.2 crore | Rs 33 lakh | −Rs 8.9 crore | Rs 1.4 crore | https://www.customsnepal.com/trade-partner/costa-rica |
+| Estonia | Rs 4.9 crore | Rs 78 lakh | −Rs 4.1 crore | Rs 1.2 crore | https://www.customsnepal.com/trade-partner/estonia |
+| Uganda | Rs 5.2 crore | Rs 39 lakh | −Rs 4.8 crore | Rs 1.5 crore | https://www.customsnepal.com/trade-partner/uganda |
+| Zimbabwe | Rs 3.6 crore | Rs 0 | −Rs 3.6 crore | Rs 66 lakh | https://www.customsnepal.com/trade-partner/zimbabwe |
+| Benin | Rs 2.3 crore | Rs 0 | −Rs 2.3 crore | Rs 70 lakh | https://www.customsnepal.com/trade-partner/benin |
+| Iraq | Rs 19 lakh | Rs 1.8 crore | Rs 1.6 crore | Rs 1 lakh | https://www.customsnepal.com/trade-partner/iraq |
+| Turkmenistan | Rs 30 lakh | Rs 8 lakh | −Rs 22 lakh | Rs 5 lakh | https://www.customsnepal.com/trade-partner/turkmenistan |
+| Senegal | Rs 16 lakh | Rs 0 | −Rs 16 lakh | Rs 5 lakh | https://www.customsnepal.com/trade-partner/senegal |
+
+## Trend for the ten largest partners (imports / exports by fiscal year)
+
+| Country | FY 2079/80 | FY 2080/81 | FY 2081/82 | FY 2082/83 |
+|---|---|---|---|---|
+| India | Rs 10.28 kharba / Rs 1.07 kharba | Rs 9.97 kharba / Rs 1.03 kharba | Rs 10.71 kharba / Rs 2.25 kharba | Rs 12.11 kharba / Rs 2.59 kharba |
+| China | Rs 2.23 kharba / Rs 1.77 arba | Rs 2.99 kharba / Rs 2.59 arba | Rs 3.41 kharba / Rs 2.63 arba | Rs 4.25 kharba / Rs 1.89 arba |
+| Argentina | Rs 24.86 arba / Rs 74 lakh | Rs 12.38 arba / Rs 18 lakh | Rs 99.30 arba / Rs 34 lakh | Rs 1.16 kharba / Rs 1.9 crore |
+| United Arab Emirates | Rs 32.21 arba / Rs 1.08 arba | Rs 29.09 arba / Rs 2.58 arba | Rs 25.34 arba / Rs 3.02 arba | Rs 52.17 arba / Rs 1.84 arba |
+| United States | Rs 19.42 arba / Rs 19.57 arba | Rs 19.48 arba / Rs 17.31 arba | Rs 25.97 arba / Rs 18.32 arba | Rs 32.72 arba / Rs 20.77 arba |
+| Australia | Rs 18.60 arba / Rs 1.61 arba | Rs 15.40 arba / Rs 1.82 arba | Rs 19.85 arba / Rs 1.91 arba | Rs 20.39 arba / Rs 2.12 arba |
+| Indonesia | Rs 41.83 arba / Rs 31.4 crore | Rs 10.66 arba / Rs 29.6 crore | Rs 15.27 arba / Rs 35.9 crore | Rs 22.19 arba / Rs 26.1 crore |
+| Thailand | Rs 11.29 arba / Rs 7.5 crore | Rs 8.66 arba / Rs 9.5 crore | Rs 14.81 arba / Rs 5.3 crore | Rs 18.37 arba / Rs 4.2 crore |
+| Brazil | Rs 5.13 arba / Rs 1.5 crore | Rs 3.94 arba / Rs 10.6 crore | Rs 11.84 arba / Rs 3.6 crore | Rs 17.76 arba / Rs 6.0 crore |
+| Malaysia | Rs 22.41 arba / Rs 31.2 crore | Rs 17.92 arba / Rs 24.0 crore | Rs 14.08 arba / Rs 19.8 crore | Rs 15.51 arba / Rs 24.6 crore |
+
+## Top products by partner (ten largest partners, FY 2082/83)
+
+- Imports from India: Diesel [HS 27101930] Rs 1.72 kharba; Petrol [HS 27101210] Rs 77.27 arba; Liquidified Petrolium Gas (LPG) [HS 27111910] Rs 60.28 arba; Ferrous products obtained by direct reduct on of iron ore,in [HS 72031000] Rs 58.52 arba; Other - Medicaments put up in measured doss or in forms or p [HS 30049090] Rs 27.56 arba.
+- Exports to India: Soya-bean oil (excl. crude) and fractions [HS 15079000] Rs 1.29 kharba; Big Cardamon (Alaichi) neither crushed nor ground [HS 09083110] Rs 12.64 arba; Sunflower-seed and safflower oil (excl. crude) and fractions [HS 15121900] Rs 8.94 arba; Unbleached woven fabrics of jute or of oth r textile bast fi [HS 53101000] Rs 7.14 arba; Refined bleached deodorized palm olein [HS 15119020] Rs 6.67 arba.
+- Imports from China: Smartphones [HS 85171300] Rs 36.79 arba; Diammonium hydrogenorthophosphate (diammonium phosphate) [HS 31053000] Rs 20.98 arba; Electric car, jeep & van 51KW to <=100KW [HS 87038059] Rs 12.03 arba; Apples, fresh [HS 08081000] Rs 12.03 arba; Crude soya-bean oil [HS 15071000] Rs 10.55 arba.
+- Exports to China: Table, kitchen or other household articles nd parts thereof; [HS 74181000] Rs 25.1 crore; Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 24.3 crore; Other vegetable saps and extracts, nes [HS 13021900] Rs 20.2 crore; other Felt, whether or not impregnated, coated, covered or l [HS 56029000] Rs 14.3 crore; Tanned or crust hides and skins or goats or kids in the wet  [HS 41062100] Rs 10.5 crore.
+- Imports from Argentina: Crude soya-bean oil [HS 15071000] Rs 98.84 arba; Crude sunflower oil [HS 15121100] Rs 17.34 arba; Maize (corn) (excl seed) [HS 10059000] Rs 9.0 crore; Seeds of coriander neither crushed nor groud [HS 09092100] Rs 3.7 crore; Dried beans, shelled whether or not skinned or split [HS 07133100] Rs 3.4 crore.
+- Exports to Argentina: Other electro thermic appliances [HS 85167990] Rs 1.4 crore; Percussion musical instruments (eg drums, xylophones, cymbal [HS 92060000] Rs 25 lakh; Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 18 lakh; Medicaments of other antibiotics, for retail sale [HS 30042000] Rs 2200; Dalmoth, Namkeen, Bhujiya and Chamena (titbits) [HS 21069010] Rs 1700.
+- Imports from United Arab Emirates: Gold [HS 71081300] Rs 26.77 arba; Unwrought silver (incl silver plated with old or platinum) [HS 71069100] Rs 11.33 arba; Powder of silver [HS 71061000] Rs 9.05 arba; Wire of refined copper, maximum cross-sect onal dimension >6 [HS 74081100] Rs 1.49 arba; Lubricating Oil [HS 27101980] Rs 51.0 crore.
+- Exports to United Arab Emirates: Safety razor blades (incl razor blades bl a ks in strips) [HS 82122000] Rs 92.5 crore; Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 16.3 crore; Self-propelled bulldozers, excavators, nes [HS 84295900] Rs 12.8 crore; Other black tea (fermented) and other partly fermented tea [HS 09024000] Rs 11.8 crore; Other pasta, nes [HS 19023000] Rs 7.4 crore.
+- Imports from United States: Other soyabean [HS 12019000] Rs 7.83 arba; Other coal, not agglomerated, nes [HS 27011900] Rs 4.63 arba; Aeroplanes and other aircraft, of an unlad n weight >2000kg  [HS 88023000] Rs 3.12 arba; Other parts of airplanes, helicopters or unmanned [HS 88073010] Rs 1.52 arba; Oil-cake and other solid residues, of soyabean [HS 23040000] Rs 1.34 arba.
+- Exports to United States: Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 6.73 arba; Dog or cat food, put up for retail sale [HS 23091000] Rs 4.19 arba; other Felt, whether or not impregnated, coated, covered or l [HS 56029000] Rs 1.92 arba; Women's or girls' trousers, breeches, etc, of cotton [HS 62046200] Rs 92.4 crore; Aeroplanes and other aircraft, of an unlad n weight >15000kg [HS 88024000] Rs 70.6 crore.
+- Imports from Australia: Low erucic acid rape or colza seeds [HS 12051000] Rs 11.96 arba; Dried Red Lentils, Unskinned, unsplit (Whole) [HS 07134010] Rs 4.36 arba; Dried Chickpeas (garbanzos), shelled whether or not skinned  [HS 07132000] Rs 2.18 arba; Red lentils (except Unskinned, unsplit) [HS 07134090] Rs 30.5 crore; Pigments and preparations based on titaniumdioxide, cont'g > [HS 32061100] Rs 20.4 crore.
+- Exports to Australia: Other pasta, nes [HS 19023000] Rs 52.3 crore; other Felt, whether or not impregnated, coated, covered or l [HS 56029000] Rs 32.0 crore; Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 16.9 crore; Other Food Preparations [HS 21069099] Rs 14.6 crore; Flattened rice(Chiura) [HS 19049020] Rs 13.3 crore.
+- Imports from Indonesia: Crude palm oil [HS 15111000] Rs 9.01 arba; Fertilizer Grade [HS 31021030] Rs 2.49 arba; Areca nuts, fresh or dried [HS 08028000] Rs 2.38 arba; Refined bleached deodorized palm olein [HS 15119020] Rs 1.38 arba; Other Edible preparations of fats and oils, nes [HS 15179000] Rs 79.9 crore.
+- Exports to Indonesia: Other, including hides (leather) nes [HS 41079900] Rs 18.2 crore; Other, leather of bovine or equine animals in the dry state  [HS 41044900] Rs 3.2 crore; Percussion musical instruments (eg drums, xylophones, cymbal [HS 92060000] Rs 1.2 crore; Leather of bovine or eqine in the dry state(crust) full grai [HS 41044100] Rs 1.2 crore; other Felt, whether or not impregnated, coated, covered or l [HS 56029000] Rs 1.1 crore.
+- Imports from Thailand: Electric car, jeep & van 51KW to <=100KW [HS 87038059] Rs 2.37 arba; Crude soya-bean oil [HS 15071000] Rs 2.36 arba; Crude palm oil [HS 15111000] Rs 2.00 arba; Aluminium casks, drums, etc, nes (excl fo r gas), <300 l [HS 76129000] Rs 1.51 arba; Acrylic or modacrylic synthetic staple fib es, not carded, e [HS 55033000] Rs 1.34 arba.
+- Exports to Thailand: Original sculptures and statuary, in any m terial [HS 97030000] Rs 51 lakh; Wheat or meslin flour except maida [HS 11010000] Rs 50 lakh; Motorcycle With piston engine of exceeding 500CC not exceedi [HS 87114000] Rs 49 lakh; New pneumatic tyres, of rubber for aircraf [HS 40113000] Rs 45 lakh; Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 43 lakh.
+- Imports from Brazil: Crude soya-bean oil [HS 15071000] Rs 17.39 arba; Dried beans, shelled whether or not skinned or split [HS 07133100] Rs 12.4 crore; Dried Cow peas (Vigna unguiculata), shelled, whether or not  [HS 07133500] Rs 6.1 crore; Pectic substances, pectinates and pectates [HS 13022000] Rs 2.8 crore; Vaccines for veterinary medicine [HS 30024200] Rs 2.8 crore.
+- Exports to Brazil: Carpets and other textile floor coverings, of wool or fine a [HS 57011000] Rs 5.4 crore; Dog or cat food, put up for retail sale [HS 23091000] Rs 38 lakh; Shawls, scarves, mufflers, mantillas, veil , etc, knitted or [HS 61171000] Rs 8 lakh; Percussion musical instruments (eg drums, xylophones, cymbal [HS 92060000] Rs 7 lakh; Women's or girls' jackets and blazers of c tton [HS 62043200] Rs 4 lakh.
+- Imports from Malaysia: Refined bleached deodorized palm olein [HS 15119020] Rs 2.94 arba; Crude palm oil [HS 15111000] Rs 2.47 arba; Refined bleached deodorized palm oil [HS 15119010] Rs 1.37 arba; Non-wired unworked sheets of float/ground/ olished glass, ne [HS 70052900] Rs 1.14 arba; Copper waste and scrap [HS 74040000] Rs 71.8 crore.
+- Exports to Malaysia: Other pasta, nes [HS 19023000] Rs 9.3 crore; Jarda, Khaini, Snuff, Ghutka and similar preparations contai [HS 24039910] Rs 5.7 crore; Sauces and sauce preparations; mixed condiments and seasonin [HS 21039010] Rs 1.5 crore; Flattened rice(Chiura) [HS 19049020] Rs 1.1 crore; Dog or cat food, put up for retail sale [HS 23091000] Rs 1.0 crore.
+
+## Customs offices (FY 2082/83)
+
+| Office | Imports cleared | Share of imports | Exports cleared | Share of exports | Page |
+|---|---|---|---|---|---|
+| Birgunj Customs Office | Rs 9.86 kharba | 47.1% | Rs 1.15 kharba | 36.4% | https://www.customsnepal.com/customs-office/birgunj |
+| Bhairahawa Customs Office | Rs 3.04 kharba | 14.5% | Rs 34.93 arba | 11.1% | https://www.customsnepal.com/customs-office/bhairahawa |
+| Biratnagar Customs Office | Rs 2.42 kharba | 11.5% | Rs 88.73 arba | 28.1% | https://www.customsnepal.com/customs-office/biratnagar |
+| Tribhuvan International Airport Customs Office | Rs 2.04 kharba | 9.7% | Rs 37.94 arba | 12.0% | https://www.customsnepal.com/customs-office/tia |
+| Nepalgunj Customs Office | Rs 87.09 arba | 4.2% | Rs 3.51 arba | 1.1% | https://www.customsnepal.com/customs-office/nepalgunj |
+| Mechi Customs Office | Rs 60.52 arba | 2.9% | Rs 26.27 arba | 8.3% | https://www.customsnepal.com/customs-office/mechi |
+| Tatopani Customs Office | Rs 47.49 arba | 2.3% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/tatopani |
+| Rasuwa Customs Office | Rs 45.74 arba | 2.2% | Rs 89.5 crore | 0.3% | https://www.customsnepal.com/customs-office/rasuwa |
+| Kailali Customs Office | Rs 29.22 arba | 1.4% | Rs 1.33 arba | 0.4% | https://www.customsnepal.com/customs-office/kailali |
+| Krishnanagar Customs Office | Rs 27.60 arba | 1.3% | Rs 1.85 arba | 0.6% | https://www.customsnepal.com/customs-office/krishnanagar |
+| Chobhar Dry Port Customs Office | Rs 15.58 arba | 0.7% | Rs 16.4 crore | 0.1% | https://www.customsnepal.com/customs-office/chobhar |
+| Mustang Customs Office | Rs 14.41 arba | 0.7% | Rs 20.6 crore | 0.1% | https://www.customsnepal.com/customs-office/mustang |
+| Jaleshwor Customs Office | Rs 8.24 arba | 0.4% | Rs 3.95 arba | 1.3% | https://www.customsnepal.com/customs-office/jaleshwor |
+| Suthauli Customs Office | Rs 10.75 arba | 0.5% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/suthauli |
+| Sarlahi Customs Office | Rs 3.72 arba | 0.2% | Rs 26.6 crore | 0.1% | https://www.customsnepal.com/customs-office/sarlahi |
+| Sunsari Customs Office | Rs 2.25 arba | 0.1% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/sunsari |
+| Gaur Customs Office | Rs 1.62 arba | 0.1% | Rs 27.2 crore | 0.1% | https://www.customsnepal.com/customs-office/gaur |
+| Kanchanpur Customs Office | Rs 1.88 arba | 0.1% | Rs 71 lakh | 0.0% | https://www.customsnepal.com/customs-office/kanchanpur |
+| Janakpur Customs Office | Rs 1.32 arba | 0.1% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/janakpur |
+| Maheshpur Customs Office | Rs 86.9 crore | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/maheshpur |
+| Sati Customs Office | Rs 70.0 crore | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/sati |
+| Bhadrapur Customs Office | Rs 48.6 crore | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/bhadrapur |
+| Siraha Customs Office | Rs 44.7 crore | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/siraha |
+| Rajbiraj Customs Office | Rs 34.7 crore | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/rajbiraj |
+| Pashupatinagar Customs Office | Rs 14 lakh | 0.0% | Rs 11.1 crore | 0.0% | https://www.customsnepal.com/customs-office/pashupatinagar |
+| Thadi Customs Office | Rs 2.2 crore | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/thadi |
+| Gautam Buddha International Airport Customs Office | Rs 46 lakh | 0.0% | Rs 0 | 0.0% | https://www.customsnepal.com/customs-office/gautambuddha |
+| Triveni Customs Office | Rs 3 lakh | 0.0% | Rs 2 lakh | 0.0% | https://www.customsnepal.com/customs-office/triveni |
+
+## Import duty by product name (Customs Tariff 2026/27)
+
+General customs duty and SAARC (SAFTA) rate for the first matching tariff lines of each product. VAT of 13% applies on top unless exempt; vehicles, alcohol and tobacco also carry excise, which is not shown here.
+
+| Product | HS code | Description | General duty | SAARC duty | Page |
+|---|---|---|---|---|---|
+| led display | 8524.11.00 | Of liquid crystals | 15% | 15% | https://www.customsnepal.com/import-duty/led-display |
+| led display | 8524.12.00 | Of organic light-emitting diodes (OLED) | 15% | 15% | https://www.customsnepal.com/import-duty/led-display |
+| led display | 8524.19.00 | Other | 15% | 15% | https://www.customsnepal.com/import-duty/led-display |
+| led module | 8524.11.00 | Of liquid crystals | 15% | 15% | https://www.customsnepal.com/import-duty/led-module |
+| led module | 8524.12.00 | Of organic light-emitting diodes (OLED) | 15% | 15% | https://www.customsnepal.com/import-duty/led-module |
+| led module | 8524.19.00 | Other | 15% | 15% | https://www.customsnepal.com/import-duty/led-module |
+| led bulb | 8539.51.00 | Light-emitting diode (LED) modules | 20% | 20% | https://www.customsnepal.com/import-duty/led-bulb |
+| led bulb | 8539.52.00 | Light-emitting diode (LED) lamps | 20% | 20% | https://www.customsnepal.com/import-duty/led-bulb |
+| led bulb | 9405.11.00 | Designed for use solely with light-emitting diode (LED) light sources | 20% | 7.25% | https://www.customsnepal.com/import-duty/led-bulb |
+| led chip | 8541.10.00 | Diodes, other than photosensitive or light-emitting diodes (LED) | Free | Free | https://www.customsnepal.com/import-duty/led-chip |
+| led chip | 8541.41.00 | Light-emitting diodes (LED) | Free | Free | https://www.customsnepal.com/import-duty/led-chip |
+| tv | 8528.71.00 | Not designed to incorporate a video display or screen | 15% | 15% | https://www.customsnepal.com/import-duty/tv |
+| tv | 8528.72.11 | Upto 48 Inch | 15% | 15% | https://www.customsnepal.com/import-duty/tv |
+| tv | 8528.72.19 | Other | 20% | 20% | https://www.customsnepal.com/import-duty/tv |
+| monitor | 8528.52.10 | Diagonal length not exceeding 23 inches | 5% | 5% | https://www.customsnepal.com/import-duty/monitor |
+| monitor | 8528.52.90 | Diagonal length exceeding 23 inches | 20% | 20% | https://www.customsnepal.com/import-duty/monitor |
+| monitor | 8528.59.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/monitor |
+| projector | 8528.62.00 | Capable of directly connecting to and designed for use with an automat | Free | Free | https://www.customsnepal.com/import-duty/projector |
+| projector | 8528.69.00 | Other | 10% | 10% | https://www.customsnepal.com/import-duty/projector |
+| mobile | 8517.13.00 | Smartphones | Free | Free | https://www.customsnepal.com/import-duty/mobile |
+| mobile | 8517.14.00 | Other telephones for cellular networks or for other wireless networks | Free | Free | https://www.customsnepal.com/import-duty/mobile |
+| mobile charger | 8504.40.10 | AC and DC Flat Charger for electric vehicles | 10% | 10% | https://www.customsnepal.com/import-duty/mobile-charger |
+| mobile charger | 8504.40.20 | Mobile phone charger | 15% | 15% | https://www.customsnepal.com/import-duty/mobile-charger |
+| mobile charger | 8504.40.90 | Other | 15% | 15% | https://www.customsnepal.com/import-duty/mobile-charger |
+| power bank | 8507.10.00 | Lead-acid, of a kind used for starting piston engines | 15% | 15% | https://www.customsnepal.com/import-duty/power-bank |
+| power bank | 8507.20.00 | Other lead-acid accumulators | 15% | 15% | https://www.customsnepal.com/import-duty/power-bank |
+| power bank | 8507.30.00 | Nickel-cadmium | 20% | 20% | https://www.customsnepal.com/import-duty/power-bank |
+| laptop | 8471.30.10 | Notebook and Laptop | Free | Free | https://www.customsnepal.com/import-duty/laptop |
+| laptop | 8471.30.20 | Tablet | Free | Free | https://www.customsnepal.com/import-duty/laptop |
+| laptop | 8471.30.90 | Other | Free | Free | https://www.customsnepal.com/import-duty/laptop |
+| computer | 8471.41.10 | Interacting conference terminal | Free | Free | https://www.customsnepal.com/import-duty/computer |
+| computer | 8471.41.90 | Other | Free | Free | https://www.customsnepal.com/import-duty/computer |
+| computer | 8471.49.00 | Other, presented in the form of systems | Free | Free | https://www.customsnepal.com/import-duty/computer |
+| keyboard | 8443.31.00 | Machines which perform two or more of the functions of printing, copyi | 10% | 5% | https://www.customsnepal.com/import-duty/keyboard |
+| keyboard | 8443.32.00 | Other, capable or connecting to an automatic data processing machine o | 10% | 5% | https://www.customsnepal.com/import-duty/keyboard |
+| keyboard | 8471.60.10 | Keyboard | Free | Free | https://www.customsnepal.com/import-duty/keyboard |
+| tablet | 8471.30.10 | Notebook and Laptop | Free | Free | https://www.customsnepal.com/import-duty/tablet |
+| tablet | 8471.30.20 | Tablet | Free | Free | https://www.customsnepal.com/import-duty/tablet |
+| tablet | 8471.30.90 | Other | Free | Free | https://www.customsnepal.com/import-duty/tablet |
+| hard disk | 8471.70.10 | Computer Hard Disk, Internal | Free | Free | https://www.customsnepal.com/import-duty/hard-disk |
+| hard disk | 8471.70.20 | Computer Hard Disk, Portable or External | 5% | 5% | https://www.customsnepal.com/import-duty/hard-disk |
+| hard disk | 8471.70.90 | Other | 5% | 5% | https://www.customsnepal.com/import-duty/hard-disk |
+| router | 8517.62.10 | Smart watch | Free | Free | https://www.customsnepal.com/import-duty/router |
+| router | 8517.62.20 | Networking switch | Free | Free | https://www.customsnepal.com/import-duty/router |
+| router | 8517.62.30 | Router | Free | Free | https://www.customsnepal.com/import-duty/router |
+| cctv | 8525.81.10 | Television Cameras | Free | Free | https://www.customsnepal.com/import-duty/cctv |
+| cctv | 8525.81.20 | Digital Cameras | Free | Free | https://www.customsnepal.com/import-duty/cctv |
+| cctv | 8525.81.30 | Video Camera recorders | Free | Free | https://www.customsnepal.com/import-duty/cctv |
+| camera | 8525.89.10 | Television Cameras | Free | Free | https://www.customsnepal.com/import-duty/camera |
+| camera | 8525.89.20 | Digital Cameras | Free | Free | https://www.customsnepal.com/import-duty/camera |
+| camera | 8525.89.30 | Video Camera recorders | Free | Free | https://www.customsnepal.com/import-duty/camera |
+| dvr | 8521.10.00 | Magnetic tape-type | 10% | 10% | https://www.customsnepal.com/import-duty/dvr |
+| dvr | 8521.90.00 | Other | 10% | 10% | https://www.customsnepal.com/import-duty/dvr |
+| speaker | 8518.21.00 | Single loudspeakers, mounted in their enclosures | 5% | 5% | https://www.customsnepal.com/import-duty/speaker |
+| speaker | 8518.22.00 | Multiple loudspeakers, mounted in the same enclosures | 5% | 5% | https://www.customsnepal.com/import-duty/speaker |
+| speaker | 8518.29.00 | Other | Free | Free | https://www.customsnepal.com/import-duty/speaker |
+| microphone | 8518.10.00 | Microphones and stands therefor; | Free | Free | https://www.customsnepal.com/import-duty/microphone |
+| headphone | 8518.30.00 | Headphones and earphones, whether or not combined with a microphone, a | 5% | 5% | https://www.customsnepal.com/import-duty/headphone |
+| amplifier | 8518.40.00 | Audio-frequency electric amplifiers | 5% | 5% | https://www.customsnepal.com/import-duty/amplifier |
+| solar panel | 8541.43.00 | Photovoltaic cells assembled in modules or made up into panels | Free | Free | https://www.customsnepal.com/import-duty/solar-panel |
+| solar inverter | 8504.40.10 | AC and DC Flat Charger for electric vehicles | 10% | 10% | https://www.customsnepal.com/import-duty/solar-inverter |
+| solar inverter | 8504.40.20 | Mobile phone charger | 15% | 15% | https://www.customsnepal.com/import-duty/solar-inverter |
+| solar inverter | 8504.40.90 | Other | 15% | 15% | https://www.customsnepal.com/import-duty/solar-inverter |
+| solar lamp | 9405.41.00 | Photovoltaic, designed for use solely with light-emitting diode (LED)  | 20% | 7.25% | https://www.customsnepal.com/import-duty/solar-lamp |
+| transformer | 8504.21.00 | Having a power handling capacity not exceeding 650 kVA | 15% | 15% | https://www.customsnepal.com/import-duty/transformer |
+| transformer | 8504.22.00 | Having a power handling capacity exceeding 650 kVA but not exceeding 1 | 15% | 15% | https://www.customsnepal.com/import-duty/transformer |
+| transformer | 8504.23.00 | Having a power handling capacity exceeding 10,000 kVA | 15% | 15% | https://www.customsnepal.com/import-duty/transformer |
+| electric motor | 8501.10.00 | Motors of an output not exceeding 37.5 W | 15% | 7.25% | https://www.customsnepal.com/import-duty/electric-motor |
+| electric motor | 8501.20.00 | Universal AC/DC motors of an output exceeding 37.5 W | 15% | 7.25% | https://www.customsnepal.com/import-duty/electric-motor |
+| electric motor | 8501.31.00 | Of an output not exceeding 750 W | 15% | 7.25% | https://www.customsnepal.com/import-duty/electric-motor |
+| generator | 8502.11.10 | Of an output not exceeding 12.5 kVA | 15% | 7.25% | https://www.customsnepal.com/import-duty/generator |
+| generator | 8502.11.90 | Other | 5% | 5% | https://www.customsnepal.com/import-duty/generator |
+| generator | 8502.12.00 | Of an output exceeding 75 kVA but not exceeding 375 kVA | 5% | 5% | https://www.customsnepal.com/import-duty/generator |
+| cable | 8544.11.00 | Of copper | 15% | 15% | https://www.customsnepal.com/import-duty/cable |
+| cable | 8544.19.00 | Other | 15% | 15% | https://www.customsnepal.com/import-duty/cable |
+| cable | 8544.20.00 | Co-axial cable and other co-axial electric conductors | 15% | 15% | https://www.customsnepal.com/import-duty/cable |
+| switch | 8536.10.00 | Fuses | 15% | 15% | https://www.customsnepal.com/import-duty/switch |
+| switch | 8536.20.00 | Automatic circuit breakers | 15% | 15% | https://www.customsnepal.com/import-duty/switch |
+| switch | 8536.30.00 | Other apparatus for protecting electrical circuits | 15% | 15% | https://www.customsnepal.com/import-duty/switch |
+| control panel | 8537.10.00 | For a voltage not exceeding 1,000 V | 10% | 6% | https://www.customsnepal.com/import-duty/control-panel |
+| control panel | 8537.20.00 | For a voltage exceeding 1,000 V | 10% | 6% | https://www.customsnepal.com/import-duty/control-panel |
+| air conditioner | 8415.10.00 | Of a kind designed to be fixed to a window, wall, ceiling or floor, se | 30% | 30% | https://www.customsnepal.com/import-duty/air-conditioner |
+| air conditioner | 8415.20.00 | Of a kind used for persons, in motor vehicles | 30% | 30% | https://www.customsnepal.com/import-duty/air-conditioner |
+| air conditioner | 8415.81.00 | Incorporating a refrigerating unit and a valve for reversal of the coo | 30% | 30% | https://www.customsnepal.com/import-duty/air-conditioner |
+| refrigerator | 8418.10.00 | Combined refrigerator-freezers, fitted with separate external doors or | 15% | 15% | https://www.customsnepal.com/import-duty/refrigerator |
+| refrigerator | 8418.21.00 | Compression-type | 15% | 15% | https://www.customsnepal.com/import-duty/refrigerator |
+| washing machine | 8450.11.00 | Fully-automatic machines | 20% | 20% | https://www.customsnepal.com/import-duty/washing-machine |
+| washing machine | 8450.12.00 | Other machines, with built-in centrifugal drier | 20% | 20% | https://www.customsnepal.com/import-duty/washing-machine |
+| washing machine | 8450.19.00 | Other | 20% | 20% | https://www.customsnepal.com/import-duty/washing-machine |
+| fan | 8414.51.00 | Table, floor, wall, window, ceiling or roof fans, with a self- contain | 10% | 7.25% | https://www.customsnepal.com/import-duty/fan |
+| rice cooker | 8516.50.00 | Microwave oven | 10% | 7.25% | https://www.customsnepal.com/import-duty/rice-cooker |
+| rice cooker | 8516.60.11 | Induction stove | Free | Free | https://www.customsnepal.com/import-duty/rice-cooker |
+| rice cooker | 8516.60.12 | Infrared stove | Free | Free | https://www.customsnepal.com/import-duty/rice-cooker |
+| water pump | 8413.11.00 | Pumps for dispensing fuel or lubricants, of the type used in filling-s | 15% | 6% | https://www.customsnepal.com/import-duty/water-pump |
+| water pump | 8413.19.00 | Other | 15% | 6% | https://www.customsnepal.com/import-duty/water-pump |
+| water pump | 8413.20.00 | Hand pumps, other than those of Sub-heading 8413.11 or 8413.19 | 10% | 6% | https://www.customsnepal.com/import-duty/water-pump |
+| elevator | 8428.10.00 | Lifts and skip hoists | 5% | 5% | https://www.customsnepal.com/import-duty/elevator |
+| car | 8703.10.10 | Vehicles specially designed for snow | 30% | 30% | https://www.customsnepal.com/import-duty/car |
+| car | 8703.10.90 | Other | 80% | 80% | https://www.customsnepal.com/import-duty/car |
+| car | 8703.21.11 | Unassembled | 30% | 30% | https://www.customsnepal.com/import-duty/car |
+| electric vehicle | 8703.80.11 | Unassembled | 10% | 10% | https://www.customsnepal.com/import-duty/electric-vehicle |
+| electric vehicle | 8703.80.19 | Other | 10% | 10% | https://www.customsnepal.com/import-duty/electric-vehicle |
+| electric vehicle | 8703.80.91 | Unassembled | 20% | 20% | https://www.customsnepal.com/import-duty/electric-vehicle |
+| motorcycle | 8711.10.00 | With internal combustion piston engine of a cylinder capacity not exce | 30% | 30% | https://www.customsnepal.com/import-duty/motorcycle |
+| motorcycle | 8711.20.11 | Of a cylinder capacity exceeding 50 cc but not exceeding 125 cc | 30% | 30% | https://www.customsnepal.com/import-duty/motorcycle |
+| motorcycle | 8711.20.12 | Of a cylinder capacity exceeding 125 cc but not exceeding 200 cc | 30% | 30% | https://www.customsnepal.com/import-duty/motorcycle |
+| electric scooter | 8711.60.10 | Cycle | 10% | 10% | https://www.customsnepal.com/import-duty/electric-scooter |
+| electric scooter | 8711.60.20 | Motercycle | 10% | 10% | https://www.customsnepal.com/import-duty/electric-scooter |
+| electric scooter | 8711.60.31 | Moped scooter with pedals | 10% | 10% | https://www.customsnepal.com/import-duty/electric-scooter |
+| bicycle | 8712.00.10 | Of a kind used by people with physical impairment | Free | Free | https://www.customsnepal.com/import-duty/bicycle |
+| bicycle | 8712.00.90 | Other | 5% | 5% | https://www.customsnepal.com/import-duty/bicycle |
+| truck | 8704.10.00 | Dumpers designed for off-highway use | 30% | 30% | https://www.customsnepal.com/import-duty/truck |
+| truck | 8704.21.10 | Double-cab pick-up vehicle principally designed for the transportation | 30% | 30% | https://www.customsnepal.com/import-duty/truck |
+| truck | 8704.21.20 | Single cab pick-up vehicle principally designed for the transportation | 30% | 30% | https://www.customsnepal.com/import-duty/truck |
+| bus | 8702.10.10 | Motor vehicles for the transport of persons (with a capacity more than | 30% | 30% | https://www.customsnepal.com/import-duty/bus |
+| bus | 8702.10.20 | Motor vehicles for the transport of persons (with a capacity 11-25 sea | 30% | 30% | https://www.customsnepal.com/import-duty/bus |
+| bus | 8702.10.41 | Unassembled | 80% | 80% | https://www.customsnepal.com/import-duty/bus |
+| tractor | 8701.10.10 | Power tiller, mini tiller | 5% | 5% | https://www.customsnepal.com/import-duty/tractor |
+| tractor | 8701.10.90 | Other | 5% | 5% | https://www.customsnepal.com/import-duty/tractor |
+| tractor | 8701.21.10 | Upto 18 KW | 5% | 5% | https://www.customsnepal.com/import-duty/tractor |
+| tyre | 4011.10.00 | Of a kind used on motor cars (including station wagons and racing cars | 20% | 20% | https://www.customsnepal.com/import-duty/tyre |
+| tyre | 4011.20.00 | Of a kind used on buses or lorries | 20% | 20% | https://www.customsnepal.com/import-duty/tyre |
+| tyre | 4011.30.00 | Of a kind used on aircraft | 20% | 9.5% | https://www.customsnepal.com/import-duty/tyre |
+| auto parts | 8708.10.00 | Bumpers and parts thereof | 20% | 20% | https://www.customsnepal.com/import-duty/auto-parts |
+| auto parts | 8708.21.00 | Safety seat belts | 20% | 20% | https://www.customsnepal.com/import-duty/auto-parts |
+| auto parts | 8708.22.00 | Front windscreens (windshields), rear windows and other windows specif | 20% | 20% | https://www.customsnepal.com/import-duty/auto-parts |
+| drone | 8806.10.00 | Designed for the carriage of passengers | 20% | 6% | https://www.customsnepal.com/import-duty/drone |
+| drone | 8806.21.00 | With maximum take-off weight not more than 250 g | 20% | 6% | https://www.customsnepal.com/import-duty/drone |
+| drone | 8806.22.00 | With maximum take-off weight more than 250 g but not more than 7 kg | 20% | 6% | https://www.customsnepal.com/import-duty/drone |
+| furniture | 9401.10.00 | Seats of a kind used for aircraft | 15% | 9.5% | https://www.customsnepal.com/import-duty/furniture |
+| furniture | 9401.20.00 | Seats of a kind used for motor vehicles | 30% | 9.5% | https://www.customsnepal.com/import-duty/furniture |
+| furniture | 9401.31.00 | Of wood | 30% | 9.5% | https://www.customsnepal.com/import-duty/furniture |
+| mattress | 9404.10.00 | Mattress supports | 30% | 11.25% | https://www.customsnepal.com/import-duty/mattress |
+| mattress | 9404.21.00 | Of cellular rubber or plastics, whether or not covered | 20% | 11.25% | https://www.customsnepal.com/import-duty/mattress |
+| mattress | 9404.29.00 | Of other materials | 20% | 11.25% | https://www.customsnepal.com/import-duty/mattress |
+| shoes | 6402.12.00 | Ski-boots, cross-country ski footwear and snowboard boots | 30% | 30% | https://www.customsnepal.com/import-duty/shoes |
+| shoes | 6402.19.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/shoes |
+| shoes | 6402.20.00 | Footwear with upper straps or thongs assembled to the sole by means of | 30% | 30% | https://www.customsnepal.com/import-duty/shoes |
+| clothes | 6109.10.00 | Of cotton | 20% | 20% | https://www.customsnepal.com/import-duty/clothes |
+| clothes | 6109.90.00 | Of other textile materials | 20% | 20% | https://www.customsnepal.com/import-duty/clothes |
+| clothes | 6203.11.00 | Of wool or fine animal hair | 20% | 20% | https://www.customsnepal.com/import-duty/clothes |
+| fabric | 5208.11.00 | Plain weave, weighing not more than 100 g/m2 | 15% | 5% | https://www.customsnepal.com/import-duty/fabric |
+| fabric | 5208.12.00 | Plain weave, weighing more than 100 g/m2 | 15% | 5% | https://www.customsnepal.com/import-duty/fabric |
+| fabric | 5208.13.00 | 3-thread or 4-thread twill, including cross twill | 15% | 5% | https://www.customsnepal.com/import-duty/fabric |
+| bag | 4202.11.00 | With outer surface of leather or of composition leather | 30% | 30% | https://www.customsnepal.com/import-duty/bag |
+| bag | 4202.12.10 | Vaccine/Blood Carrier | 15% | 15% | https://www.customsnepal.com/import-duty/bag |
+| bag | 4202.12.90 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/bag |
+| watch | 9101.11.00 | With mechanical display only | 15% | 7.25% | https://www.customsnepal.com/import-duty/watch |
+| watch | 9101.19.00 | Other | 15% | 7.25% | https://www.customsnepal.com/import-duty/watch |
+| watch | 9101.21.00 | With automatic winding | 15% | 7.25% | https://www.customsnepal.com/import-duty/watch |
+| toys | 9503.00.00 | Tricycles, scooters, pedal cars and similar wheeled toys; dolls' carri | 10% | 5% | https://www.customsnepal.com/import-duty/toys |
+| video game | 9504.50.00 | Video game consoles and machines, other than those of subheading 9504. | 10% | 5% | https://www.customsnepal.com/import-duty/video-game |
+| sports goods | 9506.11.00 | Skis | 10% | 5% | https://www.customsnepal.com/import-duty/sports-goods |
+| sports goods | 9506.12.00 | Skis-fastenings (ski-bindings) | 10% | 5% | https://www.customsnepal.com/import-duty/sports-goods |
+| sports goods | 9506.19.00 | Other | 10% | 5% | https://www.customsnepal.com/import-duty/sports-goods |
+| cosmetics | 3304.10.00 | Lip make-up preparations | 15% | 15% | https://www.customsnepal.com/import-duty/cosmetics |
+| cosmetics | 3304.20.00 | Eye make-up preparations | 15% | 15% | https://www.customsnepal.com/import-duty/cosmetics |
+| cosmetics | 3304.30.10 | Nail polish | 15% | 15% | https://www.customsnepal.com/import-duty/cosmetics |
+| perfume | 3303.00.00 | Perfumes and toilet waters. | 15% | 7.25% | https://www.customsnepal.com/import-duty/perfume |
+| shampoo | 3305.10.00 | Shampoos | 20% | 20% | https://www.customsnepal.com/import-duty/shampoo |
+| shampoo | 3305.20.00 | Preparations for permanent waving or straightening | 20% | 20% | https://www.customsnepal.com/import-duty/shampoo |
+| shampoo | 3305.30.00 | Hair lacquers | 20% | 20% | https://www.customsnepal.com/import-duty/shampoo |
+| soap | 3401.11.00 | For toilet use (including medicated products) | 30% | 30% | https://www.customsnepal.com/import-duty/soap |
+| soap | 3401.19.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/soap |
+| soap | 3401.20.10 | Sodium Fatty Acid Salt (Soap noodles) | 15% | 15% | https://www.customsnepal.com/import-duty/soap |
+| detergent | 3402.31.00 | Linear alkylbenzene sulphonic acids and their salts | 10% | 10% | https://www.customsnepal.com/import-duty/detergent |
+| detergent | 3402.39.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/detergent |
+| detergent | 3402.41.00 | Cationic | 30% | 30% | https://www.customsnepal.com/import-duty/detergent |
+| medicine | 3004.10.00 | Containing penicillins or derivatives thereof, with a penicillanic aci | 15% | 14% | https://www.customsnepal.com/import-duty/medicine |
+| medicine | 3004.20.00 | Other, containing antibiotics | 15% | 14% | https://www.customsnepal.com/import-duty/medicine |
+| medicine | 3004.31.00 | Containing insulin | 15% | 14% | https://www.customsnepal.com/import-duty/medicine |
+| medical equipment | 9018.11.00 | Electro-cardiographs | 5% | 5% | https://www.customsnepal.com/import-duty/medical-equipment |
+| medical equipment | 9018.12.00 | Ultrasonic scanning apparatus | 5% | 5% | https://www.customsnepal.com/import-duty/medical-equipment |
+| medical equipment | 9018.13.00 | Magnetic resonance imaging apparatus | 5% | 5% | https://www.customsnepal.com/import-duty/medical-equipment |
+| x-ray machine | 9022.12.00 | Computed tomography apparatus | 5% | 5% | https://www.customsnepal.com/import-duty/x-ray-machine |
+| x-ray machine | 9022.13.00 | Other, for dental uses | 5% | 5% | https://www.customsnepal.com/import-duty/x-ray-machine |
+| x-ray machine | 9022.14.00 | Other, for medical, surgical or veterinary uses | 5% | 5% | https://www.customsnepal.com/import-duty/x-ray-machine |
+| mask | 4015.12.00 | Of a kind used for medical, surgical, dental or veterinary purposes | 15% | 5% | https://www.customsnepal.com/import-duty/mask |
+| mask | 4015.19.00 | Other | 15% | 7.25% | https://www.customsnepal.com/import-duty/mask |
+| mask | 4015.90.00 | Other | 15% | 7.25% | https://www.customsnepal.com/import-duty/mask |
+| paint | 3208.10.00 | Based on polyesters | 30% | 30% | https://www.customsnepal.com/import-duty/paint |
+| paint | 3208.20.00 | Based on acrylic or vinyl polymers | 30% | 30% | https://www.customsnepal.com/import-duty/paint |
+| paint | 3208.90.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/paint |
+| cement | 2523.10.00 | Cement clinkers | Per MT Rs. 2400 | Per MT Rs. 2400 | https://www.customsnepal.com/import-duty/cement |
+| cement | 2523.21.00 | White cement, whether or not artificially coloured | 30% | 30% | https://www.customsnepal.com/import-duty/cement |
+| cement | 2523.29.00 | Other | Per MT Rs. 4050 | Per MT Rs. 4050 | https://www.customsnepal.com/import-duty/cement |
+| steel rod | 7213.10.00 | Containing indentations, ribs, grooves or other deformations produced  | 30% | 30% | https://www.customsnepal.com/import-duty/steel-rod |
+| steel rod | 7213.20.00 | Other, of free-cutting steel | 30% | 30% | https://www.customsnepal.com/import-duty/steel-rod |
+| steel rod | 7213.91.10 | Not more than 8 mm | 5% | 5% | https://www.customsnepal.com/import-duty/steel-rod |
+| steel pipe | 7306.11.00 | Welded, of stainless steel | 30% | 30% | https://www.customsnepal.com/import-duty/steel-pipe |
+| steel pipe | 7306.19.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/steel-pipe |
+| steel pipe | 7306.21.00 | Welded, of stainless steel | 30% | 30% | https://www.customsnepal.com/import-duty/steel-pipe |
+| aluminium | 7604.10.10 | Aluminium Profiles | 15% | 5% | https://www.customsnepal.com/import-duty/aluminium |
+| aluminium | 7604.10.90 | Other bars, rods | 5% | 5% | https://www.customsnepal.com/import-duty/aluminium |
+| aluminium | 7604.21.00 | Hollow profiles | 15% | 7.25% | https://www.customsnepal.com/import-duty/aluminium |
+| glass | 7005.10.00 | Non-wired glass, having an absorbent, reflecting or non-reflecting lay | 30% | 30% | https://www.customsnepal.com/import-duty/glass |
+| glass | 7005.21.00 | Coloured throughout the mass (body tinted), opacified, flashed or mere | 30% | 30% | https://www.customsnepal.com/import-duty/glass |
+| glass | 7005.29.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/glass |
+| tiles | 6802.10.00 | Tiles, cubes and similar articles, whether or not rectangular (includi | 30% | 30% | https://www.customsnepal.com/import-duty/tiles |
+| tiles | 6802.21.00 | Marble, travertine and alabaster | 30% | 30% | https://www.customsnepal.com/import-duty/tiles |
+| tiles | 6802.23.00 | Granite | 30% | 30% | https://www.customsnepal.com/import-duty/tiles |
+| plywood | 4407.11.00 | Of pine (Pinus spp.) | 5% | 5% | https://www.customsnepal.com/import-duty/plywood |
+| plywood | 4407.12.00 | Of fir (Abies spp.) and spruce (Picea spp.) | 5% | 5% | https://www.customsnepal.com/import-duty/plywood |
+| plywood | 4407.13.00 | Of S-P-F (spruce (Picea spp.), pine (Pinus spp.) and fir (Abies spp.)) | 5% | 5% | https://www.customsnepal.com/import-duty/plywood |
+| paper | 4802.10.00 | Hand-made paper and paperboard | 15% | 15% | https://www.customsnepal.com/import-duty/paper |
+| paper | 4802.20.00 | Paper and paperboard of a kind used as a base for photo-sensitive, hea | 15% | 15% | https://www.customsnepal.com/import-duty/paper |
+| paper | 4802.40.00 | Wallpaper base | 15% | 15% | https://www.customsnepal.com/import-duty/paper |
+| plastic | 3901.10.00 | Polyethylene having a specific gravity of less than 0.94 | 10% | 6% | https://www.customsnepal.com/import-duty/plastic |
+| plastic | 3901.20.00 | Polyethylene having a specific gravity of 0.94 or more | 10% | 6% | https://www.customsnepal.com/import-duty/plastic |
+| plastic | 3901.30.00 | Ethylene-vinyl acetate copolymers | 10% | 6% | https://www.customsnepal.com/import-duty/plastic |
+| plastic goods | 3923.10.10 | Packing tubes of plastic | 15% | 15% | https://www.customsnepal.com/import-duty/plastic-goods |
+| plastic goods | 3923.10.20 | Crate of Egg | 30% | 30% | https://www.customsnepal.com/import-duty/plastic-goods |
+| plastic goods | 3923.10.90 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/plastic-goods |
+| rice | 1006.10.10 | Seed | 10% | 9% | https://www.customsnepal.com/import-duty/rice |
+| rice | 1006.10.90 | Other | 10% | 9% | https://www.customsnepal.com/import-duty/rice |
+| rice | 1006.20.00 | Husked (brown) rice | 10% | 9% | https://www.customsnepal.com/import-duty/rice |
+| wheat | 1001.11.00 | Seed | 10% | 6% | https://www.customsnepal.com/import-duty/wheat |
+| wheat | 1001.19.00 | Other | 10% | 6% | https://www.customsnepal.com/import-duty/wheat |
+| wheat | 1001.91.00 | Seed | 10% | 9% | https://www.customsnepal.com/import-duty/wheat |
+| sugar | 1701.12.00 | Beet sugar | 15% | 6% | https://www.customsnepal.com/import-duty/sugar |
+| sugar | 1701.13.10 | Sakhhar (Gud) | 15% | 15% | https://www.customsnepal.com/import-duty/sugar |
+| sugar | 1701.13.20 | Khanda sugar | 15% | 15% | https://www.customsnepal.com/import-duty/sugar |
+| cooking oil | 1507.10.00 | Crude oil, whether or not degummed | 10% | 5% | https://www.customsnepal.com/import-duty/cooking-oil |
+| cooking oil | 1507.90.00 | Other | 15% | 15% | https://www.customsnepal.com/import-duty/cooking-oil |
+| cooking oil | 1511.10.00 | Crude oil | 10% | 5% | https://www.customsnepal.com/import-duty/cooking-oil |
+| tea | 0902.10.00 | Green tea (not fermented) in immediate packings of a content not excee | 30% | 30% | https://www.customsnepal.com/import-duty/tea |
+| tea | 0902.20.00 | Other green tea (not fermented) | 30% | 30% | https://www.customsnepal.com/import-duty/tea |
+| tea | 0902.30.00 | Black tea (fermented) and partly fermented tea, in immediate packings  | 30% | 30% | https://www.customsnepal.com/import-duty/tea |
+| coffee | 0901.11.00 | Not decaffeinated | 30% | 30% | https://www.customsnepal.com/import-duty/coffee |
+| coffee | 0901.12.00 | Decaffeinated | 30% | 30% | https://www.customsnepal.com/import-duty/coffee |
+| coffee | 0901.21.00 | Not decaffeinated | 30% | 30% | https://www.customsnepal.com/import-duty/coffee |
+| fruits | 0803.10.00 | Plantains | 10% | 9% | https://www.customsnepal.com/import-duty/fruits |
+| fruits | 0803.90.00 | Other | 10% | 9% | https://www.customsnepal.com/import-duty/fruits |
+| fruits | 0805.10.00 | Oranges | 10% | 10% | https://www.customsnepal.com/import-duty/fruits |
+| vegetables | 0701.10.00 | Seed | 10% | 9% | https://www.customsnepal.com/import-duty/vegetables |
+| vegetables | 0701.90.00 | Other | 15% | 9% | https://www.customsnepal.com/import-duty/vegetables |
+| vegetables | 0703.10.00 | Onions and shallots | 10% | 9% | https://www.customsnepal.com/import-duty/vegetables |
+| spices | 0904.11.10 | Pipala | 20% | 5% | https://www.customsnepal.com/import-duty/spices |
+| spices | 0904.11.20 | White Pepper | 20% | 5% | https://www.customsnepal.com/import-duty/spices |
+| spices | 0904.11.30 | Black Pepper | 20% | 5% | https://www.customsnepal.com/import-duty/spices |
+| bire noon | 2501.00.20 | Black Salt | Free | Free | https://www.customsnepal.com/import-duty/bire-noon |
+| okhar | 0802.31.00 | In shell | 10% | 9% | https://www.customsnepal.com/import-duty/okhar |
+| okhar | 0802.32.00 | Shelled | 10% | 9% | https://www.customsnepal.com/import-duty/okhar |
+| supari | 0802.80.00 | Areca nuts | per kg Rs. 100 | per kg Rs. 100 | https://www.customsnepal.com/import-duty/supari |
+| supari | 2106.90.60 | Scented areca nuts without Tobacco | 30% | 30% | https://www.customsnepal.com/import-duty/supari |
+| papad | 1905.90.30 | Papad | 30% | 30% | https://www.customsnepal.com/import-duty/papad |
+| mishri | 1701.99.10 | Rock sugar or rock candy or sugar candy (Mishri) | 15% | 15% | https://www.customsnepal.com/import-duty/mishri |
+| haldi | 0910.30.10 | Fresh | 10% | 9% | https://www.customsnepal.com/import-duty/haldi |
+| haldi | 0910.30.20 | Dust or Powder | 10% | 9% | https://www.customsnepal.com/import-duty/haldi |
+| haldi | 0910.30.90 | Other | 10% | 9% | https://www.customsnepal.com/import-duty/haldi |
+| chuna | 2522.20.00 | Slaked lime | 10% | 6% | https://www.customsnepal.com/import-duty/chuna |
+| alaichi | 0908.31.10 | Big Cardamon (Alaichi) | 20% | 20% | https://www.customsnepal.com/import-duty/alaichi |
+| alaichi | 0908.32.10 | Big Cardamon (Alaichi) | 20% | 20% | https://www.customsnepal.com/import-duty/alaichi |
+| sukumel | 0908.31.20 | Small Cardamon (Sukumel) | 20% | 20% | https://www.customsnepal.com/import-duty/sukumel |
+| sukumel | 0908.32.20 | Small Cardamon (Sukumel) | 20% | 20% | https://www.customsnepal.com/import-duty/sukumel |
+| til | 1207.40.00 | Sesamum seeds | 10% | 9% | https://www.customsnepal.com/import-duty/til |
+| til | 1515.50.00 | Sesame oil and its fractions | 10% | 9% | https://www.customsnepal.com/import-duty/til |
+| chocolate | 1806.10.00 | Cocoa powder, containing added sugar or other sweetening matter | 30% | 30% | https://www.customsnepal.com/import-duty/chocolate |
+| chocolate | 1806.20.00 | Other preparations in blocks, slabs or bars weighing more than 2 kg or | 30% | 30% | https://www.customsnepal.com/import-duty/chocolate |
+| chocolate | 1806.31.00 | Filled | 30% | 30% | https://www.customsnepal.com/import-duty/chocolate |
+| biscuit | 1902.11.00 | Containing eggs | 30% | 30% | https://www.customsnepal.com/import-duty/biscuit |
+| biscuit | 1902.19.00 | Other | 30% | 30% | https://www.customsnepal.com/import-duty/biscuit |
+| biscuit | 1902.20.00 | Stuffed pasta, whether or not cooked or otherwise prepared | 30% | 30% | https://www.customsnepal.com/import-duty/biscuit |
+| milk | 0401.10.00 | Of a fat content, by weight, not exceeding 1% | 10% | 9% | https://www.customsnepal.com/import-duty/milk |
+| milk | 0401.20.00 | Of a fat content, by weight, exceeding 1% but not exceeding 6% | 10% | 9% | https://www.customsnepal.com/import-duty/milk |
+| milk | 0401.40.00 | Of a fat content, by weight, exceeding 6% but not exceeding 10% | 10% | 9% | https://www.customsnepal.com/import-duty/milk |
+| beer | 2203.00.10 | Of an alcoholic strength by volume not exceeding 5% vol. | Per ltr. Rs. 200 or 80 Percent whichever is higher | Per ltr. Rs. 200 or 80 Percent whichever is higher | https://www.customsnepal.com/import-duty/beer |
+| beer | 2203.00.90 | Of an alcoholic strength by volume exceeding 5% vol. | Per ltr. Rs. 200 or 80 Percent whichever is higher | Per ltr. Rs. 200 or 80 Percent whichever is higher | https://www.customsnepal.com/import-duty/beer |
+| wine | 2204.10.10 | Of an alcoholic strength by volume not exceeding 12% vol. | Per ltr. Rs. 300 or 80 Percent whichever is higher | Per ltr. Rs. 300 or 80 Percent whichever is higher | https://www.customsnepal.com/import-duty/wine |
+| wine | 2204.10.20 | Of an alcoholic strength by volume exceeding 12% vol. but not exceedin | Per ltr. Rs. 300 or 80 Percent whichever is higher | Per ltr. Rs. 300 or 80 Percent whichever is higher | https://www.customsnepal.com/import-duty/wine |
+| wine | 2204.10.30 | Of an alcoholic strength by volume exceeding 17% vol. | Per ltr. Rs. 300 or 80 Percent whichever is higher | Per ltr. Rs. 300 or 80 Percent whichever is higher | https://www.customsnepal.com/import-duty/wine |
+| cigarette | 2402.10.00 | Cigars, cheroots and cigarillos, containing tobacco | Per thousand sticks Rs. 12000 | Per thousand sticks Rs. 12000 | https://www.customsnepal.com/import-duty/cigarette |
+| cigarette | 2402.20.10 | Without filter | Per thousand sticks Rs. 6000 | Per thousand sticks Rs. 6000 | https://www.customsnepal.com/import-duty/cigarette |
+| cigarette | 2402.20.21 | of length not exceeding 70m.m. | Per thousand sticks Rs. 6000 | Per thousand sticks Rs. 6000 | https://www.customsnepal.com/import-duty/cigarette |
+| electronic cigarette | 8543.40.00 | Electronic cigarettes and similar personal electric vaporising devices | 20% | 5% | https://www.customsnepal.com/import-duty/electronic-cigarette |
+| petrol | 2710.12.10 | Motor Spirit (Petrol) | Per KL Rs. 25200 | Per KL Rs. 25200 | https://www.customsnepal.com/import-duty/petrol |
+| petrol | 2710.12.20 | Hexsen (food grade) | Per KL Rs. 25200 | Per KL Rs. 25200 | https://www.customsnepal.com/import-duty/petrol |
+| petrol | 2710.12.90 | Other | Per KL Rs. 25200 | Per KL Rs. 25200 | https://www.customsnepal.com/import-duty/petrol |
+| lpg | 2711.11.00 | Natural gas | 10% | 10% | https://www.customsnepal.com/import-duty/lpg |
+| lpg | 2711.12.10 | For refrigerant (R-290) | 15% | 14% | https://www.customsnepal.com/import-duty/lpg |
+| lpg | 2711.12.90 | Other | 15% | 14% | https://www.customsnepal.com/import-duty/lpg |
+| gold | 7108.11.00 | Powder | 20% | 20% | https://www.customsnepal.com/import-duty/gold |
+| gold | 7108.12.00 | Other unwrought forms | 20% | 20% | https://www.customsnepal.com/import-duty/gold |
+| gold | 7108.13.00 | Other semi-manufactured forms | 20% | 20% | https://www.customsnepal.com/import-duty/gold |
+| silver | 7106.10.00 | Powder | 20% | 20% | https://www.customsnepal.com/import-duty/silver |
+| silver | 7106.91.00 | Unwrought | 20% | 20% | https://www.customsnepal.com/import-duty/silver |
+| silver | 7106.92.00 | Semi-manufactured | 20% | 20% | https://www.customsnepal.com/import-duty/silver |
+| jewellery | 7113.11.00 | Of silver, whether or not plated or clad with other precious metal | 30% | 9.5% | https://www.customsnepal.com/import-duty/jewellery |
+| jewellery | 7113.19.10 | Of Gold | 30% | 9.5% | https://www.customsnepal.com/import-duty/jewellery |
+| jewellery | 7113.19.90 | Of other precious metal | 30% | 9.5% | https://www.customsnepal.com/import-duty/jewellery |
+| machinery parts | 8483.10.00 | Transmission shafts (including cam shafts and crank shafts) and cranks | 15% | 7.25% | https://www.customsnepal.com/import-duty/machinery-parts |
+| machinery parts | 8483.20.00 | Bearing housings, incorporating ball or roller bearings | 15% | 7.25% | https://www.customsnepal.com/import-duty/machinery-parts |
+| machinery parts | 8483.30.00 | Bearing housings, not incorporating ball or roller bearings; plain sha | 15% | 7.25% | https://www.customsnepal.com/import-duty/machinery-parts |
+| printing machine | 8443.11.00 | Offset printing machinery, reel-fed | 5% | 5% | https://www.customsnepal.com/import-duty/printing-machine |
+| printing machine | 8443.12.00 | Offset printing machinery, sheet-fed, office type (using sheets with o | 5% | 5% | https://www.customsnepal.com/import-duty/printing-machine |
+| printing machine | 8443.13.00 | Other offset printing machinery | 5% | 5% | https://www.customsnepal.com/import-duty/printing-machine |
+| sewing machine | 8452.10.00 | Sewing machines of the household type | 5% | 5% | https://www.customsnepal.com/import-duty/sewing-machine |
+| sewing machine | 8452.21.00 | Automatic units | 5% | 5% | https://www.customsnepal.com/import-duty/sewing-machine |
+| sewing machine | 8452.29.00 | Other | 5% | 5% | https://www.customsnepal.com/import-duty/sewing-machine |
+| musical instrument | 9201.10.00 | Upright pianos | 15% | 5% | https://www.customsnepal.com/import-duty/musical-instrument |
+| musical instrument | 9201.20.00 | Grand pianos | 15% | 5% | https://www.customsnepal.com/import-duty/musical-instrument |
+| musical instrument | 9201.90.00 | Other | 15% | 5% | https://www.customsnepal.com/import-duty/musical-instrument |
+| fertilizer | 3102.10.10 | Diesel exhaust fluid | 10% | 9.5% | https://www.customsnepal.com/import-duty/fertilizer |
+| fertilizer | 3102.10.20 | Technical Grade | 5% | 5% | https://www.customsnepal.com/import-duty/fertilizer |
+| fertilizer | 3102.10.30 | Fertilizer Grade | Free | Free | https://www.customsnepal.com/import-duty/fertilizer |
+| pesticide | 3808.52.00 | DDT (ISO) (clofenotane (INN)), in packings of a net weight content not | 10% | 5% | https://www.customsnepal.com/import-duty/pesticide |
+| pesticide | 3808.59.00 | Other | 10% | 5% | https://www.customsnepal.com/import-duty/pesticide |
+| pesticide | 3808.61.00 | In packings of a net weight content not exceeding 300 g | 10% | 5% | https://www.customsnepal.com/import-duty/pesticide |
+| seeds | 1209.10.00 | Sugar beet seeds | 10% | 6% | https://www.customsnepal.com/import-duty/seeds |
+| seeds | 1209.21.00 | Lucerne (alfalfa) seeds | 10% | 6% | https://www.customsnepal.com/import-duty/seeds |
+| seeds | 1209.22.00 | Clover (Trifolium spp.) seeds | 10% | 6% | https://www.customsnepal.com/import-duty/seeds |
+| books | 4901.10.00 | In single sheets, whether or not folded | 10% | 5% | https://www.customsnepal.com/import-duty/books |
+| books | 4901.91.00 | Dictionaries and encyclopaedias, and serial instalments thereof | 10% | 5% | https://www.customsnepal.com/import-duty/books |
+| books | 4901.99.00 | Other | 10% | 5% | https://www.customsnepal.com/import-duty/books |
+| pens | 9608.10.00 | Ball point pens | 15% | 15% | https://www.customsnepal.com/import-duty/pens |
+| pens | 9608.20.10 | Felt tipped and other porous tipped | 5% | 5% | https://www.customsnepal.com/import-duty/pens |
+| pens | 9608.20.90 | Other marker etc. | 5% | 5% | https://www.customsnepal.com/import-duty/pens |
+| kitchen utensils | 7323.10.00 | Iron or steel wool; pot scourers and scouring or polishing pads, glove | 10% | 7.25% | https://www.customsnepal.com/import-duty/kitchen-utensils |
+| kitchen utensils | 7323.91.00 | Of cast iron, not enamelled | 10% | 6% | https://www.customsnepal.com/import-duty/kitchen-utensils |
+| kitchen utensils | 7323.92.00 | Of cast iron, enamelled | 20% | 7.25% | https://www.customsnepal.com/import-duty/kitchen-utensils |
+| hand tools | 8205.10.00 | Drilling, threading or tapping tools | 5% | 5% | https://www.customsnepal.com/import-duty/hand-tools |
+| hand tools | 8205.20.00 | Hammers and sledge hammers | 5% | 5% | https://www.customsnepal.com/import-duty/hand-tools |
+| hand tools | 8205.30.00 | Planes, chisels, gouges and similar cutting tools for working wood | 5% | 5% | https://www.customsnepal.com/import-duty/hand-tools |
+| lock | 8301.10.00 | Padlocks | 10% | 7.25% | https://www.customsnepal.com/import-duty/lock |
+| lock | 8301.20.00 | Locks of a kind used for motor vehicles | 15% | 7.25% | https://www.customsnepal.com/import-duty/lock |
+| lock | 8301.30.00 | Locks of a kind used for furniture | 10% | 7.25% | https://www.customsnepal.com/import-duty/lock |
+| helmet | 6506.10.00 | Safety headgear | 20% | 20% | https://www.customsnepal.com/import-duty/helmet |
+| helmet | 6506.91.00 | Of rubber or of plastics | 20% | 7.25% | https://www.customsnepal.com/import-duty/helmet |
+| helmet | 6506.99.00 | Of other materials | 20% | 7.25% | https://www.customsnepal.com/import-duty/helmet |
+| umbrella | 6601.10.00 | Garden or similar umbrellas | 15% | 7.25% | https://www.customsnepal.com/import-duty/umbrella |
+| umbrella | 6601.91.00 | Having a telescopic shaft | 15% | 7.25% | https://www.customsnepal.com/import-duty/umbrella |
+| umbrella | 6601.99.00 | Other | 15% | 7.25% | https://www.customsnepal.com/import-duty/umbrella |
+| sunglasses | 9004.10.00 | Sunglasses | 15% | 7.25% | https://www.customsnepal.com/import-duty/sunglasses |
+| sunglasses | 9004.90.00 | Other | 15% | 7.25% | https://www.customsnepal.com/import-duty/sunglasses |
+| hearing aid | 8713.10.00 | Not mechanically propelled | Free | Free | https://www.customsnepal.com/import-duty/hearing-aid |
+| hearing aid | 8713.90.10 | Electric wheel chair | Free | Free | https://www.customsnepal.com/import-duty/hearing-aid |
+| hearing aid | 8713.90.90 | Other | 5% | 5% | https://www.customsnepal.com/import-duty/hearing-aid |
+| antenna | 8529.10.00 | Aerials and aerial reflectors of all kinds; parts suitable for use the | 10% | 6% | https://www.customsnepal.com/import-duty/antenna |
+| sound system | 8518.10.00 | Microphones and stands therefor; | Free | Free | https://www.customsnepal.com/import-duty/sound-system |
+| sound system | 8518.21.00 | Single loudspeakers, mounted in their enclosures | 5% | 5% | https://www.customsnepal.com/import-duty/sound-system |
+| sound system | 8518.22.00 | Multiple loudspeakers, mounted in the same enclosures | 5% | 5% | https://www.customsnepal.com/import-duty/sound-system |
+| processor | 8471.80.00 | Other units of automatic data processing machines | Free | Free | https://www.customsnepal.com/import-duty/processor |
+| processor | 8473.30.00 | Parts and accessories of the machines of Heading 84.71 | Free | Free | https://www.customsnepal.com/import-duty/processor |
+| processor | 8543.70.00 | Other machines and apparatus | 5% | 5% | https://www.customsnepal.com/import-duty/processor |
+| smart home | 8517.62.10 | Smart watch | Free | Free | https://www.customsnepal.com/import-duty/smart-home |
+| smart home | 8517.62.20 | Networking switch | Free | Free | https://www.customsnepal.com/import-duty/smart-home |
+| smart home | 8517.62.30 | Router | Free | Free | https://www.customsnepal.com/import-duty/smart-home |
+| barcode scanner | 8470.50.00 | Cash registers | Free | Free | https://www.customsnepal.com/import-duty/barcode-scanner |
+| barcode scanner | 8471.90.00 | Other | Free | Free | https://www.customsnepal.com/import-duty/barcode-scanner |
+| battery lead acid | 8507.10.00 | Lead-acid, of a kind used for starting piston engines | 15% | 15% | https://www.customsnepal.com/import-duty/battery-lead-acid |
+| battery lead acid | 8507.20.00 | Other lead-acid accumulators | 15% | 15% | https://www.customsnepal.com/import-duty/battery-lead-acid |

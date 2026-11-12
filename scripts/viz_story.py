@@ -365,6 +365,13 @@ svg.vz.wmap{min-width:640px}
 @media(prefers-color-scheme:dark){.vz .wm1{fill:#1c3558}.vz .wm2{fill:#234a80}.vz .wm3{fill:#2d64ad}.vz .wm4{fill:#4a8be0}.vz .wm5{fill:#9cc6f8}}
 .xlink{margin:1em 0;background:var(--accent-bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.93rem;line-height:1.55}
 footer p.explore{line-height:1.7}
+h3.sub{font-size:1rem;margin:.9em 0 .4em}.catg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
+.catg h3,.catg ul{grid-column:auto}ul.catl{list-style:none;margin:0;padding:0}
+ul.catl li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.93rem}
+ul.catl li a{min-width:0;text-decoration:none;color:var(--fg)}ul.catl li a:hover{color:var(--accent)}ul.catl li a span{color:var(--muted);font-size:.78rem;margin-left:4px}
+ul.catl li b{white-space:nowrap;font-variant-numeric:tabular-nums}
+@media(max-width:700px){.catg{grid-template-columns:minmax(0,1fr)}}
+dl.qa{margin:.6em 0 1em}dl.qa dt{font-weight:700;margin-top:.9em}dl.qa dd{margin:.25em 0 0;color:var(--fg2);line-height:1.6}
 table.ptbl a.dguide{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:600;color:var(--accent);border:1px solid var(--border);border-radius:999px;padding:1px 8px;text-decoration:none;white-space:nowrap}
 table.ptbl a.dguide:hover{border-color:var(--accent)}
 table.ptbl .tk{display:block;font-size:.7rem;color:var(--muted);font-weight:400}

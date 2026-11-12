@@ -180,6 +180,7 @@ AI_AGENTS = [
     "Applebot-Extended",                                  # Apple Intelligence
     "Amazonbot", "Bingbot", "DuckAssistBot",              # Amazon, Microsoft Copilot, DuckDuckGo
     "meta-externalagent", "MistralAI-User", "cohere-ai", "CCBot",  # Meta, Mistral, Cohere, Common Crawl
+    "Applebot", "DuckDuckBot", "Meta-ExternalFetcher", "Google-CloudVertexBot", "YouBot", "PetalBot",  # Siri/Spotlight, DDG, Meta AI fetch, Vertex, You.com, Petal
 ]
 robots = ["# Customs Nepal (customsnepal.com) — crawling and indexing is welcome, including AI answer engines.",
           "", "User-agent: *", "Allow: /", ""]

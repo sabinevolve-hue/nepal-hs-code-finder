@@ -196,6 +196,8 @@ for name in sorted(CO_IMP, key=lambda n: -CO_IMP[n]):
     if not (imp or exp):
         continue
     sg = slug(name); path = '/trade/country/' + sg
+    if links.partner_href(name):      # replaced by /trade-partner/<slug>; old URL 301s there (vercel.json)
+        continue
     bal = exp - imp
     share = (imp / TOT_IMP * 100) if TOT_IMP else 0
     rank = imp_rank.get(name)
@@ -258,6 +260,11 @@ for name in sorted(CO_IMP, key=lambda n: -CO_IMP[n]):
     sitemap_urls.append((path, '0.6'))
     written += 1
 
+for _old in links.OLD_COUNTRY:
+    _f = pub / (_old.strip('/') + '.html')
+    if _f.exists():
+        _f.unlink()
+
 # ================= CATEGORY PAGES =================
 for ch in sorted(CH_IMP, key=lambda c: -CH_IMP[c]):
     imp = CH_IMP[ch]; exp = CH_EXP.get(ch, 0)
@@ -301,10 +308,10 @@ for ch in sorted(CH_IMP, key=lambda c: -CH_IMP[c]):
         o.append('<table class="dtable"><thead><tr><th>Fiscal year</th><th>Imports</th><th>Exports</th></tr></thead><tbody>%s</tbody></table>' % rows)
     if srcs:
         o.append('<h2>Top source countries (imports)</h2>')
-        o.append(linklist([('/trade/country/' + slug(co), co, rsf(v)) for co, v in srcs]))
+        o.append(linklist([(links.country_href(co), co, rsf(v)) for co, v in srcs]))
     if dests:
         o.append('<h2>Top export destinations</h2>')
-        o.append(linklist([('/trade/country/' + slug(co), co, rsf(v)) for co, v in dests]))
+        o.append(linklist([(links.country_href(co), co, rsf(v)) for co, v in dests]))
     if topcodes:
         o.append('<h2>Top imported products in this category</h2>')
         rr = ''.join('<tr><td class="mono"><a href="/#hs-%s">%s</a></td><td>%s</td><td>%s</td></tr>'
@@ -326,10 +333,10 @@ def index_page(path, title, desc, h1, lede, rows, crumb_last):
     o.append(FOOT)
     (pub / (path.strip('/') + '.html')).write_text(''.join(o), encoding='utf-8')
 
-co_rows = [('/trade/country/' + slug(n), n, rsf(CO_IMP[n] + CO_EXP.get(n, 0)))
+co_rows = [(links.country_href(n), n, rsf(CO_IMP[n] + CO_EXP.get(n, 0)))
            for n in sorted(CO_IMP, key=lambda n: -(CO_IMP[n] + CO_EXP.get(n, 0))) if CO_IMP[n] or CO_EXP.get(n, 0)]
 index_page('/trade/countries', 'Nepal trade by country %s — every trading partner | Customs Nepal' % FY,
-           'Nepal\'s imports and exports with every trading-partner country in FY %s. Open any country for its top products, categories and 7-year trend.' % FY,
+           'Nepal\'s imports and exports with every trading-partner country in FY %s. Open any country for its top products, categories and multi-year trend.' % FY,
            'Nepal trade by country', 'Every country Nepal traded with in FY %s, by two-way trade. Open any for its top imports, exports, products and trend. '
            'For charts, maps and shareable profiles of the main partners, see <a href="/trade-partners">Nepal&rsquo;s trading partners</a>.' % esc(FY),
            co_rows, 'Countries')
