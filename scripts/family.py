@@ -68,14 +68,14 @@ def family(dotted):
 
 
 def render(dotted, href):
-    """HTML block for the product page: one compact table, lowest duty first. href(dotted_code) -> link or None."""
+    """HTML block for the product page: duty staircase, compact table (lowest duty first), closest cheaper lines."""
     fam = family(dotted)
     if len(fam) < 2:
         return ''
     mine = next((r for r in fam if r[0] == dotted), None)
     if mine is None:
         return ''
-    my_g = rate(mine[5])[0]
+    my_g, my_d = rate(mine[5])
     nums = [rate(r[5])[0] for r in fam if rate(r[5])[0] is not None]
     lo, hi = (min(nums), max(nums)) if nums else (None, None)
 
@@ -86,48 +86,100 @@ def render(dotted, href):
         n, d = rate(x)
         return '<span class="fam-chip t-%s">%s</span>' % (tone(n), esc(d))
 
+    def key(r):                       # filter key shared by a step and its rows
+        n, d = rate(r[5])
+        return ('%g' % n) if n is not None else 'spec'
+
+    def words_of(r):
+        return [('Other (none of the above)' if w.strip().lower() in ('other', 'others') else w) for w in path_of(r)]
+
+    out = ['<section class="fam" aria-labelledby="fam-h">',
+           '<h2 class="sec" id="fam-h">Same family, compared by duty: heading %s</h2>' % esc(dotted[:5].rstrip('.')),
+           '<p class="fam-lede">%s. %d lines. The code follows from what the goods are, so read the description before the rate.</p>'
+           % (esc(heading_text(dotted.replace('.', ''))), len(fam))]
+
+    # 1. the duty staircase: one step per rate in the family, the reader's step marked; a step filters the table
+    steps = {}
+    for r in fam:
+        steps.setdefault(key(r), []).append(r)
+    order = sorted(steps, key=lambda k: (k == 'spec', float(k) if k != 'spec' else 0))
+    if len(order) > 1:
+        top = max(hi or 0, 1)
+        s = []
+        for k in order:
+            n = None if k == 'spec' else float(k)
+            me = key(mine) == k
+            hgt = 34 if n is None else 34 + round(74 * n / top)
+            cnt = len(steps[k])
+            s.append('<button type="button" class="fam-step t-%s%s" data-step="%s" style="height:%dpx" aria-pressed="false" '
+                     'aria-label="%s duty: %d line%s%s">%s<b>%s</b><small>%d line%s</small></button>'
+                     % (tone(n), ' is-me' if me else '', k, hgt, 'Per-unit' if n is None else rate(steps[k][0][5])[1], cnt,
+                        '' if cnt == 1 else 's', ', includes your line' if me else '',
+                        '<em>Your line</em>' if me else '', 'Per unit' if n is None else esc(rate(steps[k][0][5])[1]), cnt, '' if cnt == 1 else 's'))
+        out.append('<div class="fam-stairs" role="group" aria-label="Duty rates in this family">%s</div>'
+                   '<p class="fam-hint">Each step is a duty rate in this family. Tap a step to see only its lines.</p>' % ''.join(s))
+    else:
+        out.append('<p class="fam-same">Every line in this family pays the same general duty: <b>%s</b>.</p>' % esc(my_d))
+
+    # 2. the table
     ranked = sorted(enumerate(fam), key=lambda ir: (rate(ir[1][5])[0] is None, rate(ir[1][5])[0] or 0, ir[0]))
     LIMIT = 10
     rows = []
     for pos, (i, r) in enumerate(ranked):
         is_me = r[0] == dotted
-        pth = [('Other (none of the above)' if w.strip().lower() in ('other', 'others') else w) for w in path_of(r)]
-        # the deciding words lead; the subheading they sit under follows in small type
+        pth = words_of(r)
         k = 2 if (len(pth) > 2 and len(pth[-1]) < 28) else 1          # a short leaf ("Other", "Upto 48 Inch") needs its parent to make sense
         words = '<b>%s</b>' % esc(' › '.join(pth[-k:])) + (('<small>%s</small>' % esc(' › '.join(pth[:-k]))) if len(pth) > k else '')
         link = href(r[0]) if not is_me else None
         code_html = ('<a href="%s">%s</a>' % (esc(link), esc(r[0]))) if link else esc(r[0])
         tag = '<span class="fam-b me">Your line</span>' if is_me else ''
         hide = ' fam-x' if (len(fam) > LIMIT + 2 and pos >= LIMIT and not is_me) else ''
-        rows.append('<tr class="%s%s" data-o="%d" data-d="%d"><td class="fam-c">%s%s</td><td class="fam-d"><span>%s</span></td>'
+        rows.append('<tr class="%s%s" data-o="%d" data-d="%d" data-r="%s"><td class="fam-c">%s%s</td><td class="fam-d"><span>%s</span></td>'
                     '<td class="fam-n">%s</td><td class="fam-n">%s</td></tr>'
-                    % ('is-me' if is_me else '', hide, i, pos, code_html, tag, words, chip(r[5]), chip(r[4])))
+                    % ('is-me' if is_me else '', hide, i, pos, key(r), code_html, tag, words, chip(r[5]), chip(r[4])))
     hidden = sum(1 for x in rows if ' fam-x"' in x)
-
-    out = ['<section class="fam" aria-labelledby="fam-h">',
-           '<h2 class="sec" id="fam-h">Same family, compared by duty: heading %s</h2>' % esc(dotted[:5].rstrip('.')),
-           '<p class="fam-lede">%s. %d lines, lowest customs duty first. The code follows from what the goods are, '
-           'so read the description before the rate.</p>' % (esc(heading_text(dotted.replace('.', ''))), len(fam)),
-           '<div class="fam-tools" role="group" aria-label="Order"><button type="button" class="on" data-ford="d">Lowest duty first</button>'
-           '<button type="button" data-ford="o">Tariff order</button></div>',
-           '<div class="fam-wrap"><table class="famt"><thead><tr><th>HS code</th><th>What the goods must be</th>'
-           '<th>General</th><th>SAFTA</th></tr></thead><tbody>%s</tbody></table></div>' % ''.join(rows)]
+    out.append('<div class="fam-tools" role="group" aria-label="Order"><button type="button" class="on" data-ford="d">Lowest duty first</button>'
+               '<button type="button" data-ford="o">Tariff order</button></div>'
+               '<div class="fam-wrap"><table class="famt"><thead><tr><th>HS code</th><th>What the goods must be</th>'
+               '<th>General</th><th>SAFTA</th></tr></thead><tbody>%s</tbody></table></div>' % ''.join(rows))
     if hidden:
         out.append('<button type="button" class="fam-more">Show all %d lines</button>' % len(fam))
-    notes = []
+
+    # 3. the closest cheaper lines, each with its condition, and the SAFTA route
+    cards = []
     sn, sd = rate(mine[4])
     if my_g is not None and sn is not None and sn < my_g:
-        notes.append('From India or another SAARC country, with a certificate of origin, your line pays <b>%s</b> instead of %s. '
-                     '<a href="/safta">How SAFTA works</a>.' % (esc(sd), esc(rate(mine[5])[1])))
-    if my_g is not None and lo is not None and my_g == lo:
+        cards.append('<a class="fam-card" href="/safta"><span class="fam-chip t-%s">%s</span><span class="fam-step2">instead of %s</span>'
+                     '<b>Same goods, made in India or SAARC</b><span class="fam-if">Needs a SAFTA certificate of origin. The code stays %s.</span></a>'
+                     % (tone(sn), esc(sd), esc(my_d), esc(dotted)))
+    if my_g is not None:
+        def shared(r):
+            p, m = path_of(r), path_of(mine); k = 0
+            while k < min(len(p), len(m)) and p[k] == m[k]:
+                k += 1
+            return k
+        cheaper = sorted([r for r in fam if r[0] != mine[0] and rate(r[5])[0] is not None and rate(r[5])[0] < my_g],
+                         key=lambda r: (-shared(r), rate(r[5])[0]))[:3]
+        for r in cheaper:
+            n, d = rate(r[5])
+            cards.append('<a class="fam-card" href="%s"><span class="fam-chip t-%s">%s</span><span class="fam-step2">instead of %s</span>'
+                         '<b>HS %s</b><span class="fam-if">Only if your goods are: %s</span></a>'
+                         % (esc(href(r[0])), tone(n), esc(d), esc(my_d), esc(r[0]), esc(' › '.join(deciding(r, mine)))))
+    if cards:
+        out.append('<h3 class="fam-h3">Closest lines with lower duty, and the condition for each</h3><div class="fam-cards">%s</div>' % ''.join(cards))
+    notes = []
+    if my_g is not None and lo is not None and my_g == lo and len(order) > 1:
         notes.append('Your line already has the lowest general duty in its family.')
     notes.append('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. '
                  'When unsure, ask the Department of Customs for an advance ruling.')
     out.append('<p class="fam-note">%s</p>' % ' '.join(notes))
-    out.append('<script>(function(){var s=document.currentScript.parentNode,tb=s.querySelector("tbody");'
+    out.append('<script>(function(){var s=document.currentScript.parentNode,tb=s.querySelector("tbody"),cur=null;'
                's.addEventListener("click",function(e){var b=e.target.closest("button"),c=e.target.closest(".fam-d");'
                'if(c){c.classList.toggle("open");return}if(!b)return;'
                'if(b.classList.contains("fam-more")){s.classList.add("all");b.remove();return}'
+               'var st=b.getAttribute("data-step");if(st!==null){cur=cur===st?null:st;'
+               '[].forEach.call(s.querySelectorAll(".fam-step"),function(x){var on=x.getAttribute("data-step")===cur;x.classList.toggle("sel",on);x.setAttribute("aria-pressed",on)});'
+               's.classList.toggle("filt",cur!==null);[].forEach.call(tb.rows,function(r){r.classList.toggle("fam-off",cur!==null&&r.dataset.r!==cur)});return}'
                'var k=b.getAttribute("data-ford");if(!k)return;'
                '[].slice.call(tb.rows).sort(function(a,z){return a.dataset[k]-z.dataset[k]}).forEach(function(r){tb.appendChild(r)});'
                'if(k==="o"){s.classList.add("all");var m=s.querySelector(".fam-more");if(m)m.remove()}'
@@ -160,7 +212,26 @@ CSS = """
 .fam-chip{display:inline-block;min-width:3.4em;text-align:center;font-weight:700;font-size:.84rem;border-radius:7px;padding:2px 7px}
 .fam-chip.t-free{background:var(--free-bg);color:var(--free)}.fam-chip.t-low{background:var(--low-bg);color:var(--low)}
 .fam-chip.t-mid{background:var(--mid-bg);color:var(--mid)}.fam-chip.t-hi{background:var(--hi-bg);color:var(--hi)}.fam-chip.t-spec{background:var(--spec-bg);color:var(--spec)}
-.fam:not(.all) .fam-x{display:none}
+.fam:not(.all):not(.filt) .fam-x{display:none}.famt tr.fam-off{display:none!important}.fam.filt .fam-more{display:none}
+.fam-stairs{display:flex;align-items:flex-end;gap:5px;margin:.4em 0 0;padding-top:22px;border-bottom:2px solid var(--border)}
+.fam-step{position:relative;flex:1 1 0;min-width:0;border:0;border-radius:9px 9px 0 0;font:inherit;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 2px 0;line-height:1.15;transition:filter .15s,transform .15s}
+.fam-step b{font-size:.95rem}.fam-step small{font-size:.68rem;opacity:.85;white-space:nowrap}
+.fam-step.t-free{background:var(--free-bg);color:var(--free)}.fam-step.t-low{background:var(--low-bg);color:var(--low)}
+.fam-step.t-mid{background:var(--mid-bg);color:var(--mid)}.fam-step.t-hi{background:var(--hi-bg);color:var(--hi)}.fam-step.t-spec{background:var(--spec-bg);color:var(--spec)}
+.fam-step:hover{filter:brightness(.96)}.fam-step:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fam-step.is-me{box-shadow:inset 0 3px 0 var(--accent)}
+.fam-step em{position:absolute;top:-21px;left:50%;transform:translateX(-50%);font-style:normal;font-size:.66rem;font-weight:700;white-space:nowrap;background:var(--accent);color:#fff;border-radius:999px;padding:1px 7px}
+.fam-step.sel{box-shadow:inset 0 0 0 2px currentColor}.fam.filt .fam-step:not(.sel){opacity:.45}
+.fam-hint{font-size:.8rem;color:var(--muted);margin:.4em 0 1em}.fam-same{margin:.2em 0 1em}
+.fam-h3{font-size:1rem;margin:1.3em 0 .5em}
+.fam-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.fam-card{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--fg);text-decoration:none}
+.fam-card:hover{border-color:var(--accent);text-decoration:none}
+.fam-card .fam-chip{font-size:1.05rem;padding:3px 10px}.fam-card .fam-step2{font-size:.8rem;color:var(--muted)}
+.fam-card b{grid-column:1/-1;font-family:var(--mono);font-size:.9rem;margin-top:4px}.fam-card b:not(:empty){word-break:break-word}
+.fam-card .fam-if{grid-column:1/-1;font-size:.85rem;color:var(--fg2);line-height:1.4}
+@media(max-width:600px){.fam-step small{font-size:.6rem}.fam-step b{font-size:.82rem}.fam-stairs{gap:3px}}
+@media(prefers-reduced-motion:reduce){.fam-step{transition:none}}
 .fam-more{margin-top:8px;border:1px solid var(--border);background:var(--card);color:var(--accent);font:inherit;font-weight:650;border-radius:10px;padding:8px 14px;cursor:pointer}
 .fam-note{margin:.8em 0 0;font-size:.85rem;color:var(--fg2)}
 @media(max-width:600px){.famt{font-size:.85rem}.famt th,.famt td{padding:7px 8px}

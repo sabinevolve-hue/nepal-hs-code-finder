@@ -459,6 +459,16 @@ h3.h{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:upperc
 .tree li.me{color:var(--fg);font-weight:700}
 .tree li.me::before{background:var(--accent);border-color:var(--accent)}
 .tree small{display:block;font-size:.72rem;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.fl-stairs{display:flex;align-items:flex-end;gap:4px;padding-top:22px;border-bottom:2px solid var(--border)}
+.fl-step{position:relative;flex:1 1 0;min-width:0;border-radius:9px 9px 0 0;display:flex;flex-direction:column;align-items:center;padding:6px 2px 0;line-height:1.15}
+.fl-step b{font-size:.9rem}.fl-step small{font-size:.62rem;opacity:.85;white-space:nowrap}
+.fl-step.fr{background:rgba(21,128,61,.15);color:#15803D}.fl-step.lo{background:rgba(3,105,161,.14);color:#0369A1}.fl-step.md{background:rgba(194,124,14,.18);color:#A15C07}.fl-step.hi{background:rgba(185,28,28,.14);color:#B91C1C}.fl-step.sp{background:rgba(100,116,139,.16);color:#475569}
+.fl-step.me{box-shadow:inset 0 3px 0 var(--accent)}.fl-step.sel{box-shadow:inset 0 0 0 2px currentColor}.fl-stairs:has(.sel) .fl-step:not(.sel){opacity:.45}
+.fl-step em{position:absolute;top:-21px;left:50%;transform:translateX(-50%);font-style:normal;font-size:.64rem;font-weight:700;white-space:nowrap;background:var(--accent);color:#fff;border-radius:999px;padding:1px 7px}
+.fl-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.fl-card{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:.88rem}
+button.fl-card:hover{border-color:var(--accent)}.fl-card .fl-chip{font-size:1rem;padding:3px 9px}.fl-card .was{font-size:.78rem;color:var(--muted)}
+.fl-card b{grid-column:1/-1;margin-top:2px}.fl-card .if{grid-column:1/-1;color:var(--fg2);line-height:1.4}
 .fl-tools{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:2px;background:var(--card);margin:0 0 8px}
 .fl-tools button{font-size:.82rem;padding:5px 12px;border-radius:999px;color:var(--fg2)}.fl-tools button.on{background:var(--primary);color:var(--on-primary);font-weight:650}
 .fl-tb{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
@@ -474,6 +484,8 @@ h3.h{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:upperc
 .fl-chip{display:inline-block;min-width:3.3em;text-align:center;font-weight:700;font-size:.82rem;border-radius:7px;padding:2px 6px}
 .fl-chip.fr{background:rgba(21,128,61,.15);color:#15803D}.fl-chip.lo{background:rgba(3,105,161,.14);color:#0369A1}.fl-chip.md{background:rgba(194,124,14,.18);color:#A15C07}.fl-chip.hi{background:rgba(185,28,28,.14);color:#B91C1C}.fl-chip.sp{background:rgba(100,116,139,.16);color:#475569}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fl-chip.fr{color:#4ADE80}:root:not([data-theme="light"]) .fl-chip.lo{color:#38BDF8}:root:not([data-theme="light"]) .fl-chip.md{color:#FBBF24}:root:not([data-theme="light"]) .fl-chip.hi{color:#F87171}:root:not([data-theme="light"]) .fl-chip.sp{color:#94A3B8}}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fl-step.fr{color:#4ADE80}:root:not([data-theme="light"]) .fl-step.lo{color:#38BDF8}:root:not([data-theme="light"]) .fl-step.md{color:#FBBF24}:root:not([data-theme="light"]) .fl-step.hi{color:#F87171}:root:not([data-theme="light"]) .fl-step.sp{color:#94A3B8}}
+:root[data-theme="dark"] .fl-step.fr{color:#4ADE80}:root[data-theme="dark"] .fl-step.lo{color:#38BDF8}:root[data-theme="dark"] .fl-step.md{color:#FBBF24}:root[data-theme="dark"] .fl-step.hi{color:#F87171}:root[data-theme="dark"] .fl-step.sp{color:#94A3B8}
 :root[data-theme="dark"] .fl-chip.fr{color:#4ADE80}:root[data-theme="dark"] .fl-chip.lo{color:#38BDF8}:root[data-theme="dark"] .fl-chip.md{color:#FBBF24}:root[data-theme="dark"] .fl-chip.hi{color:#F87171}:root[data-theme="dark"] .fl-chip.sp{color:#94A3B8}
 .ac-fam{margin:10px 0 0;font-size:.88rem;color:var(--fg2)}.ac-fam .lnk{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
 .sibs{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
