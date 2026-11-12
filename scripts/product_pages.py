@@ -20,6 +20,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from nav import OTHER_SITES
 import textfit
 import links
+import family
 from statsfields import IMP_VALUE, IMP_UNIT, IMP_DESC, IMP_PARTNERS, IMP_NPARTNERS, TARIFF_FY, TARIFF_FY_AD, validate_import_rows, slug, clean_name
 
 root = pathlib.Path(__file__).resolve().parents[1]
@@ -176,6 +177,12 @@ _missing = PUBLISHED - {c for c, *_ in items}
 if _missing:
     print('product_pages: WARNING %d previously published codes no longer in the data: %s' % (len(_missing), sorted(_missing)[:20]))
 
+# product page path per 8-digit code, for the family ladder's links (lines without a page open in the app)
+PAGE_OF = {c: '/import-duty/%s-%s' % (slug(clean_name(i[0] if i and i[0] else r[1])), c) for c, r, i, _ in items}
+def fam_href(dotted):
+    c = c8(dotted)
+    return PAGE_OF.get(c, '/#hs-' + c)
+
 by_head = {}
 for it in items:
     by_head.setdefault(it[0][:6], []).append(it)
@@ -307,6 +314,8 @@ def product_page(code, row, imp, val):
                    'percentage, so the amount depends on quantity. Enter your shipment in the '
                    '<a href="/calculator">calculator</a> for the exact figure; 13%% VAT still applies on the CIF value '
                    'plus duty.</div>' % esc(gen_d))
+
+    out.append(family.render(dotted, fam_href))
 
     srcs = top_sources(imp)
     out.append('<h2 class="sec">Nepal&rsquo;s imports of %s</h2>' % esc(name))

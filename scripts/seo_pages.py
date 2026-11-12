@@ -395,7 +395,8 @@ UI_CSS = """
 .cs-key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--fg2);margin-top:6px}.cs-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
 .cs-key .c{background:#64748b}.cs-key .d{background:#eb6834}.cs-key .v{background:#2a78d6}
 """
-(pub / 'seo.css').write_text(CSS + NAV_CSS.strip() + UI_CSS, encoding='utf-8')
+import family
+(pub / 'seo.css').write_text(CSS + NAV_CSS.strip() + UI_CSS + family.CSS, encoding='utf-8')
 
 # ---- sitemap (homepage + tariff index + every chapter) ----
 # App routes (/calculator, /imports, /exports, /trade-data, /ask-ai, /browse, /about, /privacy) are added by
