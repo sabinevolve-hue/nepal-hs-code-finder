@@ -394,6 +394,7 @@ out.append('<p class="trkhint">Showing the top 200 by import value; all %d produ
            '<a href="/tariff">full tariff</a>.</p>' % len(items))
 out.append('<div class="tools"><a class="btn" href="/">Search any product</a>'
            '<a class="btn ghost" href="/calculator">Landed-cost calculator</a>'
+           '<a class="btn ghost" href="/duty-free">Duty-free and 5% goods</a>'
            '<a class="btn ghost" href="/safta">SAFTA savings</a></div>')
 out.append(FOOT)
 (pub / 'import-duty.html').write_text(''.join(out), encoding='utf-8')

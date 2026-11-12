@@ -27,6 +27,7 @@ GROUPS = [
         ('/calculator', 'Landed-cost calculator', 'Duty, VAT and total in rupees', 'calc'),
         ('/invoice', 'Invoice maker', 'Proforma and commercial invoice', 'invoice'),
         ('/safta', 'SAFTA lower duty', 'Cheaper rates from South Asia', ''),
+        ('/duty-free', 'Duty-free goods', 'Every 0% and 5% line', ''),
         ('/tariff/2083-84-changes', 'What changed in 2083/84', 'This year’s tariff changes', ''),
     ]),
     ('trade', 'Trade', '🌍', 'Who, what and how much', [
@@ -51,7 +52,7 @@ NAV = [(h, l) for _, _, _, _, items in GROUPS for h, l, _, _ in items]
 
 # which door lights up for a path that is not itself a menu item
 _GROUP_PREFIX = [('/tariff/2083-84-changes', 'cost'), ('/tariff', 'find'), ('/import-duty', 'find'), ('/faq', 'find'),
-                 ('/safta', 'cost'), ('/trade-partner', 'trade'), ('/sector', 'trade'), ('/customs-office', 'trade'),
+                 ('/safta', 'cost'), ('/duty-free', 'cost'), ('/trade-partner', 'trade'), ('/sector', 'trade'), ('/customs-office', 'trade'),
                  ('/compare', 'trade'), ('/trade', 'trade'), ('/shipping', 'move'), ('/export', 'move'), ('/the-border', 'move')]
 
 
