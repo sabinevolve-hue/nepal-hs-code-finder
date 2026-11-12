@@ -210,6 +210,20 @@ def example_table(gen, gen_d, saarc, saarc_d):
             + body + '</tbody></table></div>')
 
 
+def cost_stack(gen, gen_d, saarc, saarc_d):
+    """The worked example as a picture: one bar per origin, split into goods, customs duty and VAT."""
+    def row(label, rate):
+        duty = EXBASE * rate / 100.0; vat = (EXBASE + duty) * VAT; tot = EXBASE + duty + vat
+        seg = lambda cls, v, txt: '<i class="%s" style="flex:%.3f" title="%s">%s</i>' % (cls, max(v, 0.0001), txt, txt if v / tot > 0.09 else '')
+        return ('<div><div class="cs-l">%s<span>Landed cost %s</span></div><div class="cs-bar" role="img" aria-label="Goods %s, customs duty %s, VAT %s, landed cost %s">%s%s%s</div></div>'
+                % (label, rsplain(tot), rsplain(EXBASE), rsplain(duty), rsplain(vat), rsplain(tot),
+                   seg('c', EXBASE, 'Goods ' + rsplain(EXBASE)), seg('d', duty, 'Duty ' + rsplain(duty)) if duty > 0 else '', seg('v', vat, 'VAT ' + rsplain(vat))))
+    o = '<div class="cstack">' + row('General rate (%s)' % gen_d, gen)
+    if saarc is not None and saarc != gen:
+        o += row('India &amp; SAARC with SAFTA certificate (%s)' % saarc_d, saarc)
+    return o + '</div><div class="cs-key"><span><i class="c"></i>Goods (CIF value)</span><span><i class="d"></i>Customs duty</span><span><i class="v"></i>VAT 13%</span></div>'
+
+
 def product_page(code, row, imp, val):
     name = clean_name(imp[0] if imp and imp[0] else row[1])
     dotted = row[0]
@@ -267,6 +281,7 @@ def product_page(code, row, imp, val):
         out.append('<h2 class="sec">Landed cost — worked example</h2>')
         out.append('<p>For a shipment with a <b>CIF value of %s</b> (cost + insurance + freight to the Nepal border), '
                    'the customs duty and VAT work out as:</p>' % rsplain(EXBASE))
+        out.append(cost_stack(gen, gen_d, saarc, saarc_d))
         out.append(example_table(gen, gen_d, saarc, saarc_d))
         if saarc is not None and 0 <= saarc < gen:
             saving = EXBASE * (gen - saarc) / 100.0

@@ -303,6 +303,31 @@ out.append('<p><b>New this year:</b> <a href="/tariff/2083-84-changes">what chan
            'concession, with sources.</p>' % FY_BS)
 out.append('<div class="tools"><a class="btn" href="/">Search by product or code</a>'
            '<a class="btn ghost" href="/#calc">Duty & landed-cost calculator</a></div>')
+# chapter tiles: icon, the most common duty rate, and a shade for how much Nepal imports under it
+import viz as _viz, collections as _col
+try:
+    _ST = json.loads((root / 'data/stats.json').read_text(encoding='utf-8'))
+    _CHIMP = {int(r[0]): float(r[2] or 0) for r in _ST.get('chapters', [])}
+    _STFY = _ST.get('fy', '')
+except Exception:
+    _CHIMP, _STFY = {}, ''
+_ranked = sorted((v for v in _CHIMP.values() if v > 0), reverse=True)
+def _heat(c):
+    v = _CHIMP.get(c, 0)
+    if v <= 0 or not _ranked:
+        return 0
+    return 4 - min(3, int(_ranked.index(v) / max(1, len(_ranked)) * 4))
+def _mode_rate(c):
+    rs = [str(r['g']).strip() for r in by_ch[c] if str(r['g']).strip() not in ('', 'None')]
+    if not rs:
+        return ''
+    m = _col.Counter(rs).most_common(1)[0][0]
+    return 'Free' if m in ('0', '0.0') or m.lower() == 'free' else (m + '%' if re.fullmatch(r'[\d.]+', m) else m)
+def _amt(th):
+    r = th * 1000.0
+    return ('Rs %.2f kharba' % (r / 1e11)) if r >= 1e11 else (('Rs %.1f arba' % (r / 1e9)) if r >= 1e9 else (('Rs %.0f crore' % (r / 1e7)) if r >= 1e7 else 'under Rs 1 crore'))
+out.append('<p class="chkey"><span>Shade shows how much Nepal imported under the chapter%s:</span> <i class="h1"></i>least <i class="h2"></i><i class="h3"></i><i class="h4"></i>most</p>'
+           % ((' in FY ' + esc(_STFY)) if _STFY else ''))
 for sec in sections:
     sec_chs = [c for c in CHAPTERS if section_of(c) is sec]
     if not sec_chs:
@@ -312,9 +337,11 @@ for sec in sections:
     for c in sec_chs:
         nn = '%02d' % c
         ct = chapters.get(str(c), {}).get('t', '')
-        out.append('<a class="chcard" href="/tariff/%s"><span class="n">Chapter %s</span>'
-                   '<span class="t">%s</span><span class="c">%d HS codes</span></a>'
-                   % (nn, nn, esc(ct), len(by_ch[c])))
+        mr = _mode_rate(c); iv = _CHIMP.get(c, 0)
+        out.append('<a class="chcard h%d" href="/tariff/%s"><span class="ic" aria-hidden="true">%s</span><span class="n">Chapter %s</span>'
+                   '<span class="t">%s</span><span class="c">%d HS codes%s</span>%s</a>'
+                   % (_heat(c), nn, _viz.chap_icon(nn), nn, esc(ct), len(by_ch[c]), (' · mostly ' + esc(mr)) if mr else '',
+                      ('<span class="v">%s imported</span>' % _amt(iv)) if iv > 0 else ''))
     out.append('</div>')
 out.append('</div>' + FOOT)
 (pub / 'tariff.html').write_text(''.join(out), encoding='utf-8')
@@ -354,7 +381,21 @@ out = [h404, crumb_html(bc), '<h1>Page not found</h1>',
 (pub / '404.html').write_text(''.join(out), encoding='utf-8')
 
 # ---- shared stylesheet ----
-(pub / 'seo.css').write_text(CSS + NAV_CSS.strip(), encoding='utf-8')
+UI_CSS = """
+.chcard{position:relative;border-left:5px solid var(--border)}.chcard .ic{font-size:1.5rem;line-height:1;display:block;margin-bottom:6px}
+.chcard .v{display:block;font-size:.76rem;font-weight:700;color:var(--fg2);margin-top:4px}
+.chcard.h1{border-left-color:#cfe1f7}.chcard.h2{border-left-color:#8fb8ea}.chcard.h3{border-left-color:#4a8bd8}.chcard.h4{border-left-color:#184e9e}
+.chkey{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}.chkey i{display:inline-block;width:18px;height:10px;border-radius:3px}
+.chkey .h1{background:#cfe1f7}.chkey .h2{background:#8fb8ea}.chkey .h3{background:#4a8bd8}.chkey .h4{background:#184e9e}
+.cstack{margin:14px 0 6px;display:grid;gap:14px}.cstack .cs-l{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;font-weight:700;margin-bottom:6px}
+.cstack .cs-l span{font-weight:400;color:var(--muted)}
+.cs-bar{display:flex;height:38px;border-radius:10px;overflow:hidden;background:var(--border)}
+.cs-bar i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.74rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;min-width:2px}
+.cs-bar .c{background:#64748b}.cs-bar .d{background:#eb6834}.cs-bar .v{background:#2a78d6}
+.cs-key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--fg2);margin-top:6px}.cs-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.cs-key .c{background:#64748b}.cs-key .d{background:#eb6834}.cs-key .v{background:#2a78d6}
+"""
+(pub / 'seo.css').write_text(CSS + NAV_CSS.strip() + UI_CSS, encoding='utf-8')
 
 # ---- sitemap (homepage + tariff index + every chapter) ----
 # App routes (/calculator, /imports, /exports, /trade-data, /ask-ai, /browse, /about, /privacy) are added by

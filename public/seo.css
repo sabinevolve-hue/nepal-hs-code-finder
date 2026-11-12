@@ -83,6 +83,19 @@ footer a{color:var(--muted)}
  .gnp,.gnm:first-child .gnp{position:fixed;left:8px;right:8px;bottom:calc(66px + env(safe-area-inset-bottom,0px));top:auto;width:auto;max-width:none;max-height:70vh;overflow:auto}
  body{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
 }
+.chcard{position:relative;border-left:5px solid var(--border)}.chcard .ic{font-size:1.5rem;line-height:1;display:block;margin-bottom:6px}
+.chcard .v{display:block;font-size:.76rem;font-weight:700;color:var(--fg2);margin-top:4px}
+.chcard.h1{border-left-color:#cfe1f7}.chcard.h2{border-left-color:#8fb8ea}.chcard.h3{border-left-color:#4a8bd8}.chcard.h4{border-left-color:#184e9e}
+.chkey{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}.chkey i{display:inline-block;width:18px;height:10px;border-radius:3px}
+.chkey .h1{background:#cfe1f7}.chkey .h2{background:#8fb8ea}.chkey .h3{background:#4a8bd8}.chkey .h4{background:#184e9e}
+.cstack{margin:14px 0 6px;display:grid;gap:14px}.cstack .cs-l{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;font-weight:700;margin-bottom:6px}
+.cstack .cs-l span{font-weight:400;color:var(--muted)}
+.cs-bar{display:flex;height:38px;border-radius:10px;overflow:hidden;background:var(--border)}
+.cs-bar i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.74rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;min-width:2px}
+.cs-bar .c{background:#64748b}.cs-bar .d{background:#eb6834}.cs-bar .v{background:#2a78d6}
+.cs-key{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--fg2);margin-top:6px}.cs-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.cs-key .c{background:#64748b}.cs-key .d{background:#eb6834}.cs-key .v{background:#2a78d6}
+
 .exstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1.2em 0}
 .extile{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
 .extile b{display:block;font-size:1.3rem;letter-spacing:-.01em;color:var(--accent)}
