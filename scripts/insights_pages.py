@@ -85,7 +85,12 @@ def hist_code(code, i=0):
 
 
 # ---------- components ----------
+_TILES = []
+
+
 def tiles(items):
+    if not _TILES:
+        _TILES.append(list(items))
     return '<div class="exstats">%s</div>' % ''.join('<div class="extile"><b>%s</b><span>%s</span></div>' % (a, esc(b)) for a, b in items)
 
 
@@ -777,47 +782,186 @@ ARTICLES = [a_year, a_deficit, a_top_imports, a_top_exports, a_suppliers, a_mark
             a_revenue, a_bands, a_highest, a_payers, a_effective, a_safta, a_dutyfree_time,
             a_substitution, a_winners, a_twoway, a_concentration, a_ev]
 
-CSS = ('<style>.ins-kick{font-size:.85rem;color:var(--muted);margin:0 0 .3em}.ins-kick a{color:inherit;text-decoration:underline}'
-       '.ins-dek{font-size:1.12rem;line-height:1.5;color:var(--fg2);max-width:62ch;margin:.2em 0 1em}'
-       '.ins-by{font-size:.82rem;color:var(--muted);margin:0 0 1.2em}'
-       '.ins-bars{list-style:none;margin:.6em 0;padding:0;counter-reset:n}'
-       '.ins-bars li{counter-increment:n;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:.92rem}'
-       '.ins-bars .l{min-width:0;overflow-wrap:anywhere}.ins-bars .l::before{content:counter(n) ". ";color:var(--muted);font-variant-numeric:tabular-nums}'
-       '.ins-bars small{color:var(--muted);font-family:var(--mono);font-size:.74rem;white-space:nowrap}'
-       '.ins-bars .b{height:12px;background:var(--spec-bg);border-radius:6px;overflow:hidden}.ins-bars .b i{display:block;height:100%;border-radius:6px;background:var(--accent)}'
-       '.ins-bars.t-e .b i{background:var(--free)}.ins-bars.t-d .b i{background:var(--hi)}.ins-bars.t-r .b i{background:var(--mid)}'
-       '.ins-bars .v{font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:.86rem}'
-       '.ins-cols{margin:.8em 0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 14px 12px}'
-       '.ins-cols .g{display:flex;align-items:flex-end;gap:6px;height:190px}'
-       '.ins-cols .c{flex:1 1 0;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}'
-       '.ins-cols .bb{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px}'
-       '.ins-cols .bb i{display:block;flex:1 1 0;max-width:26px;border-radius:5px 5px 0 0}'
-       '.ins-cols .c span{font-size:.7rem;color:var(--muted);white-space:nowrap}'
-       '.ins-cols i.s0{background:var(--accent)}.ins-cols i.s1{background:var(--free)}.ins-cols i.s2{background:var(--hi)}'
-       '.ins-cols figcaption{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:.8rem;color:var(--fg2)}'
+# ---------- covers: every article opens on a picture of its own lead figure ----------
+def _spark(vals, w=520, h=150, pad=10):
+    mx, mn = max(vals), min(0, min(vals))
+    rng = (mx - mn) or 1
+    xs = [pad + i * (w - 2 * pad) / (len(vals) - 1) for i in range(len(vals))]
+    ys = [h - pad - (v - mn) / rng * (h - 2 * pad) for v in vals]
+    line = ' '.join('%s%.1f %.1f' % ('M' if i == 0 else 'L', x, y) for i, (x, y) in enumerate(zip(xs, ys)))
+    area = line + ' L%.1f %d L%.1f %d Z' % (xs[-1], h, xs[0], h)
+    dots = ''.join('<circle cx="%.1f" cy="%.1f" r="%s" class="%s"/>' % (x, y, 6 if i == len(xs) - 1 else 3, 'end' if i == len(xs) - 1 else 'pt') for i, (x, y) in enumerate(zip(xs, ys)))
+    return ('<svg viewBox="0 0 %d %d" preserveAspectRatio="none" aria-hidden="true"><path class="ar" d="%s"/><path class="ln" d="%s"/>%s</svg>' % (w, h, area, line, dots))
+
+
+def cover_series(vals, first_lab, last_lab, fmt, caption):
+    return ('<div class="cv cv-series"><div class="cv-plot">%s</div><div class="cv-ends"><span><b>%s</b>%s</span><span><b>%s</b>%s</span></div>'
+            '<p class="cv-cap">%s</p></div>' % (_spark(vals), esc(fmt(vals[0])), esc(first_lab), esc(fmt(vals[-1])), esc(last_lab), esc(caption)),
+            '<span class="th th-series">%s</span>' % _spark(vals, 120, 34, 3))
+
+
+def cover_share(frac, caption):
+    n = max(0, min(100, int(round(frac * 100))))
+    cells = ''.join('<i%s></i>' % (' class="on"' if j < n else '') for j in range(100))
+    big = '%.1f%%' % (frac * 100) if frac * 100 < 99.95 else '100%'
+    return ('<div class="cv cv-share"><div class="cv-big">%s</div><div class="cv-waffle" role="img" aria-label="%s of 100 squares filled">%s</div><p class="cv-cap">%s</p></div>' % (big, n, cells, esc(caption)),
+            '<span class="th th-share"><i style="width:%d%%"></i></span>' % n)
+
+
+def cover_ratio(a, b, la, lb, caption):
+    mx = max(a, b) or 1
+    row = lambda v, lab, cls: '<div class="rr"><span>%s</span><div class="rb"><i class="%s" style="width:%.1f%%"></i></div><b>%s</b></div>' % (esc(lab), cls, max(1.5, 100.0 * v / mx), esc(money(v)))
+    return ('<div class="cv cv-ratio">%s%s<p class="cv-cap">%s</p></div>' % (row(a, la, 'a'), row(b, lb, 'b'), esc(caption)),
+            '<span class="th th-ratio"><i style="width:100%%"></i><i class="b" style="width:%.1f%%"></i></span>' % max(3, 100.0 * min(a, b) / mx))
+
+
+def cover_figure(big, caption):
+    return ('<div class="cv cv-fig"><div class="cv-big">%s</div><p class="cv-cap">%s</p></div>' % (big, esc(caption)), '<span class="th th-fig">%s</span>' % big)
+
+
+def _topmover(idx, sign):
+    c = _movers(idx, sign)[0][0]
+    return cover_series(hist_code(c, idx), 'FY ' + Y[0], 'FY ' + Y[-1], money, '%s: %s by year' % (pname(c), 'imports' if idx == 0 else 'exports'))
+
+
+def _grp(chs):
+    return [sum(H['chapters'][str(c)][i][0] for c in chs if str(c) in H['chapters']) for i in range(len(Y))]
+
+
+def _season_avg():
+    yrs = [y for y in S['monthly'] if len(S['monthly'][y]) == 12 and all(m and m.get('val') for m in S['monthly'][y]) and y != S['current']['fy']]
+    return [sum(100.0 * S['monthly'][y][m]['val'][0] / sum(x['val'][0] for x in S['monthly'][y]) for y in yrs) / len(yrs) for m in range(12)]
+
+
+def _ev_share():
+    ev = [c for c in H['codes'] if c.startswith('870380')]; oth = [c for c in H['codes'] if c.startswith('8703') and not c.startswith('870380')]
+    return [100.0 * sum(H['codes'][c][i][0] for c in ev) / ((sum(H['codes'][c][i][0] for c in ev) + sum(H['codes'][c][i][0] for c in oth)) or 1) for i in range(len(Y))]
+
+
+pc1 = lambda v: '%.1f%%' % v
+COVERS = {
+    'nepal-trade-year-in-numbers': lambda: cover_ratio(TOT_I, TOT_E, 'Imports', 'Exports', 'Drawn to scale: what Nepal bought and what it sold, FY %s' % FY),
+    'nepal-trade-deficit-seven-years': lambda: cover_series([x[0] - x[1] for x in H['totals']], 'FY ' + Y[0], 'FY ' + Y[-1], money, 'Trade deficit by fiscal year'),
+    'imports-that-grew-most': lambda: _topmover(0, 1),
+    'imports-that-fell-most': lambda: _topmover(0, -1),
+    'exports-that-grew-most': lambda: _topmover(1, 1),
+    'this-fiscal-year-so-far': lambda: cover_ratio(S['current']['overview']['imports'][1], S['current']['overview']['imports'][0], 'FY %s so far' % S['current']['fy'], 'Same months, FY %s' % FY, 'Imports in the first %s months' % S['current']['months']),
+    'when-nepal-imports-most': lambda: cover_series(_season_avg(), S['month_names'][0], S['month_names'][-1], pc1, 'Share of the year’s imports arriving in each month'),
+    'how-much-nepal-depends-on-india': lambda: cover_series(_share_series('India'), 'FY ' + Y[0], 'FY ' + Y[-1], pc1, 'India’s share of Nepal’s imports'),
+    'what-nepal-buys-from-china': lambda: cover_series(_share_series('China'), 'FY ' + Y[0], 'FY ' + Y[-1], pc1, 'China’s share of Nepal’s imports'),
+    'nepal-fuel-import-bill': lambda: cover_series(_grp([27]), 'FY ' + Y[0], 'FY ' + Y[-1], money, 'Fuel imports by fiscal year'),
+    'nepal-food-import-bill': lambda: cover_series(_grp(range(1, 25)), 'FY ' + Y[0], 'FY ' + Y[-1], money, 'Food and farm imports by fiscal year'),
+    'duty-free-share-over-time': lambda: cover_series([100.0 * {b[0]: b for b in bs}.get('0', [0, 0, 0])[2] / sum(b[2] for b in bs) for bs in H['bands']], 'FY ' + Y[0], 'FY ' + Y[-1], pc1, 'Share of imports entering duty free'),
+    'nepal-export-winners-five-years': lambda: cover_series([x[1] for x in H['totals']], 'FY ' + Y[0], 'FY ' + Y[-1], money, 'All exports by fiscal year'),
+    'electric-vs-petrol-vehicle-imports': lambda: cover_series(_ev_share(), 'FY ' + Y[0], 'FY ' + Y[-1], lambda v: '%.0f%%' % v, 'Electric share of passenger-vehicle imports, by value'),
+}
+
+
+def make_cover(a):
+    if a['slug'] in COVERS:
+        return COVERS[a['slug']]()
+    for big, lab in a.get('tiles') or []:
+        m = re.fullmatch(r'([\d.]+)%', str(big))
+        if m:
+            return cover_share(float(m.group(1)) / 100.0, lab)
+    big, lab = (a.get('tiles') or [('', '')])[0]
+    return cover_figure(big, lab)
+
+
+CSS = ('<style>'
+       # hero: Nepal-flag blue ground, crimson data marks
+       '.ih{background:#0B2A66;background-image:radial-gradient(1200px 400px at 85% -10%,#17409a 0,transparent 60%);color:#fff;margin:0 0 1.6em}'
+       '.ih .wrap{max-width:1060px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:36px;align-items:center;padding-top:26px;padding-bottom:34px}'
+       '.ih .crumb{grid-column:1/-1;color:#b9c8ea;margin:0;font-size:.82rem}.ih .crumb a{color:#dbe5fb}'
+       '.ih-k{display:inline-block;font-size:.8rem;font-weight:650;color:#0B2A66;background:#fff;border-radius:999px;padding:3px 11px;text-decoration:none;margin-bottom:12px}'
+       '.ih h1{font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.04;letter-spacing:-.025em;margin:0 0 .35em;text-wrap:balance}'
+       '.ih-dek{font-size:1.1rem;line-height:1.5;color:#dbe5fb;max-width:52ch;margin:0 0 1em}'
+       '.ih-by{font-size:.8rem;color:#b9c8ea;margin:0}'
+       '.cv{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:20px}'
+       '.cv-cap{margin:12px 0 0;font-size:.82rem;color:#c9d6f3;line-height:1.4}'
+       '.cv-big{font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:clamp(2.6rem,6vw,4.2rem);line-height:1;letter-spacing:-.03em}'
+       '.cv-waffle{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin-top:14px}.cv-waffle i{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.14)}'
+       '.cv-waffle i.on{background:#FF4D6D}'
+       '.cv-plot svg{display:block;width:100%;height:150px;overflow:visible}.cv-plot .ar{fill:rgba(255,77,109,.22)}.cv-plot .ln{fill:none;stroke:#FF4D6D;stroke-width:3;vector-effect:non-scaling-stroke;stroke-linejoin:round}'
+       '.cv-plot .pt{fill:#0B2A66;stroke:#FF4D6D;stroke-width:2;vector-effect:non-scaling-stroke}.cv-plot .end{fill:#fff;stroke:#FF4D6D;stroke-width:3;vector-effect:non-scaling-stroke}'
+       '.cv-ends{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:.78rem;color:#c9d6f3}.cv-ends span:last-child{text-align:right}'
+       '.cv-ends b{display:block;font-family:"Bricolage Grotesque",var(--f);font-size:1.25rem;color:#fff;line-height:1.1}'
+       '.cv-ratio .rr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:end;margin-bottom:14px;font-size:.85rem;color:#c9d6f3}'
+       '.cv-ratio .rr b{font-family:"Bricolage Grotesque",var(--f);font-size:1.3rem;color:#fff;line-height:1}.cv-ratio .rb{grid-column:1/-1;height:22px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}'
+       '.cv-ratio .rb i{display:block;height:100%;border-radius:6px;background:#fff}.cv-ratio .rb i.b{background:#FF4D6D}'
+       # body
+       '.ins-body{max-width:820px}'
+       '.ins-body .exstats{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}'
+       '.ins-body .extile b{font-family:"Bricolage Grotesque",var(--f);font-size:1.5rem;letter-spacing:-.02em}'
+       '.ins-body h2.sec{font-family:"Bricolage Grotesque",var(--f);font-size:1.35rem;letter-spacing:-.015em;border:0;margin:2em 0 .5em;padding:0}'
+       '.ins-bars{list-style:none;margin:.6em 0;padding:4px 16px;counter-reset:n;background:var(--card);border:1px solid var(--border);border-radius:14px}'
+       '.ins-bars li{counter-increment:n;display:grid;grid-template-columns:1.9em minmax(0,1.15fr) minmax(0,.85fr) minmax(0,1fr);gap:4px 12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:.92rem}'
+       '.ins-bars li:last-child{border-bottom:0}'
+       '.ins-bars li::before{content:counter(n);font-family:var(--mono);font-size:.78rem;color:var(--muted);text-align:right}'
+       '.ins-bars li:nth-child(-n+3)::before{color:var(--fg);font-weight:700}'
+       '.ins-bars .l{min-width:0;overflow-wrap:anywhere}'
+       '.ins-bars small{display:block;color:var(--muted);font-family:var(--mono);font-size:.72rem}'
+       '.ins-bars .b{height:14px;background:var(--spec-bg);border-radius:4px;overflow:hidden}'
+       '.ins-bars .b i{display:block;height:100%;border-radius:4px;background:#1F4FBF;transform-origin:left;animation:insgrow .7s cubic-bezier(.2,.7,.2,1) both}'
+       '.ins-bars.t-e .b i{background:#12805C}.ins-bars.t-d .b i{background:#DC143C}.ins-bars.t-r .b i{background:#B7791F}'
+       '.ins-bars .v{font-weight:650;font-variant-numeric:tabular-nums;font-size:.84rem;text-align:right}'
+       '@keyframes insgrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes insrise{from{transform:scaleY(0)}to{transform:scaleY(1)}}'
+       '.ins-cols{margin:.8em 0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 16px 12px}'
+       '.ins-cols .g{display:flex;align-items:flex-end;gap:8px;height:210px;background:repeating-linear-gradient(to top,var(--border) 0 1px,transparent 1px 25%);border-bottom:2px solid var(--fg2)}'
+       '.ins-cols .c{flex:1 1 0;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}'
+       '.ins-cols .bb{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}'
+       '.ins-cols .bb i{display:block;flex:1 1 0;max-width:30px;border-radius:4px 4px 0 0;transform-origin:bottom;animation:insrise .7s cubic-bezier(.2,.7,.2,1) both}'
+       '.ins-cols .c span{position:absolute;top:100%;margin-top:6px;font-size:.7rem;color:var(--muted);white-space:nowrap}'
+       '.ins-cols .c:last-child span{color:var(--fg);font-weight:700}'
+       '.ins-cols i.s0{background:#1F4FBF}.ins-cols i.s1{background:#12805C}.ins-cols i.s2{background:#DC143C}'
+       '.ins-cols figcaption{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:30px;font-size:.8rem;color:var(--fg2)}'
        '.ins-cols figcaption i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}'
        '.ins-t .r{text-align:right;white-space:nowrap}.ins-t small{color:var(--muted);font-family:var(--mono);font-size:.74rem}'
-       '.ins-num{padding-left:1.4em}.ins-num li{margin:.5em 0;line-height:1.5}'
-       '.ins-take{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;background:var(--card);padding:14px 18px;margin:1.6em 0}'
-       '.ins-take h2{font-size:1.02rem;margin:0 0 .4em}.ins-take ul{margin:0;padding-left:1.1em}.ins-take li{margin:.4em 0}'
-       '.ins-split{list-style:none;margin:.6em 0;padding:0}.ins-split li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:.9rem}'
-       '.ins-split .sp{display:flex;height:14px;background:var(--spec-bg);border-radius:7px;overflow:hidden}.ins-split .sp .i,.fineprint .k.i{background:var(--accent)}.ins-split .sp .c,.fineprint .k.c{background:var(--hi)}'
+       '.ins-num{list-style:none;padding:0;margin:.6em 0;counter-reset:k;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}'
+       '.ins-num li{counter-increment:k;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px 14px 62px;position:relative;line-height:1.45;margin:0}'
+       '.ins-num li::before{content:counter(k);position:absolute;left:14px;top:8px;font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:2rem;color:#DC143C;line-height:1.1}'
+       '.ins-take{border-radius:16px;background:#0B2A66;color:#fff;padding:20px 22px;margin:2em 0}'
+       '.ins-take h2{font-family:"Bricolage Grotesque",var(--f);font-size:1.2rem;margin:0 0 .5em;color:#fff;border:0;padding:0}.ins-take ul{margin:0;padding-left:1.1em}.ins-take li{margin:.5em 0;color:#e6ecfb;line-height:1.5}'
+       '.ins-take a{color:#fff;text-decoration:underline}.ins-take li::marker{color:#FF4D6D}'
+       '.ins-split{list-style:none;margin:.6em 0;padding:4px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px}'
+       '.ins-split li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.9rem}.ins-split li:last-child{border-bottom:0}'
+       '.ins-split .sp{display:flex;height:16px;background:var(--spec-bg);border-radius:4px;overflow:hidden}.ins-split .sp .i,.fineprint .k.i{background:#1F4FBF}.ins-split .sp .c,.fineprint .k.c{background:#DC143C}'
        '.ins-split .v{font-weight:650;white-space:nowrap;font-size:.86rem}.fineprint .k{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 5px 0 10px}'
-       '.ins-more{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:.6em 0 1.4em}'
-       '.ins-card{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--fg);text-decoration:none}'
-       '.ins-card:hover{border-color:var(--accent);text-decoration:none}.ins-card b{display:block;line-height:1.3}.ins-card span{display:block;font-size:.84rem;color:var(--fg2);margin-top:4px;line-height:1.4}'
-       '.ins-card em{font-style:normal;font-size:.72rem;font-weight:650;color:var(--accent)}'
-       '.ins-lead{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:1em 0 1.6em}.ins-lead .ins-card b{font-size:1.1rem}'
-       '@media(max-width:600px){.ins-bars li{grid-template-columns:minmax(0,1fr) auto}.ins-bars .b{grid-column:1/-1;grid-row:2;height:8px}'
-       '.ins-split li{grid-template-columns:minmax(0,1fr) auto}.ins-split .sp{grid-column:1/-1;grid-row:2}.ins-cols .g{height:150px;gap:3px}.ins-cols .c span{font-size:.58rem}}</style>')
+       # cards
+       '.ins-more{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:.6em 0 1.6em}'
+       '.ins-card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px 16px;color:var(--fg);text-decoration:none;transition:transform .15s,border-color .15s}'
+       '.ins-card:hover{border-color:#1F4FBF;text-decoration:none;transform:translateY(-2px)}'
+       '.ins-card b{display:block;font-family:"Bricolage Grotesque",var(--f);font-size:1.08rem;line-height:1.2;letter-spacing:-.01em;margin-top:10px}'
+       '.ins-card span.dk{display:block;font-size:.84rem;color:var(--fg2);margin-top:6px;line-height:1.4}'
+       '.th{display:block;height:38px;border-radius:8px;background:var(--spec-bg);overflow:hidden;position:relative}'
+       '.th-series svg{display:block;width:100%;height:100%}.th-series .ar{fill:rgba(220,20,60,.16)}.th-series .ln{fill:none;stroke:#DC143C;stroke-width:2;vector-effect:non-scaling-stroke}.th-series circle{display:none}'
+       '.th-share i{position:absolute;inset:0 auto 0 0;background:#DC143C;border-radius:8px 0 0 8px}'
+       '.th-ratio{display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--spec-bg)}.th-ratio i{display:block;height:9px;border-radius:3px;background:#1F4FBF}.th-ratio i.b{background:#DC143C}'
+       '.th-fig{display:flex;align-items:center;padding:0 12px;font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:1.05rem;color:#DC143C;white-space:nowrap}'
+       '.ins-sec{display:flex;align-items:baseline;gap:10px;margin:2.2em 0 .2em}.ins-sec h2{font-family:"Bricolage Grotesque",var(--f);font-size:1.5rem;letter-spacing:-.02em;margin:0;border:0;padding:0}'
+       '.ins-sec span{color:var(--muted);font-size:.85rem}'
+       '.ins-hub{max-width:1060px}'
+       '.ih-lead{display:block;color:#fff;text-decoration:none}.ih-lead:hover{text-decoration:none}.ih-lead:hover h2{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}'
+       '.ih-lead h2{font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.08;letter-spacing:-.02em;margin:.2em 0 .3em;border:0;padding:0;color:#fff}'
+       '@media(max-width:820px){.ih .wrap{grid-template-columns:minmax(0,1fr);gap:20px;padding-bottom:24px}}'
+       '@media(max-width:600px){.ins-body .extile b{font-size:1.2rem;line-height:1.15;display:block}.ins-bars{padding:2px 12px}.ins-bars li{grid-template-columns:1.6em minmax(0,1fr) auto}.ins-bars .b{grid-column:2/-1;grid-row:2;height:8px}.ins-bars .v{white-space:normal;text-align:right;max-width:42vw}'
+       '.ins-split li{grid-template-columns:minmax(0,1fr) auto}.ins-split .sp{grid-column:1/-1;grid-row:2}.ins-cols .g{height:160px;gap:3px}.ins-cols .c span{font-size:.56rem}.cv{padding:16px}.cv-plot svg{height:110px}}'
+       '@media(prefers-reduced-motion:reduce){.ins-bars .b i,.ins-cols .bb i{animation:none}.ins-card{transition:none}}'
+       '</style>')
 
 
-def card(a, lead=False):
-    return '<a class="ins-card" href="/insights/%s"><em>%s</em><b>%s</b><span>%s</span></a>' % (a['slug'], esc(TAGS[a['tag']]), esc(a['h1']), esc(a['dek']))
+def card(a):
+    return ('<a class="ins-card" href="/insights/%s">%s<b>%s</b><span class="dk">%s</span></a>' % (a['slug'], a['thumb'], esc(a['h1']), esc(a['dek'])))
 
 
 def build():
-    arts = [f() for f in ARTICLES]
+    arts = []
+    for f in ARTICLES:
+        del _TILES[:]
+        a = f()
+        a['tiles'] = _TILES[0] if _TILES else []
+        a['cover'], a['thumb'] = make_cover(a)
+        arts.append(a)
     by = {a['slug']: a for a in arts}
     assert len(by) == len(arts), 'duplicate insight slug'
     (pub / 'insights').mkdir(exist_ok=True)
@@ -832,9 +976,10 @@ def build():
               "author": {"@type": "Organization", "name": "Customs Nepal", "url": k.SITE},
               "publisher": {"@type": "Organization", "name": "Customs Nepal", "url": k.SITE},
               "isBasedOn": "https://www.customs.gov.np"}
-        out = [k.page_head(a['title'], a['dek'], path, bc, extra_ld=[ld]), k.crumb_html(bc), CSS,
-               '<article><p class="ins-kick"><a href="/insights#%s">%s</a></p><h1>%s</h1><p class="ins-dek">%s</p>'
-               '<p class="ins-by">Customs Nepal data desk · Figures for FY %s · Updated %s</p>' % (a['tag'], esc(TAGS[a['tag']]), esc(a['h1']), esc(a['dek']), FY, TODAY)]
+        out = [k.page_head(a['title'], a['dek'], path, bc, extra_ld=[ld]), '</div>', CSS,
+               '<article><header class="ih"><div class="wrap">%s<div><a class="ih-k" href="/insights#%s">%s</a><h1>%s</h1><p class="ih-dek">%s</p>'
+               '<p class="ih-by">Customs Nepal data desk. Figures for FY %s. Updated %s.</p></div>%s</div></header><div class="wrap ins-body">'
+               % (k.crumb_html(bc), a['tag'], esc(TAGS[a['tag']]), esc(a['h1']), esc(a['dek']), FY, TODAY, a['cover'])]
         out += a['body']
         out.append('<h2 class="sec">How this was worked out</h2><p class="fineprint">Every figure is calculated from the %s, FY %s, and the Nepal Customs Tariff %s. '
                    'Values are in Nepali rupees (1 crore = 10 million, 1 arba = 1 billion, 1 kharba = 100 billion). %s '
@@ -842,7 +987,7 @@ def build():
         more = [by[s] for s in a['more'] if s in by]
         if more:
             out.append('<h2 class="sec">Read next</h2><div class="ins-more">%s</div>' % ''.join(card(m) for m in more))
-        out.append('</article>')
+        out.append('</div></article><div class="wrap">')
         out.append(k.foot('<b>Source:</b> %s, FY %s; Nepal Customs Tariff %s.' % (SRC, FY, TARIFF_FY)))
         (pub / 'insights' / (a['slug'] + '.html')).write_text(''.join(out), encoding='utf-8')
         for s in a['more']:
@@ -854,14 +999,16 @@ def build():
     bc = [('Home', '/'), ('Insights', '')]
     ld = {"@context": "https://schema.org", "@type": "CollectionPage", "name": title, "description": desc,
           "hasPart": [{"@type": "Article", "headline": a['h1'], "url": k.SITE + '/insights/' + a['slug']} for a in arts]}
-    out = [k.page_head(title, desc, '/insights', bc, extra_ld=[ld]), k.crumb_html(bc), CSS,
-           '<h1>Insights: Nepal’s trade, read from the customs data</h1>'
-           '<p class="ins-dek">%d articles, each worked out from the Department of Customs’ own figures for FY %s and refreshed when new data is published. '
-           'They say what moved and by how much, and link to the pages that go deeper.</p>' % (len(arts), FY),
-           '<div class="ins-lead">%s</div>' % ''.join(card(by[s]) for s in ('nepal-trade-year-in-numbers', 'this-fiscal-year-so-far', 'high-duty-goods-nepal-still-imports'))]
+    lead = by['nepal-trade-year-in-numbers']
+    out = [k.page_head(title, desc, '/insights', bc, extra_ld=[ld]), '</div>', CSS,
+           '<header class="ih"><div class="wrap">%s<div><h1>Nepal’s trade, read from the customs data</h1>'
+           '<p class="ih-dek">%d articles worked out from the Department of Customs’ own figures for FY %s. They refresh when new data is published.</p>'
+           '<a class="ih-lead" href="/insights/%s"><span class="ih-k">Start here</span><h2>%s</h2><p class="ih-dek" style="margin:0">%s</p></a></div>%s</div></header>'
+           '<div class="wrap ins-hub">' % (k.crumb_html(bc), len(arts), FY, lead['slug'], esc(lead['h1']), esc(lead['dek']), lead['cover'])]
     for tag, name in TAGS.items():
-        group = [a for a in arts if a['tag'] == tag]
-        out.append('<h2 class="sec" id="%s">%s</h2><div class="ins-more">%s</div>' % (tag, esc(name), ''.join(card(a) for a in group)))
+        group = [a for a in arts if a['tag'] == tag and a is not lead]
+        out.append('<div class="ins-sec" id="%s"><h2>%s</h2><span>%d articles</span></div><div class="ins-more">%s</div>' % (tag, esc(name), len(group), ''.join(card(a) for a in group)))
+    out.append('</div><div class="wrap">')
     out.append(k.foot('<b>Source:</b> %s, FY %s; Nepal Customs Tariff %s.' % (SRC, FY, TARIFF_FY)))
     (pub / 'insights.html').write_text(''.join(out), encoding='utf-8')
     n = k.add_to_sitemap(['/insights'] + ['/insights/' + a['slug'] for a in arts])
