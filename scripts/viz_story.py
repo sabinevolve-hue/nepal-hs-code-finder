@@ -80,10 +80,11 @@ def _squarify(vals, x, y, w, h):
             y += rh; h -= rh
     return rects
 
-def treemap(items, money, label):
-    """items: [(name, icon, value, cls)] — sorted here; draws every item to scale."""
+def treemap(items, money, label, whole=None):
+    """items: [(name, icon, value, cls)] — sorted here; draws every item to scale.
+    whole: the true total the items are part of; percentages are of that, not of the items shown."""
     items = sorted([it for it in items if it[2] > 0], key=lambda t: -t[2])
-    total = sum(v for _, _, v, _ in items) or 1.0
+    total = whole or sum(v for _, _, v, _ in items) or 1.0
     Ht = 330
     rects = _squarify([v for _, _, v, _ in items], 0, 0, W, Ht)
     b = []
@@ -371,6 +372,11 @@ ul.catl li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;bor
 ul.catl li a{min-width:0;text-decoration:none;color:var(--fg)}ul.catl li a:hover{color:var(--accent)}ul.catl li a span{color:var(--muted);font-size:.78rem;margin-left:4px}
 ul.catl li b{white-space:nowrap;font-variant-numeric:tabular-nums}
 @media(max-width:700px){.catg{grid-template-columns:minmax(0,1fr)}}
+ul.mvl{list-style:none;margin:0;padding:0}ul.mvl li{padding:9px 0;border-bottom:1px solid var(--border)}
+.mvt{font-size:.92rem;font-weight:600}.mvt .mono{font-weight:400;color:var(--muted);font-size:.74rem;margin-left:4px}
+.mvb{height:8px;border-radius:4px;background:var(--border);margin:6px 0 4px;overflow:hidden}.mvb i{display:block;height:100%;border-radius:4px}
+.mvb i.up{background:var(--v3)}.mvb i.dn{background:var(--vcrit,#d33)}
+.mvn{font-size:.84rem}.mvn b{font-variant-numeric:tabular-nums}.mvn span{color:var(--muted)}
 dl.qa{margin:.6em 0 1em}dl.qa dt{font-weight:700;margin-top:.9em}dl.qa dd{margin:.25em 0 0;color:var(--fg2);line-height:1.6}
 table.ptbl a.dguide{display:inline-block;margin-left:6px;font-size:.7rem;font-weight:600;color:var(--accent);border:1px solid var(--border);border-radius:999px;padding:1px 8px;text-decoration:none;white-space:nowrap}
 table.ptbl a.dguide:hover{border-color:var(--accent)}

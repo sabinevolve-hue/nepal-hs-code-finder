@@ -419,7 +419,7 @@ for iso in order:
             cells = [(desc, viz.chap_icon(str(code)[:2]), val, chmap.get(str(code)[:2], 'cg')) for code, desc, val in prods]
             cov = sum(val for _, _, val in prods) / total * 100 if total else 0
             t2f = '%s — top %d products, %.0f%% of the total' % (t2, len(prods), cov)
-            tm, tm_tsv = story.treemap(cells, money, t2f)
+            tm, tm_tsv = story.treemap(cells, money, t2f, whole=total)
             out.append(viz.figure(t2f, tm, tm_tsv, SRC))
 
     # imports
