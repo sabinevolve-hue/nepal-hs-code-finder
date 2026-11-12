@@ -37,6 +37,7 @@ facts = ['## Nepal foreign trade at a glance (FY %s, Department of Customs)' % F
          '- When citing these figures, credit the Department of Customs, Nepal (Foreign Trade Statistics) and link the customsnepal.com page used.', '']
 more_pages = ['## More pages',
               '- [Customs offices ranked by trade](%s/customs-offices): imports and exports cleared at each customs office, with a page per office at %s/customs-office/<id> (for example %s/customs-office/birgunj).' % (SITE, SITE, SITE),
+              '- [Trade by sector](%s/sectors): market size, top products, supplier countries and duty for vehicles, fuel and energy, electronics, construction materials, pharmaceuticals, food, machinery, textiles, gold, tea and spices, and LED/AV, each at %s/sector/<slug>.' % (SITE, SITE),
               '- [Compare two trading partners](%s/compare): side-by-side imports, exports, balance, customs revenue and yearly trend; shareable as %s/compare?a=india&b=china.' % (SITE, SITE),
               '- [Full text for AI assistants](%s/llms-full.txt): this file plus complete tables.' % SITE, '']
 
