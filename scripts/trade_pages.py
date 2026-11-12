@@ -326,9 +326,10 @@ for ch in sorted(CH_IMP, key=lambda c: -CH_IMP[c]):
     written += 1
 
 # ================= INDEX PAGES =================
-def index_page(path, title, desc, h1, lede, rows, crumb_last):
+def index_page(path, title, desc, h1, lede, rows, crumb_last, top=''):
     bc = [('Home', '/'), ('Trade data', '/trade-data'), (crumb_last, '')]
     o = [page_head(title, desc, path, bc), crumb_html(bc), '<h1>%s</h1>' % esc(h1), '<p class="lede">%s</p>' % lede]
+    o.append(top)
     o.append(linklist(rows))
     o.append(FOOT)
     (pub / (path.strip('/') + '.html')).write_text(''.join(o), encoding='utf-8')
@@ -343,10 +344,20 @@ index_page('/trade/countries', 'Nepal trade by country %s — every trading part
 
 ch_rows = [('/trade/category/%02d' % ch, '%s (Ch %d)' % (CHSHORT.get(ch, ''), ch), rsf(CH_IMP[ch] + CH_EXP.get(ch, 0)))
            for ch in sorted(CH_IMP, key=lambda c: -(CH_IMP[c] + CH_EXP.get(c, 0))) if CH_IMP[ch] or CH_EXP.get(ch, 0)]
+import viz as _viz, viz_story as _story
+def _money(th):
+    r = th * 1000.0
+    return ('Rs %.2f kharba' % (r / 1e11)) if r >= 1e11 else (('Rs %.2f arba' % (r / 1e9)) if r >= 1e9 else ('Rs %.1f crore' % (r / 1e7)))
+_tc = sorted(CH_IMP, key=lambda c: -CH_IMP[c])[:14]
+_tm, _ = _story.treemap([(CHSHORT.get(c, '') or 'Chapter %d' % c, _viz.chap_icon('%02d' % c), CH_IMP[c], _story.CLS[i % 5] if i < 5 else 'cg') for i, c in enumerate(_tc)],
+                        _money, 'Nepal imports by HS chapter', whole=TOT_IMP)
+_cat_top = ('<figure class="vzfig"><figcaption><b>What Nepal imports — the 14 largest chapters, %.0f%% of the total (FY %s)</b></figcaption><div class="vzwrap">%s</div></figure>'
+            '<p class="xlink">Prefer industries to chapters? See <a href="/sectors">Nepal&rsquo;s trade by sector</a>.</p>'
+            % (sum(CH_IMP[c] for c in _tc) / TOT_IMP * 100 if TOT_IMP else 0, esc(FY), _tm))
 index_page('/trade/categories', 'Nepal trade by category %s — every HS chapter | Customs Nepal' % FY,
            'Nepal\'s imports and exports by HS category (chapter) in FY %s, with import duty. Open any category for its source countries, products and trend.' % FY,
            'Nepal trade by category', 'Every HS category Nepal traded in FY %s, by two-way trade. Open any for its source countries, top products, duty and trend.' % esc(FY),
-           ch_rows, 'Categories')
+           ch_rows, 'Categories', top=_cat_top)
 
 # ---------------- append styles to seo.css ----------------
 TRADECSS = """
