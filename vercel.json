@@ -98,6 +98,7 @@
     {"source": "/(search|invoice|saved|account|ask-ai|trade-data|exports|imports|browse|calculator|about|privacy)", "destination": "/"}
   ],
   "headers": [
+    {"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]},
     {"source": "/index.html", "headers": [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]},
     {"source": "/sw.js", "headers": [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]},
     {"source": "/seo.css", "headers": [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]},

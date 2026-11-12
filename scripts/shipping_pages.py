@@ -608,6 +608,87 @@ out.append('<div class="note">Nepal’s sea access runs on the <b>Nepal–India 
            'Goods for China move overland instead — by road via Rasuwagadhi (Kerung) and Tatopani (Khasa) — not by '
            'sea.</div>')
 
+# ---- route map: ports, dry ports and the inland legs drawn on Natural Earth (world/data/route_map.json, offline) ----
+def route_map():
+    import math
+    f = root / 'world' / 'data' / 'route_map.json'
+    if not f.exists():
+        return ''
+    M = json.loads(f.read_text(encoding='utf-8'))
+    W, H, k, (tx, ty) = M['w'], M['h'], M['k'], M['t']
+    def xy(lat, lon):
+        return tx + k * math.radians(lon), ty - k * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))
+    b = ['<rect width="%d" height="%d" class="rm-sea"/>' % (W, H)]
+    for iso, d in M['paths'].items():
+        b.append('<path d="%s" class="%s"/>' % (d, 'rm-np' if iso == 'NPL' else 'rm-land'))
+    for iso, lab, lat, lon in (('IND', 'INDIA', 22.8, 78.6), ('BGD', 'BANGLADESH', 24.3, 90.1), ('NPL', 'NEPAL', 28.6, 83.4), ('CHN', 'CHINA', 30.2, 86.0)):
+        x, y = xy(lat, lon)
+        b.append('<text x="%.0f" y="%.0f" class="rm-cty" text-anchor="middle">%s</text>' % (x, y, lab))
+    for lab, lat, lon in (('Bay of Bengal', 18.6, 88.6), ('Arabian Sea', 18.2, 69.4)):
+        x, y = xy(lat, lon)
+        b.append('<text x="%.0f" y="%.0f" class="rm-seal" text-anchor="middle">%s</text>' % (x, y, lab))
+    # inland legs: each gateway to the dry port it feeds
+    for key, n in NODES.items():
+        if n['type'] != 'gateway' or not n.get('feeds') or n['feeds'] not in NODES:
+            continue
+        d = NODES[n['feeds']]
+        x1, y1 = xy(n['lat'], n['lon']); x2, y2 = xy(d['lat'], d['lon'])
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        dx, dy = x2 - x1, y2 - y1; ln = math.hypot(dx, dy) or 1
+        bend = 0.12 * ln * (1 if key not in ('haldia',) else -1)
+        cx, cy = mx - dy / ln * bend, my + dx / ln * bend
+        rail = n['country'] == 'India'   # Indian gateways move Nepal boxes mainly by container train; Bangladesh legs are mainly road
+        cls = ('rm-bd' if n['country'] == 'Bangladesh' else 'rm-in') + (' rm-rail' if rail else '')
+        b.append('<path d="M%.1f %.1f Q%.1f %.1f %.1f %.1f" class="rm-leg %s"><title>%s to %s: %s, %s</title></path>'
+                 % (x1, y1, cx, cy, x2, y2, cls, n['short'], d['short'], n['mode'], n.get('to_birgunj', '')))
+    for key, n in NODES.items():
+        x, y = xy(n['lat'], n['lon']); gw = n['type'] == 'gateway'
+        lab = n['short'].replace(' ICD', '').replace(' Dry Port', '')
+        if gw:
+            shape = '<circle cx="%.1f" cy="%.1f" r="8" class="rm-port %s"/>' % (x, y, 'rm-bd' if n['country'] == 'Bangladesh' else 'rm-in')
+        else:
+            shape = '<rect x="%.1f" y="%.1f" width="13" height="13" rx="3" class="rm-icd"/>' % (x - 6.5, y - 6.5)
+        # label placement: dry ports above (they cluster on the border), ports to the side away from the coast
+        if not gw:
+            lx, ly, anc = x, y - 13, 'middle'
+            if key in ('chobhar',): lx, ly, anc = x + 12, y - 4, 'start'
+            if key in ('biratnagar',): lx, ly, anc = x - 10, y + 22, 'end'
+            if key == 'birgunj': lx, ly, anc = x - 12, y + 5, 'end'
+        else:
+            west = n['lon'] < 80
+            lx, ly, anc = (x + 13, y + 5, 'start') if west else (x - 13, y + 5, 'end')
+            if key == 'haldia': lx, ly, anc = x - 13, y + 18, 'end'
+            if key == 'mongla': lx, ly, anc = x + 13, y + 5, 'start'
+            if key == 'chittagong': lx, ly, anc = x + 4, y + 26, 'end'
+        b.append('<a href="/shipping/%s" aria-label="%s">%s<text x="%.1f" y="%.1f" class="rm-lab" text-anchor="%s">%s</text></a>'
+                 % (key, html.escape(n['name']), shape, lx, ly, anc, html.escape(lab)))
+    svg = ('<svg class="rmap" viewBox="0 0 %d %d" role="img" aria-label="Sea gateways in India and Bangladesh and the rail and road legs to Nepal’s dry ports" '
+           'xmlns="http://www.w3.org/2000/svg">%s</svg>' % (W, H, ''.join(b)))
+    css = ('<style>.rmfig{margin:1.2em 0;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;overflow:hidden}'
+           '.rmfig figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;font-weight:700;margin-bottom:10px}'
+           '.rmfig .rmleg{display:flex;flex-wrap:wrap;gap:4px 14px;font-weight:400;font-size:.8rem;color:var(--fg2)}'
+           '.rmleg i{display:inline-block;vertical-align:middle;margin-right:5px}.rmleg .p{width:10px;height:10px;border-radius:50%;background:#2a78d6}'
+           '.rmleg .pb{width:10px;height:10px;border-radius:50%;background:#eb6834}.rmleg .s{width:10px;height:10px;border-radius:3px;background:#1baf7a}'
+           '.rmleg .r{width:22px;border-top:3px dashed #2a78d6}.rmleg .o{width:22px;border-top:3px solid #2a78d6}'
+           '.rmwrap{overflow-x:auto}.rmswipe{display:none}@media(max-width:660px){.rmswipe{display:inline}}'
+           '.rmap{display:block;width:100%;min-width:620px;height:auto}'
+           '.rmap .rm-sea{fill:#e6f0fb}.rmap .rm-land{fill:#f7f8fa;stroke:#c9d3df;stroke-width:.8}.rmap .rm-np{fill:#fde6dc;stroke:#e0603a;stroke-width:1.4}'
+           '.rmap .rm-cty{font:700 13px var(--f,system-ui);letter-spacing:.18em;fill:#94a3b8}.rmap .rm-seal{font:italic 13px var(--f,system-ui);fill:#7da7d9}'
+           '.rmap .rm-leg{fill:none;stroke-width:3;stroke-linecap:round;opacity:.9}.rmap .rm-leg.rm-in{stroke:#2a78d6}.rmap .rm-leg.rm-bd{stroke:#eb6834}'
+           '.rmap .rm-leg.rm-rail{stroke-dasharray:9 6}'
+           '.rmap .rm-port{stroke:#fff;stroke-width:2.5}.rmap .rm-port.rm-in{fill:#2a78d6}.rmap .rm-port.rm-bd{fill:#eb6834}.rmap .rm-icd{fill:#1baf7a;stroke:#fff;stroke-width:2}'
+           '.rmap .rm-lab{font:700 14px var(--f,system-ui);fill:#0f172a;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}'
+           '.rmap a:hover .rm-lab,.rmap a:focus .rm-lab{fill:#2a5bd7;text-decoration:underline}'
+           '@media(prefers-color-scheme:dark){.rmap .rm-sea{fill:#0e1d33}.rmap .rm-land{fill:#1a2436;stroke:#2c3a52}.rmap .rm-np{fill:#4a2418;stroke:#ff8a5c}'
+           '.rmap .rm-lab{fill:#e2e8f0;stroke:#0b1220}.rmap .rm-cty{fill:#55657d}.rmap .rm-seal{fill:#3d6aa3}}</style>')
+    return (css + '<figure class="rmfig"><figcaption><span>How sea freight reaches Nepal</span><span class="rmleg">'
+            '<span><i class="p"></i>Indian gateway port</span><span><i class="pb"></i>Bangladesh gateway port</span><span><i class="s"></i>Nepal dry port</span>'
+            '<span><i class="r"></i>Rail leg</span><span><i class="o"></i>Road leg</span></span></figcaption><div class="rmwrap">' + svg + '</div>'
+            '<p class="fineprint" style="margin:.6em 0 0">Tap a port or dry port to open its guide. Lines show which dry port each gateway mainly feeds; they are drawn '
+            'as curves, not the actual rail or road alignment. <span class="rmswipe">Swipe the map to see the western ports. </span>Map: Natural Earth.</p></figure>'
+            '<script>(function(){var w=document.querySelector(".rmwrap");if(w&&w.scrollWidth>w.clientWidth)w.scrollLeft=(w.scrollWidth-w.clientWidth)*0.9;})();</script>')
+
+out.append(route_map())
 out.append('<h2 class="sec">The corridors</h2>')
 out.append('<h3 class="head">Eastern India corridor — the primary route</h3>')
 out.append(chain_html(['Ocean vessel', 'Kolkata / Haldia / Vizag', 'Broad-gauge rail', 'Raxaul (border)', 'Birgunj ICD', 'Nepal market']))

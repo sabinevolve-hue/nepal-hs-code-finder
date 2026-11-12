@@ -18,6 +18,11 @@ src = re.sub(r'/\*GNAVCSS\*/.*?/\*/GNAVCSS\*/', lambda m: '/*GNAVCSS*/' + _nav.N
 import home_info as _home
 src = re.sub(r'<!--HOMEINFO-->.*?<!--/HOMEINFO-->', lambda m: '<!--HOMEINFO-->' + _home.build() + '<!--/HOMEINFO-->', src, flags=re.S)
 src = re.sub(r'/\*HOMECSS\*/.*?/\*/HOMECSS\*/', lambda m: '/*HOMECSS*/' + _home.CSS + '/*/HOMECSS*/', src, flags=re.S)
+import footer as _footer
+_fsrc = re.search(r'<!--SFOOTSRC-->(.*?)<!--/SFOOTSRC-->', src, flags=re.S)
+src = re.sub(r'<!--SFOOT-->.*?<!--/SFOOT-->', lambda m: '<!--SFOOT-->' + _footer.site_footer(_fsrc.group(1) if _fsrc else '') + '<!--/SFOOT-->', src, flags=re.S)
+src = re.sub(r'<!--SFOOTSRC-->.*?<!--/SFOOTSRC-->', '', src, flags=re.S)
+src = re.sub(r'/\*SFOOTCSS\*/.*?/\*/SFOOTCSS\*/', lambda m: '/*SFOOTCSS*/' + _footer.FOOTER_CSS + '/*/SFOOTCSS*/', src, flags=re.S)
 src = re.sub(r'<!--EXPLORE-->.*?<!--/EXPLORE-->', lambda m: '<!--EXPLORE-->' + _links.explore_footer() + '<!--/EXPLORE-->', src, flags=re.S)
 # Data (tariff/stats/offices/integrated) is no longer inlined into the HTML. It is written to
 # separate files below and fetched async by the app (__boot), so the HTML shell stays small and
@@ -155,7 +160,7 @@ head = (
     # Structured data
     '<script type="application/ld+json">' + LD_JSON + '</script>'
     + ANALYTICS + SW_REG +
-    '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{overflow-x:hidden}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
+    '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{overflow-x:hidden;overflow-x:clip}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
     '</head><body>')
 
 # Inject the visible FAQ (same source as the FAQPage JSON-LD) into the About section,
@@ -165,6 +170,35 @@ FAQ_HTML = ('<h2>Frequently asked questions</h2>'
 page = page.replace('<!--FAQ-->', FAQ_HTML)
 
 (root / 'public').mkdir(exist_ok=True)
+
+# ---- move the big inline blocks into content-hashed, long-cached files ----
+# Every app route (/, /calculator, /imports, …) is a copy of this shell; inline, the 160 KB app script and 57 KB
+# stylesheet were re-downloaded on each. As /assets/<name>.<hash>.<ext> they are fetched once and cached for a
+# year (vercel.json). Scripts keep their order and become `defer`, so they still run after the DOM is parsed, in
+# the same sequence: charts library -> app -> account. The links between them (window.CN) are used on click only.
+import hashlib
+ASSETS = root / 'public' / 'assets'
+ASSETS.mkdir(exist_ok=True)
+for _old in ASSETS.glob('*'):
+    if re.match(r'^(app|account)\.[0-9a-f]{10}\.(js|css)$', _old.name):
+        _old.unlink()
+def _asset(name, ext, body):
+    h = hashlib.sha256(body.encode('utf-8')).hexdigest()[:10]
+    (ASSETS / ('%s.%s.%s' % (name, h, ext))).write_text(body, encoding='utf-8')
+    return '/assets/%s.%s.%s' % (name, h, ext)
+_m = re.search(r'<style>(\n/\* Layout: .*?)</style>', page, re.S)
+assert _m, 'main stylesheet not found'
+page = page[:_m.start()] + '<link rel="stylesheet" href="%s">' % _asset('app', 'css', _m.group(1)) + page[_m.end():]
+_ec = '<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>'
+assert page.count(_ec) == 1, 'echarts tag changed'
+page = page.replace(_ec, _ec.replace('<script ', '<script defer '))
+_m = re.search(r'<script>(\n\(function\(\)\{\nasync function __boot\(\)\{.*?)</script>', page, re.S)
+assert _m, 'app script not found'
+page = page[:_m.start()] + '<script defer src="%s"></script>' % _asset('app', 'js', _m.group(1)) + page[_m.end():]
+_m = re.search(r'<script>(\n\(function\(\)\{\n  var URL_=.*?)</script>', page, re.S)
+assert _m, 'account script not found'
+page = page[:_m.start()] + '<script defer src="%s"></script>' % _asset('account', 'js', _m.group(1)) + page[_m.end():]
+
 (root / 'public' / 'index.html').write_text(head + page + '</body></html>', encoding='utf-8')
 # write the data files the app fetches (see __boot in src.html)
 for _src, _out in DATA_FILES:
