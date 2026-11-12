@@ -56,6 +56,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 
 ## More pages
 - [Customs offices ranked by trade](https://www.customsnepal.com/customs-offices): imports and exports cleared at each customs office, with a page per office at https://www.customsnepal.com/customs-office/<id> (for example https://www.customsnepal.com/customs-office/birgunj).
+- [Trade by sector](https://www.customsnepal.com/sectors): market size, top products, supplier countries and duty for vehicles, fuel and energy, electronics, construction materials, pharmaceuticals, food, machinery, textiles, gold, tea and spices, and LED/AV, each at https://www.customsnepal.com/sector/<slug>.
 - [Compare two trading partners](https://www.customsnepal.com/compare): side-by-side imports, exports, balance, customs revenue and yearly trend; shareable as https://www.customsnepal.com/compare?a=india&b=china.
 - [Full text for AI assistants](https://www.customsnepal.com/llms-full.txt): this file plus complete tables.
 

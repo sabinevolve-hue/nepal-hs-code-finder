@@ -80,7 +80,7 @@ def crumb_html(breadcrumb):
 def foot(source_line):
     return ('<footer><div class="wrap"><p>' + source_line + '</p>'
             '<p><b>Not a government website.</b> Customs Nepal is an independent reference tool, not affiliated with the Government of Nepal.</p>'
-            '<p><a href="/">Home</a> · <a href="/trade-partners">Trade partners</a> · <a href="/customs-offices">Customs offices</a> · '
+            '<p><a href="/">Home</a> · <a href="/trade-partners">Trade partners</a> · <a href="/customs-offices">Customs offices</a> · <a href="/sectors">Sectors</a> · '
             '<a href="/import-duty">Import duty</a> · <a href="/calculator">Calculator</a> · <a href="/tariff">Tariff</a> · © customsnepal.com</p>'
             + OTHER_SITES + '</div></footer><script src="/cn-tools.js" defer></script></body></html>')
 
