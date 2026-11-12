@@ -13,7 +13,7 @@ app (navy, system font stack, light/dark) but is self-contained. No change to th
 Run after assemble.py:  python3 scripts/seo_pages.py
 """
 import pathlib, json, re, datetime, html
-from nav import render_nav, OTHER_SITES
+from nav import render_nav, OTHER_SITES, NAV_CSS
 import links
 
 root = pathlib.Path(__file__).resolve().parents[1]
@@ -354,7 +354,7 @@ out = [h404, crumb_html(bc), '<h1>Page not found</h1>',
 (pub / '404.html').write_text(''.join(out), encoding='utf-8')
 
 # ---- shared stylesheet ----
-(pub / 'seo.css').write_text(CSS.strip(), encoding='utf-8')
+(pub / 'seo.css').write_text(CSS + NAV_CSS.strip(), encoding='utf-8')
 
 # ---- sitemap (homepage + tariff index + every chapter) ----
 # App routes (/calculator, /imports, /exports, /trade-data, /ask-ai, /browse, /about, /privacy) are added by

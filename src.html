@@ -47,6 +47,8 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
+/*GNAVCSS*//*/GNAVCSS*/
+/*HOMECSS*//*/HOMECSS*/
 /* ---------- app bar ---------- */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero1);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
 .bar .wrap{max-width:1100px}
@@ -650,21 +652,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <div class="wrap bar-row">
     <a class="logo" href="/" data-tab="search" aria-label="Customs Nepal — home"><span class="mark">HS</span><span>Customs Nepal<small>HS codes, duty &amp; trade</small></span></a>
     <div style="display:flex;align-items:center;gap:6px;min-width:0">
-    <div class="nav-desk" role="tablist" aria-label="Sections">
-      <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
-      <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
-      <a role="tab" data-tab="imports" href="/imports" aria-selected="false">Imports</a>
-      <a role="tab" data-tab="exports" href="/exports" aria-selected="false">Exports</a>
-      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade</a>
-      <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
-      <a href="/tariff">Tariff</a>
-      <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
-      <a href="/export" title="Nepal export guides — what Nepal exports & how">Export guides</a>
-      <a href="/shipping" title="Shipping & ocean freight to Nepal — gateway ports, routes & transit times">Shipping</a>
-      <a href="/safta" title="SAFTA — lower import duty from South Asia, and how to claim it">SAFTA</a>
-      <a href="/trade-partners" title="Nepal's trade partners — imports, exports & duty by country">Partners</a>
-      <a href="https://world.customsnepal.com/" title="World HS codes & global trade">World ↗</a>
-    </div>
+    <nav class="gnwrap" aria-label="Sections"><!--GNAV--><!--/GNAV--></nav>
     <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
   </div>
@@ -706,6 +694,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
       <select class="chip" id="fchap" aria-label="Filter by chapter"><option value="">All chapters</option></select>
     </div>
     <div id="results" aria-live="polite"></div>
+    <div id="home-info"><!--HOMEINFO--><!--/HOMEINFO--></div>
   </section>
 
 
@@ -1002,14 +991,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   </footer>
 </main>
 
-<nav class="tabbar" role="tablist" aria-label="Sections">
-  <a role="tab" data-tab="search" href="/" aria-selected="true"><svg class="i"><use href="#i-search"/></svg>Search</a>
-  <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</a>
-  <a role="tab" data-tab="imports" href="/imports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Imports</a>
-  <a role="tab" data-tab="exports" href="/exports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Exports</a>
-  <a role="tab" data-tab="browse" href="/browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</a>
-  <a role="tab" data-tab="calc" href="/calculator" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</a>
-</nav>
+<!-- mobile bar: the four-door menu above turns into a fixed bottom bar under 720px (scripts/nav.py NAV_CSS) -->
 
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title" hidden>

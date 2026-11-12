@@ -47,6 +47,68 @@ svg.i{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
+/*GNAVCSS*/
+.gn{display:flex;gap:4px;align-items:center}
+.gnm{position:relative}
+.gnm>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;height:40px;padding:0 13px;border-radius:10px;font-weight:700;font-size:.9rem;white-space:nowrap;color:rgba(255,255,255,.78);user-select:none}
+.gnm>summary::-webkit-details-marker{display:none}
+.gnm>summary:hover,.gnm[open]>summary{background:rgba(255,255,255,.12);color:#fff}
+.gnm.cur>summary,.gnm:has([aria-selected="true"])>summary{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 -2px 0 #7FB2FF}
+.gnm>summary:focus-visible{outline:2px solid #9FD8FF;outline-offset:2px}
+.gni{font-size:1rem;line-height:1}
+.gnp{position:absolute;right:0;top:calc(100% + 8px);z-index:60;width:300px;max-width:calc(100vw - 24px);background:var(--card,#fff);color:var(--fg,#0f172a);border:1px solid var(--border,#e2e8f0);border-radius:16px;padding:8px;box-shadow:0 18px 44px -18px rgba(10,20,50,.55)}
+.gnm:first-child .gnp{right:auto;left:0}
+.gnh{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#64748b);padding:6px 10px 4px}
+.gnp a{display:block;padding:9px 10px;border-radius:10px;color:inherit;text-decoration:none;height:auto;white-space:normal;font-weight:400;background:none}
+.gnp a:hover,.gnp a:focus-visible{background:var(--accent-bg,#e8edfa);text-decoration:none;color:inherit}
+.gnp a b{display:block;font-size:.93rem;font-weight:700;color:var(--fg,#0f172a)}
+.gnp a small{display:block;font-size:.78rem;color:var(--muted,#64748b);margin-top:1px}
+.gnp a.cur b,.gnp a[aria-selected="true"] b{color:var(--accent,#5470c6)}
+.topnav{overflow:visible!important}
+@media(max-width:720px){
+ .gn{position:fixed;left:0;right:0;bottom:0;z-index:50;gap:0;background:var(--card,#fff);border-top:1px solid var(--border,#e2e8f0);padding-bottom:env(safe-area-inset-bottom,0px)}
+ .gnm{flex:1;position:static}
+ .gnm>summary{flex-direction:column;justify-content:center;gap:2px;height:58px;padding:0;border-radius:0;font-size:.72rem;color:var(--muted,#64748b)}
+ .gnm>summary:hover{background:none;color:var(--muted,#64748b)}
+ .gnm[open]>summary,.gnm.cur>summary,.gnm:has([aria-selected="true"])>summary{background:none;color:var(--accent,#5470c6);box-shadow:inset 0 2px 0 var(--accent,#5470c6)}
+ .gni{font-size:1.25rem}
+ .gnp,.gnm:first-child .gnp{position:fixed;left:8px;right:8px;bottom:calc(66px + env(safe-area-inset-bottom,0px));top:auto;width:auto;max-width:none;max-height:70vh;overflow:auto}
+ body{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+}
+/*/GNAVCSS*/
+/*HOMECSS*/
+.hi{margin:var(--s5,24px) 0 var(--s4,16px)}
+#toolbar:not([hidden])~#home-info{display:none}
+.hi-h{font-size:1.05rem;margin:26px 0 10px;letter-spacing:-.01em}
+.hi-doors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hi-door{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+.hi-dt span{font-size:1.5rem;line-height:1;display:block}.hi-dt b{display:block;font-size:1.05rem;margin-top:8px}.hi-dt small{display:block;color:var(--muted);font-size:.78rem}
+.hi-dl{display:grid;gap:2px;margin-top:10px}.hi-dl a{font-size:.88rem;font-weight:600;color:var(--accent);padding:5px 0;text-decoration:none}.hi-dl a:hover{text-decoration:underline}
+.hi-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hi-num{display:block;border-radius:16px;padding:14px 16px;color:#fff;text-decoration:none;background:linear-gradient(135deg,var(--hero1),var(--hero2))}
+.hi-num span{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.hi-num b{display:block;font-size:clamp(1.15rem,.9rem + 1vw,1.6rem);font-weight:800;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.hi-num small{display:block;font-size:.76rem;opacity:.8}
+.hi-num.i b{color:#8EC0FF}.hi-num.e b{color:#FFB08A}.hi-num.d b{color:#FF9B9B}.hi-num.r b{color:#7EE2A8}
+.hi-bar{display:flex;height:34px;border-radius:12px;overflow:hidden;gap:2px}
+.hi-seg{display:block;min-width:3px}.s0{background:#2a78d6}.s1{background:#eb6834}.s2{background:#1baf7a}.s3{background:#eda100}.s4{background:#e87ba4}.hi-seg.o,.hi-leg i.o{background:var(--border)}
+.hi-leg{list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0;padding:0;font-size:.88rem}
+.hi-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}.hi-leg a{color:var(--fg);font-weight:600;text-decoration:none}.hi-leg a:hover{color:var(--accent)}.hi-leg b{font-variant-numeric:tabular-nums}
+.hi-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:8px}
+.hi-two h3{font-size:1.05rem;margin:18px 0 8px}
+.hi-row{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);color:var(--fg);text-decoration:none;font-size:.9rem}
+.hi-row:hover .hi-rn{color:var(--accent)}.hi-rn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.hi-rt{height:10px;border-radius:5px;background:var(--muted-bg,var(--border));overflow:hidden}.hi-rt i{display:block;height:100%;border-radius:5px}.hi-rt i.i{background:#2a78d6}.hi-rt i.e{background:#eb6834}
+.hi-row b{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:.86rem}
+.hi-more{display:inline-block;margin-top:10px;font-size:.86rem;font-weight:700;color:var(--accent);text-decoration:none}
+.hi-tease{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:26px}
+.hi-tease a{display:block;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;color:var(--fg);text-decoration:none;transition:transform .15s,border-color .15s}
+.hi-tease a:hover{transform:translateY(-2px);border-color:var(--accent)}
+.hi-tease span{font-size:1.5rem;display:block}.hi-tease b{display:block;margin:6px 0 2px}.hi-tease small{color:var(--muted);font-size:.8rem;display:block}
+.hi-src{font-size:.76rem;color:var(--muted);margin-top:16px}
+@media(max-width:860px){.hi-doors,.hi-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.hi-two,.hi-tease{grid-template-columns:minmax(0,1fr)}.hi-two{gap:0}}
+@media(prefers-reduced-motion:reduce){.hi-tease a{transition:none}}
+/*/HOMECSS*/
 /* ---------- app bar ---------- */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hero1);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
 .bar .wrap{max-width:1100px}
@@ -650,21 +712,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   <div class="wrap bar-row">
     <a class="logo" href="/" data-tab="search" aria-label="Customs Nepal — home"><span class="mark">HS</span><span>Customs Nepal<small>HS codes, duty &amp; trade</small></span></a>
     <div style="display:flex;align-items:center;gap:6px;min-width:0">
-    <div class="nav-desk" role="tablist" aria-label="Sections">
-      <a role="tab" data-tab="search" href="/" aria-selected="true">Search</a>
-      <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false">Ask AI<span class="beta">Beta</span></a>
-      <a role="tab" data-tab="imports" href="/imports" aria-selected="false">Imports</a>
-      <a role="tab" data-tab="exports" href="/exports" aria-selected="false">Exports</a>
-      <a role="tab" data-tab="stats" href="/trade-data" aria-selected="false">Trade</a>
-      <a role="tab" data-tab="browse" href="/browse" aria-selected="false">Browse</a>
-      <a href="/tariff">Tariff</a>
-      <a role="tab" data-tab="calc" href="/calculator" aria-selected="false">Calculator</a>
-      <a href="/export" title="Nepal export guides — what Nepal exports & how">Export guides</a>
-      <a href="/shipping" title="Shipping & ocean freight to Nepal — gateway ports, routes & transit times">Shipping</a>
-      <a href="/safta" title="SAFTA — lower import duty from South Asia, and how to claim it">SAFTA</a>
-      <a href="/trade-partners" title="Nepal's trade partners — imports, exports & duty by country">Partners</a>
-      <a href="https://world.customsnepal.com/" title="World HS codes & global trade">World ↗</a>
-    </div>
+    <nav class="gnwrap" aria-label="Sections"><!--GNAV--><div class="gn"><details class="gnm cur" name="gn"><summary><span class="gni" aria-hidden="true">🔎</span>Find</summary><div class="gnp"><div class="gnh">HS codes and tariff</div><a href="/" data-tab="search" aria-selected="true"><b>Search</b><small>HS code and duty for any product</small></a><a href="/ask-ai" data-tab="ai" aria-selected="false"><b>Ask AI</b><small>Describe it, get the code</small></a><a href="/tariff"><b>Tariff by chapter</b><small>All 97 chapters with rates</small></a><a href="/import-duty"><b>Duty by product name</b><small>Mobile, car, laptop, gold…</small></a><a href="/browse" data-tab="browse" aria-selected="false"><b>Browse</b><small>Chapters and customs offices</small></a></div></details><details class="gnm" name="gn"><summary><span class="gni" aria-hidden="true">🧮</span>Cost</summary><div class="gnp"><div class="gnh">Duty, VAT and landed cost</div><a href="/calculator" data-tab="calc" aria-selected="false"><b>Landed-cost calculator</b><small>Duty, VAT and total in rupees</small></a><a href="/invoice" data-tab="invoice" aria-selected="false"><b>Invoice maker</b><small>Proforma and commercial invoice</small></a><a href="/safta"><b>SAFTA lower duty</b><small>Cheaper rates from South Asia</small></a><a href="/tariff/2083-84-changes"><b>What changed in 2083/84</b><small>This year’s tariff changes</small></a></div></details><details class="gnm" name="gn"><summary><span class="gni" aria-hidden="true">🌍</span>Trade</summary><div class="gnp"><div class="gnh">Who, what and how much</div><a href="/trade-partners"><b>Countries</b><small>Nepal’s trade with each country</small></a><a href="/sectors"><b>Sectors</b><small>Import markets and export industries</small></a><a href="/customs-offices"><b>Customs offices</b><small>What each border point handles</small></a><a href="/compare"><b>Compare two countries</b><small>Side by side</small></a><a href="/imports" data-tab="imports" aria-selected="false"><b>Imports explorer</b><small>Every imported product</small></a><a href="/exports" data-tab="exports" aria-selected="false"><b>Exports explorer</b><small>Every exported product</small></a><a href="/trade-data" data-tab="stats" aria-selected="false"><b>Trade data by year</b><small>Seven years of totals</small></a><a href="https://world.customsnepal.com/"><b>World trade ↗</b><small>Global HS codes and flows</small></a></div></details><details class="gnm" name="gn"><summary><span class="gni" aria-hidden="true">🚢</span>Move</summary><div class="gnp"><div class="gnh">Shipping and exporting</div><a href="/shipping"><b>Shipping routes</b><small>Ports, dry ports and transit</small></a><a href="/shipping/track"><b>Track a shipment</b><small>Container, air waybill, courier</small></a><a href="/the-border"><b>The Border</b><small>Every customs gate, west to east</small></a><a href="/export"><b>Export guides</b><small>How to sell abroad, product by product</small></a></div></details></div><script>(function(){function shut(x){document.querySelectorAll('details.gnm[open]').forEach(function(d){if(d!==x)d.removeAttribute('open')})}document.addEventListener('click',function(e){var d=e.target.closest&&e.target.closest('details.gnm');if(!d||e.target.closest('.gnp a'))shut(e.target.closest&&e.target.closest('summary')?d:null);else shut(d)});document.addEventListener('keydown',function(e){if(e.key==='Escape')shut(null)})})();</script><!--/GNAV--></nav>
     <button class="hdrbtn" data-tab="saved" aria-selected="false" aria-label="Saved codes" title="Saved codes"><svg class="i"><use href="#i-bookmark"/></svg></button>
     </div>
   </div>
@@ -706,6 +754,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
       <select class="chip" id="fchap" aria-label="Filter by chapter"><option value="">All chapters</option></select>
     </div>
     <div id="results" aria-live="polite"></div>
+    <div id="home-info"><!--HOMEINFO--><section class="hi" aria-label="Nepal’s trade at a glance"><h2 class="hi-h">Nepal’s trade in FY 2082/83</h2><div class="hi-nums"><a href="/trade-partners" class="hi-num i"><span>Imports</span><b>Rs 20.96 kharba</b><small>+16.2% on last year</small></a><a href="/sectors" class="hi-num e"><span>Exports</span><b>Rs 3.15 kharba</b><small>+13.8% on last year</small></a><a href="/compare" class="hi-num d"><span>Trade deficit</span><b>Rs 17.81 kharba</b><small>Rs 665 imported for every Rs 100 exported</small></a><a href="/customs-offices" class="hi-num r"><span>Collected at customs</span><b>Rs 5.06 kharba</b><small>Rs 24 per Rs 100 of imports</small></a></div><h2 class="hi-h">Where every Rs 100 of imports comes from</h2><div class="hi-bar" role="img" aria-label="India Rs 58, China Rs 20, Argentina Rs 6, United Arab Emirates Rs 2, United States Rs 2"><span class="hi-seg s0" style="flex:57.75"></span><span class="hi-seg s1" style="flex:20.28"></span><span class="hi-seg s2" style="flex:5.55"></span><span class="hi-seg s3" style="flex:2.49"></span><span class="hi-seg s4" style="flex:1.56"></span><span class="hi-seg o" style="flex:12.37"></span></div><ul class="hi-leg"><li><i class="s0"></i><a href="/trade-partner/india">🇮🇳 India</a> <b>Rs 58</b></li><li><i class="s1"></i><a href="/trade-partner/china">🇨🇳 China</a> <b>Rs 20</b></li><li><i class="s2"></i><a href="/trade-partner/argentina">🇦🇷 Argentina</a> <b>Rs 6</b></li><li><i class="s3"></i><a href="/trade-partner/united-arab-emirates">🇦🇪 United Arab Emirates</a> <b>Rs 2</b></li><li><i class="s4"></i><a href="/trade-partner/united-states">🇺🇸 United States</a> <b>Rs 2</b></li><li><i class="o"></i>Everyone else <b>Rs 12</b></li></ul><div class="hi-two"><div><h3>What Nepal buys</h3><a class="hi-row" href="/sector/fuel-energy"><span class="hi-rn">⛽ Fuel and energy</span><span class="hi-rt"><i class="i" style="width:100.0%"></i></span><b>Rs 3.93 kharba</b></a><a class="hi-row" href="/sector/food-edible-oils"><span class="hi-rn">🌾 Food and edible oils</span><span class="hi-rt"><i class="i" style="width:99.5%"></i></span><b>Rs 3.91 kharba</b></a><a class="hi-row" href="/sector/construction-materials"><span class="hi-rn">🏗️ Iron, steel and construction materials</span><span class="hi-rt"><i class="i" style="width:46.4%"></i></span><b>Rs 1.82 kharba</b></a><a class="hi-row" href="/sector/electronics"><span class="hi-rn">📱 Electronics and appliances</span><span class="hi-rt"><i class="i" style="width:45.0%"></i></span><b>Rs 1.77 kharba</b></a><a class="hi-row" href="/sector/vehicles"><span class="hi-rn">🚗 Vehicles, motorcycles and EVs</span><span class="hi-rt"><i class="i" style="width:31.6%"></i></span><b>Rs 1.24 kharba</b></a><a class="hi-row" href="/sector/textiles-garments"><span class="hi-rn">🧵 Textiles, garments and carpets</span><span class="hi-rt"><i class="i" style="width:31.3%"></i></span><b>Rs 1.23 kharba</b></a><a class="hi-more" href="/sectors">All import sectors</a></div><div><h3>What Nepal sells</h3><a class="hi-row" href="/sector/edible-oils-exports"><span class="hi-rn">🫒 Refined edible oils</span><span class="hi-rt"><i class="e" style="width:100.0%"></i></span><b>Rs 1.49 kharba</b></a><a class="hi-row" href="/sector/yarn-fabric-exports"><span class="hi-rn">🧶 Yarn and fabric</span><span class="hi-rt"><i class="e" style="width:12.9%"></i></span><b>Rs 19.23 arba</b></a><a class="hi-row" href="/sector/cardamom-spices-exports"><span class="hi-rn">🌿 Cardamom, ginger and spices</span><span class="hi-rt"><i class="e" style="width:9.8%"></i></span><b>Rs 14.63 arba</b></a><a class="hi-row" href="/sector/garments-pashmina-exports"><span class="hi-rn">👕 Readymade garments and pashmina</span><span class="hi-rt"><i class="e" style="width:8.8%"></i></span><b>Rs 13.07 arba</b></a><a class="hi-row" href="/sector/juice-noodles-exports"><span class="hi-rn">🧃 Juices, noodles and packaged food</span><span class="hi-rt"><i class="e" style="width:8.1%"></i></span><b>Rs 12.11 arba</b></a><a class="hi-row" href="/sector/carpets-exports"><span class="hi-rn">🧵 Carpets</span><span class="hi-rt"><i class="e" style="width:7.9%"></i></span><b>Rs 11.79 arba</b></a><a class="hi-more" href="/sectors">All export industries</a></div></div><div class="hi-tease"><a href="/the-border"><span aria-hidden="true">🛂</span><b>The Border</b><small>Every customs gate from west to east, sized by the trade it handles</small></a><a href="/trade-partners"><span aria-hidden="true">🗺️</span><b>The world map</b><small>Tap any country to see what Nepal trades with it</small></a><a href="/compare"><span aria-hidden="true">⚖️</span><b>Compare two countries</b><small>India against China, or any pair, side by side</small></a></div><p class="hi-src">Source: Department of Customs, Nepal — Foreign Trade Statistics, FY 2082/83. 1 arba = 1 billion rupees; 1 kharba = 100 billion.</p></section><!--/HOMEINFO--></div>
   </section>
 
 
@@ -1002,14 +1051,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
   </footer>
 </main>
 
-<nav class="tabbar" role="tablist" aria-label="Sections">
-  <a role="tab" data-tab="search" href="/" aria-selected="true"><svg class="i"><use href="#i-search"/></svg>Search</a>
-  <a role="tab" data-tab="ai" href="/ask-ai" aria-selected="false"><svg class="i"><use href="#i-spark"/></svg>Ask AI</a>
-  <a role="tab" data-tab="imports" href="/imports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Imports</a>
-  <a role="tab" data-tab="exports" href="/exports" aria-selected="false"><svg class="i"><use href="#i-chart"/></svg>Exports</a>
-  <a role="tab" data-tab="browse" href="/browse" aria-selected="false"><svg class="i"><use href="#i-list"/></svg>Browse</a>
-  <a role="tab" data-tab="calc" href="/calculator" aria-selected="false"><svg class="i"><use href="#i-calc"/></svg>Calc</a>
-</nav>
+<!-- mobile bar: the four-door menu above turns into a fixed bottom bar under 720px (scripts/nav.py NAV_CSS) -->
 
 <div class="scrim" id="scrim" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title" hidden>
