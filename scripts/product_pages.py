@@ -18,6 +18,7 @@ Run after seo_pages.py (needs seo.css):  python3 scripts/product_pages.py
 import pathlib, json, datetime, html, re, unicodedata, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from nav import OTHER_SITES
+import textfit
 import links
 from statsfields import IMP_VALUE, IMP_UNIT, IMP_DESC, IMP_PARTNERS, IMP_NPARTNERS, TARIFF_FY, TARIFF_FY_AD, validate_import_rows, slug, clean_name
 
@@ -233,13 +234,20 @@ def product_page(code, row, imp, val):
     unit = row[3] or (imp[IMP_UNIT] if len(imp) > IMP_UNIT else '') or ''
     ch2 = code[:2]
     path = '/import-duty/' + slug(name) + '-' + code
-    title = 'Customs duty on %s in Nepal (HS %s) | Customs Nepal' % (name, dotted)
-    if len(title) > 68:
-        title = 'Duty on %s in Nepal — HS %s | Customs Nepal' % (name[:34], dotted)
+    # title: product, code and rate up front — the three things people search for; <= 65 chars, whole words only
+    rate_bit = ', duty-free' if str(gen_d).lower() == 'free' else ((', %s duty' % gen_d) if gen_d not in ('—', '') else '')
+    tail = ' — HS %s%s' % (dotted, rate_bit)
+    nm = ' '.join(name.split())
+    if len(nm + ' in Nepal' + tail) <= 65:
+        title = nm + ' in Nepal' + tail
+    else:   # drop 'in Nepal' before cutting any of the product name
+        title = textfit.clip_words(nm, max(18, 65 - len(tail))) + tail
     gtxt = gen_d if gen_d != '—' else 'the statutory rate'
     stxt = saarc_d if saarc_d != '—' else 'the SAARC rate'
-    desc = ('Customs duty on %s (HS %s) imported into Nepal: %s general, %s from India & SAARC under SAFTA, '
-            'plus 13%% VAT. Worked landed-cost example and Nepal import figures.' % (name, dotted, gtxt, stxt))
+    lead = 'Nepal customs duty on %s (HS %s): %s general, %s with SAFTA, plus 13%% VAT. Landed-cost example and import figures.'
+    room = 158 - len(lead % ('', dotted, gtxt, stxt))
+    desc = lead % (textfit.clip_words(name, max(24, room)), dotted, gtxt, stxt)
+    desc = textfit.fit_desc(desc)
 
     bc = [('Home', '/'), ('Import duty', '/import-duty'), (name if len(name) < 40 else name[:38] + '…', '')]
     faq = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": []}
