@@ -215,6 +215,50 @@ function renderHome(){
 function track(n,p){ try{ if(window.gtag) gtag('event', n, p||{}); }catch(e){} }
 let calcTracked = false;
 let lastShown = { q: null, n: 0 }; // last count shown by renderResults(), reused by remember() for hs_search
+// Answer card: the best match drawn as a picture before the list — what it costs to bring in, where Nepal buys it,
+// and the trend. Uses the same tax data as the detail sheet (int.json totals by origin) and trade data (st.json).
+function costSplit(code, r, k){
+  // k: index into totals (0 India, 3 other countries). Returns {duty, vat, total} for NPR 1,00,000 CIF, or null.
+  const TI = taxInfo(code), base = 100000;
+  if (TI && TI.totals && TI.totals[k] != null){
+    const T = base * TI.totals[k] / 100, v = (TI.vat || 0) / 100;
+    const nonvat = v ? (T - base * v) / (1 + v) : T;
+    return { duty: Math.max(0, nonvat), vat: Math.max(0, T - Math.max(0, nonvat)), total: T, excise: TI.excise != null || TI.fees.length > 0 };
+  }
+  // no official total: compute the same way calc() does — duty, then excise, then fees, then VAT
+  const n = num(k === 0 ? (r.s || r.g) : r.g); if (isNaN(n)) return null;
+  const cd = base * n / 100, ex = TI && TI.excise != null ? (base + cd) * TI.excise / 100 : 0;
+  let fees = 0; if (TI && TI.fees.length){ let b = base + cd + ex; TI.fees.forEach(f => { const a = b * f.rate / 100; fees += a; b += a; }); }
+  const vat = (TI && TI.vat === 0) ? 0 : (base + cd + ex + fees) * ((TI && TI.vat) || 13) / 100;
+  return { duty: cd + ex + fees, vat, total: cd + ex + fees + vat, excise: ex > 0 || fees > 0 };
+}
+function answerCard(r){
+  try {
+    const code = r.code, d = r.digits, im = ST.imports[d], hist = (typeof H !== 'undefined' && H.codes) ? H.codes[d] : null;
+    const other = costSplit(code, r, 3), india = costSplit(code, r, 0);
+    const bar = (lab, c) => { if (!c) return ''; const tot = 100000 + c.total;
+      const seg = (cls, v, txt) => v > 0 ? `<i class="${cls}" style="flex:${v.toFixed(0)}" title="${txt}">${v / tot > 0.12 ? txt : ''}</i>` : '';
+      return `<div class="ac-row"><div class="ac-l"><span>${lab}</span><b>${npr(tot)}</b></div><div class="ac-bar" role="img" aria-label="${lab}: goods NPR 1,00,000, duties ${npr(c.duty)}, VAT ${npr(c.vat)}">`
+        + seg('g', 100000, 'Goods 1,00,000') + seg('d', c.duty, (c.excise ? 'Duty & excise ' : 'Duty ') + Math.round(c.duty).toLocaleString('en-IN')) + seg('v', c.vat, 'VAT ' + Math.round(c.vat).toLocaleString('en-IN')) + `</div></div>`; };
+    const showIndia = india && other && Math.abs(india.total - other.total) > 1;
+    const TIc = taxInfo(code), noVat = TIc && TIc.vat === 0;
+    const extra = TIc && TIc.specific && (other || india) ? `<p class="fine" style="margin:6px 0 0">Plus a per-unit duty on this line — enter your quantity in the calculator for the full amount.</p>` : '';
+    const specNote = !other && !india ? `<p class="fine" style="margin:0">This line has a per-unit (specific) duty: <b style="color:var(--fg)">${esc(rateOf(r) || 'see tariff')}</b>. Use the calculator with your quantity for the exact amount.</p>` : '';
+    let h = `<article class="ac" aria-label="Best match">
+      <div class="ac-top"><div><span class="ac-k">Best match</span><h3>${esc(label(r))}</h3><p class="ac-sub">${esc(r.head)}</p></div>
+        <div class="ac-code"><span class="mono">${r.code}</span>${dutyTag(rateOf(r), true)}</div></div>
+      <div class="ac-grid"><div><h4>What NPR 1,00,000 of goods costs you</h4>${specNote}${bar(showIndia ? 'From China &amp; others' : 'Landed cost', other || india)}${showIndia ? bar('From India with SAFTA certificate', india) : ''}
+        ${specNote ? '' : `<p class="ac-key"><span><i class="g"></i>Goods (CIF)</span><span><i class="d"></i>Customs duty${other && other.excise ? ', excise &amp; fees' : ''}</span>${noVat ? '' : '<span><i class="v"></i>VAT</span>'}</p>`}${extra}</div>`;
+    if (im && im[3] > 0){
+      const top = (im[5] || []).slice(0, 3), m = top.length ? top[0][1] : 1;
+      h += `<div><h4>Nepal imported ${rs(im[3], true)} last year</h4>${top.map(x => `<div class="ac-sup"><span>${esc(x[0])}</span><i style="width:${(x[1] / m * 100).toFixed(0)}%"></i><b>${Math.round(x[1] / im[3] * 100)}%</b></div>`).join('')}`
+        + (hist && hist.some(x => x[0]) ? `<p class="ac-k" style="margin-top:8px">Imports, FY ${FY[0]}–${FY[FY.length - 1]}</p>${sparkHTML(hist.map(x => x[0]), 0, '')}` : '') + `</div>`;
+    } else h += `<div><h4>Nepal trade</h4><p class="fine" style="margin:0">No recorded imports under this exact line last year.</p></div>`;
+    h += `</div><div class="ac-act"><button class="btn" data-code="${code}">Full details &amp; nearby lines</button><button class="btn ghost" data-calc="${code}">Calculate for my shipment</button></div>
+      <p class="fine" style="margin:8px 0 0">Not your product? Pick the right line from the list below — the code depends on what it is made of and how it is used.</p></article>`;
+    return h;
+  } catch (e) { return ''; }
+}
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
   $('#qclear').hidden = !q;
@@ -249,6 +293,12 @@ function renderResults(){
     const tips = ['LED display','solar panel','mobile','cotton fabric','steel pipe'];
     html += `<div class="empty"><b>No codes match “${esc(q)}”</b><p>${dutyF !== 'all' || chapF ? 'A filter is hiding results. Clear it, or try' : 'Try the material (steel, plastic, cotton), what it does (pump, lamp, charger) or a shorter word. For example'}:</p><div class="suggest">${(dutyF !== 'all' || chapF ? '<button data-clear="1">Clear filters</button>' : '<button data-go="ai">' + ic('i-spark') + 'Ask the assistant</button>') + tips.map(t => `<button data-q="${t}">${t}</button>`).join('')}</div></div>`;
   } else {
+    if (rows[0] && rows[0].digits && rows[0].digits.length === 8 && (res.kind !== 'code' || q.replace(/[^\d]/g,'').length >= 6)){
+      // among the top few equally relevant lines, lead with the one Nepal actually imports most
+      let best = rows[0];
+      if (res.kind !== 'code'){ const v = r => (ST.imports[r.digits] || [0,0,0,0])[3] || 0; rows.slice(0, 5).forEach(r => { if (v(r) > v(best)) best = r; }); }
+      html += answerCard(best);
+    }
     html += res.kind === 'code' ? groupedHTML(rows.slice(0, shown), []) : groupedHTML(rows.slice(0, shown), res.words);
     if (rows.length > shown) html += `<button class="more" id="more">Show more codes ${ic('i-chev')}</button>`;
   }
@@ -273,6 +323,7 @@ document.addEventListener('click', e => {
     if (b.dataset.chap && b.classList.contains('cat')){ browseChap = +b.dataset.chap; go('browse'); return; }
     if (b.dataset.sec){ browseChap = null; browsePage = ''; browseQ = ''; openSec = b.dataset.sec; go('browse'); setTimeout(() => { const el = document.querySelector(`[data-sec="${b.dataset.sec}"][aria-expanded]`); if (el) el.scrollIntoView({ block: 'start' }); }, 50); return; }
     if (b.dataset.duty){ dutyF = b.dataset.duty; $$('[data-duty]').forEach(x => x.setAttribute('aria-pressed', x === b)); shown = 40; renderResults(); return; }
+    if (b.dataset.calc){ remember($('#q').value.trim()); pickCalc(b.dataset.calc); go('calc', 'push'); window.scrollTo({ top: 0 }); return; }
     if (b.dataset.code){ remember($('#q').value.trim()); openDetail(b.dataset.code); }
   }
 });
@@ -503,6 +554,11 @@ function calc(){
       ${oth ? `<tr><td>Other costs</td><td>${npr(oth)}</td></tr>` : ''}
       <tr class="total"><td>Estimated landed cost</td><td>${npr(landed)}</td></tr>
     </tbody></table>
+    ${(() => { if (!r || isSpec) return ''; const g = num(r.g), s = num(r.s); if (isNaN(g) || isNaN(s) || g === s) return '';
+        const alt = origin === 'saarc' ? g : s, altCd = av * alt / 100, altEx = (av + altCd) * exp / 100;
+        let altFee = 0; if (calcTI && calcTI.fees.length){ let base = av + altCd + altEx; calcTI.fees.forEach(f => { const a = base * f.rate / 100; altFee += a; base += a; }); }
+        const altLanded = av + altCd + altEx + altFee + (vatOn ? (av + altCd + altEx + altFee) * 0.13 : 0) + oth, diff = landed - altLanded;
+        return `<div class="cmpo">${ic('i-info')}<div>${origin === 'saarc' ? 'Without a SAFTA certificate (general rate ' + g + '%)' : 'From India or SAARC with a SAFTA certificate (' + s + '%)'}: <b>${npr(altLanded)}</b> — ${diff > 0 ? 'you would save <b>' + npr(diff) + '</b>' : 'it would cost <b>' + npr(-diff) + '</b> more'}.</div></div>`; })()}
     ${isSpec && !qty ? `<div class="warn">${ic('i-alert')}<span>This code has a per-unit duty. Enter the quantity in ${esc(r.u)} to include it.</span></div>` : ''}
     ${calcTI && calcTI.sep.length ? `<p class="fine">Also collected at customs (not in the landed total above): ${calcTI.sep.map(s => `${esc(s.label)} ${s.rate}%`).join(', ')}.</p>` : ''}
     ${calcTI && calcTI.totals ? `<p class="fine">Official total effective rate — ${['India', 'other SAARC', 'Tibet', 'other countries'].map((nm, i) => calcTI.totals[i] != null ? `${nm} <b style="color:var(--fg)">${calcTI.totals[i]}%</b>` : '').filter(Boolean).join(' · ')}.</p>` : ''}

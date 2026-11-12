@@ -34,8 +34,11 @@ for f in pub.rglob('*.html'):
     if key not in cache:
         cache[key] = site_footer(key)
     kept += bool(srcs)
-    # the old footer sat inside the page's .wrap; close it so the dark footer can run full width
-    h = h[:m.start()] + cache[key] + h[m.end():]
+    # some generators leave the page's .wrap open when the footer starts; close any open <div> so the dark
+    # footer runs full width (a stray closing tag later on is ignored by browsers)
+    pre = h[:m.start()]
+    open_divs = max(0, len(re.findall(r'<div\b', pre)) - pre.count('</div>'))
+    h = pre + '</div>' * open_divs + cache[key] + h[m.end():]
     f.write_text(h, encoding='utf-8')
     n += 1
 css = pub / 'seo.css'
