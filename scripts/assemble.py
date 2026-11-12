@@ -160,7 +160,7 @@ head = (
     # Structured data
     '<script type="application/ld+json">' + LD_JSON + '</script>'
     + ANALYTICS + SW_REG +
-    '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{overflow-x:hidden}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
+    '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{overflow-x:hidden;overflow-x:clip}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
     '</head><body>')
 
 # Inject the visible FAQ (same source as the FAQPage JSON-LD) into the About section,
