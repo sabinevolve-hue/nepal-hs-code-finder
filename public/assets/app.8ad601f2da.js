@@ -240,25 +240,23 @@ function famShared(x, me){ const p = [...x.path, x.d], m = [...me.path, me.d]; l
 function famCheaper(r){ const sib = BYHEAD[r.h] || [], mine = num(rateOf(r)); if (isNaN(mine)) return [];
   return sib.filter(x => x.code !== r.code && !isNaN(num(rateOf(x))) && num(rateOf(x)) < mine)
     .sort((a, b) => famShared(b, r) - famShared(a, r) || num(rateOf(a)) - num(rateOf(b))); }
+let famOrd = 'd';
 function familyHTML(r){
   const sib = BYHEAD[r.h] || []; if (sib.length < 2) return '';
-  const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), hi = Math.max(...vals), top = Math.max(hi, 1);
-  const groups = []; const gi = {};
-  sib.forEach(x => { const g = x.path[0] || ''; if (!(g in gi)){ gi[g] = groups.length; groups.push([g, []]); } groups[gi[g]][1].push(x); });
-  const many = sib.length > 14, myG = r.path[0] || '';
-  let h = `<p class="fine" style="margin:0 0 8px">The bar is the ${origin === 'saarc' ? 'SAARC' : 'general'} customs duty. The text is what decides between the lines, in the tariff's own words.</p>`;
-  h += groups.map(([g, xs]) => `<details class="fl-g" ${!many || g === myG ? 'open' : ''}><summary>${esc(g || 'Lines in this heading')}<span>${xs.length}</span></summary>${xs.map(x => {
-      const v = rateOf(x), n = num(v), me = x.code === r.code, words = (g ? [...x.path.slice(1), x.d] : [...x.path, x.d]).map(s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s).join(' › ');
-      const tone = isNaN(n) ? 'sp' : n === 0 ? 'fr' : n <= 10 ? 'lo' : n <= 20 ? 'md' : 'hi';
-      const w = isNaN(n) ? 0 : Math.max(1.5, 55 * n / top);
-      const badge = me ? '<em class="fl-b me">This line</em>' : (!isNaN(n) && n === lo && lo !== hi ? '<em class="fl-b lw">Lowest</em>' : '');
-      return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="fl-t"><span class="c">${x.code}</span>${badge}<span class="d">${esc(words)}</span></span><span class="fl-bar"><i class="${tone}" style="width:${w.toFixed(1)}%"></i><b>${esc(pct(v))}</b></span></button>`; }).join('')}</details>`).join('');
-  const tips = [], mine = num(rateOf(r)), other = num(origin === 'saarc' ? r.g : r.s);
-  if (origin !== 'saarc' && !isNaN(mine) && !isNaN(other) && other < mine) tips.push(`<li><b>Origin:</b> made in India or another SAARC country, with a certificate of origin, this line pays <b>${esc(pct(r.s))}</b> instead of ${esc(pct(r.g))} under SAFTA.</li>`);
-  famCheaper(r).slice(0, 3).forEach(x => tips.push(`<li><b>${x.code} at ${esc(pct(rateOf(x)))}</b> applies only if your goods are: <i>${esc(famWords(x, r).join(' › '))}</i>.</li>`));
-  if (tips.length) h += `<div class="fl-pay"><b>Ways the duty can be lower, and the condition for each</b><ul>${tips.join('')}</ul><p class="fine" style="margin:6px 0 0">The code follows from what the goods are; it is not a choice. Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference, a fine and possible seizure. When unsure, ask the Department of Customs for an advance ruling.</p></div>`;
-  else if (!isNaN(mine) && mine === lo) h += `<p class="fine" style="color:var(--free);font-weight:600">This is already the lowest duty in its family.</p>`;
-  return h;
+  const N = x => { const n = num(rateOf(x)); return isNaN(n) ? 1e9 : n; };
+  const tone = v => { const n = num(v); return isNaN(n) ? 'sp' : n === 0 ? 'fr' : n <= 10 ? 'lo' : n <= 20 ? 'md' : 'hi'; };
+  const chip = v => `<span class="fl-chip ${tone(v)}">${esc(pct(v))}</span>`;
+  const list = famOrd === 'd' ? sib.map((x, i) => [x, i]).sort((a, b) => N(a[0]) - N(b[0]) || a[1] - b[1]).map(a => a[0]) : sib;
+  const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), mine = num(rateOf(r));
+  const rows = list.map(x => { const me = x.code === r.code;
+    const pth = [...x.path, x.d].map(s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s), k = pth.length > 2 && pth[pth.length - 1].length < 28 ? 2 : 1;
+    return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="c">${x.code}${me ? '<em class="fl-b">This line</em>' : ''}</span><span class="n">${chip(x.g)}</span><span class="n">${chip(x.s)}</span><span class="d"><b>${esc(pth.slice(-k).join(' › '))}</b>${pth.length > k ? `<small>${esc(pth.slice(0, -k).join(' › '))}</small>` : ''}</span></button>`; }).join('');
+  const notes = [], sa = num(r.s), ge = num(r.g);
+  if (!isNaN(sa) && !isNaN(ge) && sa < ge) notes.push(`From India or another SAARC country, with a certificate of origin, this line pays <b>${esc(pct(r.s))}</b> instead of ${esc(pct(r.g))}.`);
+  if (!isNaN(mine) && mine === lo) notes.push('This line already has the lowest duty in its family.');
+  notes.push('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. When unsure, ask the Department of Customs for an advance ruling.');
+  return `<div class="fl-tools" role="group" aria-label="Order"><button data-famord="d" class="${famOrd === 'd' ? 'on' : ''}">Lowest duty first</button><button data-famord="o" class="${famOrd === 'o' ? 'on' : ''}">Tariff order</button></div>
+    <div class="fl-tb"><div class="fl-h"><span>HS code and what the goods must be</span><span>General</span><span>SAARC</span></div>${rows}</div><p class="fine" style="margin:8px 0 0">${notes.join(' ')}</p>`;
 }
 function answerCard(r){
   try {
@@ -435,6 +433,7 @@ $('#scrim').onclick = closeDetail; $('#sh-x').onclick = closeDetail;
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) closeDetail(); });
 $('#sh-body').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'sh-copy') return copy(curDetail, 'Copied ' + curDetail);
+  if (b.dataset.famord){ famOrd = b.dataset.famord; const st = $('#sh-body').scrollTop; openDetail(curDetail, true); $('#sh-body').scrollTop = st; return; }
   if (b.dataset.code) openDetail(b.dataset.code); });
 $('#sh-save').onclick = () => { let s = store.get('saved', []); const had = s.includes(curDetail); s = had ? s.filter(x => x !== curDetail) : [curDetail, ...s]; store.set('saved', s); openDetail(curDetail, true); toast(had ? 'Removed from saved' : 'Saved'); if (curTab === 'saved') renderSaved(); };
 $('#sh-link').onclick = () => copy(location.href.split('#')[0] + '#hs-' + curDetail, 'Link copied');
