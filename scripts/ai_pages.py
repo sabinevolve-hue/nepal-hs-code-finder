@@ -4,10 +4,9 @@ Build-time, stdlib only; runs after assemble.py (which writes the base llms.txt)
 generators. AI assistants and search engines read three things here:
   /llms.txt        curated map + headline facts (appends a data section to assemble.py's file)
   /llms-full.txt   the same plus full Markdown tables: every partner, every customs office, popular duties
-  /data            a human page listing downloadable CSV files, each described with schema.org Dataset
 Every figure is copied from the same JSON the pages use (Department of Customs FTS); nothing is estimated.
 """
-import csv, io, json, re
+import json, re
 import pagekit as k
 from pagekit import esc, money, pub, root, SITE
 import links
@@ -39,7 +38,6 @@ facts = ['## Nepal foreign trade at a glance (FY %s, Department of Customs)' % F
 more_pages = ['## More pages',
               '- [Customs offices ranked by trade](%s/customs-offices): imports and exports cleared at each customs office, with a page per office at %s/customs-office/<id> (for example %s/customs-office/birgunj).' % (SITE, SITE, SITE),
               '- [Compare two trading partners](%s/compare): side-by-side imports, exports, balance, customs revenue and yearly trend; shareable as %s/compare?a=india&b=china.' % (SITE, SITE),
-              '- [Open data downloads](%s/data): CSV files of Nepal’s trade by partner country and by customs office.' % SITE,
               '- [Full text for AI assistants](%s/llms-full.txt): this file plus complete tables.' % SITE, '']
 
 base = (pub / 'llms.txt').read_text(encoding='utf-8')
@@ -83,45 +81,8 @@ for slug, name, codes in links.ALIAS_RECS:
                 break
 (pub / 'llms-full.txt').write_text('\n'.join(full) + '\n', encoding='utf-8')
 
-# ---------- open data: CSV files + /data page ----------
-(pub / 'data').mkdir(exist_ok=True)
-fyf = FY.replace('/', '-')
-def write_csv(name, header, rows):
-    buf = io.StringIO(); w = csv.writer(buf, lineterminator='\n'); w.writerow(header); w.writerows(rows)
-    (pub / 'data' / name).write_text(buf.getvalue(), encoding='utf-8')
-    return len(rows)
-allc = [CO['countries'][i] for i in CO['order']]
-f1 = 'nepal-trade-by-partner-fy-%s.csv' % fyf
-n1 = write_csv(f1, ['country', 'iso3', 'imports_npr', 'exports_npr', 'trade_balance_npr', 'customs_revenue_npr', 'fiscal_year', 'source'],
-               [[c['name'], c['iso'], rs(c['imp']), rs(c['exp']), rs(c['exp'] - c['imp']), rs(c.get('rev', 0)), FY, 'Department of Customs, Nepal'] for c in allc])
-f2 = 'nepal-trade-by-partner-history.csv'
-n2 = write_csv(f2, ['country', 'iso3', 'fiscal_year', 'imports_npr', 'exports_npr', 'source'],
-               [[c['name'], c['iso'], y, rs(h[0]), rs(h[1]), 'Department of Customs, Nepal'] for c in allc if len(c.get('hist') or []) == len(YEARS) for y, h in zip(YEARS, c['hist'])])
-f3 = 'nepal-trade-by-customs-office-fy-%s.csv' % OF['fy'].replace('/', '-')
-n3 = write_csv(f3, ['customs_office', 'imports_npr', 'exports_npr', 'import_share_pct', 'export_share_pct', 'fiscal_year', 'source'],
-               [[oname(key, o), rs(o['imp']), rs(o['exp']), '%.2f' % (o['imp'] / OF['totals']['imp'] * 100),
-                 '%.2f' % ((o['exp'] / OF['totals']['exp'] * 100) if OF['totals']['exp'] else 0), OF['fy'], 'Department of Customs, Nepal'] for key, o in offices])
-files = [(f1, 'Nepal trade by partner country, FY %s' % FY, 'Imports, exports, balance and customs revenue for each of %d trading partners, in rupees.' % n1),
-         (f2, 'Nepal trade by partner country, FY %s to %s' % (YEARS[0], YEARS[-1]) if YEARS else 'Nepal trade by partner, history', 'Imports and exports per partner per fiscal year (%d rows).' % n2),
-         (f3, 'Nepal trade by customs office, FY %s' % OF['fy'], 'Imports and exports cleared at each of %d customs offices, with shares.' % n3)]
-lds = [{"@context": "https://schema.org", "@type": "Dataset", "name": t, "description": d, "url": SITE + '/data',
-        "isAccessibleForFree": True, "temporalCoverage": "Nepali FY " + FY, "spatialCoverage": "Nepal",
-        "creator": {"@type": "GovernmentOrganization", "name": "Department of Customs, Nepal", "url": "https://www.customs.gov.np"},
-        "publisher": {"@type": "Organization", "name": "Customs Nepal", "url": SITE},
-        "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": SITE + '/data/' + f}]} for f, t, d in files]
-bc = [('Home', '/'), ('Open data', '')]
-title = 'Nepal trade data downloads (CSV) — by country and customs office, FY %s' % FY
-desc = 'Free CSV files of Nepal’s imports and exports by partner country and by customs office, from the Department of Customs Foreign Trade Statistics. For analysts, students, journalists and AI assistants.'
-out = [k.page_head(title, desc, '/data', bc, extra_ld=lds), k.crumb_html(bc),
-       '<h1>Nepal trade data you can download</h1>',
-       '<p class="lede">The same official figures the site’s pages use, as plain CSV files. Free to use; please credit the Department of Customs, Nepal as the source and link to customsnepal.com.</p>',
-       '<div class="tblwrap"><table class="ptbl"><thead><tr><th>File</th><th>What it contains</th></tr></thead><tbody>',
-       ''.join('<tr><td><a href="/data/%s" download>%s</a></td><td>%s</td></tr>' % (f, esc(t), esc(d)) for f, t, d in files),
-       '</tbody></table></div>',
-       '<p>Amounts are in Nepali rupees (not thousands). “customs_revenue_npr” is the revenue the Department of Customs reports on imports from that country: customs duty plus other taxes charged at the border.</p>',
-       '<p class="xlink"><b>For AI assistants and developers:</b> <a href="/llms.txt">llms.txt</a> (site map and headline facts) · <a href="/llms-full.txt">llms-full.txt</a> (full tables in Markdown) · <a href="/sitemap.xml">sitemap.xml</a></p>',
-       '<p class="xlink"><b>See it as pages:</b> <a href="/trade-partners">trade by country</a> · <a href="/customs-offices">customs offices</a> · <a href="/compare">compare two countries</a></p>',
-       '</div>' + k.foot('<b>Trade figures:</b> Department of Customs, Nepal — Foreign Trade Statistics, FY ' + FY + '.')]
-(pub / 'data.html').write_text(''.join(out), encoding='utf-8')
-print('ai_pages: llms.txt %d KB, llms-full.txt %d KB, 3 CSV files, /data page; +%d sitemap URL'
-      % ((pub / 'llms.txt').stat().st_size // 1024, (pub / 'llms-full.txt').stat().st_size // 1024, k.add_to_sitemap(['/data'])))
+# The /data page and CSV downloads were removed on 2026-11-12 at the owner's request (no bulk data hand-out).
+import shutil
+shutil.rmtree(pub / 'data', ignore_errors=True)
+(pub / 'data.html').unlink(missing_ok=True)
+print('ai_pages: llms.txt %d KB, llms-full.txt %d KB' % ((pub / 'llms.txt').stat().st_size // 1024, (pub / 'llms-full.txt').stat().st_size // 1024))

@@ -157,6 +157,6 @@ def explore_footer():
     part = ' · '.join('<a href="%s">%s</a>' % (PARTNER_PAGE[i][0], PARTNER_PAGE[i][1]) for i in TOP_PARTNERS[:8])
     duty = ' · '.join('<a href="/import-duty/%s">%s</a>' % (s, l) for s, l in _POPULAR if s in _ALIAS_NAME)
     return ('<p class="explore"><b>Nepal&rsquo;s trade by country:</b> ' + part +
-            ' · <a href="/trade-partners">all %d trading partners</a> · <a href="/customs-offices">by customs office</a> · <a href="/compare">compare two countries</a> · <a href="/data">download the data</a></p>'
+            ' · <a href="/trade-partners">all %d trading partners</a> · <a href="/customs-offices">by customs office</a> · <a href="/compare">compare two countries</a></p>'
             '<p class="explore"><b>Import duty by product name:</b> ' + duty +
             ' · <a href="/import-duty#popular-names">all %d products</a></p>') % (len(PARTNER_PAGE), len(ALIAS_RECS))
