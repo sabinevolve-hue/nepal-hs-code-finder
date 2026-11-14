@@ -182,13 +182,6 @@ nav.tabbar{display:none}
 .hero-stats{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s5);font-size:.8rem;color:rgba(255,255,255,.7)}
 .hero-stats b{display:block;color:#fff;font-size:1.05rem;font-variant-numeric:tabular-nums}
 @media (min-width:760px){.hero:not(.compact){border-radius:0 0 var(--r-lg) var(--r-lg);margin-inline:0;padding-inline:var(--s6)}}
-.trackmini{display:flex;align-items:center;gap:8px;max-width:480px;margin:var(--s3) 0 0;padding:5px 5px 5px 13px;background:var(--card);border:1px solid var(--border);border-radius:999px}
-.trackmini>svg{flex:0 0 auto;width:18px;height:18px;color:var(--muted)}
-.trackmini input{flex:1 1 auto;min-width:0;height:34px;border:0;background:transparent;color:var(--fg);font-size:.9rem;outline:none}
-.trackmini input::placeholder{color:var(--muted)}
-.trackmini button{flex:0 0 auto;height:34px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;cursor:pointer}
-.trackmini-note{max-width:520px;margin:7px 4px 0;font-size:.8rem;line-height:1.5;color:var(--muted)}
-.trackmini-note b{color:var(--fg);font-weight:600}
 .explore{margin-top:var(--s5)}
 .xgroup+.xgroup{margin-top:var(--s4)}
 .xhead{display:flex;align-items:center;gap:10px;margin:0 0 var(--s2);font-size:.82rem;font-weight:800;letter-spacing:.01em;color:var(--fg)}
