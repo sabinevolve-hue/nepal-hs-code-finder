@@ -90,9 +90,11 @@ xk = defaultdict(lambda: defaultdict(float)); mk = defaultdict(lambda: defaultdi
 bx, bm = {}, {}                                    # (country, hs6) -> [partner, value] largest partner
 wk = defaultdict(float)                            # hs6 -> world
 pk = defaultdict(lambda: defaultdict(float))       # (i, j) within PSET -> hs6 -> value
+xc = defaultdict(lambda: defaultdict(float)); mc = defaultdict(lambda: defaultdict(float))     # country -> HS chapter -> value
 xq = defaultdict(float)                            # (country, hs6) -> tonnes exported (where reported)
 for i, j, k, v, q in rows(files[MAIN]):
     xk[i][k] += v; mk[j][k] += v; wk[k] += v
+    xc[i][k[:2]] += v; mc[j][k[:2]] += v
     try:
         xq[(i, k)] += float(q)
     except ValueError:
@@ -135,6 +137,8 @@ for c in sorted(set(tot_x[MAIN]) | set(tot_m[MAIN])):
         lead=[[k, R(v), r, round(s, 1)] for k, v, r, s in lead],
         dep=[[k, R(v), p, round(s)] for k, v, p, s in dep],
         nx=len(xk[c]), nm=len(mk[c]),
+        xc=[[ch, R(v)] for ch, v in sorted(xc[c].items(), key=lambda kv: -kv[1]) if v >= 1],
+        mc=[[ch, R(v)] for ch, v in sorted(mc[c].items(), key=lambda kv: -kv[1]) if v >= 1],
         hist={str(y): [R(tot_x[y].get(c, 0)), R(tot_m[y].get(c, 0))] for y in years})
 
 pairs = {}
