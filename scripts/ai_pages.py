@@ -12,6 +12,7 @@ from pagekit import esc, money, pub, root, SITE
 import links
 
 CO = json.loads((root / 'world/data/country.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_country_names(CO)
 OF = json.loads((root / 'world/data/offices_trade.json').read_text(encoding='utf-8'))
 DIR = {re.sub(r'[^a-z0-9]', '', (o.get('stat') or '').lower()): o for o in json.loads((root / 'data/offices.json').read_text(encoding='utf-8'))['offices'] if o.get('stat')}
 DIR['chobhar'] = DIR.get('dryport', DIR.get('chobhar'))

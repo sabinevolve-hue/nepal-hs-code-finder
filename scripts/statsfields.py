@@ -62,14 +62,64 @@ def validate_import_rows(rows, stats):
 import re as _re, unicodedata as _ud
 
 
-def clean_name(s):
+class Name(str):
+    """A repaired display name that remembers the source text, so page addresses (slugs) never change."""
+    raw = ''
+
+
+def _raw_clean(s):
     s = _re.sub(r'\s+', ' ', str(s)).strip()
     s = _re.sub(r'\s*\.\s*$', '', s)             # drop a trailing " ."
     s = s.strip(' ,;:-')
     return s or 'product'
 
 
+def clean_name(s):
+    """Display name: source text with lost letters and known misspellings repaired (scripts/namefix.py).
+    The result carries .raw = the unrepaired text, which slug() uses, so URLs stay exactly as they were."""
+    if isinstance(s, Name):
+        return s
+    raw = _raw_clean(s)
+    try:
+        import namefix
+        fixed = namefix.fix(s) or raw
+    except Exception:
+        fixed = raw
+    n = Name(fixed)
+    n.raw = raw
+    return n
+
+
+def fix_names(stats):
+    """Turn every product name in a loaded stats.json into a repaired Name (in place). Call right after json.load."""
+    for k in ('imports', 'exports'):
+        for row in (stats.get(k) or {}).values():
+            if row and row[0]:
+                row[0] = clean_name(row[0])
+    return stats
+
+
+def fix_country_names(co, stats=None):
+    """Same for world/data/country.json product lists (impP / expP rows are [code, name, value])."""
+    look = {}
+    if stats is None:
+        import json as _json, pathlib as _pl
+        stats = _json.loads((_pl.Path(__file__).resolve().parents[1] / 'data' / 'stats.json').read_text(encoding='utf-8'))
+    if stats:
+        for k in ('imports', 'exports'):
+            for c, row in (stats.get(k) or {}).items():
+                if row and row[0]:
+                    look.setdefault(c, clean_name(row[0]))
+    for c in (co.get('countries') or {}).values():
+        for k in ('impP', 'expP'):
+            for row in c.get(k) or []:
+                if len(row) > 1 and row[1]:
+                    row[1] = look.get(str(row[0])) or clean_name(row[1])
+    return co
+
+
 def slug(s):
+    s = getattr(s, 'raw', None) or s          # a repaired Name keeps its original address
     s = _ud.normalize('NFKD', str(s)).encode('ascii', 'ignore').decode('ascii')
     s = _re.sub(r'[^a-zA-Z0-9]+', '-', s).strip('-').lower()
     return (_re.sub(r'-{2,}', '-', s)[:60].strip('-')) or 'product'

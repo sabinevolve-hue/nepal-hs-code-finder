@@ -54,6 +54,7 @@ def _tslug(n):
 # REPLACES that page: trade_pages.py skips it, vercel.json 301s the old URL, and country_href() points links
 # at the profile. Countries without a profile keep their /trade/country page.
 _S = json.loads((_root / 'data/stats.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(_S); _sf.fix_country_names(_C, _S)
 OLD_COUNTRY = {}        # '/trade/country/<slug>' -> '/trade-partner/<slug>'
 LONG_HIST = {}          # iso -> [[imp, exp] per year in LONG_YEARS], summed over every spelling of the country
 LONG_YEARS = _S.get('history', {}).get('years', [])

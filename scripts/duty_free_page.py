@@ -14,6 +14,7 @@ import family
 
 T = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 ST = json.loads((root / 'data/stats.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(ST)
 FY = ST.get('fy', '')
 CH = T.get('chapters', {})
 c8 = lambda s: re.sub(r'\D', '', str(s))

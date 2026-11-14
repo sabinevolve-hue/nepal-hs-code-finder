@@ -10,6 +10,7 @@ from pagekit import esc, money, pub, root
 import links
 
 CO = json.loads((root / 'world/data/country.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_country_names(CO)
 FY, YEARS = CO['fy'], CO.get('hist_years') or []
 D = {}
 for iso in links.TOP_PARTNERS:

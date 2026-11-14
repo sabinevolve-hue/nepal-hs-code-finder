@@ -19,6 +19,7 @@ pub = root / 'public'
 (pub / 'trade-partner').mkdir(parents=True, exist_ok=True)
 
 CO = json.loads((root / 'world/data/country.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_country_names(CO)
 TAR = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 
 SITE = 'https://www.customsnepal.com'

@@ -29,6 +29,7 @@ pub = root / 'public'
 
 TARIFF = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 STATS = json.loads((root / 'data/stats.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(STATS)
 ROWS = TARIFF['rows']
 STRS = TARIFF.get('strs', [])
 CH = TARIFF.get('chapters', {})

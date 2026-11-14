@@ -15,6 +15,7 @@ import links, viz
 import viz_story as story
 
 S = json.loads((root / 'data/stats.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(S)
 TAR = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 FY, HY = S['fy'], S['history']['years']
 TOT_IMP, TOT_EXP = S['history']['totals'][-1][0], S['history']['totals'][-1][1]
