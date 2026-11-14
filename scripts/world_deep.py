@@ -175,7 +175,7 @@ class Views:
                            f'<a href="https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37" target="_blank" rel="noopener">About BACI ↗</a></p>', str(Y))
         peers = self.peers(c)
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade in {Y}</h1><p>{rk}</p></div>'
-                         + lead + tiles + sec_x + sec_m + sec_bal + sec_xk + sec_mk + sec_lead + sec_dep + sec_hist + long_trend + sec_pairs + sec_all + peers + src)
+                         + lead + tiles + (self.nepal_official() if iso == 'NPL' else '') + sec_x + sec_m + sec_bal + sec_xk + sec_mk + sec_lead + sec_dep + sec_hist + long_trend + sec_pairs + sec_all + peers + src)
 
     def peers(self, c):
         known = self.h['CBYISO']
@@ -247,8 +247,33 @@ class Views:
                     f'<a class="nepalcard" href="/trade/{b.lower()}"><span class="fl">{fb}</span><span><b>{B}: full trade profile</b> {h["ic"]("right")}</span></a></div>')
         src = h['src_box']('Source', f'<p><b>BACI</b> (CEPII), reconciled from what both countries reported to <b>UN Comtrade</b>, 6-digit HS, current US dollars. '
                            f'BACI gives one agreed figure for each flow, so it can differ from either country&#39;s own national statistics.</p>', str(Y))
-        return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{fa} {A} – {fb} {B} trade, {Y}</h1></div>'
-                         + lead + tiles + scale + ctx + sec_ab + sec_ba + sec_hist + profiles + others + src)
+        npl = self.nepal_official(b if a == 'NPL' else a) if 'NPL' in (a, b) else ''
+        return h['main'](h['back']('/trade/pairs', 'Country pairs') + f'<div class="ph"><h1 class="h2">{fa} {A} – {fb} {B} trade, {Y}</h1></div>'
+                         + lead + tiles + scale + ctx + npl + sec_ab + sec_ba + sec_hist + profiles + others + src)
+
+    def pairs_index(self):
+        h = self.h; e = h['esc']; keys = sorted(self.pair_keys(), key=lambda k: -(self.P[k]['ab'] + self.P[k]['ba']))
+        rows = []
+        for k in keys:
+            a, b = k.split('-'); p = self.P[k]
+            rows.append((f'<a href="/trade/{a.lower()}/{b.lower()}">{self.flag(a)} {e(self.name(a))} – {self.flag(b)} {e(self.name(b))}</a>',
+                         self.usd(p['ab'] + p['ba']), self.usd(p['ab']), self.usd(p['ba'])))
+        src = h['src_box']('Source', '<p><b>BACI</b> (CEPII), reconciled from UN Comtrade, current US dollars.</p>', str(self.Y))
+        return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">Country pairs: bilateral trade in {self.Y}</h1>'
+                         f'<p>{len(keys)} pairs among the SAARC economies, China and the world&#39;s largest exporters, largest first. Each page shows what each side sells the other.</p></div>'
+                         + self.table(['Pair', 'Total trade', 'First to second', 'Second to first'], rows)
+                         + '<a class="nepalcard" href="/trade/region/south-asia" style="margin-top:var(--s5)"><span class="fl">\U0001F30F</span><span><b>South Asia hub</b>: the SAARC who-sells-to-whom table ' + h['ic']('right') + '</span></a>' + src)
+
+    def nepal_official(self, other=None):
+        """On pages about Nepal: point to customsnepal.com for the official rupee, fiscal-year figures.
+        Keeps the two sites apart: this one is US dollars by calendar year, that one is Department of Customs data."""
+        href = 'https://www.customsnepal.com/trade-partners'; label = 'Nepal&#39;s trade by country'
+        if other:
+            m = self.h['main_partner'](self.name(other))
+            if m:
+                href, label = 'https://www.customsnepal.com' + m, 'Nepal–' + self.h['esc'](self.name(other)) + ' trade'
+        return (f'<a class="nepalcard" href="{href}"><span class="fl">\U0001F1F3\U0001F1F5</span><span><b>{label} in official figures</b>: Department of Customs data in rupees, '
+                f'by fiscal year and 8-digit code, with duty, on customsnepal.com {self.h["ic"]("right")}</span></a>')
 
     # ---------- South Asia hub
     def region_title(self):
@@ -324,4 +349,36 @@ h2.h{font-size:1.15rem;margin:var(--s6) 0 var(--s3)}
 .pscale{margin-top:var(--s4)}.pscale .pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;margin-bottom:10px;font-size:.9rem}
 .pscale .pr div{grid-column:1/-1;height:18px;border-radius:5px;background:var(--bg);overflow:hidden}.pscale .pr i{display:block;height:100%;border-radius:5px}
 @media(max-width:600px){.dt{font-size:.82rem}.dt td:first-child{min-width:150px}}
+'''
+
+
+# Shell restyle so the world site matches customsnepal.com: shared menu and footer components, display headings, cover hero.
+SHELL_CSS = '''
+:root{--fg2:var(--fg-2);--navy:var(--hero1);--mono:var(--f-mono);--f:var(--f-body)}
+.wrap,.bar .wrap{max-width:1060px}.nav.topnav{margin-left:auto;overflow:visible}
+footer.sf .sf-logo .mark{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--accent);color:#fff;font-size:.9rem;font-weight:800}
+h1,h1.h2,h2.h,.whero h1,.wcv-t,.wdoor b,.statrow .s b,.ph h1{font-family:"Bricolage Grotesque",var(--f-body);letter-spacing:-.02em}
+h1.h2{font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.1;font-weight:800}
+.whero{background:#0B2A66;background-image:radial-gradient(1200px 420px at 85% -10%,#17409a 0,transparent 60%);color:#fff}
+.whero .wrap{max-width:1060px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:36px;align-items:center;padding-top:40px;padding-bottom:40px}
+.whero h1{font-weight:800;font-size:clamp(2rem,4.6vw,3.2rem);line-height:1.03;margin:0 0 .35em;text-wrap:balance;color:#fff}
+.whero p{color:#dbe5fb;font-size:1.08rem;line-height:1.5;margin:0 0 1em;max-width:52ch}.whero .wh-s{font-size:.9rem;color:#b9c8ea;margin:14px 0 0}.whero .wh-s b{color:#fff}
+.wsearch{display:flex;gap:8px;background:#fff;border-radius:14px;padding:6px;max-width:520px}
+.wsearch input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:1rem;padding:10px 12px;color:#0f172a;outline:none}
+.wsearch button{border:0;border-radius:10px;background:#DC143C;color:#fff;font:inherit;font-weight:700;padding:0 18px;cursor:pointer}
+.wsearch:focus-within{outline:3px solid #9FD8FF}
+.wcv{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:18px 18px 14px}
+.wcv-t{display:block;font-size:1rem;margin-bottom:10px}
+.wcv-r{display:grid;grid-template-columns:9.5em minmax(0,1fr) auto;gap:10px;align-items:center;padding:4px 0;color:#fff;font-size:.86rem;text-decoration:none}
+.wcv-r span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wcv-r i{display:block;height:12px;border-radius:4px;background:#FF4D6D;justify-self:start}
+.wcv-r:nth-child(2) i{background:#fff}.wcv-r b{font-variant-numeric:tabular-nums;font-weight:650}.wcv-r:hover span{text-decoration:underline}
+.whero .wcv-c{margin:10px 0 0;font-size:.76rem;color:#b9c8ea}
+.wdoors{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:var(--s5)}
+.wdoor{display:flex;flex-direction:column;gap:3px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;color:var(--fg);text-decoration:none;transition:transform .15s,border-color .15s}
+.wdoor:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}.wd-i{font-size:1.5rem;line-height:1}
+.wdoor b{font-size:1.2rem}.wdoor span{color:var(--fg-2);font-size:.9rem}.wdoor small{color:var(--muted);font-size:.8rem;margin-top:4px}
+@media(max-width:820px){.whero .wrap{grid-template-columns:minmax(0,1fr);gap:22px;padding-top:26px;padding-bottom:28px}}
+@media(max-width:720px){body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}.wcv-r{grid-template-columns:7.5em minmax(0,1fr) auto}}
+table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:14px}
+@media(prefers-reduced-motion:reduce){.wdoor{transition:none}}
 '''

@@ -8,6 +8,16 @@
       "permanent": true
     },
     {
+      "source": "/nepal/exports/guide/cardamom",
+      "destination": "https://www.customsnepal.com/export/cardamom",
+      "permanent": true
+    },
+    {
+      "source": "/nepal/exports/guide/carpets",
+      "destination": "https://www.customsnepal.com/export/carpets",
+      "permanent": true
+    },
+    {
       "source": "/trade/chn/afg",
       "destination": "/trade/afg/chn",
       "permanent": true

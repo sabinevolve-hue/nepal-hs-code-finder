@@ -564,9 +564,10 @@ for iso in order:
     # related
     out.append('<h2 class="sec">Other trade partners</h2>')
     out.append(other_partners(iso))
-    out.append('<p class="fineprint">Bilateral figures: Department of Customs, Nepal — FTS FY %s. '
-               'Global context on the <a href="/world/trade/%s">%s world trade profile</a>.</p>'
-               % (FY, iso.lower(), esc(name)))
+    _wp = (root / 'world' / 'trade' / (iso.lower() + '.html')).exists()
+    out.append('<p class="fineprint">Bilateral figures: Department of Customs, Nepal — FTS FY %s.%s</p>'
+               % (FY, (' Global context on the <a href="https://world.customsnepal.com/trade/%s">%s world trade profile</a>.'
+                       % (iso.lower(), esc(name))) if _wp else ''))
     out.append('</div>' + FOOT)
     (pub / 'trade-partner' / (slug + '.html')).write_text(''.join(out), encoding='utf-8')
     made += 1
