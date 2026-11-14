@@ -89,6 +89,8 @@
     {"source": "/hs/:path*", "destination": "https://world.customsnepal.com/hs/:path*", "permanent": true},
     {"source": "/nepal", "destination": "https://world.customsnepal.com/nepal", "permanent": true},
     {"source": "/nepal/:path*", "destination": "https://world.customsnepal.com/nepal/:path*", "permanent": true},
+    {"source": "/trade/category", "destination": "/trade/categories", "permanent": true},
+    {"source": "/trade/country", "destination": "/trade/countries", "permanent": true},
     {"source": "/trade", "destination": "https://world.customsnepal.com/trade", "permanent": true},
     {"source": "/trade/product/:slug", "destination": "https://world.customsnepal.com/trade/product/:slug", "permanent": true},
     {"source": "/trade/:iso([A-Za-z]{3})", "destination": "https://world.customsnepal.com/trade/:iso", "permanent": true},
