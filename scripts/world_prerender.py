@@ -324,6 +324,10 @@ def nepal_prod(code):
             f'{"; ".join(parts)}. <a href="{MAIN}/?q={code}" target="_blank" rel="noopener">Nepal duty &amp; taxes ↗</a></div></div>')
 
 def prod_block(code):
+    if DV and DV.has_product(code):
+        p0 = PROD.get(code) or {}
+        price = (f'<p class="fine">World average value: <b>${p0["u"]} per kg</b>, an average across grades and countries.</p>' if p0.get('u') else '')
+        return DV.product_world(code) + price + src_box('Source', '<p><b>BACI</b> (CEPII), bilateral trade at 6-digit HS, reconciled from <b>UN Comtrade</b>. Current US dollars.</p>', str(DV.Y))
     p = PROD.get(code)
     if not p or not p.get('x'): return nepal_prod(code)
     mk = lambda a: [[iso, *iso_meta(iso), v * 1e6] for iso, v in a]
@@ -661,7 +665,7 @@ def init_deep():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
                                    ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP)))
 
-STATIC_PARTS = {'countries', 'pairs', 'regions', 'exports-by-product'}      # pages that ship without the SPA script
+STATIC_PARTS = {'countries', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/'}
 
 # ---------------------------------------------------------------- route table
@@ -831,11 +835,12 @@ GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWW
 
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''
+    gtag = GTAG if js_href else GTAG.replace('{send_page_view:false}', '{}')      # static pages have no app script: let gtag send the page view
     return (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f'<!--seo-->\n{seo_head}\n<!--/seo-->\n<meta name="robots" content="{robots}">\n<meta name="theme-color" content="#0C2530">\n'
             f'<link rel="icon" href="/favicon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">\n'
             f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&display=swap">\n'
-            f'<link rel="stylesheet" href="{css_href}">\n{GTAG}\n{js}\n</head>\n<body>\n{header(k)}\n<div id="app"><!--app-->{app_html}<!--/app--></div>\n{site_footer()}\n</body>\n</html>\n')
+            f'<link rel="stylesheet" href="{css_href}">\n{gtag}\n{js}\n</head>\n<body>\n{header(k)}\n<div id="app"><!--app-->{app_html}<!--/app--></div>\n{site_footer()}\n</body>\n</html>\n')
 
 def seo_head(p, title, desc, page_type, extra_ld, lastmod):
     u = url(p); cr = crumbs_for(p)

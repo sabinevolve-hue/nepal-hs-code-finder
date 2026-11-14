@@ -9,6 +9,7 @@ import json, pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PRODC_FILE = ROOT / 'data' / 'world' / 'prodc.json'
+PRODW_FILE = ROOT / 'data' / 'world' / 'prodw.json'
 DEEP_FILE = ROOT / 'data' / 'world' / 'deep.json'
 
 
@@ -34,6 +35,7 @@ class Views:
         pc = json.loads(PRODC_FILE.read_text(encoding='utf-8')) if PRODC_FILE.exists() else {'products': {}, 'wtop': {}}
         self.PC = {k: v for k, v in pc['products'].items() if k.split('-')[0] in known and h['has_code'](k.split('-')[1])}
         self.WTOP = pc['wtop']
+        self.PW = json.loads(PRODW_FILE.read_text(encoding='utf-8'))['products'] if PRODW_FILE.exists() else {}
         self._pc_keys = sorted(self.PC); self._pc_set = set(self.PC); self._pc_by_country = {}
         for k in sorted(self.PC, key=lambda k: -self.PC[k]['v']):
             self._pc_by_country.setdefault(k.split('-')[0], []).append(k.split('-')[1])
@@ -103,9 +105,9 @@ class Views:
             tip = f'{self.name(p)}: {self.usd(v)}, {s:.1f}% of {verb}'
             u = f'<use href="/assets/worldmap.svg#{p}" class="m{cls}"><title>{e(tip)}</title></use>'
             out.append(f'<a href="/trade/{p.lower()}">{u}</a>' if p in self.h['CBYISO'] else u)
-        if iso in shapes:
+        if iso and iso in shapes:
             out.append(f'<use href="/assets/worldmap.svg#{iso}" class="me"><title>{e(self.name(iso))}</title></use>')
-        return f'<svg viewBox="0 60 960 400" role="img" aria-label="World map shaded by share of {e(self.name(iso))}&#39;s {verb}">{"".join(out)}</svg>'
+        return f'<svg viewBox="0 60 960 400" role="img" aria-label="World map shaded by share of {e(self.name(iso)) + "&#39;s " if iso else ""}{verb}">{"".join(out)}</svg>'
 
     def map_block(self, iso, d):
         nm = self.h['esc'](self.name(iso)); k = iso.lower()
@@ -115,6 +117,49 @@ class Views:
                 f'<div class="gtabs" role="group" aria-label="Map shows"><label for="gmx-{k}">Export markets</label><label for="gmm-{k}">Import suppliers</label></div>'
                 f'<div class="gm gmx">{self._map(iso, d["xp"], d["x"], "exports")}</div><div class="gm gmm">{self._map(iso, d["mp"], d["m"], "imports")}</div>'
                 f'{legend}<p class="fine">Shade shows each partner&#39;s share of {nm}&#39;s exports or imports. Hover or tap a country for the figure; every partner is in the table further down.</p></div>')
+
+    def map_tabs(self, key, tabs, me_label, note):
+        """tabs: [(label, svg)]. One map shows plainly; two get CSS-only tabs."""
+        legend = ('<div class="mlg">' + (f'<span><i class="me"></i>{me_label}</span>' if me_label else '') + ''.join(f'<span><i class="m{c}"></i>{lab}</span>' for _, c, lab in self.MAP_BINS)
+                  + '<span><i class="m0"></i>Under 0.1% or none</span></div>')
+        if len(tabs) == 1:
+            return f'<div class="gmap"><div class="gm" style="display:block">{tabs[0][1]}</div>{legend}<p class="fine">{note}</p></div>'
+        return (f'<div class="gmap"><input type="radio" name="gm-{key}" id="gmx-{key}" checked><input type="radio" name="gm-{key}" id="gmm-{key}">'
+                f'<div class="gtabs" role="group" aria-label="Map shows"><label for="gmx-{key}">{tabs[0][0]}</label><label for="gmm-{key}">{tabs[1][0]}</label></div>'
+                f'<div class="gm gmx">{tabs[0][1]}</div><div class="gm gmm">{tabs[1][1]}</div>{legend}<p class="fine">{note}</p></div>')
+
+    def year_cols(self, hist, la, lb):
+        """Grouped columns, one group per year, both series on one scale. hist: {year: [a, b]}."""
+        ys = sorted(hist.items())
+        mx = max([max(v) for _, v in ys] + [1])
+        if len(ys) < 2:
+            return ''
+        g = ''.join(f'<div class="yc"><div class="ycb"><i class="x" style="height:{max(1.5, 100.0 * v[0] / mx):.1f}%" title="{la}: {self.usd(v[0])}"><b>{self.usd(v[0])}</b></i>'
+                    f'<i class="m" style="height:{max(1.5, 100.0 * v[1] / mx):.1f}%" title="{lb}: {self.usd(v[1])}"><b>{self.usd(v[1])}</b></i></div><span>{y}</span></div>' for y, v in ys)
+        return (f'<div class="ycs">{g}</div><div class="dvk"><span><i class="pos"></i>{la}</span><span><i class="neg"></i>{lb}</span></div>')
+
+    # ---------- every product: who exports and imports it (HS code pages)
+    def has_product(self, code):
+        return code in self.PW and bool(self.PW[code]['x'])
+
+    def product_world(self, code):
+        h = self.h; e = h['esc']; p = self.PW[code]; w = p['w']; Y = self.Y
+        mx = self._map(None, p['x'], w, 'world exports'); mm = self._map(None, p['m'], w, 'world imports')
+        def rows(lst, link):
+            out = []
+            for c, v in lst[:10]:
+                href = self.pc_href(c, code) if link else None
+                lab = self.clink(c) + (f' <a class="pl" href="{href}">buyers</a>' if href else '')
+                out.append((lab, v, f'{self.usd(v)} <small>{self.share(v, w)}</small>'))
+            return out
+        top = p['x'][0] if p['x'] else None; topm = p['m'][0] if p['m'] else None
+        lead = (f'<p class="ans">World trade in this product was <b>{self.usd(w)}</b> in {Y}, exported by {p["nx"]} economies and imported by {p["nm"]}.'
+                + (f' The largest exporter was {self.clink(top[0])} ({self.share(top[1], w)})' if top else '')
+                + (f' and the largest importer was {self.clink(topm[0])} ({self.share(topm[1], w)}).' if topm else '.') + '</p>')
+        return (f'<section class="gsec"><h2>Who trades this product</h2>{lead}'
+                + self.map_tabs('p' + code, [('Exporters', mx), ('Importers', mm)], '', 'Shade shows each economy&#39;s share of world exports or imports of this product. Hover or tap for the figure.')
+                + f'<h3>Top {min(10, len(p["x"]))} exporters</h3>' + self.barlist(rows(p['x'], True), 'var(--exp)')
+                + (f'<h3>Top {min(10, len(p["m"]))} importers</h3>' + self.barlist(rows(p['m'], False), 'var(--imp)') if p['m'] else '') + '</section>')
 
     @staticmethod
     def _squarify(vals, x, y, w, h):
@@ -362,11 +407,16 @@ class Views:
             top3 = sum(v for _, v in lst[:3])
             return (self.table(['Product', 'Value', 'Share'], rows)
                     + f'<p class="fine">{who} sold {n:,} different products to {to}. The top three make up {self.share(top3, total, 0)} of the total.</p>')
-        sec_ab = f'<h2 class="h">What {A} sells to {B}</h2>' + prods(p['abk'], ab, p['nab'], A, B)
-        sec_ba = f'<h2 class="h">What {B} sells to {A}</h2>' + prods(p['bak'], ba, p['nba'], B, A)
+        tm_ab = self.treemap(p.get('abc') or [], ab, 'exp', self.name(a), f'exports to {self.name(b)}') if ab else ''
+        tm_ba = self.treemap(p.get('bac') or [], ba, 'imp', self.name(b), f'exports to {self.name(a)}') if ba else ''
+        sec_ab = (f'<section class="gsec"><h2>What {A} sells to {B}</h2>' + ('<h3>By product group</h3>' + tm_ab if tm_ab else '')
+                  + '<h3>Top products</h3>' + prods(p['abk'], ab, p['nab'], A, B) + '</section>')
+        sec_ba = (f'<section class="gsec"><h2>What {B} sells to {A}</h2>' + ('<h3>By product group</h3>' + tm_ba if tm_ba else '')
+                  + '<h3>Top products</h3>' + prods(p['bak'], ba, p['nba'], B, A) + '</section>')
         hist = p.get('hist') or {}
         hrows = [(y, self.usd(v[0]), self.usd(v[1]), self.usd(v[0] + v[1])) for y, v in sorted(hist.items(), reverse=True)]
-        sec_hist = '<h2 class="h">Recent years</h2>' + self.table(['Year', f'{A} → {B}', f'{B} → {A}', 'Total'], hrows)
+        sec_hist = (f'<section class="gsec"><h2>The last three years</h2>' + self.year_cols(hist, f'{A} → {B}', f'{B} → {A}')
+                    + self.table(['Year', f'{A} → {B}', f'{B} → {A}', 'Total'], hrows) + '</section>')
         more = lambda x, other: ''.join(f'<a href="{self.pair_href(x, q)}">{self.flag(x)} {e(self.name(x))} – {self.flag(q)} {e(self.name(q))}</a>'
                                         for q in [q for q in self.pairs_of.get(x, []) if q != other][:10])
         others = (f'<h2 class="h">More pairs</h2><div class="pairgrid">{more(a, b)}{more(b, a)}</div>')
@@ -457,22 +507,22 @@ class Views:
         for j, x in b:
             ph = self.pair_href(iso, j)
             brow.append((self.clink(j) + (f' <a class="pl" href="{ph}">pair</a>' if ph else ''), x, f'{self.usd(x)} <small>{self.share(x, v)}</small>'))
-        sec_b = (f'<h2 class="h">Who buys it: top {len(brow)} markets</h2>' + self.barlist(brow, 'var(--exp)')
-                 + f'<p class="fine">{nm} sold this product to {p["nb"]} countries. The top three took {self.share(top3, v, 0)}.</p>') if brow else ''
+        brow = brow[:15]
+        bmap = self.map_tabs('b', [('Buyers', self._map(iso, b, v, 'these exports'))], nm, f'Shade shows each buyer&#39;s share of {nm}&#39;s exports of this product.') if b else ''
+        sec_b = (f'<section class="gsec"><h2>Who buys it</h2>' + bmap + f'<h3>Top {len(brow)} markets</h3>' + self.barlist(brow, 'var(--exp)')
+                 + f'<p class="fine">{nm} sold this product to {p["nb"]} countries. The top three took {self.share(top3, v, 0)}.</p></section>') if brow else ''
         wt = self.WTOP.get(code) or []
         wrows = []
         for i, (c, x) in enumerate(wt, 1):
             href = self.pc_href(c, code)
-            lab = self.clink(c) if not href else f'<a href="{href}">{self.flag(c)} {e(self.name(c))}</a>'
-            if c == iso:
-                lab = f'<b>{self.flag(c)} {e(self.name(c))}</b>'
-            wrows.append((lab, self.usd(x), self.share(x, p['w']), f'<span class="rk{i}">#{i}</span>' if i <= 3 else f'#{i}'))
+            lab = f'<b>{self.flag(c)} {e(self.name(c))}</b>' if c == iso else (self.clink(c) if not href else f'<a href="{href}">{self.flag(c)} {e(self.name(c))}</a>')
+            wrows.append((f'<small class="rkn">#{i}</small> ' + lab, x, f'{self.usd(x)} <small>{self.share(x, p["w"])}</small>'))
         if iso not in [c for c, _ in wt]:
-            wrows.append((f'<b>{fl} {nm}</b>', self.usd(v), f'{p["s"]:.1f}%', f'#{p["r"]}'))
-        sec_w = (f'<h2 class="h">The largest exporters of this product</h2>' + self.table(['Exporter', 'Exports', 'World share', 'Rank'], wrows)) if wrows else ''
+            wrows.append((f'<small class="rkn">#{p["r"]}</small> <b>{fl} {nm}</b>', v, f'{self.usd(v)} <small>{p["s"]:.1f}%</small>'))
+        sec_w = (f'<section class="gsec"><h2>The largest exporters of this product</h2>' + self.barlist(wrows, 'var(--exp)') + '</section>') if wrows else ''
         hist = dict(p.get('hist') or {}); hist[str(Y)] = v
         hrows = [(y, self.usd(x) if x else '—') for y, x in sorted(hist.items(), reverse=True)]
-        sec_h = '<h2 class="h">Recent years</h2>' + self.table(['Year', f'{nm} exports'], hrows)
+        sec_h = '<section class="gsec"><h2>The last three years</h2>' + self.table(['Year', f'{nm} exports'], hrows) + '</section>'
         others = [k for k in self._pc_by_country.get(iso, []) if k != code]
         sec_o = (f'<h2 class="h">Other leading exports of {nm}</h2><div class="pairgrid">'
                  + ''.join(f'<a href="{self.pc_href(iso, k)}">{e(self.pc_short(k, 44))} <small>{self.usd(self.PC[iso + "-" + k]["v"])}</small></a>' for k in others) + '</div>') if others else ''
@@ -574,7 +624,7 @@ footer.sf .sf-logo .mark svg{width:28px;height:28px}
 footer.sf .sf-track button{background:#0E8583}footer.sf a:hover{color:#8FE3DD}
 h1,h1.h2,h2.h,.statrow .s b,.ph h1,.wcol h2,.wstrip h2{font-family:var(--f-head);letter-spacing:-.015em}
 h1.h2{font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.1;font-weight:800}
-table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:14px}
+a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:14px}
 
 .whero{background:var(--bg);border-bottom:1px solid var(--border)}
 .whero .wrap{padding-top:clamp(36px,7vw,84px);padding-bottom:clamp(28px,5vw,56px)}
@@ -649,6 +699,12 @@ table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:
 .dvk{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:.78rem;color:var(--fg-2)}.dvk span{display:inline-flex;gap:6px;align-items:center}
 .dvk i{width:14px;height:10px;border-radius:3px}.dvk i.pos{background:var(--exp)}.dvk i.neg{background:var(--imp)}
 .gsec{margin-top:var(--s6);padding-top:var(--s4);border-top:2px solid var(--fg)}.gsec>h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin:0 0 4px;letter-spacing:-.015em}
+.ycs{display:flex;gap:18px;align-items:flex-end;height:190px;margin:26px 0 6px;max-width:560px}
+.yc{flex:1;display:flex;flex-direction:column;height:100%;min-width:0}.ycb{flex:1;display:flex;gap:2px;align-items:flex-end;border-bottom:1px solid var(--border)}
+.ycb i{flex:1;position:relative;border-radius:4px 4px 0 0;min-width:0}.ycb i.x{background:var(--exp)}.ycb i.m{background:var(--imp)}
+.ycb i b{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);font-style:normal;font-size:.72rem;font-weight:650;color:var(--fg);white-space:nowrap;padding-bottom:2px}
+.yc>span{text-align:center;font-size:.82rem;color:var(--fg-2);padding-top:5px}.rkn{color:var(--muted);font-variant-numeric:tabular-nums}
+.gsec>p.ans{margin-top:6px}
 .gsec>p.gk{color:var(--fg-2);margin:0 0 10px;max-width:68ch}.gsec h3{font-size:1rem;margin:22px 0 4px}
 @media(max-width:700px){.tm{aspect-ratio:4/5}.tc.md b{font-size:.68rem;overflow-wrap:anywhere}.tc.lg b{overflow-wrap:anywhere}.tc span{padding:5px 6px}.dvr{grid-template-columns:minmax(0,7em) minmax(0,1fr) 4.6em}.glr{grid-template-columns:4.2em minmax(0,1fr) 4.6em}}
 @media(max-width:820px){.wcols{grid-template-columns:minmax(0,1fr);gap:22px}.wcol>p{min-height:0}.ws{height:64px}.ws-s,.ws-s.sm{padding:0}.ws-s b,.ws-s i,.ws-s span{display:none}.wsl{display:block}}
