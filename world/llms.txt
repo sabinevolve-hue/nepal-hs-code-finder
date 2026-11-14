@@ -15,7 +15,9 @@
 - [HS chapter example — Chapter 09, coffee, tea, mate and spices](https://world.customsnepal.com/hs/chapter/09): Every six-digit code in a chapter, grouped by heading. URL pattern: /hs/chapter/NN (01–97).
 - [HS code example — 0908.31 cardamom](https://world.customsnepal.com/hs/code/090831): One six-digit code with world trade, top exporters/importers and world price. URL pattern: /hs/code/NNNNNN.
 - [Global trade](https://world.customsnepal.com/trade): World merchandise trade, rankings of exporters and importers, regional shares and product groups.
-- [Country profile example — India](https://world.customsnepal.com/trade/ind): Exports, imports, trade balance, trend, partners and products for one economy. URL pattern: /trade/<ISO3 lowercase>.
+- [Country profile example — India](https://world.customsnepal.com/trade/ind): Exports, imports and balance for 2024, every trading partner, top 25 export and import products with the main buyer or supplier, world rank by product, single-supplier imports. Source BACI (CEPII). URL pattern: /trade/<ISO3 lowercase>.
+- [Country pair example — India–Nepal](https://world.customsnepal.com/trade/ind/npl): What each country sells the other, both directions, top 20 products each way, three years. URL pattern: /trade/<ISO3>/<ISO3> in alphabetical order. Built for pairs among the SAARC economies, China and the 15 largest exporters.
+- [South Asia hub](https://world.customsnepal.com/trade/region/south-asia): The eight SAARC economies, intra-regional trade matrix and every pair.
 - [Country profile — China](https://world.customsnepal.com/trade/chn): China trade profile.
 - [Country profile — United States](https://world.customsnepal.com/trade/usa): United States trade profile.
 - [Trade by product group — machinery & electronics](https://world.customsnepal.com/trade/product/machinery-and-electronics): Top exporters and importers for an HS product group (16 groups).

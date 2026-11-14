@@ -8,6 +8,881 @@
       "permanent": true
     },
     {
+      "source": "/trade/chn/afg",
+      "destination": "/trade/afg/chn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu/afg",
+      "destination": "/trade/afg/deu",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/afg",
+      "destination": "/trade/afg/fra",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/afg",
+      "destination": "/trade/afg/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/afg",
+      "destination": "/trade/afg/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/afg",
+      "destination": "/trade/afg/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/afg",
+      "destination": "/trade/afg/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/afg",
+      "destination": "/trade/afg/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/afg",
+      "destination": "/trade/afg/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/afg",
+      "destination": "/trade/afg/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/can/bgd",
+      "destination": "/trade/bgd/can",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chn/bgd",
+      "destination": "/trade/bgd/chn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu/bgd",
+      "destination": "/trade/bgd/deu",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/bgd",
+      "destination": "/trade/bgd/fra",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/bgd",
+      "destination": "/trade/bgd/gbr",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/bgd",
+      "destination": "/trade/bgd/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/bgd",
+      "destination": "/trade/bgd/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/bgd",
+      "destination": "/trade/bgd/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/bgd",
+      "destination": "/trade/bgd/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/bgd",
+      "destination": "/trade/bgd/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/bgd",
+      "destination": "/trade/bgd/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/bgd",
+      "destination": "/trade/bgd/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/bgd",
+      "destination": "/trade/bgd/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/bgd",
+      "destination": "/trade/bgd/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/bgd",
+      "destination": "/trade/bgd/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chn/btn",
+      "destination": "/trade/btn/chn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/btn",
+      "destination": "/trade/btn/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/btn",
+      "destination": "/trade/btn/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chn/can",
+      "destination": "/trade/can/chn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu/can",
+      "destination": "/trade/can/deu",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/can",
+      "destination": "/trade/can/fra",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/can",
+      "destination": "/trade/can/gbr",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/can",
+      "destination": "/trade/can/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/can",
+      "destination": "/trade/can/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/can",
+      "destination": "/trade/can/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/can",
+      "destination": "/trade/can/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/can",
+      "destination": "/trade/can/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/can",
+      "destination": "/trade/can/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/can",
+      "destination": "/trade/can/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/can",
+      "destination": "/trade/can/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/can",
+      "destination": "/trade/can/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/can",
+      "destination": "/trade/can/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/can",
+      "destination": "/trade/can/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/can",
+      "destination": "/trade/can/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/can",
+      "destination": "/trade/can/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu/chn",
+      "destination": "/trade/chn/deu",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/chn",
+      "destination": "/trade/chn/fra",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/chn",
+      "destination": "/trade/chn/gbr",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/chn",
+      "destination": "/trade/chn/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/chn",
+      "destination": "/trade/chn/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/chn",
+      "destination": "/trade/chn/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/chn",
+      "destination": "/trade/chn/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/chn",
+      "destination": "/trade/chn/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/chn",
+      "destination": "/trade/chn/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/chn",
+      "destination": "/trade/chn/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/chn",
+      "destination": "/trade/chn/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/chn",
+      "destination": "/trade/chn/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/chn",
+      "destination": "/trade/chn/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/chn",
+      "destination": "/trade/chn/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/chn",
+      "destination": "/trade/chn/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/chn",
+      "destination": "/trade/chn/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/deu",
+      "destination": "/trade/deu/fra",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/deu",
+      "destination": "/trade/deu/gbr",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/deu",
+      "destination": "/trade/deu/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/deu",
+      "destination": "/trade/deu/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/deu",
+      "destination": "/trade/deu/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/deu",
+      "destination": "/trade/deu/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/deu",
+      "destination": "/trade/deu/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/deu",
+      "destination": "/trade/deu/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/deu",
+      "destination": "/trade/deu/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/deu",
+      "destination": "/trade/deu/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/deu",
+      "destination": "/trade/deu/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/deu",
+      "destination": "/trade/deu/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/deu",
+      "destination": "/trade/deu/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/deu",
+      "destination": "/trade/deu/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/deu",
+      "destination": "/trade/deu/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/fra",
+      "destination": "/trade/fra/gbr",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/fra",
+      "destination": "/trade/fra/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/fra",
+      "destination": "/trade/fra/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/fra",
+      "destination": "/trade/fra/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/fra",
+      "destination": "/trade/fra/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/fra",
+      "destination": "/trade/fra/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/fra",
+      "destination": "/trade/fra/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/fra",
+      "destination": "/trade/fra/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/fra",
+      "destination": "/trade/fra/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/fra",
+      "destination": "/trade/fra/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/fra",
+      "destination": "/trade/fra/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/fra",
+      "destination": "/trade/fra/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/fra",
+      "destination": "/trade/fra/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/fra",
+      "destination": "/trade/fra/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/gbr",
+      "destination": "/trade/gbr/ind",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/gbr",
+      "destination": "/trade/gbr/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/gbr",
+      "destination": "/trade/gbr/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/gbr",
+      "destination": "/trade/gbr/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/gbr",
+      "destination": "/trade/gbr/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/gbr",
+      "destination": "/trade/gbr/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/gbr",
+      "destination": "/trade/gbr/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/gbr",
+      "destination": "/trade/gbr/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/gbr",
+      "destination": "/trade/gbr/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/gbr",
+      "destination": "/trade/gbr/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/gbr",
+      "destination": "/trade/gbr/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/gbr",
+      "destination": "/trade/gbr/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/gbr",
+      "destination": "/trade/gbr/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/ind",
+      "destination": "/trade/ind/ita",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/ind",
+      "destination": "/trade/ind/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/ind",
+      "destination": "/trade/ind/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/ind",
+      "destination": "/trade/ind/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/ind",
+      "destination": "/trade/ind/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/ind",
+      "destination": "/trade/ind/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/ind",
+      "destination": "/trade/ind/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/ind",
+      "destination": "/trade/ind/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/ind",
+      "destination": "/trade/ind/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/ind",
+      "destination": "/trade/ind/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/ind",
+      "destination": "/trade/ind/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/ind",
+      "destination": "/trade/ind/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/ita",
+      "destination": "/trade/ita/jpn",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/ita",
+      "destination": "/trade/ita/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/ita",
+      "destination": "/trade/ita/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/ita",
+      "destination": "/trade/ita/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/ita",
+      "destination": "/trade/ita/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/ita",
+      "destination": "/trade/ita/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/ita",
+      "destination": "/trade/ita/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/ita",
+      "destination": "/trade/ita/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/ita",
+      "destination": "/trade/ita/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/ita",
+      "destination": "/trade/ita/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/ita",
+      "destination": "/trade/ita/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/jpn",
+      "destination": "/trade/jpn/kor",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/jpn",
+      "destination": "/trade/jpn/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/jpn",
+      "destination": "/trade/jpn/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/jpn",
+      "destination": "/trade/jpn/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/jpn",
+      "destination": "/trade/jpn/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/jpn",
+      "destination": "/trade/jpn/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/jpn",
+      "destination": "/trade/jpn/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/jpn",
+      "destination": "/trade/jpn/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/jpn",
+      "destination": "/trade/jpn/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/jpn",
+      "destination": "/trade/jpn/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/kor",
+      "destination": "/trade/kor/lka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/kor",
+      "destination": "/trade/kor/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/kor",
+      "destination": "/trade/kor/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/kor",
+      "destination": "/trade/kor/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/kor",
+      "destination": "/trade/kor/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/kor",
+      "destination": "/trade/kor/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/kor",
+      "destination": "/trade/kor/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/kor",
+      "destination": "/trade/kor/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/kor",
+      "destination": "/trade/kor/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/lka",
+      "destination": "/trade/lka/mdv",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/lka",
+      "destination": "/trade/lka/mex",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/lka",
+      "destination": "/trade/lka/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/lka",
+      "destination": "/trade/lka/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/lka",
+      "destination": "/trade/lka/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/lka",
+      "destination": "/trade/lka/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/lka",
+      "destination": "/trade/lka/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/mdv",
+      "destination": "/trade/mdv/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/mdv",
+      "destination": "/trade/mdv/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/mdv",
+      "destination": "/trade/mdv/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/mdv",
+      "destination": "/trade/mdv/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/mdv",
+      "destination": "/trade/mdv/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/mex",
+      "destination": "/trade/mex/mys",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/mex",
+      "destination": "/trade/mex/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/mex",
+      "destination": "/trade/mex/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/mex",
+      "destination": "/trade/mex/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/mex",
+      "destination": "/trade/mex/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/mys",
+      "destination": "/trade/mys/nld",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/mys",
+      "destination": "/trade/mys/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/mys",
+      "destination": "/trade/mys/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/mys",
+      "destination": "/trade/mys/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/mys",
+      "destination": "/trade/mys/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/nld",
+      "destination": "/trade/nld/npl",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/nld",
+      "destination": "/trade/nld/pak",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/nld",
+      "destination": "/trade/nld/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/nld",
+      "destination": "/trade/nld/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/npl",
+      "destination": "/trade/npl/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/pak",
+      "destination": "/trade/pak/usa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/pak",
+      "destination": "/trade/pak/vnm",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/usa",
+      "destination": "/trade/usa/vnm",
+      "permanent": true
+    },
+    {
       "source": "/index",
       "destination": "/",
       "permanent": true
