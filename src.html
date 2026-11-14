@@ -383,15 +383,16 @@ button.fl-card:hover{border-color:var(--accent)}.fl-card .fl-chip{font-size:1rem
 .fl-tools{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:2px;background:var(--card);margin:0 0 8px}
 .fl-tools button{font-size:.82rem;padding:5px 12px;border-radius:999px;color:var(--fg2)}.fl-tools button.on{background:var(--primary);color:var(--on-primary);font-weight:650}
 .fl-tb{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.fl-h,.fl-r{display:grid;grid-template-columns:minmax(0,1fr) 4.4em 4.4em;column-gap:8px;align-items:center;padding:8px 12px}
+.fl-h,.fl-r{display:grid;grid-template-columns:minmax(0,1fr) 5.2em 5.2em;column-gap:8px;align-items:center;padding:8px 12px}
 .fl-h{font-size:.72rem;font-weight:650;color:var(--muted)}.fl-h span:nth-child(n+2){text-align:right}
-.fl-r{width:100%;text-align:left;border-top:1px solid var(--border);font-size:.88rem;background:none;row-gap:2px}
+.fl-r{width:100%;text-align:left;border-top:1px solid var(--border);font-size:.88rem;background:none;row-gap:2px;align-items:start}
 .fl-r:hover{background:var(--bg)}.fl-r.cur{background:var(--accent-bg);box-shadow:inset 3px 0 0 var(--accent)}
 .fl-r .c{font-family:var(--mono,ui-monospace,monospace);font-size:.82rem;color:var(--accent)}.fl-r.cur .c{color:var(--fg)}
 .fl-r .n{text-align:right}.fl-r .d{grid-column:1/-1;min-width:0}
 .fl-r .d b{font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
 .fl-r .d small{color:var(--muted);font-size:.78rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
 .fl-b{font-style:normal;font-family:var(--f,inherit);font-size:.68rem;font-weight:700;border-radius:999px;padding:1px 7px;margin-left:6px;background:var(--accent);color:#fff}
+.fl-all{display:block;font-size:.68rem;color:var(--muted);margin-top:2px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .fl-chip{display:inline-block;min-width:3.3em;text-align:center;font-weight:700;font-size:.82rem;border-radius:7px;padding:2px 6px}
 .fl-chip.fr{background:rgba(21,128,61,.15);color:#15803D}.fl-chip.lo{background:rgba(3,105,161,.14);color:#0369A1}.fl-chip.md{background:rgba(194,124,14,.18);color:#A15C07}.fl-chip.hi{background:rgba(185,28,28,.14);color:#B91C1C}.fl-chip.sp{background:rgba(100,116,139,.16);color:#475569}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .fl-chip.fr{color:#4ADE80}:root:not([data-theme="light"]) .fl-chip.lo{color:#38BDF8}:root:not([data-theme="light"]) .fl-chip.md{color:#FBBF24}:root:not([data-theme="light"]) .fl-chip.hi{color:#F87171}:root:not([data-theme="light"]) .fl-chip.sp{color:#94A3B8}}
@@ -1305,6 +1306,8 @@ function familyHTML(r){
   const key = x => { const n = num(rateOf(x)); return isNaN(n) ? 'spec' : String(n); };
   const tone = v => { const n = num(v); return isNaN(n) ? 'sp' : n === 0 ? 'fr' : n <= 10 ? 'lo' : n <= 20 ? 'md' : 'hi'; };
   const chip = v => `<span class="fl-chip ${tone(v)}">${esc(pct(v))}</span>`;
+  // overall border tax (customs + excise + VAT + fees) from the official integrated tariff: index 3 = other countries, 0 = India
+  const all = (x, k) => { const T = (INT[x.code] || {}).t; return T && T[k] != null ? `<small class="fl-all">${T[k]}% total</small>` : ''; };
   const fix = s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s;
   const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), hi = Math.max(...vals), mine = num(rateOf(r));
   // 1. staircase: one step per duty rate, this line's step marked; a step filters the table
@@ -1319,7 +1322,7 @@ function familyHTML(r){
   let list = famOrd === 'd' ? sib.map((x, i) => [x, i]).sort((a, b) => N(a[0]) - N(b[0]) || a[1] - b[1]).map(a => a[0]) : sib;
   if (famStep !== null) list = list.filter(x => key(x) === famStep);
   const rows = list.map(x => { const me = x.code === r.code, pth = [...x.path, x.d].map(fix), k = pth.length > 2 && pth[pth.length - 1].length < 28 ? 2 : 1;
-    return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="c">${x.code}${me ? '<em class="fl-b">This line</em>' : ''}</span><span class="n">${chip(x.g)}</span><span class="n">${chip(x.s)}</span><span class="d"><b>${esc(pth.slice(-k).join(' › '))}</b>${pth.length > k ? `<small>${esc(pth.slice(0, -k).join(' › '))}</small>` : ''}</span></button>`; }).join('');
+    return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="c">${x.code}${me ? '<em class="fl-b">This line</em>' : ''}</span><span class="n">${chip(x.g)}${all(x, 3)}</span><span class="n">${chip(x.s)}${all(x, 0)}</span><span class="d"><b>${esc(pth.slice(-k).join(' › '))}</b>${pth.length > k ? `<small>${esc(pth.slice(0, -k).join(' › '))}</small>` : ''}</span></button>`; }).join('');
   h += `<div class="fl-tools" role="group" aria-label="Order"><button data-famord="d" class="${famOrd === 'd' ? 'on' : ''}">Lowest duty first</button><button data-famord="o" class="${famOrd === 'o' ? 'on' : ''}">Tariff order</button></div>
     <div class="fl-tb"><div class="fl-h"><span>HS code and what the goods must be</span><span>General</span><span>SAARC</span></div>${rows}</div>`;
   // 3. closest cheaper lines, each with its condition
@@ -1329,6 +1332,7 @@ function familyHTML(r){
   if (cards.length) h += `<h3 class="h" style="margin-top:14px">Closest lines with lower duty, and the condition for each</h3><div class="fl-cards">${cards.join('')}</div>`;
   const notes = [];
   if (!isNaN(mine) && mine === lo && ks.length > 1) notes.push('This line already has the lowest duty in its family.');
+  notes.push('The chip is customs duty. “Total” under it is everything charged at the border (customs duty, excise, VAT and other fees) as a share of CIF value, for goods from other countries and from India.');
   notes.push('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. When unsure, ask the Department of Customs for an advance ruling.');
   return h + `<p class="fine" style="margin:8px 0 0">${notes.join(' ')}</p>`;
 }

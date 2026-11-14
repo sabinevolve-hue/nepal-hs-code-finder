@@ -248,6 +248,8 @@ function familyHTML(r){
   const key = x => { const n = num(rateOf(x)); return isNaN(n) ? 'spec' : String(n); };
   const tone = v => { const n = num(v); return isNaN(n) ? 'sp' : n === 0 ? 'fr' : n <= 10 ? 'lo' : n <= 20 ? 'md' : 'hi'; };
   const chip = v => `<span class="fl-chip ${tone(v)}">${esc(pct(v))}</span>`;
+  // overall border tax (customs + excise + VAT + fees) from the official integrated tariff: index 3 = other countries, 0 = India
+  const all = (x, k) => { const T = (INT[x.code] || {}).t; return T && T[k] != null ? `<small class="fl-all">${T[k]}% total</small>` : ''; };
   const fix = s => /^others?$/i.test(s.trim()) ? 'Other (none of the above)' : s;
   const vals = sib.map(x => num(rateOf(x))).filter(v => !isNaN(v)), lo = Math.min(...vals), hi = Math.max(...vals), mine = num(rateOf(r));
   // 1. staircase: one step per duty rate, this line's step marked; a step filters the table
@@ -262,7 +264,7 @@ function familyHTML(r){
   let list = famOrd === 'd' ? sib.map((x, i) => [x, i]).sort((a, b) => N(a[0]) - N(b[0]) || a[1] - b[1]).map(a => a[0]) : sib;
   if (famStep !== null) list = list.filter(x => key(x) === famStep);
   const rows = list.map(x => { const me = x.code === r.code, pth = [...x.path, x.d].map(fix), k = pth.length > 2 && pth[pth.length - 1].length < 28 ? 2 : 1;
-    return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="c">${x.code}${me ? '<em class="fl-b">This line</em>' : ''}</span><span class="n">${chip(x.g)}</span><span class="n">${chip(x.s)}</span><span class="d"><b>${esc(pth.slice(-k).join(' › '))}</b>${pth.length > k ? `<small>${esc(pth.slice(0, -k).join(' › '))}</small>` : ''}</span></button>`; }).join('');
+    return `<button class="fl-r${me ? ' cur' : ''}" data-code="${x.code}"${me ? ' aria-current="true"' : ''}><span class="c">${x.code}${me ? '<em class="fl-b">This line</em>' : ''}</span><span class="n">${chip(x.g)}${all(x, 3)}</span><span class="n">${chip(x.s)}${all(x, 0)}</span><span class="d"><b>${esc(pth.slice(-k).join(' › '))}</b>${pth.length > k ? `<small>${esc(pth.slice(0, -k).join(' › '))}</small>` : ''}</span></button>`; }).join('');
   h += `<div class="fl-tools" role="group" aria-label="Order"><button data-famord="d" class="${famOrd === 'd' ? 'on' : ''}">Lowest duty first</button><button data-famord="o" class="${famOrd === 'o' ? 'on' : ''}">Tariff order</button></div>
     <div class="fl-tb"><div class="fl-h"><span>HS code and what the goods must be</span><span>General</span><span>SAARC</span></div>${rows}</div>`;
   // 3. closest cheaper lines, each with its condition
@@ -272,6 +274,7 @@ function familyHTML(r){
   if (cards.length) h += `<h3 class="h" style="margin-top:14px">Closest lines with lower duty, and the condition for each</h3><div class="fl-cards">${cards.join('')}</div>`;
   const notes = [];
   if (!isNaN(mine) && mine === lo && ks.length > 1) notes.push('This line already has the lowest duty in its family.');
+  notes.push('The chip is customs duty. “Total” under it is everything charged at the border (customs duty, excise, VAT and other fees) as a share of CIF value, for goods from other countries and from India.');
   notes.push('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. When unsure, ask the Department of Customs for an advance ruling.');
   return h + `<p class="fine" style="margin:8px 0 0">${notes.join(' ')}</p>`;
 }

@@ -18,6 +18,18 @@ _T = json.loads((root / 'data' / 'tariff.json').read_text(encoding='utf-8'))
 _S = _T.get('strs', [])
 HEADS = _T.get('heads', {})
 FREE = {'free', 'nil', 'exempt'}
+# official integrated tariff: t = total border tax % of CIF by origin [India, other SAARC, Tibet, other countries]
+try:
+    _INT = json.loads((root / 'data' / 'integrated.json').read_text(encoding='utf-8'))
+except Exception:
+    _INT = {}
+
+
+def total_tax(dotted, k):
+    """Overall border tax (customs + excise + VAT + fees) as % of CIF. k: 3 = other countries, 0 = India."""
+    tt = (_INT.get(dotted) or {}).get('t')
+    return tt[k] if tt and len(tt) > k and tt[k] is not None else None
+
 
 by_heading = {}
 for _r in _T['rows']:
@@ -86,6 +98,10 @@ def render(dotted, href):
         n, d = rate(x)
         return '<span class="fam-chip t-%s">%s</span>' % (tone(n), esc(d))
 
+    def allt(code, k):
+        v = total_tax(code, k)
+        return '<small class="fam-all">%g%% total</small>' % v if v is not None else ''
+
     def key(r):                       # filter key shared by a step and its rows
         n, d = rate(r[5])
         return ('%g' % n) if n is not None else 'spec'
@@ -136,7 +152,7 @@ def render(dotted, href):
         hide = ' fam-x' if (len(fam) > LIMIT + 2 and pos >= LIMIT and not is_me) else ''
         rows.append('<tr class="%s%s" data-o="%d" data-d="%d" data-r="%s"><td class="fam-c">%s%s</td><td class="fam-d"><span>%s</span></td>'
                     '<td class="fam-n">%s</td><td class="fam-n">%s</td></tr>'
-                    % ('is-me' if is_me else '', hide, i, pos, key(r), code_html, tag, words, chip(r[5]), chip(r[4])))
+                    % ('is-me' if is_me else '', hide, i, pos, key(r), code_html, tag, words, chip(r[5]) + allt(r[0], 3), chip(r[4]) + allt(r[0], 0)))
     hidden = sum(1 for x in rows if ' fam-x"' in x)
     out.append('<div class="fam-tools" role="group" aria-label="Order"><button type="button" class="on" data-ford="d">Lowest duty first</button>'
                '<button type="button" data-ford="o">Tariff order</button></div>'
@@ -167,7 +183,8 @@ def render(dotted, href):
                          % (esc(href(r[0])), tone(n), esc(d), esc(my_d), esc(r[0]), esc(' › '.join(deciding(r, mine)))))
     if cards:
         out.append('<h3 class="fam-h3">Closest lines with lower duty, and the condition for each</h3><div class="fam-cards">%s</div>' % ''.join(cards))
-    notes = []
+    notes = ['The chip is customs duty. &ldquo;Total&rdquo; under it is everything charged at the border (customs duty, excise, VAT and other fees) '
+             'as a share of CIF value, for goods from other countries and from India.']
     if my_g is not None and lo is not None and my_g == lo and len(order) > 1:
         notes.append('Your line already has the lowest general duty in its family.')
     notes.append('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. '
@@ -209,6 +226,7 @@ CSS = """
 .famt tr.is-me td{background:var(--accent-bg)}.famt tr.is-me td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .fam-b{display:block;width:max-content;font-family:var(--f);font-size:.68rem;font-weight:700;border-radius:999px;padding:1px 7px;margin-top:3px}
 .fam-b.me{background:var(--accent);color:#fff}
+.fam-all{display:block;font-size:.7rem;color:var(--muted);margin-top:2px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .fam-chip{display:inline-block;min-width:3.4em;text-align:center;font-weight:700;font-size:.84rem;border-radius:7px;padding:2px 7px}
 .fam-chip.t-free{background:var(--free-bg);color:var(--free)}.fam-chip.t-low{background:var(--low-bg);color:var(--low)}
 .fam-chip.t-mid{background:var(--mid-bg);color:var(--mid)}.fam-chip.t-hi{background:var(--hi-bg);color:var(--hi)}.fam-chip.t-spec{background:var(--spec-bg);color:var(--spec)}
@@ -237,7 +255,7 @@ CSS = """
 @media(max-width:600px){.famt{font-size:.85rem}.famt th,.famt td{padding:7px 8px}
 .famt thead th:nth-child(2){display:none}.famt thead th:first-child{}
 .famt tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:6px}
-.famt thead tr{grid-template-columns:minmax(0,1fr) 4.6em 4.6em}.famt tbody tr{grid-template-columns:minmax(0,1fr) 4.6em 4.6em;border-top:1px solid var(--border)}
+.famt thead tr{grid-template-columns:minmax(0,1fr) 5.4em 5.4em}.famt tbody tr{grid-template-columns:minmax(0,1fr) 5.4em 5.4em;border-top:1px solid var(--border)}
 .famt tbody tr:first-child{border-top:0}.famt td{border-top:0;width:auto!important}
 .famt .fam-c{grid-column:1;grid-row:1;padding-bottom:0;white-space:normal}.famt .fam-b{display:inline-block;margin:0 0 0 6px}
 .famt .fam-d{grid-column:1/-1;grid-row:2;padding-top:2px;max-width:none;min-width:0}.famt .fam-n{grid-row:1;text-align:right}.famt th:nth-child(n+3){text-align:right}}
