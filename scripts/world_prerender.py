@@ -129,7 +129,7 @@ def ic(k):
 
 # ---------------------------------------------------------------- titles (mirror PT in world-src/app.js)
 class T:
-    home = staticmethod(lambda: 'World Trade Data by Country, Pair and HS Code')
+    home = staticmethod(lambda: 'World Trade Data: Exports and Imports by Country and Product')
     hs = staticmethod(lambda: f'World HS Code Finder — Search {len(SUBS):,} HS 2022 Codes')
     chapter = staticmethod(lambda ch, name: f'HS Chapter {ch}: {clip(name, 60)} — HS Codes List')
     trade = staticmethod(lambda: f'Global Trade Data — World Rankings & {len(COUNTRIES)} Country Profiles')
@@ -212,39 +212,77 @@ def main(inner):
 
 # ---------------------------------------------------------------- views
 def v_home():
+    """Global home: one search for countries, products and codes, then the world at a glance. No country is singled out."""
     yr = DV.Y if DV else WORLD['year']
-    # cover: the ten largest exporters, bars to scale
-    if DV:
-        top = sorted(((c, DV.C[c]['x']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])[:10]
-        mx = top[0][1]
-        cover = ('<div class="wcv"><b class="wcv-t">The ten largest exporters, ' + str(yr) + '</b>' + ''.join(
-            f'<a class="wcv-r" href="/trade/{c.lower()}"><span>{CBYISO[c]["flag"]} {esc(CBYISO[c]["name"])}</span><i style="width:{max(3.0, 100.0 * v / mx):.1f}%"></i><b>{money(v * 1000.0)}</b></a>'
-            for c, v in top) + '<p class="wcv-c">Bars drawn to scale. Source: BACI (CEPII).</p></div>')
-        world_total = money(DV.D['world'] * 1000.0)
-        pairs = sorted(DV.pair_keys(), key=lambda k: -(DV.P[k]['ab'] + DV.P[k]['ba']))[:14]
-        pair_chips = '<div class="pairgrid">' + ''.join(
-            f'<a href="/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}">{DV.flag(k.split("-")[0])} {esc(DV.name(k.split("-")[0]))} – {DV.flag(k.split("-")[1])} {esc(DV.name(k.split("-")[1]))} '
-            f'<small>{money((DV.P[k]["ab"] + DV.P[k]["ba"]) * 1000.0)}</small></a>' for k in pairs) + f'<a href="/trade/pairs"><b>All {len(DV.pair_keys())} pairs</b></a></div>'
-    else:
-        cover, world_total, pair_chips = '', money(WORLD['totalExp']), ''
-    topc = sorted([c for c in COUNTRIES if c.get('exp')], key=lambda c: -(c['exp'] + (c.get('imp') or 0)))[:18]
-    chips = '<div class="pairgrid">' + ''.join(f'<a href="/trade/{c["iso"].lower()}">{c["flag"]} {esc(c["name"])}</a>' for c in topc) + f'<a href="/trade"><b>All {len(COUNTRIES)} economies</b></a></div>'
-    door_cards = ''.join(
-        f'<a class="wdoor" href="{items[0][0]}"><span class="wd-i" aria-hidden="true">{icon}</span><b>{label}</b><span>{esc(hint)}</span><small>{esc(items[0][2])}</small></a>'
-        for key, label, icon, hint, items in doors() if items)
-    hero = (f'<section class="whero"><div class="wrap"><div><h1>World trade, country by country</h1>'
-            f'<p>Who sells what to whom: {len(COUNTRIES)} economies, {len(SUBS):,} products and the trade between them, from reconciled UN data for {yr}.</p>'
-            '<form class="wsearch" action="/hs" method="get" role="search"><input name="q" type="search" placeholder="Search a product or HS code: coffee, 8517" aria-label="Search HS codes" autocomplete="off"><button type="submit">Search</button></form>'
-            f'<p class="wh-s"><b>{world_total}</b> of goods crossed a border in {yr}.</p></div>{cover}</div></section>')
-    body = (f'<div class="wdoors">{door_cards}</div>'
-            '<h2 class="h">Trade profiles</h2><p class="fine" style="margin:0 0 10px">Every partner, the top products and where each economy leads the world.</p>' + chips
-            + (('<h2 class="h">Country pairs</h2><p class="fine" style="margin:0 0 10px">What each country sells the other, both directions.</p>' + pair_chips) if pair_chips else '')
-            + '<h2 class="h">Trade by product group</h2>' + pgroup_grid().replace(' data-nav', '')
-            + '<a class="nepalcard" href="/trade/region/south-asia" style="margin-top:var(--s5)"><span class="fl">\U0001F30F</span><span><b>South Asia</b>: the eight SAARC economies and what they trade with each other ' + ic("right") + '</span></a>'
-            + f'<a class="nepalcard" href="{MAIN}/"><span class="fl">\U0001F1F3\U0001F1F5</span><span><b>Importing into Nepal?</b> Nepal&#39;s own tariff, duty and landed cost are on customsnepal.com ' + ic("right") + '</span></a>'
+    e = esc
+    if not DV:
+        return main('<div class="ph"><h1 class="h2">World trade data</h1></div>' + pgroup_grid().replace(' data-nav', ''))
+    world = DV.D['world']
+    exps = sorted(((c, DV.C[c]['x']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
+    imps = sorted(((c, DV.C[c]['m']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
+    tot = sorted(((c, DV.C[c]['x'] + DV.C[c]['m']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
+    # signature: the world's exports as one strip, each segment drawn to its share
+    seg = exps[:12]; rest = world - sum(v for _, v in seg)
+    strip = ''.join(
+        f'<a class="ws-s{" sm" if v / world < 0.035 else ""}" href="/trade/{c.lower()}" style=""flex-grow:{v / world * 1000:.0f}" title="{e(CBYISO[c]["name"])}: {money(v * 1000.0)}, {100.0 * v / world:.1f}% of world exports">'
+        f'<span>{CBYISO[c]["flag"]}</span><b>{e(CBYISO[c]["name"])}</b><i>{100.0 * v / world:.1f}%</i></a>' for c, v in seg)
+    strip += f'<a class="ws-s ws-r" href="/trade" style="flex-grow:{rest / world * 1000:.0f}"><b>{len(COUNTRIES) - len(seg)} other economies</b><i>{100.0 * rest / world:.0f}%</i></a>'
+    legend = ''.join(f'<li><a href="/trade/{c.lower()}">{CBYISO[c]["flag"]} {e(CBYISO[c]["name"])}</a><span>{money(v * 1000.0)}</span><i>{100.0 * v / world:.1f}%</i></li>' for c, v in seg)
+
+    def col(title, sub, rows, more_href, more):
+        return (f'<section class="wcol"><h2>{title}</h2><p>{sub}</p><ol>'
+                + ''.join(f'<li><a href="{h}">{lab}</a><span>{val}</span></li>' for h, lab, val in rows)
+                + f'</ol><a class="wmore" href="{more_href}">{more}</a></section>')
+    pk = sorted(DV.pair_keys(), key=lambda k: -(DV.P[k]['ab'] + DV.P[k]['ba']))[:7]
+    prod_w = {}
+    for key, p in DV.PC.items():
+        prod_w[key.split('-')[1]] = p['w']
+    topk = sorted(prod_w.items(), key=lambda kv: -kv[1])[:7]
+    cols = (col('Countries', f'A trade profile for each of {len(COUNTRIES)} economies. Largest by exports plus imports.',
+                [(f'/trade/{c.lower()}', f'{CBYISO[c]["flag"]} {e(CBYISO[c]["name"])}', money(v * 1000.0)) for c, v in tot[:7]], '/trade', f'All {len(COUNTRIES)} economies')
+            + col('Country pairs', 'What two countries sell each other, product by product, both directions.',
+                  [(f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', f'{e(DV.name(k.split("-")[0]))} – {e(DV.name(k.split("-")[1]))}', money((DV.P[k]['ab'] + DV.P[k]['ba']) * 1000.0)) for k in pk],
+                  '/trade/pairs', f'All {len(DV.pair_keys()):,} pairs')
+            + col('Products', f'{len(SUBS):,} six-digit HS codes, each with its exporters and importers.',
+                  [(code_href(k), e(DV.pc_short(k, 30)) + f' <small class="hsc">{fmt_code(k)}</small>', money(w * 1000.0)) for k, w in topk], '/hs', 'Search all HS codes'))
+    # who leads what: the largest export of each of several economies where it ranks first in the world
+    seen, leaders = set(), []
+    for key in sorted((k for k, p in DV.PC.items() if p['r'] == 1), key=lambda k: -DV.PC[k]['v']):
+        c, k = key.split('-')
+        if c in seen or k in {x[1] for x in leaders}:
+            continue
+        seen.add(c); leaders.append((c, k))
+        if len(leaders) == 12:
+            break
+    lead = ''.join(f'<a class="wlead" href="/trade/{c.lower()}/exports/{k}"><span>{CBYISO[c]["flag"]}</span><b>{e(CBYISO[c]["name"])}</b>'
+                   f'<em>{e(DV.pc_short(k, 40))}</em><i>{DV.PC[c + "-" + k]["s"]:.0f}% of world exports</i></a>' for c, k in leaders)
+    idx = json.dumps([[c['name'], c['iso'].lower()] for c in sorted(COUNTRIES, key=lambda c: -((c.get('exp') or 0) + (c.get('imp') or 0)))], ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
+    hero = (f'<section class="whero"><div class="wrap"><h1>Who sells what to whom</h1>'
+            f'<p>Trade figures for {len(COUNTRIES)} economies and {len(SUBS):,} products, {yr}. Search a country, a product or an HS code.</p>'
+            '<form class="wsearch" id="wsearch" action="/hs" method="get" role="search" autocomplete="off">'
+            '<input id="wq" name="q" type="search" placeholder="Vietnam, coffee, 8517…" aria-label="Search a country, product or HS code" aria-controls="wsug" autocomplete="off">'
+            '<button type="submit">Search</button><div class="wsug" id="wsug" role="listbox" hidden></div></form>'
+            '<p class="wtry">Try <a href="/trade/chn">China</a><a href="/trade/deu/usa">Germany – United States</a><a href="/trade/bra/exports/090111">Brazil coffee exports</a><a href="/hs/code/851713">Smartphones, HS 8517.13</a></p>'
+            '</div></section>')
+    js = ('<script>(function(){var C=' + idx + ',q=document.getElementById("wq"),s=document.getElementById("wsug"),f=document.getElementById("wsearch");'
+          'function esc(t){return t.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]})}'
+          'function match(v){v=v.trim().toLowerCase();if(v.length<2||/^\\d/.test(v))return[];var a=[],b=[];C.forEach(function(c){var n=c[0].toLowerCase();if(n.indexOf(v)===0)a.push(c);else if(n.indexOf(v)>0)b.push(c)});return a.concat(b).slice(0,6)}'
+          'function draw(){var v=q.value,m=match(v);if(!v.trim()){s.hidden=true;return}'
+          's.innerHTML=m.map(function(c){return\'<a role="option" href="/trade/\'+c[1]+\'"><b>\'+esc(c[0])+\'</b><small>Trade profile</small></a>\'}).join("")'
+          '+\'<a role="option" href="/hs?q=\'+encodeURIComponent(v.trim())+\'"><b>\'+esc(v.trim())+\'</b><small>Search products and HS codes</small></a>\';s.hidden=false}'
+          'q.addEventListener("input",draw);q.addEventListener("focus",draw);'
+          'document.addEventListener("click",function(e){if(!f.contains(e.target))s.hidden=true});'
+          'q.addEventListener("keydown",function(e){if(e.key==="Escape")s.hidden=true});'
+          'f.addEventListener("submit",function(e){var v=q.value.trim().toLowerCase(),m=match(v);if(m.length&&m[0][0].toLowerCase()===v){e.preventDefault();location.href="/trade/"+m[0][1]}});})();</script>')
+    body = (f'<section class="wstrip"><h2>{money(world * 1000.0)} of goods crossed a border in {yr}. This is who exported them.</h2>'
+            f'<div class="ws" role="img" aria-label="Share of world exports by economy">{strip}</div><ol class="wsl">{legend}</ol>'
+            f'<p class="fine">Each segment is drawn to its share of world exports. The largest importer was {DV.clink(imps[0][0])} ({money(imps[0][1] * 1000.0)}), then {DV.clink(imps[1][0])} and {DV.clink(imps[2][0])}.</p></section>'
+            f'<div class="wcols">{cols}</div>'
+            f'<section><h2 class="h">Where one country leads the world</h2><p class="fine" style="margin:0 0 12px">The largest export in which each of these economies ranks first.</p><div class="wleads">{lead}</div></section>'
+            '<section><h2 class="h">Trade by product group</h2>' + pgroup_grid().replace(' data-nav', '') + '</section>'
             + src_box('Sources', '<p>Bilateral and product trade from <b>BACI</b> (CEPII), which reconciles what exporters and importers reported to <b>UN Comtrade</b>. '
-                      'HS nomenclature from the <b>World Customs Organization</b>. Long-run totals from the <b>World Bank</b>.</p>', str(yr)))
-    return hero + main(body)
+                      'HS nomenclature from the <b>World Customs Organization</b>. Long-run totals from the <b>World Bank</b>. Current US dollars.</p>', str(yr)))
+    return hero + main(body) + js
 
 
 def v_hs():
@@ -355,7 +393,7 @@ def v_trade():
     offs = sorted([(k, CBYISO[k]) for k in OFFICIAL if k != 'NPL' and k in CBYISO], key=lambda x: -(x[1].get('exp') or 0))[:12]
     osrc = ''.join(f'<a class="osrc-i" href="{OFFICIAL[k][1]}" target="_blank" rel="noopener">{c["flag"]} <span>{esc(OFFICIAL[k][0])}</span>{ic("right")}</a>' for k, c in offs)
     osrc += f'<a class="osrc-i" href="{EUROSTAT[1]}" target="_blank" rel="noopener">🇪🇺 <span>{esc(EUROSTAT[0])}</span>{ic("right")}</a>'
-    ncard = card('/nepal', np_['flag'], '<b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product') if np_ else ''
+    ncard = ''
     if DV:
         ncard += f'<a class="nepalcard" href="/trade/region/south-asia"><span class="fl">🌏</span><span><b>South Asia</b> — the eight SAARC economies and what they trade with each other {ic("right")}</span></a>'
     return main(f'''<div class="ph"><h1 class="h2">Global trade</h1><p>World merchandise trade reached <b>{money(WORLD["totalExp"])}</b> in {WORLD["year"]}, across {WORLD["count"]} economies. Explore the rankings below, or open any country.</p></div>
@@ -593,7 +631,7 @@ def url(p):
 
 ORG = {'@type': 'Organization', '@id': B + '/#org', 'name': 'Customs Nepal', 'url': 'https://www.customsnepal.com/',
        'logo': 'https://www.customsnepal.com/icon-512.png', 'sameAs': ['https://www.customsnepal.com/']}
-WEBSITE = {'@type': 'WebSite', '@id': B + '/#website', 'url': B + '/', 'name': 'Customs Nepal — World HS & Trade',
+WEBSITE = {'@type': 'WebSite', '@id': B + '/#website', 'url': B + '/', 'name': 'World Trade Data', 'alternateName': 'World Trade Data by Customs Nepal',
            'description': 'International HS codes and global trade data.', 'inLanguage': 'en', 'publisher': {'@id': B + '/#org'},
            'potentialAction': {'@type': 'SearchAction', 'target': {'@type': 'EntryPoint', 'urlTemplate': B + '/hs?q={search_term_string}'},
                                'query-input': 'required name=search_term_string'}}
@@ -687,7 +725,7 @@ def routes():
                [dataset('South Asia (SAARC) merchandise trade ' + str(DV.Y), d, {'@type': 'Place', 'name': 'South Asia'}, str(DV.Y),
                         'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', ['SAARC trade', 'South Asia trade', 'intra-regional trade'])], 'regions')
         d = f'{len(DV.pair_keys())} country pairs: what each country sells the other, both directions, with the top products each way ({DV.Y}).'
-        yield ('/trade/pairs', 'pairs', f'Bilateral Trade by Country Pair, {DV.Y}: {len(DV.pair_keys())} Pairs', d, DV.pairs_index(), 'CollectionPage', [], 'regions')
+        yield ('/trade/pairs', 'pairs', f'Bilateral Trade by Country Pair, {DV.Y}: {len(DV.pair_keys()):,} Pairs', d, DV.pairs_index(), 'CollectionPage', [], 'regions')
         for key in DV.pair_keys():
             a_, b_ = key.split('-'); d = DV.pair_desc(a_, b_)
             yield (f'/trade/{a_.lower()}/{b_.lower()}', 'pairs', DV.pair_title(a_, b_), d, DV.pair(a_, b_), 'WebPage',
@@ -722,36 +760,33 @@ def routes():
 def doors():
     pairs_n = len(DV.pair_keys()) if DV else 0
     return [
-        ('hs', 'Codes', '🔎', 'The international HS classification', [
-            ('/hs', 'HS code finder', f'Search {len(SUBS):,} six-digit codes'),
-            ('/hs/chapter/85', 'Electrical machinery', 'Chapter 85, the most-traded chapter'),
-            ('/hs/chapter/27', 'Fuels and oils', 'Chapter 27'),
-            ('/hs/chapter/87', 'Vehicles', 'Chapter 87')]),
         ('trade', 'Countries', '🌍', 'Every economy, one profile each', [
             ('/trade', 'World rankings', f'All {len(COUNTRIES)} economies'),
             ('/trade/chn', 'China', 'Largest exporter'), ('/trade/usa', 'United States', 'Largest importer'),
-            ('/trade/ind', 'India', 'Trade profile'), ('/trade/product/machinery-and-electronics', 'By product group', '16 groups of goods')]),
+            ('/trade/deu', 'Germany', 'Trade profile'), ('/trade/ind', 'India', 'Trade profile')]),
         ('pairs', 'Pairs', '🤝', 'What two countries sell each other', [
-            ('/trade/pairs', 'All country pairs', f'{pairs_n} pairs, both directions'),
-            ('/trade/region/south-asia', 'South Asia', 'The eight SAARC economies'),
-            ('/trade/chn/usa', 'China – United States', 'The largest pair'), ('/trade/chn/ind', 'China – India', 'Pair page')] if DV else []),
-        ('exports', 'Nepal', '🇳🇵', 'Nepal against the world', [
-            ('/nepal', 'Nepal in world trade', 'World prices against what Nepal pays'),
-            ('/nepal/exports', 'Nepal export explorer', 'Markets and products in US dollars'),
-            ('/trade/npl', 'Nepal trade profile', 'Partners and products'),
-            (MAIN + '/', 'Nepal duty and tariff ↗', 'customsnepal.com: HS codes, duty, landed cost')]),
+            ('/trade/pairs', 'All country pairs', f'{pairs_n:,} pairs, both directions'),
+            ('/trade/chn/usa', 'China – United States', 'The largest pair'), ('/trade/can/usa', 'Canada – United States', 'Pair page'),
+            ('/trade/deu/fra', 'Germany – France', 'Pair page'), ('/trade/region/south-asia', 'South Asia', 'Regional hub')] if DV else []),
+        ('hs', 'Products', '📦', 'HS codes and what is traded', [
+            ('/hs', 'HS code finder', f'Search {len(SUBS):,} six-digit codes'),
+            ('/trade/product/machinery-and-electronics', 'By product group', '16 groups of goods'),
+            ('/hs/chapter/85', 'Electrical machinery', 'Chapter 85, the most-traded chapter'),
+            ('/hs/chapter/27', 'Fuels and oils', 'Chapter 27'), ('/hs/chapter/87', 'Vehicles', 'Chapter 87')]),
     ]
+
+MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="#4CC9C2" stroke-width="2.4"/><path d="M3 16h26M16 3c-5.5 4-5.5 22 0 26M16 3c5.5 4 5.5 22 0 26" fill="none" stroke="#4CC9C2" stroke-width="1.8"/><circle cx="23.5" cy="9.5" r="3.4" fill="#E2572B"/></svg>'
 
 def header(k):
     import nav as _nav
     o = ['<div class="gn">']
     for key, label, icon, hint, items in doors():
         if not items: continue
-        o.append(f'<details class="gnm{" cur" if key == k else ""}" name="gn" data-k="{key}"><summary><span class="gni" aria-hidden="true">{icon}</span>{label}</summary>'
+        o.append(f'<details class="gnm{" cur" if key == ("trade" if k == "exports" else k) else ""}" name="gn" data-k="{key}"><summary><span class="gni" aria-hidden="true">{icon}</span>{label}</summary>'
                  f'<div class="gnp"><div class="gnh">{esc(hint)}</div>'
                  + ''.join(f'<a href="{h}"><b>{esc(l)}</b><small>{esc(d)}</small></a>' for h, l, d in items) + '</div></details>')
     o.append('</div>' + _nav._NAV_JS)
-    return (f'<header class="bar"><div class="wrap"><a class="logo" href="/"><span class="mk">HS</span><span>Customs Nepal<small>World HS &amp; Trade</small></span></a>'
+    return (f'<header class="bar"><div class="wrap"><a class="logo" href="/" aria-label="World Trade Data, home"><span class="mk">{MARK}</span><span>World Trade Data</span></a>'
             f'<nav class="nav topnav" aria-label="Main">{"".join(o)}</nav></div></header>')
 
 def site_footer():
@@ -759,7 +794,7 @@ def site_footer():
     yr = DV.Y if DV else WORLD['year']
     trust = [('🌐', f'{len(COUNTRIES)} economies', f'One trade profile each, on {yr} data'),
              ('📦', f'{len(SUBS):,} HS codes', f'{HS["edition"]}, each linked to who trades it'),
-             ('🤝', f'{len(DV.pair_keys()) if DV else 0} country pairs', 'What each side sells the other, product by product'),
+             ('🤝', f'{len(DV.pair_keys()) if DV else 0:,} country pairs', 'What each side sells the other, product by product'),
              ('🔓', 'Free and independent', 'No sign-in. Not affiliated with any government or the WCO')]
     cols = ''.join(f'<nav class="sf-col" aria-label="{label}"><h2>{label}</h2><ul>' + ''.join(f'<li><a href="{h}">{esc(l)}</a></li>' for h, l, d in items) + '</ul></nav>'
                    for key, label, icon, hint, items in doors() if items)
@@ -771,15 +806,15 @@ def site_footer():
         pop2 = ('<div><h2>Country pairs</h2><p>' + ''.join(f'<a href="/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}">{esc(DV.name(k.split("-")[0]))} – {esc(DV.name(k.split("-")[1]))}</a>' for k in ks)
                 + '<a class="sf-more" href="/trade/pairs">All pairs</a></p></div>')
     return ('<footer class="sf"><div class="sf-in"><div class="sf-trust">' + ''.join(f'<div><span aria-hidden="true">{i}</span><b>{esc(b)}</b><small>{esc(s)}</small></div>' for i, b, s in trust) + '</div>'
-            '<div class="sf-grid"><div class="sf-brand"><a class="sf-logo" href="/"><span class="mark">HS</span>Customs Nepal · World</a>'
-            '<p>International HS codes and the trade of every economy, read from reconciled UN data. The companion to customsnepal.com.</p>'
+            f'<div class="sf-grid"><div class="sf-brand"><a class="sf-logo" href="/"><span class="mark">{MARK}</span>World Trade Data</a>'
+            '<p>Who sells what to whom: the trade of every economy and every product, read from reconciled UN data.</p>'
             '<p><a href="mailto:info@customsnepal.com">info@customsnepal.com</a></p>'
             '<form class="sf-track" role="search" aria-label="Search HS codes" action="/hs" method="get"><input name="q" type="search" autocomplete="off" placeholder="Search a product or HS code" aria-label="Search HS codes"><button type="submit">Search</button></form></div>'
             + cols + '</div>'
             f'<div class="sf-pop"><div><h2>Trade profiles</h2><p>{pop1}</p></div>{pop2}</div>'
             '<div class="sf-src"><p>HS nomenclature © World Customs Organization. Bilateral and product trade: BACI (CEPII), reconciled from UN Comtrade. Long-run totals: World Bank. '
             'An independent reference, not affiliated with any government, the WCO or the UN.</p></div>'
-            '<div class="sf-bot">' + OTHER_SITES.replace('style="margin:0 0 6px"', 'class="other-sites"').replace(' style="color:var(--fg-2)"', '') + '</div></div></footer>')
+            '<div class="sf-bot"><p class="other-sites">World Trade Data is published by the team behind <a href="https://www.customsnepal.com/">customsnepal.com</a> and <a href="https://nepalpublicdata.com/">nepalpublicdata.com</a>.</p></div></div></footer>')
 
 # "Our other sites": the Nepal-data cluster siblings (AI-search / site-network spec) — plain followed links whose anchor is
 # the site's role + domain. Same wording as OTHER_SITES in scripts/nav.py (main site). No links to unrelated sites.
@@ -793,9 +828,9 @@ GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWW
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''
     return (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
-            f'<!--seo-->\n{seo_head}\n<!--/seo-->\n<meta name="robots" content="{robots}">\n<meta name="theme-color" content="#1B2A45">\n'
+            f'<!--seo-->\n{seo_head}\n<!--/seo-->\n<meta name="robots" content="{robots}">\n<meta name="theme-color" content="#0C2530">\n'
             f'<link rel="icon" href="/favicon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">\n'
-            f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap">\n'
+            f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&display=swap">\n'
             f'<link rel="stylesheet" href="{css_href}">\n{GTAG}\n{js}\n</head>\n<body>\n{header(k)}\n<div id="app"><!--app-->{app_html}<!--/app--></div>\n{site_footer()}\n</body>\n</html>\n')
 
 def seo_head(p, title, desc, page_type, extra_ld, lastmod):
@@ -805,10 +840,10 @@ def seo_head(p, title, desc, page_type, extra_ld, lastmod):
     page = {'@type': page_type, '@id': u + '#webpage', 'url': u, 'name': title, 'description': desc, 'inLanguage': 'en',
             'isPartOf': {'@id': B + '/#website'}, 'breadcrumb': {'@id': u + '#breadcrumb'}, 'dateModified': lastmod}
     ld = json.dumps({'@context': 'https://schema.org', '@graph': [page, bc] + extra_ld}, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
-    title, desc = textfit.fit_title(title, 65, brand=' — Customs Nepal'), textfit.fit_desc(desc, 160)
+    title, desc = textfit.fit_title(title, 65, brand=' — World Trade Data'), textfit.fit_desc(desc, 160)
     t, d = esc(title), esc(desc)
     return (f'<title>{t}</title>\n<meta name="description" content="{d}">\n<link rel="canonical" href="{u}">\n<meta name="cn-route" content="{p}">\n'
-            f'<meta property="og:site_name" content="Customs Nepal"><meta property="og:type" content="website"><meta property="og:url" content="{u}">'
+            f'<meta property="og:site_name" content="World Trade Data"><meta property="og:type" content="website"><meta property="og:url" content="{u}">'
             f'<meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:image" content="https://www.customsnepal.com/og.png">\n'
             f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.customsnepal.com/og.png">\n'
             f'<script type="application/ld+json">{ld}</script>')
@@ -849,8 +884,7 @@ def write_assets():
         names[ext] = '/assets/' + name
         for old in (W / 'assets').glob(f'world.*.{ext}'):
             if old.name != name: old.unlink()
-    (W / 'favicon.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#1B2A45"/>'
-                                   '<text x="16" y="21" font-family="monospace" font-size="13" font-weight="700" fill="white" text-anchor="middle">HS</text></svg>\n', encoding='utf-8')
+    (W / 'favicon.svg').write_text((SRC / 'favicon.svg').read_text(encoding='utf-8'), encoding='utf-8')
     return names
 
 def write_vercel_json():
