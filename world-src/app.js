@@ -26,6 +26,7 @@ function loadDuty(){ if(DUTYp)return DUTYp; DUTYp=fetch(BASE+'/data/nepduty.json
 function fmtUSD(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
 // Landed cost into Nepal on a $1,000 CIF shipment: SAARC/SAFTA origin vs general origin (customs duty + 13% VAT).
 function landedBlock(code){
+  return '';   // global site: no single country's duty on product pages
   if(DUTY===null){ loadDuty().then(()=>{ if(curHS===code) hsDetail(code,true); }); return ''; }
   const d=DUTY[code]; if(!d||d[0]==null) return '';
   const gen=d[0], saarc=(d[1]==null?gen:d[1]);
@@ -49,6 +50,7 @@ function landedBlock(code){
 function isoMeta(iso){ const c=TRADE.countries.find(x=>x.iso===iso); return c?[c.name,c.flag]:[iso,'']; }
 const isoName=iso=>isoMeta(iso)[0];
 function nepalProd(code){
+  return '';   // global site
   const z=NEP&&NEP[code]; if(!z||!(z.im||z.ex)) return '';
   const p=PROD&&PROD[code]; const parts=[];
   if(z.im){ const src=(z.ims||[]).map(x=>esc(isoName(x[0]))).slice(0,3).join(', ');
@@ -256,7 +258,7 @@ function hsDetail(code){
   track('view_hs_code',{hs_code:code});
   const s=SUBS.find(x=>x[0]===code); if(!s)return hsHome();
   const ch=code.slice(0,2), head=code.slice(0,4), cn=CHByNum[ch]||[ch,'',''], sec=SECByRoman[cn[2]]||['','',''];
-  const np=s[3];
+  const np=null;   // global site: no single country's tariff on the code page
   setTitle(PT.code(code,s[1]));
   let nepal='';
   if(np&&np.g!=null){ const g=np.g; const txt=Array.isArray(g)?`${g[0]}–${g[1]}%`:(g===0?'Free':g+'%');
