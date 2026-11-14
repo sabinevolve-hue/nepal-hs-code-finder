@@ -1336,6 +1336,14 @@ function familyHTML(r){
   notes.push('Declaring a lower-duty line that does not match the goods leads to reclassification, the duty difference and a fine. When unsure, ask the Department of Customs for an advance ruling.');
   return h + `<p class="fine" style="margin:8px 0 0">${notes.join(' ')}</p>`;
 }
+/* average declared import value per unit: official value / official quantity (a yardstick, not a price list) */
+const UNIT_NAMES = { KG:'kg', PCS:'piece', SQM:'square metre', LTR:'litre', MTQ:'cubic metre', PAIR:'pair', PR:'pair', GRM:'gram', MTR:'metre', KL:'kilolitre', DZN:'dozen', TNE:'tonne', NOS:'piece', SET:'set' };
+function unitLine(im){
+  const u = UNIT_NAMES[String(im[1] || '').trim().toUpperCase()], q = +im[2], v = +im[3] * 1000;
+  if (!u || !(q >= 10) || !(v > 0)) return '';
+  const per = v / q, f = per >= 100 ? Math.round(per).toLocaleString('en-IN') : per >= 10 ? per.toFixed(1) : per.toFixed(2);
+  return `<p class="ac-k" style="margin-top:8px">Average declared value</p><p style="margin:0"><b>Rs ${f}</b> per ${u} <span class="fine">(all grades and origins)</span></p>`;
+}
 function answerCard(r){
   try {
     const code = r.code, d = r.digits, im = ST.imports[d], hist = (typeof H !== 'undefined' && H.codes) ? H.codes[d] : null;
@@ -1355,7 +1363,7 @@ function answerCard(r){
         ${specNote ? '' : `<p class="ac-key"><span><i class="g"></i>Goods (CIF)</span><span><i class="d"></i>Customs duty${other && other.excise ? ', excise &amp; fees' : ''}</span>${noVat ? '' : '<span><i class="v"></i>VAT</span>'}</p>`}${extra}</div>`;
     if (im && im[3] > 0){
       const top = (im[5] || []).slice(0, 3), m = top.length ? top[0][1] : 1;
-      h += `<div><h4>Nepal imported ${rs(im[3], true)} last year</h4>${top.map(x => `<div class="ac-sup"><span>${esc(x[0])}</span><i style="width:${(x[1] / m * 100).toFixed(0)}%"></i><b>${Math.round(x[1] / im[3] * 100)}%</b></div>`).join('')}`
+      h += `<div><h4>Nepal imported ${rs(im[3], true)} last year</h4>${top.map(x => `<div class="ac-sup"><span>${esc(x[0])}</span><i style="width:${(x[1] / m * 100).toFixed(0)}%"></i><b>${Math.round(x[1] / im[3] * 100)}%</b></div>`).join('')}${unitLine(im)}`
         + (hist && hist.some(x => x[0]) ? `<p class="ac-k" style="margin-top:8px">Imports, FY ${FY[0]}–${FY[FY.length - 1]}</p>${sparkHTML(hist.map(x => x[0]), 0, '')}` : '') + `</div>`;
     } else h += `<div><h4>Nepal trade</h4><p class="fine" style="margin:0">No recorded imports under this exact line last year.</p></div>`;
     const ch = famCheaper(r);

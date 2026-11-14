@@ -21,6 +21,7 @@ from nav import OTHER_SITES
 import textfit
 import links
 import family
+import unitvalue
 from statsfields import IMP_VALUE, IMP_UNIT, IMP_DESC, IMP_PARTNERS, IMP_NPARTNERS, TARIFF_FY, TARIFF_FY_AD, validate_import_rows, slug, clean_name
 
 root = pathlib.Path(__file__).resolve().parents[1]
@@ -323,6 +324,15 @@ def product_page(code, row, imp, val):
     ctx = 'Nepal imported about <b>%s</b> of %s in FY&nbsp;%s' % (rsf(val), esc(name), esc(FY))
     ctx += (', mainly from ' + ', '.join('<b>%s</b>' % esc(s[0]) for s in srcs[:3]) + '.') if srcs else '.'
     out.append('<p>%s</p>' % ctx)
+    uv = unitvalue.unit_value(imp)
+    if uv:
+        out.append('<div class="exstats uvt"><div class="extile"><b>%s</b><span>Average declared value per %s</span></div>'
+                   '<div class="extile"><b>%s</b><span>Collected at customs per %s (%.0f%% of value)</span></div>'
+                   '<div class="extile"><b>%s</b><span>Imported in FY %s</span></div></div>'
+                   '<p class="fineprint">Import value divided by quantity, FY %s, Department of Customs. It averages every grade, brand and '
+                   'origin under this line, so use it to sense-check a quote, not as a price list.</p>'
+                   % (unitvalue.rs(uv['per']), uv['one'], unitvalue.rs(uv['tax']), uv['one'], 100 * uv['share'],
+                      unitvalue.qty_words(uv['qty'], uv['many']), esc(FY), esc(FY)))
     _al = links.alias_for(code)
     if _al:
         out.append('<p class="xlink">Plain-language guide: <a href="%s">import duty on %s in Nepal</a> — every HS line '

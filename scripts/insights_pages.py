@@ -777,7 +777,42 @@ def a_ev():
                method='Passenger vehicles are HS heading 87.03. Electric means subheading 8703.80; hybrids are counted with petrol and diesel.')
 
 
-ARTICLES = [a_year, a_deficit, a_top_imports, a_top_exports, a_suppliers, a_markets, a_gates,
+def a_unitvalues():
+    import unitvalue as U
+    def pick(unit, n, floor):
+        L = []
+        for c, v in IMP_RANK:
+            row = IMP[c]
+            if str(row[1] or '').strip().upper() != unit or v < floor:
+                continue
+            uv = U.unit_value(row)
+            if uv:
+                L.append((c, uv, v))
+            if len(L) >= n:
+                break
+        return L
+    pcs = pick('PCS', 20, 1000000); kg = pick('KG', 15, 3000000)
+    t1 = [(plink(c) + ' <small>%s</small>' % dotted(c), U.rs(uv['per']), U.rs(uv['tax']), '%.0f%%' % (100 * uv['share']), U.qty_words(uv['qty'], uv['many'])) for c, uv, v in pcs]
+    t2 = [(plink(c) + ' <small>%s</small>' % dotted(c), U.rs(uv['per']), U.rs(uv['tax']), '%.0f%%' % (100 * uv['share']), money(v)) for c, uv, v in kg]
+    top = max(pcs, key=lambda x: x[1]['per'])
+    ph = next((x for x in pcs if x[0] == '85171300'), pcs[0])
+    body = [tiles([(U.rs(ph[1]['per']), 'Average declared value of a %s' % pname(ph[0]).lower().rstrip('s')), (U.rs(ph[1]['tax']), 'Collected at customs on each'), ('%d' % (len(pcs) + len(kg)), 'Goods priced on this page')]),
+            h2('Goods counted in pieces: the 20 largest, FY %s' % FY),
+            table(['Product', 'Average value per piece', 'Tax per piece', 'Tax as % of value', 'Quantity imported'], t1, right=(1, 2, 3, 4)),
+            h2('Goods counted by weight: the 15 largest'),
+            table(['Product', 'Average value per kg', 'Tax per kg', 'Tax as % of value', 'Imports'], t2, right=(1, 2, 3, 4)),
+            p('Each figure is the year&rsquo;s import value divided by the quantity imported, both as recorded by the Department of Customs. '
+              'A line covers every brand, grade and origin that falls under it, so the average sits between the cheapest and dearest goods in that line.'),
+            takeaways(['Use the average to sense-check a supplier&rsquo;s quote. A quote far below it deserves a second look before customs valuation does the same.',
+                       'Tax per piece is what was actually collected, after any exemption or SAFTA rate. The <a href="/calculator">calculator</a> gives the figure for your own invoice.',
+                       'Every product page now shows this average for its own line.'])]
+    return art('average-import-prices-nepal', 'biz', 'Average import prices in Nepal: what goods cost at the border, FY %s' % FY, 'What goods cost at the border',
+               'The average %s entered Nepal at a declared value of %s in FY %s, and customs collected %s on each.' % (pname(ph[0]).lower().rstrip('s'), U.rs(ph[1]['per']), FY, U.rs(ph[1]['tax'])), body,
+               more=['goods-that-pay-the-most-tax', 'top-imports-of-nepal', 'high-duty-goods-nepal-still-imports'],
+               method='Average declared value = import value ÷ quantity for the 8-digit line. Lines with very small quantities are left out.')
+
+
+ARTICLES = [a_unitvalues, a_year, a_deficit, a_top_imports, a_top_exports, a_suppliers, a_markets, a_gates,
             a_imp_up, a_imp_down, a_exp_up, a_ytd, a_season,
             a_india, a_china, a_india_china, a_single, a_fuel, a_food,
             a_revenue, a_bands, a_highest, a_payers, a_effective, a_safta, a_dutyfree_time,
