@@ -81,4 +81,25 @@ Allow: /
 User-agent: PetalBot
 Allow: /
 
+User-agent: YandexBot
+Allow: /
+
+User-agent: SeznamBot
+Allow: /
+
+User-agent: Yeti
+Allow: /
+
+User-agent: MojeekBot
+Allow: /
+
+User-agent: Qwantbot
+Allow: /
+
+User-agent: coccocbot-web
+Allow: /
+
+User-agent: archive.org_bot
+Allow: /
+
 Sitemap: https://www.customsnepal.com/sitemap.xml

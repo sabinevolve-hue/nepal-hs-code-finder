@@ -232,6 +232,8 @@ AI_AGENTS = [
     "Amazonbot", "Bingbot", "DuckAssistBot",              # Amazon, Microsoft Copilot, DuckDuckGo
     "meta-externalagent", "MistralAI-User", "cohere-ai", "CCBot",  # Meta, Mistral, Cohere, Common Crawl
     "Applebot", "DuckDuckBot", "Meta-ExternalFetcher", "Google-CloudVertexBot", "YouBot", "PetalBot",  # Siri/Spotlight, DDG, Meta AI fetch, Vertex, You.com, Petal
+    "YandexBot", "SeznamBot", "Yeti", "MojeekBot", "Qwantbot", "coccocbot-web",  # Yandex, Seznam, Naver, Mojeek, Qwant, Coc Coc
+    "archive.org_bot",                                    # Internet Archive (Wayback Machine)
 ]
 robots = ["# Customs Nepal (customsnepal.com) — crawling and indexing is welcome, including AI answer engines.",
           "", "User-agent: *", "Allow: /", ""]

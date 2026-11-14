@@ -107,6 +107,49 @@ INTRO_CALC = (
     '<p>Per-product worked examples: <a href="/import-duty">import duty by product</a>. All rates: '
     '<a href="/tariff">full tariff by chapter</a>.</p>' % (TARIFF_FY, TARIFF_FY_AD))
 
+# Worked example + short FAQ under the calculator (SEO pass 14 Nov 2026): the page ranked only ~#9 on Google for
+# "Nepal import duty calculator" because the server HTML was mostly the app shell. Same order of calculation as
+# calc() in src.html: customs duty on CIF, excise on CIF + duty, 13% VAT on CIF + duty + excise + fees.
+CALC_FAQ = [
+    ('How is import duty calculated in Nepal?',
+     'Customs duty is charged on the CIF value (cost, insurance and freight to the Nepal border) at the rate set for '
+     'the product\'s HS code in the Customs Tariff %s. Excise duty, where it applies, is charged on the CIF value plus '
+     'customs duty. VAT of 13%% is then charged on the CIF value plus customs duty, excise and any other border fees.'
+     % TARIFF_FY),
+    ('Is VAT charged on top of customs duty?',
+     'Yes. The 13% VAT at the border is calculated on the CIF value plus customs duty, excise duty and other border '
+     'fees, not on the invoice value alone. That is why the total tax is more than the duty rate plus 13%.'),
+    ('What is the SAFTA (SAARC) rate?',
+     'Goods made in India or another SAARC country and shipped with a SAFTA certificate of origin can use the lower '
+     'SAARC rate printed in the tariff for many HS codes. The calculator shows both the general and the SAARC rate.'),
+    ('Is the calculator result final?',
+     'No. It is an estimate from the published tariff. The customs office assesses the actual duty in NECAS from the '
+     'declared HS code, value and origin, so confirm with customs or a licensed customs agent before you import.'),
+]
+CALC_EXAMPLE = (
+    '<h2 style="font-size:1.05rem;margin:1em 0 .3em">Worked example</h2>'
+    '<p>Goods with a CIF value of <b>Rs 1,00,000</b> and a <b>15%</b> customs duty, with no excise:</p>'
+    '<ul><li>Customs duty: 15% of 1,00,000 = <b>Rs 15,000</b></li>'
+    '<li>VAT: 13% of (1,00,000 + 15,000) = <b>Rs 14,950</b></li>'
+    '<li>Total border tax: <b>Rs 29,950</b>, so the landed cost before local transport is <b>Rs 1,29,950</b>.</li></ul>'
+    '<p>With a 10% excise as well, excise is 10% of 1,15,000 = Rs 11,500, and VAT rises to 13% of 1,26,500 = Rs 16,445.</p>')
+CALC_FAQ_HTML = ('<h2 style="font-size:1.05rem;margin:1em 0 .3em">Questions</h2>'
+                 + ''.join('<p><b>%s</b><br>%s</p>' % (esc(q), esc(a)) for q, a in CALC_FAQ))
+CALC_BELOW = CALC_EXAMPLE + CALC_FAQ_HTML   # placed after the calculator form, not above it
+CALC_LD = [
+    {"@context": "https://schema.org", "@type": "WebApplication",
+     "name": "Nepal Import Duty & Landed Cost Calculator",
+     "url": SITE + "/calculator", "applicationCategory": "FinanceApplication", "operatingSystem": "Any",
+     "isAccessibleForFree": True, "inLanguage": "en",
+     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "NPR"},
+     "description": "Calculates Nepal customs duty, SAARC (SAFTA) rate, excise, 13%% VAT and total landed cost for any "
+                    "HS code under the Customs Tariff %s." % TARIFF_FY,
+     "publisher": {"@type": "Organization", "name": "Customs Nepal", "url": SITE + "/"}},
+    {"@context": "https://schema.org", "@type": "FAQPage",
+     "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+                    for q, a in CALC_FAQ]},
+]
+
 INTRO_AI = (
     '<p>Not sure which Nepal HS code fits your product? Describe it in plain English or Nepali — what it is, what it '
     'is made of, what it does. The assistant searches all %s lines of the Nepal Customs Tariff %s, ranks the likely '
@@ -156,7 +199,7 @@ ROUTES = {
 
 INTRO_CSS = ('<style>.route-intro{margin:0 0 var(--s4,24px);font-size:.95rem;line-height:1.55;max-width:72ch}'
              '.route-intro ul,.route-intro ol{padding-left:1.25em;margin:.4em 0}.route-intro p{margin:.5em 0}'
-             '.route-intro a{color:var(--accent);text-decoration:none}.route-intro a:hover{text-decoration:underline}'
+             '#v-calc>.route-intro{grid-column:1}.route-intro a{color:var(--accent);text-decoration:none}.route-intro a:hover{text-decoration:underline}'
              '.hero .hero-h{margin:0 0 var(--s2);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.12;'
              'letter-spacing:-.03em;font-weight:800;text-wrap:balance;max-width:20ch}</style>')
 
@@ -183,8 +226,10 @@ def build(path, sec, title, desc, h1, intro, crumb):
     ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/"},
         {"@type": "ListItem", "position": 2, "name": crumb, "item": url}]}
+    lds = [ld] + (CALC_LD if path == '/calculator' else [])
     s = sub_one(s, r'<script type="application/ld\+json">.*?</script>',
-                lambda m: '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + '</script>', re.S)
+                lambda m: ''.join('<script type="application/ld+json">' + json.dumps(x, ensure_ascii=False).replace('</', '<\\/')
+                                  + '</script>' for x in lds), re.S)
     s = s.replace('</head>', INTRO_CSS + '</head>', 1)
     # server-side initial view: route section visible, search hero hidden, single <h1>
     s = sub_one(s, r'<section id="v-search">', '<section id="v-search" hidden>')
@@ -205,6 +250,9 @@ def build(path, sec, title, desc, h1, intro, crumb):
         if intro:
             j = head.index('</div>', head.index('<div class="page-h">')) + len('</div>')
             head = head[:j] + '<div class="route-intro">' + intro + '</div>' + head[j:]
+        if path == '/calculator':
+            k = head.index('</section>')
+            head = head[:k] + '<div class="route-intro">' + CALC_BELOW + '</div>' + head[k:]
     s = s[:i] + head
     assert s.count('<h1') == BASE.count('<h1'), (path, s.count('<h1'))  # hero <h1> swapped for the route's
     (pub / (path.strip('/') + '.html')).write_text(s, encoding='utf-8')
