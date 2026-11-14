@@ -19,6 +19,11 @@ pub = root / 'public'
 (pub / 'trade-partner').mkdir(parents=True, exist_ok=True)
 
 CO = json.loads((root / 'world/data/country.json').read_text(encoding='utf-8'))
+try:
+    WORLD_DEEP = json.loads((root / 'data/world/deep.json').read_text(encoding='utf-8'))
+    WORLD_DEEP = {'year': WORLD_DEEP.get('year'), 'countries': set(WORLD_DEEP.get('countries', {})), 'pairs': set(WORLD_DEEP.get('pairs', {}))}
+except FileNotFoundError:
+    WORLD_DEEP = {}
 import statsfields as _sf; _sf.fix_country_names(CO)
 TAR = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 
@@ -400,6 +405,15 @@ for iso in order:
         out.append('<p class="xlink"><b>FY %s so far</b> (%s): imports %s · exports %s. Provisional, from the latest monthly '
                    'release; it will be replaced by the full-year figure.</p>' % (yt['fy'], esc(yt['label']), money(cy[0]), money(cy[1])))
 
+
+    # the same country seen from the world side: its full profile and, where built, its pair page with Nepal
+    _iso = str(c.get('iso') or '').upper()
+    if _iso and _iso in WORLD_DEEP.get('countries', {}) and _iso != 'NPL':
+        _k = '-'.join(sorted([_iso, 'NPL']))
+        _pair = (' Both directions, product by product: <a href="https://world.customsnepal.com/trade/%s/%s">%s–Nepal trade in US dollars</a>.'
+                 % (_k.split('-')[0].lower(), _k.split('-')[1].lower(), esc(name))) if _k in WORLD_DEEP.get('pairs', {}) else ''
+        out.append('<p class="xlink"><b>%s and the rest of the world:</b> <a href="https://world.customsnepal.com/trade/%s">every partner and top product of %s, %s</a>.%s</p>'
+                   % (esc(name), _iso.lower(), esc(name), WORLD_DEEP.get('year', ''), _pair))
 
     def flows(chs, prods, total, src_label, note, t1, t2, fname, direction):
         chmap = {}

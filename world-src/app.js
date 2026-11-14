@@ -93,6 +93,8 @@ async function boot(){
 function nav(path){ history.pushState(null,'',BASE+path); route(); window.scrollTo(0,0); }
 document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
   const a=e.target.closest('a[data-nav]'); if(!a) return; let h=a.getAttribute('href')||''; if(!h.startsWith('/')) return;
+  // Country profiles are full static pages on the subdomain (deep partner/product data the SPA does not hold): load them normally.
+  if(!BASE&&/^\/trade\/[a-z]{3}$/i.test(h)) return;
   e.preventDefault(); if(BASE&&h.indexOf(BASE)===0) h=h.slice(BASE.length)||'/'; nav(h); });
 
 function setNav(k){ document.querySelectorAll('.nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===k)); }
@@ -305,6 +307,7 @@ function tradeHome(){
       </div>
       <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">World trade over time</b>${trendSVG(W.trend)}</div>
       ${np?`<a class="nepalcard" href="${BASE}/nepal" data-nav><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product ${ic(I.right)}</span></a>`:''}
+      <a class="nepalcard" href="${BASE?CANON:''}/trade/region/south-asia"><span class="fl">🌏</span><span><b>South Asia</b> — the eight SAARC economies and what they trade with each other ${ic(I.right)}</span></a>
       <div class="sub2" style="margin-top:var(--s5)"><button class="${tFlow==='exp'?'on':''}" onclick="__tflow('exp')">Top exporters</button><button class="${tFlow==='imp'?'on':''}" onclick="__tflow('imp')">Top importers</button></div>
       ${leaderboard(top,col)}
       <h3 class="h">By region</h3>

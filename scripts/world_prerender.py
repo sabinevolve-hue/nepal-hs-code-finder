@@ -332,6 +332,8 @@ def v_trade():
     osrc = ''.join(f'<a class="osrc-i" href="{OFFICIAL[k][1]}" target="_blank" rel="noopener">{c["flag"]} <span>{esc(OFFICIAL[k][0])}</span>{ic("right")}</a>' for k, c in offs)
     osrc += f'<a class="osrc-i" href="{EUROSTAT[1]}" target="_blank" rel="noopener">🇪🇺 <span>{esc(EUROSTAT[0])}</span>{ic("right")}</a>'
     ncard = card('/nepal', np_['flag'], '<b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product') if np_ else ''
+    if DV:
+        ncard += f'<a class="nepalcard" href="/trade/region/south-asia"><span class="fl">🌏</span><span><b>South Asia</b> — the eight SAARC economies and what they trade with each other {ic("right")}</span></a>'
     return main(f'''<div class="ph"><h1 class="h2">Global trade</h1><p>World merchandise trade reached <b>{money(WORLD["totalExp"])}</b> in {WORLD["year"]}, across {WORLD["count"]} economies. Explore the rankings below, or open any country.</p></div>
 <div class="statrow" style="margin-top:0"><div class="s"><b class="ex">{money(WORLD["totalExp"])}</b><span>World exports ({WORLD["year"]})</span></div>
 <div class="s"><b class="im">{money(WORLD["totalImp"])}</b><span>World imports ({WORLD["year"]})</span></div><div class="s"><b>{WORLD["count"]}</b><span>Economies</span></div></div>
@@ -551,6 +553,10 @@ def crumbs_for(p):
         g = next(x for x in PGROUPS if group_slug(x[0]) == m[1]); cr += [('Trade', '/trade'), (g[0], p)]
     elif (m := re.match(r'^/trade/([a-z]{3})$', p)):
         cr += [('Trade', '/trade'), (iso_name(m[1].upper()), p)]
+    elif p == '/trade/region/south-asia':
+        cr += [('Trade', '/trade'), ('South Asia', p)]
+    elif (m := re.match(r'^/trade/([a-z]{3})/([a-z]{3})$', p)):
+        cr += [('Trade', '/trade'), (iso_name(m[1].upper()), f'/trade/{m[1]}'), (iso_name(m[1].upper()) + '–' + iso_name(m[2].upper()), p)]
     return cr
 
 def url(p):
@@ -566,6 +572,18 @@ WEBSITE = {'@type': 'WebSite', '@id': B + '/#website', 'url': B + '/', 'name': '
 def dataset(name, desc, cover, temporal, based_on, keywords):
     return {'@type': 'Dataset', 'name': name, 'description': desc, 'creator': {'@id': B + '/#org'}, 'isAccessibleForFree': True,
             'spatialCoverage': cover, 'temporalCoverage': temporal, 'isBasedOn': based_on, 'keywords': keywords}
+
+# ---------------------------------------------------------------- deep profiles + pair pages (static, no SPA script)
+import world_deep
+DV = None      # set in main_build once helpers exist; v_trade checks it
+
+def init_deep():
+    global DV
+    if world_deep.DEEP_FILE.exists():
+        DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO))
+
+STATIC_PARTS = {'countries', 'pairs', 'regions'}      # pages that ship without the SPA script
 
 # ---------------------------------------------------------------- route table
 def routes():
@@ -614,10 +632,26 @@ def routes():
         else:
             d = f"{c['name']} trade profile: merchandise imports {money(c.get('imp'))} ({c.get('impYear')}), trend since {(c.get('trend') or [[None]])[0][0]} and official data sources."
         yrs = [r[0] for r in (c.get('trend') or [])]
+        if DV and DV.has(c['iso']):
+            d = DV.country_desc(c)
+            yield (f'/trade/{iso}', 'trade', DV.country_title(c), d, DV.country(c), 'WebPage',
+                   [dataset(f"{c['name']} merchandise trade {DV.Y} — partners and products", d, {'@type': 'Country', 'name': c['name']}, str(DV.Y),
+                            'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', [f"{c['name']} exports", f"{c['name']} imports", f"{c['name']} trading partners"])], 'countries')
+            continue
         yield (f'/trade/{iso}', 'trade', T.country(c), d, v_country(c), 'WebPage',
                [dataset(f"{c['name']} merchandise trade — exports, imports{', partners and products' if c.get('deep') else ''}", d,
                         {'@type': 'Country', 'name': c['name']}, f'{yrs[0]}/{yrs[-1]}' if yrs else str(c.get('expYear') or ''),
                         'https://data.worldbank.org/', [f"{c['name']} exports", f"{c['name']} imports", f"{c['name']} trade balance"])], 'countries')
+    if DV:
+        d = DV.region_desc()
+        yield ('/trade/region/south-asia', 'trade', DV.region_title(), d, DV.region(), 'CollectionPage',
+               [dataset('South Asia (SAARC) merchandise trade ' + str(DV.Y), d, {'@type': 'Place', 'name': 'South Asia'}, str(DV.Y),
+                        'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', ['SAARC trade', 'South Asia trade', 'intra-regional trade'])], 'regions')
+        for key in DV.pair_keys():
+            a_, b_ = key.split('-'); d = DV.pair_desc(a_, b_)
+            yield (f'/trade/{a_.lower()}/{b_.lower()}', 'trade', DV.pair_title(a_, b_), d, DV.pair(a_, b_), 'WebPage',
+                   [dataset(f'{DV.name(a_)}–{DV.name(b_)} bilateral merchandise trade {DV.Y}', d, {'@type': 'Place', 'name': f'{DV.name(a_)} and {DV.name(b_)}'}, str(DV.Y),
+                            'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', [f'{DV.name(a_)} {DV.name(b_)} trade', 'bilateral trade', 'exports', 'imports'])], 'pairs')
     for iso in NEPEXP['order']:
         if not NEPEXP['cc'][iso] > 0: continue
         name = iso_name(iso); prods = [x for x in NEPEXP['cp'][iso] if x[1] > 0]
@@ -699,6 +733,7 @@ def write_assets():
     (W / 'assets').mkdir(exist_ok=True)
     css = (SRC / 'app.css').read_text(encoding='utf-8')
     css += '\n/* prerender: semantic headings styled like the SPA\'s h2 */\nh1.h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}\nh1.dcode{margin:0}\na.row,a.sec,a.lbrow,a.nepalcard,a.back{text-decoration:none}\n'
+    css += world_deep.CSS
     js = (SRC / 'app.js').read_text(encoding='utf-8')
     assert '/*@META@*/null' in js, 'META placeholder missing from world-src/app.js'
     js = js.replace('/*@META@*/null', json.dumps(META, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/'))
@@ -720,7 +755,9 @@ def write_vercel_json():
     redirects = [{'source': f'/hs/code/{c}', 'destination': f'/hs/chapter/{c[:2]}', 'permanent': True} for c in sorted(MISSING_CODES) if c[:2] in CH]
     cfg = {
         'cleanUrls': True, 'trailingSlash': False,
-        'redirects': redirects + [{'source': '/index', 'destination': '/', 'permanent': True}],
+        'redirects': redirects + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
+                                    'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys()] if DV else [])
+                     + [{'source': '/index', 'destination': '/', 'permanent': True}],
         'headers': [
             {'source': '/assets/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]},
             {'source': '/data/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'},
@@ -736,7 +773,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'product-groups', 'hs-chapters', 'countries', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'product-groups', 'hs-chapters', 'countries', 'pairs', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()
@@ -755,6 +792,7 @@ def write_sitemaps(entries):
     return counts
 
 def main_build():
+    init_deep()
     assets = write_assets()
     # generated route files are rebuilt from scratch each run (stale routes must disappear → 404)
     for d in ('hs', 'trade', 'nepal'):
@@ -773,7 +811,7 @@ def main_build():
         prev = lastmod.get(p)
         lm = prev[1] if prev and prev[0] == h else TODAY
         new_lastmod[p] = [h, lm]
-        doc = document(seo_head(p, title, desc, ptype, extra_ld, lm), k, body, assets['css'], assets['js'])
+        doc = document(seo_head(p, title, desc, ptype, extra_ld, lm), k, body, assets['css'], None if part in STATIC_PARTS else assets['js'])
         f = out_path(p); f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(doc, encoding='utf-8')
         total_bytes += len(doc.encode('utf-8')); n += 1

@@ -165,6 +165,31 @@ h1.h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}
 h1.dcode{margin:0}
 a.row,a.sec,a.lbrow,a.nepalcard,a.back{text-decoration:none}
 
+/* deep profiles + pair pages (scripts/world_deep.py) */
+.ans{font-size:1.08rem;line-height:1.55;margin:var(--s3) 0 var(--s4);max-width:70ch}
+.ans a,.ctx a,.dt a,.pl2 a{color:var(--accent)}
+h2.h{font-size:1.15rem;margin:var(--s6) 0 var(--s3)}
+.bars.dp .barrow .lb{white-space:normal}.bars.dp .vl{white-space:nowrap}.bars.dp .vl small{color:var(--muted);font-weight:500;margin-left:4px}
+.bars.dp a{color:inherit;text-decoration:none}.bars.dp a:hover{text-decoration:underline}
+.bars.dp a.pl{font-size:.68rem;font-weight:700;color:var(--accent);border:1px solid var(--border);border-radius:999px;padding:0 6px;margin-left:4px;text-decoration:none}
+.dscroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r,12px);background:var(--card)}
+.dt{width:100%;border-collapse:collapse;font-size:.88rem}.dt th{font-size:.72rem;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;font-weight:650}
+.dt td{padding:8px 10px;border-top:1px solid var(--border);vertical-align:top}.dt tbody tr:first-child td{border-top:0}
+.dt .r{text-align:right;white-space:nowrap}.dt td:first-child{min-width:190px}.dt small{color:var(--muted)}
+.dt.mx td:first-child{min-width:130px;white-space:nowrap}.dt.mx .mu{color:var(--muted)}
+.hsc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;color:var(--muted)}
+.rk1,.rk2,.rk3{display:inline-block;font-size:.7rem;font-weight:700;border-radius:999px;padding:0 7px;white-space:nowrap}
+.rk1{background:#FDE68A;color:#713F12}.rk2{background:#E2E8F0;color:#334155}.rk3{background:#FED7AA;color:#7C2D12}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--s3)}
+.pl2{list-style:none;margin:8px 0 0;padding:0}.pl2 li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--border);font-size:.9rem}.pl2 li:first-child{border-top:0}
+.pairgrid{display:flex;flex-wrap:wrap;gap:8px}.pairgrid a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.85rem;color:var(--fg);text-decoration:none}
+.pairgrid a:hover{border-color:var(--accent)}.pairgrid small{color:var(--muted)}
+.dall{margin-top:var(--s5)}.dall>summary{cursor:pointer;font-weight:650;padding:10px 0;color:var(--accent)}
+.ctx{margin:var(--s4) 0;padding-left:1.1em;line-height:1.6}
+.pscale{margin-top:var(--s4)}.pscale .pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;margin-bottom:10px;font-size:.9rem}
+.pscale .pr div{grid-column:1/-1;height:18px;border-radius:5px;background:var(--bg);overflow:hidden}.pscale .pr i{display:block;height:100%;border-radius:5px}
+@media(max-width:600px){.dt{font-size:.82rem}.dt td:first-child{min-width:150px}}
+
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>
 </head>
@@ -268,6 +293,8 @@ async function boot(){
 function nav(path){ history.pushState(null,'',BASE+path); route(); window.scrollTo(0,0); }
 document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
   const a=e.target.closest('a[data-nav]'); if(!a) return; let h=a.getAttribute('href')||''; if(!h.startsWith('/')) return;
+  // Country profiles are full static pages on the subdomain (deep partner/product data the SPA does not hold): load them normally.
+  if(!BASE&&/^\/trade\/[a-z]{3}$/i.test(h)) return;
   e.preventDefault(); if(BASE&&h.indexOf(BASE)===0) h=h.slice(BASE.length)||'/'; nav(h); });
 
 function setNav(k){ document.querySelectorAll('.nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===k)); }
@@ -480,6 +507,7 @@ function tradeHome(){
       </div>
       <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">World trade over time</b>${trendSVG(W.trend)}</div>
       ${np?`<a class="nepalcard" href="${BASE}/nepal" data-nav><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product ${ic(I.right)}</span></a>`:''}
+      <a class="nepalcard" href="${BASE?CANON:''}/trade/region/south-asia"><span class="fl">🌏</span><span><b>South Asia</b> — the eight SAARC economies and what they trade with each other ${ic(I.right)}</span></a>
       <div class="sub2" style="margin-top:var(--s5)"><button class="${tFlow==='exp'?'on':''}" onclick="__tflow('exp')">Top exporters</button><button class="${tFlow==='imp'?'on':''}" onclick="__tflow('imp')">Top importers</button></div>
       ${leaderboard(top,col)}
       <h3 class="h">By region</h3>

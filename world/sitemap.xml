@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<sitemap><loc>https://world.customsnepal.com/sitemap-hubs.xml</loc><lastmod>2026-11-04</lastmod></sitemap>
+<sitemap><loc>https://world.customsnepal.com/sitemap-hubs.xml</loc><lastmod>2026-11-14</lastmod></sitemap>
+<sitemap><loc>https://world.customsnepal.com/sitemap-regions.xml</loc><lastmod>2026-11-14</lastmod></sitemap>
 <sitemap><loc>https://world.customsnepal.com/sitemap-product-groups.xml</loc><lastmod>2026-11-04</lastmod></sitemap>
 <sitemap><loc>https://world.customsnepal.com/sitemap-hs-chapters.xml</loc><lastmod>2026-11-04</lastmod></sitemap>
-<sitemap><loc>https://world.customsnepal.com/sitemap-countries.xml</loc><lastmod>2026-11-04</lastmod></sitemap>
+<sitemap><loc>https://world.customsnepal.com/sitemap-countries.xml</loc><lastmod>2026-11-14</lastmod></sitemap>
+<sitemap><loc>https://world.customsnepal.com/sitemap-pairs.xml</loc><lastmod>2026-11-14</lastmod></sitemap>
 <sitemap><loc>https://world.customsnepal.com/sitemap-nepal-exports.xml</loc><lastmod>2026-11-04</lastmod></sitemap>
 <sitemap><loc>https://world.customsnepal.com/sitemap-hs-codes.xml</loc><lastmod>2026-11-04</lastmod></sitemap>
 </sitemapindex>
