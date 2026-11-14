@@ -780,8 +780,11 @@ OTHER_SITES = ('<p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other
                '<a href="https://www.customsnepal.com/">Nepal HS codes, customs tariff 2083/84 &amp; import-duty calculator — customsnepal.com</a> · '
                '<a href="https://nepalpublicdata.com/">Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com</a></p>')
 
-GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script>'
-        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>")
+# world.customsnepal.com has its own GA4 property since 15 Nov 2026 ("world.customsnepal.com", property 564366260,
+# stream 16342942965), separate from the main site's G-T1FQWWL2VV. Page views are sent by pageview() in app.js.
+GA_ID = 'G-E2HLC62N88'
+GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=%s"></script>'
+        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','%s',{send_page_view:false});</script>" % (GA_ID, GA_ID))
 
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''

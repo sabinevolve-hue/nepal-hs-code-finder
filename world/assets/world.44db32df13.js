@@ -158,7 +158,8 @@ function seoSync(p){ const url=CANON+(p==='/'||p===''?'/':p); setLink('canonical
   const t=document.title; setMeta('property','og:title',t); setMeta('name','twitter:title',t);
   const d=seoDesc(p); setMeta('name','description',d); setMeta('property','og:description',d); setMeta('name','twitter:description',d);
   try{ setBreadcrumb(p); }catch(e){} }
-function pageview(p){ try{ if(window.gtag) gtag('event','page_view',{page_path:p,page_location:CANON+(p==='/'||p===''?'/':p),page_title:document.title}); }catch(e){} }
+function section(p){ var s=(p||'/').split('/'); if(s[1]==='hs') return s[2]==='code'?'hs-codes':s[2]==='chapter'?'hs-chapters':'hs'; if(s[1]==='trade') return s[2]==='product'?'product-groups':s[2]?'countries':'trade'; if(s[1]==='nepal') return s[2]==='exports'?'nepal-exports':'nepal'; return s[1]||'home'; }
+function pageview(p){ try{ if(window.gtag) gtag('event','page_view',{page_path:p,page_location:CANON+(p==='/'||p===''?'/':p),page_title:document.title,content_group:section(p)}); }catch(e){} }
 function track(n,params){ try{ if(window.gtag) gtag('event',n,params||{}); }catch(e){} }
 
 function route(){
