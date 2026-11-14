@@ -582,6 +582,8 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('Country pairs', p)]
     elif p == '/trade/region/south-asia':
         cr += [('Trade', '/trade'), ('South Asia', p)]
+    elif (m := re.match(r'^/trade/([a-z]{3})/exports/(\d{6})$', p)):
+        cr += [('Trade', '/trade'), (iso_name(m[1].upper()), f'/trade/{m[1]}'), ('Exports of HS ' + fmt_code(m[2]), p)]
     elif (m := re.match(r'^/trade/([a-z]{3})/([a-z]{3})$', p)):
         cr += [('Trade', '/trade'), (iso_name(m[1].upper()), f'/trade/{m[1]}'), (iso_name(m[1].upper()) + '–' + iso_name(m[2].upper()), p)]
     return cr
@@ -616,9 +618,9 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB))
 
-STATIC_PARTS = {'countries', 'pairs', 'regions'}      # pages that ship without the SPA script
+STATIC_PARTS = {'countries', 'pairs', 'regions', 'exports-by-product'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/'}
 
 # ---------------------------------------------------------------- route table
@@ -691,6 +693,11 @@ def routes():
             yield (f'/trade/{a_.lower()}/{b_.lower()}', 'pairs', DV.pair_title(a_, b_), d, DV.pair(a_, b_), 'WebPage',
                    [dataset(f'{DV.name(a_)}–{DV.name(b_)} bilateral merchandise trade {DV.Y}', d, {'@type': 'Place', 'name': f'{DV.name(a_)} and {DV.name(b_)}'}, str(DV.Y),
                             'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', [f'{DV.name(a_)} {DV.name(b_)} trade', 'bilateral trade', 'exports', 'imports'])], 'pairs')
+        for key in DV.pc_keys():
+            i_, k_ = key.split('-'); d = DV.pc_desc(i_, k_)
+            yield (f'/trade/{i_.lower()}/exports/{k_}', 'trade', DV.pc_title(i_, k_), d, DV.product_country(i_, k_), 'WebPage',
+                   [dataset(f'{DV.name(i_)} exports of HS {k_}, {DV.Y}', d, {'@type': 'Country', 'name': DV.name(i_)}, str(DV.Y),
+                            'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', [f'{DV.name(i_)} exports', DV.pc_short(k_, 60), 'export markets', 'world share'])], 'exports-by-product')
     for iso in NEPEXP['order']:
         if not NEPEXP['cc'][iso] > 0: continue
         name = iso_name(iso); prods = [x for x in NEPEXP['cp'][iso] if x[1] > 0]
@@ -853,7 +860,7 @@ def write_vercel_json():
     cfg = {
         'cleanUrls': True, 'trailingSlash': False,
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
-                                    'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys()] if DV else [])
+                                    'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys() if all(x in DV.D['pairset'] for x in k.split('-'))] if DV else [])
                      + [{'source': '/index', 'destination': '/', 'permanent': True},
                         # the old www /world mount leaked /world URLs onto this host
                         {'source': '/world', 'destination': '/', 'permanent': True},
@@ -873,7 +880,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'regions', 'product-groups', 'hs-chapters', 'countries', 'pairs', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'product-groups', 'hs-chapters', 'countries', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()

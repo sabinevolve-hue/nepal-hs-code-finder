@@ -26,6 +26,8 @@ SAARC = ['AFG', 'BGD', 'BTN', 'IND', 'MDV', 'NPL', 'PAK', 'LKA']
 PAIR_EXTRA = ['CHN']          # always in the pair set, with SAARC
 PAIR_TOP = 15                 # plus the world's largest exporters
 PAIR_MIN = 10000              # thousand USD: a pair page needs at least $10M of trade in one direction
+PAIR_PARTNERS = 10            # every economy also gets a pair page with each of its ten largest partners
+PC_TOP, PC_MIN, PC_BUYERS = 10, 50000, 15     # product-by-country pages: top export products per economy, min $50M
 TOPK, TOPDEP, TOPLEAD, PAIRK = 40, 12, 15, 20
 
 files = {}
@@ -52,7 +54,7 @@ def rows(path):
         rd = csv.reader(fh); next(rd, None)
         for row in rd:
             try:
-                yield iso.get(int(row[1]), row[1]), iso.get(int(row[2]), row[2]), row[3].strip().zfill(6), float(row[4])
+                yield iso.get(int(row[1]), row[1]), iso.get(int(row[2]), row[2]), row[3].strip().zfill(6), float(row[4]), row[5]
             except (ValueError, IndexError):
                 continue
 
@@ -62,27 +64,46 @@ tot_x = {y: defaultdict(float) for y in years}; tot_m = {y: defaultdict(float) f
 pair = {y: defaultdict(float) for y in years}
 for y in years:
     n = 0
-    for i, j, k, v in rows(files[y]):
+    for i, j, k, v, _q in rows(files[y]):
         tot_x[y][i] += v; tot_m[y][j] += v; pair[y][(i, j)] += v; n += 1
     sys.stderr.write('%d: %s rows\n' % (y, format(n, ',')))
 
 top = [c for c, _ in sorted(tot_x[MAIN].items(), key=lambda kv: -kv[1])[:PAIR_TOP]]
 PSET = set(SAARC + PAIR_EXTRA + top)
+# pair keys: every pair inside PSET, plus each economy with its largest partners (by two-way trade)
+PKEYS = set()
+for a in PSET:
+    for b in PSET:
+        if a < b:
+            PKEYS.add((a, b))
+two = defaultdict(lambda: defaultdict(float))
+for (i, j), v in pair[MAIN].items():
+    two[i][j] += v; two[j][i] += v
+for c, d in two.items():
+    for p, _v in sorted(d.items(), key=lambda kv: -kv[1])[:PAIR_PARTNERS]:
+        if p != c:
+            PKEYS.add((min(c, p), max(c, p)))
+PKEYS = {(a, b) for a, b in PKEYS if max(pair[MAIN].get((a, b), 0.0), pair[MAIN].get((b, a), 0.0)) >= PAIR_MIN}
 
 # ---- pass 2 (main year): products
 xk = defaultdict(lambda: defaultdict(float)); mk = defaultdict(lambda: defaultdict(float))     # country -> hs6 -> value
 bx, bm = {}, {}                                    # (country, hs6) -> [partner, value] largest partner
 wk = defaultdict(float)                            # hs6 -> world
 pk = defaultdict(lambda: defaultdict(float))       # (i, j) within PSET -> hs6 -> value
-for i, j, k, v in rows(files[MAIN]):
+xq = defaultdict(float)                            # (country, hs6) -> tonnes exported (where reported)
+for i, j, k, v, q in rows(files[MAIN]):
     xk[i][k] += v; mk[j][k] += v; wk[k] += v
+    try:
+        xq[(i, k)] += float(q)
+    except ValueError:
+        pass
     b = bx.get((i, k))
     if b is None or v > b[1]:
         bx[(i, k)] = [j, v]
     b = bm.get((j, k))
     if b is None or v > b[1]:
         bm[(j, k)] = [i, v]
-    if i in PSET and j in PSET:
+    if ((i, j) if i < j else (j, i)) in PKEYS:
         pk[(i, j)][k] += v
 
 # world rank of each exporter per product
@@ -118,13 +139,9 @@ for c in sorted(set(tot_x[MAIN]) | set(tot_m[MAIN])):
 
 pairs = {}
 ps = sorted(PSET)
-for a in ps:
-    for b in ps:
-        if a >= b:
-            continue
+if True:
+    for a, b in sorted(PKEYS):
         ab, ba = pair[MAIN].get((a, b), 0.0), pair[MAIN].get((b, a), 0.0)
-        if max(ab, ba) < PAIR_MIN:
-            continue
         pairs[a + '-' + b] = dict(
             ab=R(ab), ba=R(ba),
             abk=[[k, R(v)] for k, v in sorted(pk[(a, b)].items(), key=lambda kv: -kv[1])[:PAIRK]],
@@ -132,7 +149,35 @@ for a in ps:
             nab=len(pk[(a, b)]), nba=len(pk[(b, a)]),
             hist={str(y): [R(pair[y].get((a, b), 0)), R(pair[y].get((b, a), 0))] for y in years})
 
+# ---- product-by-country: each economy's largest export products, with who buys them
+PCSET = set()
+for c in countries:
+    for k, v in sorted(xk[c].items(), key=lambda kv: -kv[1])[:PC_TOP]:
+        if v >= PC_MIN:
+            PCSET.add((c, k))
+buy = defaultdict(lambda: defaultdict(float))
+for i, j, k, v, _q in rows(files[MAIN]):
+    if (i, k) in PCSET:
+        buy[(i, k)][j] += v
+pch = {y: defaultdict(float) for y in years if y != MAIN}
+for y in pch:
+    for i, j, k, v, _q in rows(files[y]):
+        if (i, k) in PCSET:
+            pch[y][(i, k)] += v
+wtop = {}
+for k in {k for _c, k in PCSET}:
+    wtop[k] = [[c, R(xk[c][k])] for c in sorted((c for c in xk if xk[c].get(k)), key=lambda c: -xk[c][k])[:8]]
+prodc = {}
+for c, k in sorted(PCSET):
+    v = xk[c][k]; b = sorted(buy[(c, k)].items(), key=lambda kv: -kv[1])
+    order = sorted((cc for cc in xk if xk[cc].get(k)), key=lambda cc: -xk[cc][k])
+    prodc[c + '-' + k] = dict(v=R(v), q=round(xq.get((c, k), 0.0), 1), w=R(wk[k]), s=round(100.0 * v / wk[k], 2), r=order.index(c) + 1,
+                              ne=len(order), nb=len(b), b=[[j, R(x)] for j, x in b[:PC_BUYERS]],
+                              hist={str(y): R(pch[y].get((c, k), 0.0)) for y in pch})
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
+with open(os.path.join(os.path.dirname(OUT), 'prodc.json'), 'w', encoding='utf-8') as fh:
+    json.dump(dict(year=MAIN, years=years, unit='thousand USD; q in tonnes', products=prodc, wtop=wtop), fh, ensure_ascii=False, separators=(',', ':'))
+sys.stderr.write('prodc.json: %d product-by-country entries, %d products\n' % (len(prodc), len(wtop)))
 out = dict(source='BACI (CEPII), HS 2022, version in file name', unit='thousand USD', year=MAIN, years=years,
            world=R(sum(tot_x[MAIN].values())), pairset=ps, saarc=SAARC, countries=countries, pairs=pairs)
 with open(OUT, 'w', encoding='utf-8') as fh:

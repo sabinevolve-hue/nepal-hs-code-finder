@@ -5,9 +5,10 @@ These pages are static: they ship without the SPA script, so what a crawler sees
 
 Every number is a BACI figure or a ratio of two BACI figures. Sentences state what the data shows; none explains why.
 """
-import json, pathlib
+import json, pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+PRODC_FILE = ROOT / 'data' / 'world' / 'prodc.json'
 DEEP_FILE = ROOT / 'data' / 'world' / 'deep.json'
 
 
@@ -26,6 +27,16 @@ class Views:
             a, b = key.split('-')
             if a in known and b in known:
                 self.pairs_of.setdefault(a, []).append(b); self.pairs_of.setdefault(b, []).append(a)
+        self._pair_keys = [k for k in sorted(self.P) if all(x in known for x in k.split('-'))]
+        ptot = lambda x, q: self.P['-'.join(sorted([x, q]))]['ab'] + self.P['-'.join(sorted([x, q]))]['ba']
+        for x in self.pairs_of:
+            self.pairs_of[x].sort(key=lambda q: -ptot(x, q))
+        pc = json.loads(PRODC_FILE.read_text(encoding='utf-8')) if PRODC_FILE.exists() else {'products': {}, 'wtop': {}}
+        self.PC = {k: v for k, v in pc['products'].items() if k.split('-')[0] in known and h['has_code'](k.split('-')[1])}
+        self.WTOP = pc['wtop']
+        self._pc_keys = sorted(self.PC); self._pc_set = set(self.PC); self._pc_by_country = {}
+        for k in sorted(self.PC, key=lambda k: -self.PC[k]['v']):
+            self._pc_by_country.setdefault(k.split('-')[0], []).append(k.split('-')[1])
 
     # ---------- small helpers
     def usd(self, vk):
@@ -132,7 +143,7 @@ class Views:
         # products
         def badge(r, s):
             return f' <span class="rk{r}">#{r} in world · {s}%</span>' if r else ''
-        xrows = [(self.prod(k), self.usd(v), self.share(v, X), self.clink(tp) + f' <small>{self.share(tv, v, 0)}</small>', f'{ws}%' + (f' <span class="rk{r}">#{r}</span>' if r else ''))
+        xrows = [(self.prod(k) + (f' <a class="pl" href="{self.pc_href(iso, k)}">buyers</a>' if self.pc_href(iso, k) else ''), self.usd(v), self.share(v, X), self.clink(tp) + f' <small>{self.share(tv, v, 0)}</small>', f'{ws}%' + (f' <span class="rk{r}">#{r}</span>' if r else ''))
                  for k, v, tp, tv, ws, r in d['xk'][:25]]
         mrows = [(self.prod(k), self.usd(v), self.share(v, M), self.clink(tp) + f' <small>{self.share(tv, v, 0)}</small>') for k, v, tp, tv in d['mk'][:25]]
         sec_xk = (f'<h2 class="h">What {nm} exports: top {len(xrows)} products</h2>'
@@ -164,11 +175,12 @@ class Views:
         long_trend = (f'<div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">Longer trend, World Bank series</b>{h["trend_svg"](c.get("trend") or [])}</div>'
                       if c.get('trend') else '')
 
-        prs = sorted(self.pairs_of.get(iso, []), key=lambda p: -(self.P['-'.join(sorted([iso, p]))]['ab'] + self.P['-'.join(sorted([iso, p]))]['ba']))
+        prs_all = self.pairs_of.get(iso, []); prs = prs_all[:30]
         sec_pairs = ''
         if prs:
             sec_pairs = (f'<h2 class="h">{nm} and its partners, pair by pair</h2><div class="pairgrid">'
-                         + ''.join(f'<a href="{self.pair_href(iso, p)}">{self.flag(iso)} {nm} – {self.flag(p)} {e(self.name(p))}</a>' for p in prs) + '</div>')
+                         + ''.join(f'<a href="{self.pair_href(iso, p)}">{self.flag(iso)} {nm} – {self.flag(p)} {e(self.name(p))}</a>' for p in prs) + '</div>'
+                         + (f'<p class="fine">The 30 largest of {len(prs_all)} pair pages. <a href="/trade/pairs">All country pairs</a></p>' if len(prs_all) > 30 else ''))
         src = h['src_box']('Sources', f'<p>Partners, products and {Y} totals from <b>BACI</b> (CEPII), which reconciles what exporters and importers each reported to '
                            f'<b>UN Comtrade</b>, at the 6-digit HS level, in current US dollars. The longer trend chart is the <b>World Bank</b> merchandise trade series, '
                            f'which can differ slightly from BACI for the same year. '
@@ -190,8 +202,7 @@ class Views:
 
     # ---------- pairs
     def pair_keys(self):
-        known = self.h['CBYISO']
-        return [k for k in sorted(self.P) if all(x in known for x in k.split('-'))]
+        return self._pair_keys
 
     def pair_title(self, a, b):
         return f'{self.name(a)}–{self.name(b)} Trade {self.Y}: What Each Sells the Other'
@@ -241,7 +252,7 @@ class Views:
         hrows = [(y, self.usd(v[0]), self.usd(v[1]), self.usd(v[0] + v[1])) for y, v in sorted(hist.items(), reverse=True)]
         sec_hist = '<h2 class="h">Recent years</h2>' + self.table(['Year', f'{A} → {B}', f'{B} → {A}', 'Total'], hrows)
         more = lambda x, other: ''.join(f'<a href="{self.pair_href(x, q)}">{self.flag(x)} {e(self.name(x))} – {self.flag(q)} {e(self.name(q))}</a>'
-                                        for q in sorted(self.pairs_of.get(x, []), key=lambda q: -(self.P["-".join(sorted([x, q]))]["ab"] + self.P["-".join(sorted([x, q]))]["ba"])) if q != other)[:99999]
+                                        for q in [q for q in self.pairs_of.get(x, []) if q != other][:10])
         others = (f'<h2 class="h">More pairs</h2><div class="pairgrid">{more(a, b)}{more(b, a)}</div>')
         profiles = (f'<div class="two"><a class="nepalcard" href="/trade/{a.lower()}"><span class="fl">{fa}</span><span><b>{A}: full trade profile</b> {h["ic"]("right")}</span></a>'
                     f'<a class="nepalcard" href="/trade/{b.lower()}"><span class="fl">{fb}</span><span><b>{B}: full trade profile</b> {h["ic"]("right")}</span></a></div>')
@@ -260,7 +271,7 @@ class Views:
                          self.usd(p['ab'] + p['ba']), self.usd(p['ab']), self.usd(p['ba'])))
         src = h['src_box']('Source', '<p><b>BACI</b> (CEPII), reconciled from UN Comtrade, current US dollars.</p>', str(self.Y))
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">Country pairs: bilateral trade in {self.Y}</h1>'
-                         f'<p>{len(keys)} pairs among the SAARC economies, China and the world&#39;s largest exporters, largest first. Each page shows what each side sells the other.</p></div>'
+                         f'<p>{len(keys):,} pairs, largest first: every economy with each of its ten largest trading partners, plus every pair among the SAARC economies, China and the largest exporters. Each page shows what each side sells the other.</p></div>'
                          + self.table(['Pair', 'Total trade', 'First to second', 'Second to first'], rows)
                          + '<a class="nepalcard" href="/trade/region/south-asia" style="margin-top:var(--s5)"><span class="fl">\U0001F30F</span><span><b>South Asia hub</b>: the SAARC who-sells-to-whom table ' + h['ic']('right') + '</span></a>' + src)
 
@@ -274,6 +285,87 @@ class Views:
                 href, label = 'https://www.customsnepal.com' + m, 'Nepal–' + self.h['esc'](self.name(other)) + ' trade'
         return (f'<a class="nepalcard" href="{href}"><span class="fl">\U0001F1F3\U0001F1F5</span><span><b>{label} in official figures</b>: Department of Customs data in rupees, '
                 f'by fiscal year and 8-digit code, with duty, on customsnepal.com {self.h["ic"]("right")}</span></a>')
+
+    # ---------- product by country ("Vietnam coffee exports")
+    def pc_keys(self):
+        return self._pc_keys
+
+    def pc_href(self, iso, code):
+        return f'/trade/{iso.lower()}/exports/{code}' if (iso + '-' + code) in self._pc_set else None
+
+    _STOP = {'or', 'and', 'of', 'other', 'the', 'for', 'with', 'not', 'in', 'to', 'than', 'a', 'an', 'on', 'by', 'whether', 'including', 'n.e.c.', 'from', 'their', 'thereof', 'those', 'such'}
+
+    def pc_short(self, code, n=38):
+        """Product name cut at a word boundary, never ending on a joining word."""
+        full = re.split(r'[;,]? n\.e\.c\.', self.h['hs_desc'](code).replace(' (', ', ').split(', excluding')[0])[0]
+        words = full.split(); out = []
+        for w in words:
+            if len(' '.join(out + [w])) > n:
+                break
+            out.append(w)
+        while len(out) > 1 and out[-1].strip('.,;:()').lower() in self._STOP:
+            out.pop()
+        return (' '.join(out) or full[:n]).rstrip('.,;:( ')
+
+    def pc_title(self, iso, code):
+        tail = f' Exports {self.Y} (HS {self.h["fmt_code"](code)})'
+        room = 65 - len(self.name(iso)) - 1 - len(tail)
+        return f'{self.name(iso)} {self.pc_short(code, max(12, room))}{tail}'
+
+    def pc_desc(self, iso, code):
+        p = self.PC[iso + '-' + code]
+        s = (f'{self.name(iso)} exported {self.usd(p["v"])} of {self.pc_short(code, 50).lower()} (HS {self.h["fmt_code"](code)}) in {self.Y}, '
+             f'{p["s"]:.1f}% of world exports, rank #{p["r"]}.')
+        if p['b']:
+            s += f' Largest buyer: {self.name(p["b"][0][0])} ({self.share(p["b"][0][1], p["v"], 0)}).'
+        return s
+
+    def product_country(self, iso, code):
+        h = self.h; e = h['esc']; p = self.PC[iso + '-' + code]; Y = self.Y
+        nm = e(self.name(iso)); fl = self.flag(iso); full = e(h['hs_desc'](code)); short = e(self.pc_short(code, 60))
+        v = p['v']; b = p['b']
+        lead = (f'<p class="ans">{nm} exported <b>{self.usd(v)}</b> of this product in {Y}. That is <b>{p["s"]:.1f}%</b> of world exports '
+                f'({self.usd(p["w"])}), which ranks {nm} <b>#{p["r"]}</b> of {p["ne"]} exporting economies.'
+                + (f' The largest buyer was {self.clink(b[0][0])}, taking {self.share(b[0][1], v)}.' if b else '') + '</p>')
+        tiles = (f'<div class="statrow" style="margin-top:0"><div class="s"><b class="ex">{self.usd(v)}</b><span>Exports ({Y})</span></div>'
+                 f'<div class="s"><b>{p["s"]:.1f}%</b><span>Share of world exports</span></div>'
+                 f'<div class="s"><b>#{p["r"]}</b><span>World rank</span></div>'
+                 f'<div class="s"><b>{p["nb"]}</b><span>Buying countries</span></div></div>')
+        unit = ''
+        if p.get('q', 0) > 0:
+            per_kg = v / p['q']          # thousand USD per tonne = USD per kg
+            unit = (f'<p class="fine">Average export value: <b>${per_kg:,.2f} per kg</b> ({p["q"]:,.0f} tonnes reported). '
+                    f'An average across every grade and buyer, not a market price.</p>')
+        top3 = sum(x for _, x in b[:3])
+        brow = []
+        for j, x in b:
+            ph = self.pair_href(iso, j)
+            brow.append((self.clink(j) + (f' <a class="pl" href="{ph}">pair</a>' if ph else ''), x, f'{self.usd(x)} <small>{self.share(x, v)}</small>'))
+        sec_b = (f'<h2 class="h">Who buys it: top {len(brow)} markets</h2>' + self.barlist(brow, 'var(--exp)')
+                 + f'<p class="fine">{nm} sold this product to {p["nb"]} countries. The top three took {self.share(top3, v, 0)}.</p>') if brow else ''
+        wt = self.WTOP.get(code) or []
+        wrows = []
+        for i, (c, x) in enumerate(wt, 1):
+            href = self.pc_href(c, code)
+            lab = self.clink(c) if not href else f'<a href="{href}">{self.flag(c)} {e(self.name(c))}</a>'
+            if c == iso:
+                lab = f'<b>{self.flag(c)} {e(self.name(c))}</b>'
+            wrows.append((lab, self.usd(x), self.share(x, p['w']), f'<span class="rk{i}">#{i}</span>' if i <= 3 else f'#{i}'))
+        if iso not in [c for c, _ in wt]:
+            wrows.append((f'<b>{fl} {nm}</b>', self.usd(v), f'{p["s"]:.1f}%', f'#{p["r"]}'))
+        sec_w = (f'<h2 class="h">The largest exporters of this product</h2>' + self.table(['Exporter', 'Exports', 'World share', 'Rank'], wrows)) if wrows else ''
+        hist = dict(p.get('hist') or {}); hist[str(Y)] = v
+        hrows = [(y, self.usd(x) if x else '—') for y, x in sorted(hist.items(), reverse=True)]
+        sec_h = '<h2 class="h">Recent years</h2>' + self.table(['Year', f'{nm} exports'], hrows)
+        others = [k for k in self._pc_by_country.get(iso, []) if k != code]
+        sec_o = (f'<h2 class="h">Other leading exports of {nm}</h2><div class="pairgrid">'
+                 + ''.join(f'<a href="{self.pc_href(iso, k)}">{e(self.pc_short(k, 44))} <small>{self.usd(self.PC[iso + "-" + k]["v"])}</small></a>' for k in others) + '</div>') if others else ''
+        links = (f'<div class="two"><a class="nepalcard" href="/trade/{iso.lower()}"><span class="fl">{fl}</span><span><b>{nm}: full trade profile</b> {h["ic"]("right")}</span></a>'
+                 f'<a class="nepalcard" href="{h["code_href"](code)}"><span class="fl">\U0001F50E</span><span><b>HS {h["fmt_code"](code)}</b>: definition and world trade {h["ic"]("right")}</span></a></div>')
+        src = h['src_box']('Source', '<p><b>BACI</b> (CEPII), reconciled from what exporters and importers reported to <b>UN Comtrade</b>, 6-digit HS 2022, current US dollars. '
+                           'Quantities are in tonnes where countries reported them.</p>', str(Y))
+        return h['main'](h['back'](f'/trade/{iso.lower()}', self.name(iso)) + f'<div class="ph"><h1 class="h2">{fl} {nm} exports of {short}, {Y}</h1>'
+                         f'<p>HS {h["fmt_code"](code)}: {full}</p></div>' + lead + tiles + unit + sec_b + sec_w + sec_h + links + sec_o + src)
 
     # ---------- South Asia hub
     def region_title(self):
