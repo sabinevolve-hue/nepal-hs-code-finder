@@ -93,13 +93,6 @@ nav.tabbar{display:none}
 .hero-stats{display:flex;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s5);font-size:.8rem;color:rgba(255,255,255,.7)}
 .hero-stats b{display:block;color:#fff;font-size:1.05rem;font-variant-numeric:tabular-nums}
 @media (min-width:760px){.hero:not(.compact){border-radius:0 0 var(--r-lg) var(--r-lg);margin-inline:0;padding-inline:var(--s6)}}
-.trackmini{display:flex;align-items:center;gap:8px;max-width:480px;margin:var(--s3) 0 0;padding:5px 5px 5px 13px;background:var(--card);border:1px solid var(--border);border-radius:999px}
-.trackmini>svg{flex:0 0 auto;width:18px;height:18px;color:var(--muted)}
-.trackmini input{flex:1 1 auto;min-width:0;height:34px;border:0;background:transparent;color:var(--fg);font-size:.9rem;outline:none}
-.trackmini input::placeholder{color:var(--muted)}
-.trackmini button{flex:0 0 auto;height:34px;padding:0 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;cursor:pointer}
-.trackmini-note{max-width:520px;margin:7px 4px 0;font-size:.8rem;line-height:1.5;color:var(--muted)}
-.trackmini-note b{color:var(--fg);font-weight:600}
 .explore{margin-top:var(--s5)}
 .xgroup+.xgroup{margin-top:var(--s4)}
 .xhead{display:flex;align-items:center;gap:10px;margin:0 0 var(--s2);font-size:.82rem;font-weight:800;letter-spacing:.01em;color:var(--fg)}
@@ -726,7 +719,7 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
         <input id="q" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Try “LED display”, “8528” or “मोबाइल”" aria-label="Search product, material or HS code">
         <button class="clear" id="qclear" aria-label="Clear search" hidden><svg class="i"><use href="#i-x"/></svg></button>
       </div>
-      <div class="origin">
+      <div class="origin" id="originbox" hidden>
         <span id="olabel">Goods from</span>
         <div class="seg" role="group" aria-labelledby="olabel">
           <button id="o-gen" aria-pressed="true">China &amp; others</button>
@@ -736,12 +729,6 @@ footer a{color:var(--accent);font-weight:600;text-decoration:none}footer a:hover
       <div class="suggest" id="suggest"></div>
       <div class="hero-stats" id="hero-stats"></div>
     </div>
-    <form class="trackmini" role="search" aria-label="Track a shipment" onsubmit="event.preventDefault();var v=(this.querySelector('input').value||'').trim();location.href='/shipping/track'+(v?('?n='+encodeURIComponent(v)):'');">
-      <svg class="i" aria-hidden="true"><use href="#i-box"/></svg>
-      <input type="search" inputmode="latin" autocomplete="off" spellcheck="false" placeholder="Track a shipment — container, air waybill, courier or EMS" aria-label="Tracking number — container, bill of lading, air waybill, courier or postal item">
-      <button type="submit">Track</button>
-    </form>
-    <p class="trackmini-note">Paste any tracking number — we detect the carrier (<b>sea container</b>, <b>air waybill</b>, <b>DHL · FedEx · UPS · Aramex</b> or <b>EMS post</b>) and take you to its official tracker. No sign-in, nothing stored.</p>
     <div class="toolbar" id="toolbar" hidden>
       <button class="chip" data-duty="all" aria-pressed="true">Any duty</button>
       <button class="chip" data-duty="free" aria-pressed="false">Duty free</button>
@@ -1373,13 +1360,16 @@ function answerCard(r){
     return h;
   } catch (e) { return ''; }
 }
+const HOME_EXAMPLES = ['Mobile phone', 'Laptop', 'Car', 'Motorcycle', 'Gold', 'Solar panel', 'LED display', 'Rice'];
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
   $('#qclear').hidden = !q;
   $('#hero').classList.toggle('compact', has);
   $('#toolbar').hidden = !has;
   const sug = has ? termSuggest(q) : [];
-  $('#suggest').innerHTML = sug.map(t => `<button data-q="${esc(t)}">${ic('i-search')}${esc(t)}</button>`).join('');
+  $('#originbox').hidden = !has;      // the origin switch only matters once there are rates on screen
+  // nothing typed yet: offer the products people look up most, so one tap shows what the tool does
+  $('#suggest').innerHTML = (has ? sug : HOME_EXAMPLES).map(t => `<button data-q="${esc(t)}">${ic('i-search')}${esc(t)}</button>`).join('');
   if (!has){ renderHome(); return; }
   $('#hero-stats').innerHTML = '';
   const res = search(q);

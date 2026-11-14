@@ -315,13 +315,16 @@ function answerCard(r){
     return h;
   } catch (e) { return ''; }
 }
+const HOME_EXAMPLES = ['Mobile phone', 'Laptop', 'Car', 'Motorcycle', 'Gold', 'Solar panel', 'LED display', 'Rice'];
 function renderResults(){
   const q = $('#q').value, has = !!q.trim();
   $('#qclear').hidden = !q;
   $('#hero').classList.toggle('compact', has);
   $('#toolbar').hidden = !has;
   const sug = has ? termSuggest(q) : [];
-  $('#suggest').innerHTML = sug.map(t => `<button data-q="${esc(t)}">${ic('i-search')}${esc(t)}</button>`).join('');
+  $('#originbox').hidden = !has;      // the origin switch only matters once there are rates on screen
+  // nothing typed yet: offer the products people look up most, so one tap shows what the tool does
+  $('#suggest').innerHTML = (has ? sug : HOME_EXAMPLES).map(t => `<button data-q="${esc(t)}">${ic('i-search')}${esc(t)}</button>`).join('');
   if (!has){ renderHome(); return; }
   $('#hero-stats').innerHTML = '';
   const res = search(q);
