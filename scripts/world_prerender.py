@@ -854,7 +854,10 @@ def write_vercel_json():
         'cleanUrls': True, 'trailingSlash': False,
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
                                     'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys()] if DV else [])
-                     + [{'source': '/index', 'destination': '/', 'permanent': True}],
+                     + [{'source': '/index', 'destination': '/', 'permanent': True},
+                        # the old www /world mount leaked /world URLs onto this host
+                        {'source': '/world', 'destination': '/', 'permanent': True},
+                        {'source': '/world/:path*', 'destination': '/:path*', 'permanent': True}],
         'headers': [
             {'source': '/assets/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]},
             {'source': '/data/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'},
