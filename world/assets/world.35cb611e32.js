@@ -1,203 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>World HS Codes &amp; Global Trade — Customs Nepal</title>
-<meta name="description" content="Search the international Harmonized System and explore the import/export trade of 207 economies — world prices, top exporters and importers.">
-<meta property="og:site_name" content="Customs Nepal"><meta property="og:type" content="website"><meta property="og:title" content="World HS Codes &amp; Global Trade — Customs Nepal"><meta property="og:image" content="https://www.customsnepal.com/og.png">
-<meta name="robots" content="index,follow,max-image-preview:large">
-<meta name="theme-color" content="#1B2A45">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%231B2A45%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27monospace%27 font-size=%2713%27 font-weight=%27700%27 fill=%27white%27 text-anchor=%27middle%27%3EHS%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">
-<style>
-:root{
-  --bg:#F8FAFC; --card:#FFFFFF; --muted-bg:#EEF2F6; --fg:#0B1220; --fg-2:#334155; --muted:#5B6878; --border:#E2E8F0;
-  --primary:#293C55; --on-primary:#FFFFFF; --accent:#5470C6; --accent-bg:#E8EDFA; --brand:#EE6666;
-  --hero1:#1B2A45; --hero2:#2F4E7A; --hero3:#5470C6;
-  --free:#15803D; --free-bg:#DCFCE7; --low:#0369A1; --low-bg:#E0F0FA; --mid:#A15C07; --mid-bg:#FEF3C7; --hi:#B91C1C; --hi-bg:#FEE2E2;
-  --exp:#5470C6; --imp:#EE6666;
-  --r-sm:8px; --r:12px; --r-lg:16px; --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
-  --f-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --f-mono:"SF Mono",SFMono-Regular,ui-monospace,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
-  --primary:#E2E8F0; --on-primary:#0B1120; --accent:#7A93E6; --accent-bg:#1C2743; --brand:#F2606E;
-  --hero1:#0B1428; --hero2:#16294A; --hero3:#3F5CB0;
-  --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
-  --exp:#7A93E6; --imp:#F2606E;
-}}
-:root[data-theme="dark"]{
-  --bg:#0B1120; --card:#131C2E; --muted-bg:#1A2436; --fg:#F1F5F9; --fg-2:#CBD5E1; --muted:#94A3B8; --border:#243047;
-  --primary:#E2E8F0; --on-primary:#0B1120; --accent:#7A93E6; --accent-bg:#1C2743; --brand:#F2606E;
-  --hero1:#0B1428; --hero2:#16294A; --hero3:#3F5CB0;
-  --free:#4ADE80; --free-bg:#0F2E1C; --low:#38BDF8; --low-bg:#0C2A40; --mid:#FBBF24; --mid-bg:#33260A; --hi:#F87171; --hi-bg:#3A1414;
-  --exp:#7A93E6; --imp:#F2606E;
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.5;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
-.wrap{max-width:960px;margin:0 auto;padding:0 var(--s4)}
-.mono{font-family:var(--f-mono)}
-svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
-/* header */
-.bar{position:sticky;top:0;z-index:30;background:var(--hero1);color:#fff}
-.bar .wrap{display:flex;align-items:center;gap:var(--s3);height:56px}
-.logo{display:flex;align-items:center;gap:9px;color:#fff;font-weight:800;letter-spacing:-.02em}
-.logo .mk{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--accent);font-size:.9rem;font-weight:800}
-.logo small{display:block;font-size:.66rem;font-weight:600;color:#9fb4e6;letter-spacing:.02em;margin-top:-2px}
-.nav{margin-left:auto;display:flex;gap:2px;align-items:center}
-.nav a{color:#c9d6f0;font-weight:700;font-size:.9rem;padding:8px 11px;border-radius:8px}
-.nav a.on,.nav a:hover{background:rgba(255,255,255,.12);color:#fff}
-.nav a.ext{color:#9fb4e6}
-@media(max-width:560px){.nav a{padding:7px 8px;font-size:.82rem}.logo small{display:none}}
-/* hero */
-.hero{background:linear-gradient(135deg,var(--hero1),var(--hero2) 60%,var(--hero3));color:#fff;padding:var(--s6) 0}
-.hero h1{margin:0 0 10px;font-size:2rem;line-height:1.1;letter-spacing:-.03em;font-weight:800;text-wrap:balance}
-.hero p{margin:0;color:#dbe4f7;max-width:54ch;font-size:1.02rem}
-.hero .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--s4)}
-.hero .chips span{background:rgba(255,255,255,.12);border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:600}
-@media(max-width:560px){.hero h1{font-size:1.6rem}}
-/* layout */
-main{padding:var(--s5) 0 64px}
-.ph{margin:0 0 var(--s4)}
-.ph h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}
-.ph p{margin:6px 0 0;color:var(--muted);max-width:60ch}
-.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--accent);font-weight:700;font-size:.9rem;cursor:pointer;padding:6px 0;margin-bottom:6px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}
-@media(max-width:620px){.grid2{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4)}
-.bigcard{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s5);color:inherit;transition:border-color .15s,transform .15s}
-.bigcard:hover{border-color:var(--accent);transform:translateY(-2px)}
-.bigcard .ic{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--accent-bg);color:var(--accent);margin-bottom:var(--s3)}
-.bigcard h3{margin:0 0 6px;font-size:1.2rem;letter-spacing:-.01em}
-.bigcard p{margin:0;color:var(--muted);font-size:.92rem}
-.bigcard .go{margin-top:var(--s3);color:var(--accent);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:5px}
-.statrow{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s5)}
-.statrow .s b{display:block;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.statrow .s span{color:var(--muted);font-size:.84rem}
-/* search */
-.sbox{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 15px;margin-bottom:var(--s4)}
-.sbox:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-bg)}
-.sbox input{border:0;background:none;outline:none;font-size:1.05rem;color:var(--fg);width:100%}
-.sbox svg{color:var(--muted)}
-/* list rows */
-.row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;color:inherit}
-.row:hover{border-color:var(--accent)}
-.row .code{font-family:var(--f-mono);font-weight:700;color:var(--accent);font-size:.92rem;flex:none}
-.row .d{flex:1;min-width:0;font-size:.93rem}
-.row .end{flex:none;color:var(--muted)}
-.chip{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--muted-bg);color:var(--fg-2)}
-.dutychip{background:var(--low-bg);color:var(--low)}
-/* section grid */
-.secs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.sec{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;color:inherit}
-.sec:hover{border-color:var(--accent)}
-.sec .n{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.sec .t{display:block;font-size:.9rem;font-weight:600;margin-top:3px;line-height:1.3}
-.sec .c{display:block;font-size:.75rem;color:var(--muted);margin-top:4px}
-/* detail */
-.dcode{font-family:var(--f-mono);font-size:1.8rem;font-weight:800;letter-spacing:-.01em}
-.dtitle{font-size:1.1rem;font-weight:600;margin:4px 0 0}
-.crumb{color:var(--muted);font-size:.86rem;margin:10px 0 0}
-.crumb b{color:var(--fg-2);font-weight:600}
-table.bk{width:100%;border-collapse:collapse;margin-top:var(--s4);font-variant-numeric:tabular-nums}
-table.bk td{padding:10px 0;border-top:1px solid var(--border);font-size:.94rem}
-table.bk td:last-child{text-align:right;font-family:var(--f-mono);font-weight:700;white-space:nowrap}
-.src{margin-top:var(--s4);border:1px solid var(--border);border-radius:var(--r);padding:var(--s3) var(--s4);background:var(--card)}
-.src-h{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:.82rem;font-weight:700}
-.src-h svg{width:17px;height:17px;color:var(--free)}
-.src p{margin:6px 0 0;font-size:.8rem;line-height:1.5;color:var(--muted)}
-.src a{color:var(--accent);font-weight:700;white-space:nowrap}
-.outcome{display:flex;gap:12px;align-items:flex-start;background:var(--accent-bg);border-radius:var(--r);padding:12px 14px;font-size:.92rem;margin-top:var(--s4)}
-.outcome svg{color:var(--accent);margin-top:2px}
-/* country cards */
-.ccards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:var(--s3)}
-.ccard{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:var(--s4);cursor:pointer;color:inherit}
-.ccard:hover{border-color:var(--accent)}
-.ccard .fl{font-size:1.6rem}
-.ccard h3{margin:6px 0 10px;font-size:1.1rem}
-.ccard .kv{display:flex;justify-content:space-between;font-size:.86rem;padding:3px 0}
-.ccard .kv b{font-variant-numeric:tabular-nums}
-.ex{color:var(--exp)} .im{color:var(--imp)}
-/* bars */
-.bars{margin-top:var(--s3)}
-.barrow{display:grid;grid-template-columns:140px 1fr auto;align-items:center;gap:10px;margin-bottom:7px;font-size:.86rem}
-.barrow .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.barrow .tr{background:var(--muted-bg);border-radius:6px;height:16px;overflow:hidden}
-.barrow .fi{display:block;height:100%;border-radius:6px;background:var(--accent);min-width:3px}
-.barrow .vl{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
-@media(max-width:520px){.barrow{grid-template-columns:110px 1fr auto;gap:7px;font-size:.8rem}}
-.lbrow{display:grid;grid-template-columns:26px 150px 1fr auto;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:6px;margin-bottom:2px;cursor:pointer;color:inherit;font-size:.86rem}
-.lbrow:hover{background:var(--muted-bg)}
-.lbrow .rk{color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
-.lbrow .lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
-.lbrow .tr{background:var(--muted-bg);border-radius:6px;height:14px;overflow:hidden}
-.lbrow .fi{display:block;height:100%;border-radius:6px;min-width:3px}
-.lbrow .vl{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
-@media(max-width:520px){.lbrow{grid-template-columns:22px 104px 1fr auto;gap:7px;font-size:.8rem}}
-.nepalcard{display:flex;align-items:center;gap:14px;background:var(--accent-bg);border-radius:var(--r);padding:var(--s4);margin-top:var(--s4);cursor:pointer;color:inherit;width:100%;text-align:left;border:0}
-.nepalcard .fl{font-size:2rem}
-.nepalcard b{font-weight:700}
-.osrc{display:grid;gap:5px}
-.osrc-i{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;color:inherit;font-size:.9rem}
-.osrc-i:hover{border-color:var(--accent)}
-.osrc-i span{flex:1;font-weight:600}
-.osrc-i svg{color:var(--muted);width:18px;height:18px}
-h3.h{font-size:1.05rem;margin:var(--s5) 0 var(--s2)}
-.sub2{display:flex;gap:6px;margin:var(--s4) 0}
-.sub2 button{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--fg-2)}
-.sub2 button.on{background:var(--accent-bg);color:var(--accent);border-color:transparent}
-.fine{font-size:.8rem;color:var(--muted);margin:var(--s3) 0 0}
-ol.exsteps{margin:4px 0 0;padding-left:20px;font-size:.9rem;line-height:1.65;color:var(--fg-2)}
-ol.exsteps li{margin-bottom:5px}
-.empty{text-align:center;color:var(--muted);padding:var(--s6) var(--s4)}
-footer{border-top:1px solid var(--border);margin-top:48px;padding:var(--s5) 0;color:var(--muted);font-size:.84rem}
-footer a{font-weight:600}
-.trend{width:100%;height:150px;margin-top:var(--s3)}
-.lgnd{display:flex;gap:16px;font-size:.82rem;margin-top:6px}
-.lgnd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
-
-/* prerender: semantic headings styled like the SPA's h2 */
-h1.h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}
-h1.dcode{margin:0}
-a.row,a.sec,a.lbrow,a.nepalcard,a.back{text-decoration:none}
-
-/* deep profiles + pair pages (scripts/world_deep.py) */
-.ans{font-size:1.08rem;line-height:1.55;margin:var(--s3) 0 var(--s4);max-width:70ch}
-.ans a,.ctx a,.dt a,.pl2 a{color:var(--accent)}
-h2.h{font-size:1.15rem;margin:var(--s6) 0 var(--s3)}
-.bars.dp .barrow .lb{white-space:normal}.bars.dp .vl{white-space:nowrap}.bars.dp .vl small{color:var(--muted);font-weight:500;margin-left:4px}
-.bars.dp a{color:inherit;text-decoration:none}.bars.dp a:hover{text-decoration:underline}
-.bars.dp a.pl{font-size:.68rem;font-weight:700;color:var(--accent);border:1px solid var(--border);border-radius:999px;padding:0 6px;margin-left:4px;text-decoration:none}
-.dscroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r,12px);background:var(--card)}
-.dt{width:100%;border-collapse:collapse;font-size:.88rem}.dt th{font-size:.72rem;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;font-weight:650}
-.dt td{padding:8px 10px;border-top:1px solid var(--border);vertical-align:top}.dt tbody tr:first-child td{border-top:0}
-.dt .r{text-align:right;white-space:nowrap}.dt td:first-child{min-width:190px}.dt small{color:var(--muted)}
-.dt.mx td:first-child{min-width:130px;white-space:nowrap}.dt.mx .mu{color:var(--muted)}
-.hsc{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;color:var(--muted)}
-.rk1,.rk2,.rk3{display:inline-block;font-size:.7rem;font-weight:700;border-radius:999px;padding:0 7px;white-space:nowrap}
-.rk1{background:#FDE68A;color:#713F12}.rk2{background:#E2E8F0;color:#334155}.rk3{background:#FED7AA;color:#7C2D12}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--s3)}
-.pl2{list-style:none;margin:8px 0 0;padding:0}.pl2 li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--border);font-size:.9rem}.pl2 li:first-child{border-top:0}
-.pairgrid{display:flex;flex-wrap:wrap;gap:8px}.pairgrid a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.85rem;color:var(--fg);text-decoration:none}
-.pairgrid a:hover{border-color:var(--accent)}.pairgrid small{color:var(--muted)}
-.dall{margin-top:var(--s5)}.dall>summary{cursor:pointer;font-weight:650;padding:10px 0;color:var(--accent)}
-.ctx{margin:var(--s4) 0;padding-left:1.1em;line-height:1.6}
-.pscale{margin-top:var(--s4)}.pscale .pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;margin-bottom:10px;font-size:.9rem}
-.pscale .pr div{grid-column:1/-1;height:18px;border-radius:5px;background:var(--bg);overflow:hidden}.pscale .pr i{display:block;height:100%;border-radius:5px}
-@media(max-width:600px){.dt{font-size:.82rem}.dt td:first-child{min-width:150px}}
-
-</style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>
-</head>
-<body>
-<header class="bar"><div class="wrap"><a class="logo" href="/world" data-nav><span class="mk">HS</span><span>Customs Nepal<small>World HS &amp; Trade</small></span></a><nav class="nav"><a href="/world/hs" data-nav data-k="hs">HS Codes</a><a href="/world/trade" data-nav data-k="trade">Trade</a><a href="/world/nepal/exports" data-nav data-k="exports">Nepal Exports</a><a class="ext" href="https://customsnepal.com" target="_blank" rel="noopener">Nepal tools ↗</a></nav></div></header>
-<div id="app"><div class="empty" style="padding-top:80px">Loading…</div></div>
-<footer><div class="wrap"><p style="margin:0 0 6px"><b style="color:var(--fg-2)">world.customsnepal.com</b> — the international companion to Customs Nepal.</p><p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other sites:</b> <a href="https://www.customsnepal.com/">Nepal HS codes, customs tariff 2083/84 &amp; import-duty calculator — customsnepal.com</a> · <a href="https://nepalpublicdata.com/">Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com</a></p><p style="margin:0">HS nomenclature © World Customs Organization. Trade figures: World Bank &amp; World Bank WITS (sourced from UN Comtrade). This is an independent reference tool, not affiliated with any government or the WCO. Figures are indicative — verify against official sources before commercial decisions.</p></div></footer>
-<script>
 (function(){
 const $=s=>document.querySelector(s), app=document.getElementById('app');
 // Works at the subdomain root (BASE='') and under a /world/ subpath (preview on the main domain).
@@ -213,7 +13,7 @@ function money(v){ if(v==null||isNaN(v))return'—'; const a=Math.abs(v);
 
 // Shared reference data (official sources, product groups, export guides) lives in world-src/meta.json —
 // the prerender (scripts/world_prerender.py) inlines it here so the SPA and the static pages use one source.
-const META={"OFFICIAL":{"CHN":["General Administration of Customs (GACC)","http://english.customs.gov.cn"],"USA":["U.S. Census Bureau — Foreign Trade","https://www.census.gov/foreign-trade/data/index.html"],"DEU":["Destatis — Foreign Trade","https://www.destatis.de/EN/Themes/Economy/Foreign-Trade/_node.html"],"NLD":["CBS — International trade","https://www.cbs.nl/en-gb/economy/international-trade"],"JPN":["Japan Customs / Ministry of Finance","https://www.customs.go.jp/toukei/info/index_e.htm"],"FRA":["French Customs (Douane) — open data","https://www.douane.gouv.fr/la-douane/opendata"],"KOR":["Korea Customs Service","https://tradedata.go.kr"],"ITA":["ISTAT — Foreign trade (Coeweb)","https://www.coeweb.istat.it"],"IND":["Dept. of Commerce — Export Import Data Bank","https://tradestat.commerce.gov.in"],"GBR":["HMRC — uktradeinfo","https://www.uktradeinfo.com/trade-data/"],"RUS":["Federal Customs Service","https://customs.gov.ru"],"ESP":["Datacomex / Aduanas","https://datacomex.comercio.es"],"CAN":["Statistics Canada — Trade","https://www150.statcan.gc.ca/n1/en/subjects/international_trade"],"MEX":["INEGI — Balanza comercial","https://www.inegi.org.mx/temas/balanza/"],"BRA":["ComexStat — Secex","https://comexstat.mdic.gov.br/en/home"],"AUS":["ABS — International trade","https://www.abs.gov.au/statistics/economy/international-trade"],"CHE":["Swiss-Impex — Federal Customs","https://www.gate.estv.admin.ch/swissimpex/"],"TUR":["TurkStat — Foreign trade","https://data.tuik.gov.tr/Kategori/GetKategori?p=foreign-trade-104"],"IDN":["BPS / Statistics Indonesia","https://www.bps.go.id/en"],"THA":["Thai Customs","http://www.customs.go.th"],"VNM":["Vietnam Customs","https://www.customs.gov.vn"],"SGP":["Enterprise Singapore / SingStat","https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment"],"SAU":["GASTAT — International trade","https://www.stats.gov.sa/en"],"NPL":["Dept. of Customs, Nepal","https://www.customs.gov.np"]},"EUROSTAT":["Eurostat — Comext (EU-wide)","https://ec.europa.eu/eurostat/web/international-trade-in-goods/database"],"PGROUPS":[["Animal & animal products",1,5],["Vegetable products",6,15],["Foodstuffs, beverages & tobacco",16,24],["Minerals",25,26],["Mineral fuels & oils",27,27],["Chemicals & allied",28,38],["Plastics & rubber",39,40],["Hides, skins & leather",41,43],["Wood & paper",44,49],["Textiles & clothing",50,63],["Footwear & headgear",64,67],["Stone, glass & precious metals",68,71],["Base metals",72,83],["Machinery & electronics",84,85],["Transport equipment",86,89],["Instruments, arms & misc.",90,99]],"EXGUIDES":{"cardamom":{"hs":"090831","fl":"🌿","name":"Large cardamom (alaichi)","h1":"Exporting large cardamom (alaichi) from Nepal","sub":"Nepal is the world's largest producer of large (black) cardamom — here's the trade picture and how to ship it.","body":"<h3 class=\"h\">About the product<\/h3>\n      <p class=\"fine\">Large cardamom (<i>Amomum subulatum<\/i>), known locally as <b>alaichi<\/b>, is grown in Nepal's eastern hill districts — Taplejung, Panchthar, Ilam and Sankhuwasabha. Nepal is the world's top producer, and cardamom is one of its highest-value agricultural exports.<\/p>\n      <h3 class=\"h\">Nepal's position<\/h3>\n      <p class=\"fine\">Almost all of Nepal's crop goes to <b>India<\/b>, which both consumes it and re-exports onward to the Middle East and beyond. Because the market is so India-concentrated, prices swing with Indian demand and with how the India–Nepal trade treaty treats the product in a given year — a key risk for growers and exporters.<\/p>\n      <h3 class=\"h\">How to export from Nepal<\/h3>\n      <ol class=\"exsteps\">\n        <li><b>Register for an EXIM code<\/b> with the Department of Customs (one-time exporter registration).<\/li>\n        <li><b>Phytosanitary certificate<\/b> from the National Plant Quarantine Program — required for agricultural produce.<\/li>\n        <li><b>Certificate of origin<\/b> from a recognised chamber of commerce or TEPC (a SAARC/SAFTA certificate for shipments to India).<\/li>\n        <li><b>Grading &amp; quality<\/b> to the buyer's specification (moisture, size, cleanliness).<\/li>\n        <li><b>File the export declaration<\/b> in the customs system and clear at the border/dry port.<\/li>\n      <\/ol>\n      <p class=\"fine\">Agro exports may qualify for the government's <b>cash export-incentive scheme<\/b>; rates are set in the annual budget, so confirm the current figure with TEPC before you price a shipment.<\/p>","sources":"Trade &amp; Export Promotion Centre (tepc.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np), Department of Customs (customs.gov.np), National Plant Quarantine Program."},"carpets":{"hs":"570110","fl":"🧶","name":"Hand-knotted woollen carpets","h1":"Exporting hand-knotted woollen carpets from Nepal","sub":"Nepal's signature manufactured export — here's who buys it and how to ship it.","body":"<h3 class=\"h\">About the product<\/h3>\n      <p class=\"fine\">Hand-knotted Tibetan–Nepali <b>woollen carpets<\/b> are made around the Kathmandu Valley (Jawalakhel, Boudha, Sankhu). They are a flagship manufactured export and one of the country's larger formal-sector employers.<\/p>\n      <h3 class=\"h\">Nepal's position<\/h3>\n      <p class=\"fine\">The <b>United States<\/b> is Nepal's largest carpet market, followed by <b>Germany<\/b>, the <b>UK<\/b> and other EU countries. Western buyers increasingly require <b>child-labour-free certification<\/b> (GoodWeave), so that certification is effectively part of market access.<\/p>\n      <h3 class=\"h\">How to export from Nepal<\/h3>\n      <ol class=\"exsteps\">\n        <li><b>Register for an EXIM code<\/b> with the Department of Customs.<\/li>\n        <li><b>Certificate of origin<\/b> from a chamber or TEPC; a <b>GSP Form A<\/b> where the destination grants Nepal preferential access (eligibility varies by country — confirm the current status before quoting duty-free).<\/li>\n        <li><b>GoodWeave / quality certification<\/b>, valued or required by most Western importers.<\/li>\n        <li><b>File the export declaration<\/b> and clear through customs (usually air or sea freight via Kolkata/Haldia).<\/li>\n      <\/ol>\n      <p class=\"fine\">Manufactured exports may qualify for the government's <b>cash export-incentive scheme<\/b> — check the current rate with TEPC, as it is reset annually.<\/p>","sources":"Nepal Carpet Exporters&#39; Association, Trade &amp; Export Promotion Centre (tepc.gov.np), Department of Customs (customs.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np)."}}};
+const META={"OFFICIAL":{"CHN":["General Administration of Customs (GACC)","http://english.customs.gov.cn"],"USA":["U.S. Census Bureau — Foreign Trade","https://www.census.gov/foreign-trade/data/index.html"],"DEU":["Destatis — Foreign Trade","https://www.destatis.de/EN/Themes/Economy/Foreign-Trade/_node.html"],"NLD":["CBS — International trade","https://www.cbs.nl/en-gb/economy/international-trade"],"JPN":["Japan Customs / Ministry of Finance","https://www.customs.go.jp/toukei/info/index_e.htm"],"FRA":["French Customs (Douane) — open data","https://www.douane.gouv.fr/la-douane/opendata"],"KOR":["Korea Customs Service","https://tradedata.go.kr"],"ITA":["ISTAT — Foreign trade (Coeweb)","https://www.coeweb.istat.it"],"IND":["Dept. of Commerce — Export Import Data Bank","https://tradestat.commerce.gov.in"],"GBR":["HMRC — uktradeinfo","https://www.uktradeinfo.com/trade-data/"],"RUS":["Federal Customs Service","https://customs.gov.ru"],"ESP":["Datacomex / Aduanas","https://datacomex.comercio.es"],"CAN":["Statistics Canada — Trade","https://www150.statcan.gc.ca/n1/en/subjects/international_trade"],"MEX":["INEGI — Balanza comercial","https://www.inegi.org.mx/temas/balanza/"],"BRA":["ComexStat — Secex","https://comexstat.mdic.gov.br/en/home"],"AUS":["ABS — International trade","https://www.abs.gov.au/statistics/economy/international-trade"],"CHE":["Swiss-Impex — Federal Customs","https://www.gate.estv.admin.ch/swissimpex/"],"TUR":["TurkStat — Foreign trade","https://data.tuik.gov.tr/Kategori/GetKategori?p=foreign-trade-104"],"IDN":["BPS / Statistics Indonesia","https://www.bps.go.id/en"],"THA":["Thai Customs","http://www.customs.go.th"],"VNM":["Vietnam Customs","https://www.customs.gov.vn"],"SGP":["Enterprise Singapore / SingStat","https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment"],"SAU":["GASTAT — International trade","https://www.stats.gov.sa/en"],"NPL":["Dept. of Customs, Nepal","https://www.customs.gov.np"]},"EUROSTAT":["Eurostat — Comext (EU-wide)","https://ec.europa.eu/eurostat/web/international-trade-in-goods/database"],"PGROUPS":[["Animal & animal products",1,5],["Vegetable products",6,15],["Foodstuffs, beverages & tobacco",16,24],["Minerals",25,26],["Mineral fuels & oils",27,27],["Chemicals & allied",28,38],["Plastics & rubber",39,40],["Hides, skins & leather",41,43],["Wood & paper",44,49],["Textiles & clothing",50,63],["Footwear & headgear",64,67],["Stone, glass & precious metals",68,71],["Base metals",72,83],["Machinery & electronics",84,85],["Transport equipment",86,89],["Instruments, arms & misc.",90,99]],"EXGUIDES":{"cardamom":{"hs":"090831","fl":"🌿","name":"Large cardamom (alaichi)","h1":"Exporting large cardamom (alaichi) from Nepal","sub":"Nepal is the world's largest producer of large (black) cardamom — here's the trade picture and how to ship it.","body":"<h3 class=\"h\">About the product<\/h3>\n      <p class=\"fine\">Large cardamom (<i>Amomum subulatum<\/i>), known locally as <b>alaichi<\/b>, is grown in Nepal's eastern hill districts — Taplejung, Panchthar, Ilam and Sankhuwasabha. Nepal is the world's top producer, and cardamom is one of its highest-value agricultural exports.<\/p>\n      <h3 class=\"h\">Nepal's position<\/h3>\n      <p class=\"fine\">Almost all of Nepal's crop goes to <b>India<\/b>, which both consumes it and re-exports onward to the Middle East and beyond. Because the market is so India-concentrated, prices swing with Indian demand and with how the India–Nepal trade treaty treats the product in a given year — a key risk for growers and exporters.<\/p>\n      <h3 class=\"h\">How to export from Nepal<\/h3>\n      <ol class=\"exsteps\">\n        <li><b>Register for an EXIM code<\/b> with the Department of Customs (one-time exporter registration).<\/li>\n        <li><b>Phytosanitary certificate<\/b> from the National Plant Quarantine Program — required for agricultural produce.<\/li>\n        <li><b>Certificate of origin<\/b> from a recognised chamber of commerce or TEPC (a SAARC/SAFTA certificate for shipments to India).<\/li>\n        <li><b>Grading &amp; quality<\/b> to the buyer's specification (moisture, size, cleanliness).<\/li>\n        <li><b>File the export declaration<\/b> in the customs system and clear at the border/dry port.<\/li>\n      <\/ol>\n      <p class=\"fine\">Agro exports may qualify for the government's <b>cash export-incentive scheme<\/b>; rates are set in the annual budget, so confirm the current figure with TEPC before you price a shipment.<\/p>","sources":"Trade &amp; Export Promotion Centre (tepc.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np), Department of Customs (customs.gov.np), National Plant Quarantine Program."},"carpets":{"hs":"570110","fl":"🧶","name":"Hand-knotted woollen carpets","h1":"Exporting hand-knotted woollen carpets from Nepal","sub":"Nepal's signature manufactured export — here's who buys it and how to ship it.","body":"<h3 class=\"h\">About the product<\/h3>\n      <p class=\"fine\">Hand-knotted Tibetan–Nepali <b>woollen carpets<\/b> are made around the Kathmandu Valley (Jawalakhel, Boudha, Sankhu). They are a flagship manufactured export and one of the country's larger formal-sector employers.<\/p>\n      <h3 class=\"h\">Nepal's position<\/h3>\n      <p class=\"fine\">The <b>United States<\/b> is Nepal's largest carpet market, followed by <b>Germany<\/b>, the <b>UK<\/b> and other EU countries. Western buyers increasingly require <b>child-labour-free certification<\/b> (GoodWeave), so that certification is effectively part of market access.<\/p>\n      <h3 class=\"h\">How to export from Nepal<\/h3>\n      <ol class=\"exsteps\">\n        <li><b>Register for an EXIM code<\/b> with the Department of Customs.<\/li>\n        <li><b>Certificate of origin<\/b> from a chamber or TEPC; a <b>GSP Form A<\/b> where the destination grants Nepal preferential access (eligibility varies by country — confirm the current status before quoting duty-free).<\/li>\n        <li><b>GoodWeave / quality certification<\/b>, valued or required by most Western importers.<\/li>\n        <li><b>File the export declaration<\/b> and clear through customs (usually air or sea freight via Kolkata/Haldia).<\/li>\n      <\/ol>\n      <p class=\"fine\">Manufactured exports may qualify for the government's <b>cash export-incentive scheme<\/b> — check the current rate with TEPC, as it is reset annually.<\/p>","sources":"Nepal Carpet Exporters&#39; Association, Trade &amp; Export Promotion Centre (tepc.gov.np), Department of Customs (customs.gov.np), Nepal Trade Information Portal (nepaltradeportal.gov.np)."}},"MAIN_GUIDES":["cardamom","carpets"]};
 const {OFFICIAL,EUROSTAT,PGROUPS,EXGUIDES}=META;
 const groupSlug=l=>l.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const chapterGroup=ch=>{ch=+ch;return PGROUPS.find(g=>ch>=g[1]&&ch<=g[2]);};
@@ -294,10 +94,11 @@ function nav(path){ history.pushState(null,'',BASE+path); route(); window.scroll
 document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
   const a=e.target.closest('a[data-nav]'); if(!a) return; let h=a.getAttribute('href')||''; if(!h.startsWith('/')) return;
   // Country profiles are full static pages on the subdomain (deep partner/product data the SPA does not hold): load them normally.
-  if(!BASE&&/^\/trade\/[a-z]{3}$/i.test(h)) return;
+  if(!BASE&&(h==='/'||/^\/trade\/[a-z]{3}$/i.test(h))) return;      // the home page and country profiles are full static pages
   e.preventDefault(); if(BASE&&h.indexOf(BASE)===0) h=h.slice(BASE.length)||'/'; nav(h); });
 
-function setNav(k){ document.querySelectorAll('.nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===k)); }
+const MAIN_GUIDES=(META&&META.MAIN_GUIDES)||[];   // export guides that live on customsnepal.com/export
+function setNav(k){ document.querySelectorAll('details.gnm[data-k]').forEach(d=>d.classList.toggle('cur',d.dataset.k===k)); }
 
 /* ---------------- Page titles — mirrored 1:1 in scripts/world_prerender.py (keep in sync) ---------------- */
 const clip=(s,n)=>{ s=String(s); if(s.length<=n) return s; const c=s.slice(0,n), i=c.lastIndexOf(' '); return (i>n*0.6?c.slice(0,i):c).replace(/[;,:\s]+$/,'')+'…'; };
@@ -366,11 +167,12 @@ function route(){
   let m;
   if(p.indexOf('/hs')===0){ loadProd(); loadNep(); loadDuty(); }
   if(p.indexOf('/nepal')===0){ loadNep(); loadProd(); }
+  if((p==='/'||p==='')&&!BASE){ location.reload(); return; }      // the home page is a full static page
   if(p==='/'||p===''){ setNav(''); home(); }
   else if(p==='/nepal/exports'){ nepExportsHome(); }
   else if((m=p.match(/^\/nepal\/exports\/guide\/([a-z-]+)$/))){ nepExportGuide(m[1]); }
   else if((m=p.match(/^\/nepal\/exports\/([a-z]{3})$/i))){ nepExportMarket(m[1].toUpperCase()); }
-  else if(p==='/nepal'){ setNav('trade'); nepalView(); }
+  else if(p==='/nepal'){ setNav('exports'); nepalView(); }
   else if(p==='/hs'){ setNav('hs'); hsHome(); }
   else if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); hsChapter(m[1]); }
   else if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); hsDetail(m[1]); }
@@ -691,7 +493,7 @@ function nepExportsHome(){
     <p class="fine" style="margin:0 0 8px">Nepal's top exports — open one for who buys it worldwide and the price Nepal gets.</p>
     ${(NEP._ex||[]).filter(d=>d[1]>0).slice(0,15).map(d=>exRow(d[0],d[1],exsText(d[0]))).join('')}
     <h3 class="h">Export guides</h3>
-    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<a class="sec" href="${BASE}/nepal/exports/guide/${s}" data-nav><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">Trade data + how to export</span></a>`).join('')}</div>
+    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<a class="sec" href="${MAIN_GUIDES.indexOf(s)>=0?'https://www.customsnepal.com/export/'+s:BASE+'/nepal/exports/guide/'+s}"${MAIN_GUIDES.indexOf(s)>=0?'':' data-nav'}><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">${MAIN_GUIDES.indexOf(s)>=0?'How to export, on customsnepal.com':'Trade data + how to export'}</span></a>`).join('')}</div>
     <h3 class="h">Export openings — big world demand, small Nepal share</h3>
     <p class="fine" style="margin:0 0 8px">Products Nepal already exports, where world import demand dwarfs Nepal's current sales.</p>
     ${open.length?open.slice(0,10).map(o=>exRow(o[0],o[1],`World imports ${money(o[2]*1e6)} · Nepal ${o[3]<1?'<1':Math.round(o[3])}%`)).join(''):'<p class="fine">—</p>'}
@@ -753,7 +555,3 @@ function nepExportGuide(slug){
 window.__go=nav;
 boot();
 })();
-
-</script>
-</body>
-</html>

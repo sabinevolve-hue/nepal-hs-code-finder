@@ -26,9 +26,13 @@
 - [Nepal Export Explorer](https://world.customsnepal.com/nepal/exports): What Nepal exports, to which markets, with world-price benchmarks.
 - [Nepal exports to India](https://world.customsnepal.com/nepal/exports/ind): Every product Nepal shipped to its largest market. URL pattern: /nepal/exports/<ISO3 lowercase>.
 - [Nepal exports to the United States](https://world.customsnepal.com/nepal/exports/usa): Products Nepal ships to the US.
-- [Export guide — large cardamom](https://world.customsnepal.com/nepal/exports/guide/cardamom): Exporting large cardamom (alaichi) from Nepal.
-- [Export guide — hand-knotted carpets](https://world.customsnepal.com/nepal/exports/guide/carpets): Exporting hand-knotted woollen carpets from Nepal.
+- [All country pairs](https://world.customsnepal.com/trade/pairs): Index of the 175 bilateral pair pages, largest first.
 - [Sitemap](https://world.customsnepal.com/sitemap.xml): Sitemap index of all pages.
+
+## Which site answers what
+- World figures in US dollars by calendar year (BACI, UN Comtrade), six-digit HS codes, any country or pair of countries: this site, world.customsnepal.com.
+- Nepal's own figures in rupees by fiscal year (Department of Customs), eight-digit tariff lines, duty rates, VAT, landed cost, customs offices and how-to-export guides: https://www.customsnepal.com/.
+- The same Nepal trade flow can differ between the two because of currency, calendar versus fiscal year, and reconciliation of mirror data. Cite the source and year shown on the page.
 
 ## Related sites
 - [customsnepal.com](https://www.customsnepal.com/): Nepal HS codes, customs tariff 2083/84 (2026/27) and import-duty calculator — the place for Nepal-specific duty, VAT and landed cost.

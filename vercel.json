@@ -85,16 +85,17 @@
     {"source": "/trade/country/viet-nam", "destination": "/trade-partner/vietnam", "permanent": true},
     {"source": "/trade/country/zimbabwe", "destination": "/trade-partner/zimbabwe", "permanent": true},
     {"source": "/trade-partner/togo", "destination": "/trade-partners", "permanent": false},
-    {"source": "/hs", "destination": "/world/hs", "permanent": false},
-    {"source": "/hs/:path*", "destination": "/world/hs/:path*", "permanent": false},
-    {"source": "/nepal", "destination": "/world/nepal", "permanent": false},
-    {"source": "/nepal/:path*", "destination": "/world/nepal/:path*", "permanent": false},
-    {"source": "/trade", "destination": "/world/trade", "permanent": false},
-    {"source": "/trade/product/:slug", "destination": "/world/trade/product/:slug", "permanent": false},
-    {"source": "/trade/:iso([A-Za-z]{3})", "destination": "/world/trade/:iso", "permanent": false}
+    {"source": "/hs", "destination": "https://world.customsnepal.com/hs", "permanent": true},
+    {"source": "/hs/:path*", "destination": "https://world.customsnepal.com/hs/:path*", "permanent": true},
+    {"source": "/nepal", "destination": "https://world.customsnepal.com/nepal", "permanent": true},
+    {"source": "/nepal/:path*", "destination": "https://world.customsnepal.com/nepal/:path*", "permanent": true},
+    {"source": "/trade", "destination": "https://world.customsnepal.com/trade", "permanent": true},
+    {"source": "/trade/product/:slug", "destination": "https://world.customsnepal.com/trade/product/:slug", "permanent": true},
+    {"source": "/trade/:iso([A-Za-z]{3})", "destination": "https://world.customsnepal.com/trade/:iso", "permanent": true},
+    {"source": "/world", "destination": "https://world.customsnepal.com/", "permanent": true},
+    {"source": "/world/:path*", "destination": "https://world.customsnepal.com/:path*", "permanent": true}
   ],
   "rewrites": [
-    {"source": "/world/((?!data/).*)", "destination": "/world"},
     {"source": "/(search|invoice|saved|account|ask-ai|trade-data|exports|imports|browse|calculator|about|privacy)", "destination": "/"}
   ],
   "headers": [

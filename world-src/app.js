@@ -94,10 +94,11 @@ function nav(path){ history.pushState(null,'',BASE+path); route(); window.scroll
 document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
   const a=e.target.closest('a[data-nav]'); if(!a) return; let h=a.getAttribute('href')||''; if(!h.startsWith('/')) return;
   // Country profiles are full static pages on the subdomain (deep partner/product data the SPA does not hold): load them normally.
-  if(!BASE&&/^\/trade\/[a-z]{3}$/i.test(h)) return;
+  if(!BASE&&(h==='/'||/^\/trade\/[a-z]{3}$/i.test(h))) return;      // the home page and country profiles are full static pages
   e.preventDefault(); if(BASE&&h.indexOf(BASE)===0) h=h.slice(BASE.length)||'/'; nav(h); });
 
-function setNav(k){ document.querySelectorAll('.nav a[data-k]').forEach(a=>a.classList.toggle('on',a.dataset.k===k)); }
+const MAIN_GUIDES=(META&&META.MAIN_GUIDES)||[];   // export guides that live on customsnepal.com/export
+function setNav(k){ document.querySelectorAll('details.gnm[data-k]').forEach(d=>d.classList.toggle('cur',d.dataset.k===k)); }
 
 /* ---------------- Page titles — mirrored 1:1 in scripts/world_prerender.py (keep in sync) ---------------- */
 const clip=(s,n)=>{ s=String(s); if(s.length<=n) return s; const c=s.slice(0,n), i=c.lastIndexOf(' '); return (i>n*0.6?c.slice(0,i):c).replace(/[;,:\s]+$/,'')+'…'; };
@@ -166,11 +167,12 @@ function route(){
   let m;
   if(p.indexOf('/hs')===0){ loadProd(); loadNep(); loadDuty(); }
   if(p.indexOf('/nepal')===0){ loadNep(); loadProd(); }
+  if((p==='/'||p==='')&&!BASE){ location.reload(); return; }      // the home page is a full static page
   if(p==='/'||p===''){ setNav(''); home(); }
   else if(p==='/nepal/exports'){ nepExportsHome(); }
   else if((m=p.match(/^\/nepal\/exports\/guide\/([a-z-]+)$/))){ nepExportGuide(m[1]); }
   else if((m=p.match(/^\/nepal\/exports\/([a-z]{3})$/i))){ nepExportMarket(m[1].toUpperCase()); }
-  else if(p==='/nepal'){ setNav('trade'); nepalView(); }
+  else if(p==='/nepal'){ setNav('exports'); nepalView(); }
   else if(p==='/hs'){ setNav('hs'); hsHome(); }
   else if((m=p.match(/^\/hs\/chapter\/(\d{2})$/))){ setNav('hs'); hsChapter(m[1]); }
   else if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ setNav('hs'); hsDetail(m[1]); }
@@ -491,7 +493,7 @@ function nepExportsHome(){
     <p class="fine" style="margin:0 0 8px">Nepal's top exports — open one for who buys it worldwide and the price Nepal gets.</p>
     ${(NEP._ex||[]).filter(d=>d[1]>0).slice(0,15).map(d=>exRow(d[0],d[1],exsText(d[0]))).join('')}
     <h3 class="h">Export guides</h3>
-    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<a class="sec" href="${BASE}/nepal/exports/guide/${s}" data-nav><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">Trade data + how to export</span></a>`).join('')}</div>
+    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<a class="sec" href="${MAIN_GUIDES.indexOf(s)>=0?'https://www.customsnepal.com/export/'+s:BASE+'/nepal/exports/guide/'+s}"${MAIN_GUIDES.indexOf(s)>=0?'':' data-nav'}><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">${MAIN_GUIDES.indexOf(s)>=0?'How to export, on customsnepal.com':'Trade data + how to export'}</span></a>`).join('')}</div>
     <h3 class="h">Export openings — big world demand, small Nepal share</h3>
     <p class="fine" style="margin:0 0 8px">Products Nepal already exports, where world import demand dwarfs Nepal's current sales.</p>
     ${open.length?open.slice(0,10).map(o=>exRow(o[0],o[1],`World imports ${money(o[2]*1e6)} · Nepal ${o[3]<1?'<1':Math.round(o[3])}%`)).join(''):'<p class="fine">—</p>'}
