@@ -99,12 +99,12 @@ document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.me
 
 const MAIN_PARTNERS=(META&&META.MAIN_PARTNERS)||[];
 const MAIN_GUIDES=(META&&META.MAIN_GUIDES)||[];   // export guides that live on customsnepal.com/export
-function setNav(k){ document.querySelectorAll('details.gnm[data-k]').forEach(d=>d.classList.toggle('cur',d.dataset.k===k)); }
+function setNav(k){ if(k==='exports') k='trade'; document.querySelectorAll('details.gnm[data-k]').forEach(d=>d.classList.toggle('cur',d.dataset.k===k)); }
 
 /* ---------------- Page titles — mirrored 1:1 in scripts/world_prerender.py (keep in sync) ---------------- */
 const clip=(s,n)=>{ s=String(s); if(s.length<=n) return s; const c=s.slice(0,n), i=c.lastIndexOf(' '); return (i>n*0.6?c.slice(0,i):c).replace(/[;,:\s]+$/,'')+'…'; };
 const PT={
-  home:()=>'World HS Codes & Global Trade Data — Customs Nepal',
+  home:()=>'World Trade Data: Exports and Imports by Country and Product',
   hs:()=>`World HS Code Finder — Search ${SUBS.length.toLocaleString('en-US')} HS 2022 Codes`,
   chapter:(ch,name)=>`HS Chapter ${ch}: ${clip(name,60)} — HS Codes List`,
   code:(code,desc)=>{ const b=`HS Code ${code} (${fmtCode(code)}) — ${clip(desc,48)}`; return b.length<=58?b+(PROD&&PROD[code]&&PROD[code].x&&PROD[code].x.length?' — World Trade & Prices':' — HS 2022 Code'):b; },
@@ -138,7 +138,7 @@ function seoDesc(p){ let m;
   if((m=p.match(/^\/hs\/code\/(\d{6})$/))){ const s=SUBS&&SUBS.find(x=>x[0]===m[1]); const pr=m[1].slice(0,4)+'.'+m[1].slice(4); return s?('HS code '+pr+' — '+s[1]+'. World trade, top exporters and importers, world price per kg, and Nepal import duty by origin.'):'HS code '+pr+' — world trade and Nepal import duty.'; }
   if((m=p.match(/^\/trade\/([a-z]{3})$/i))){ const iso=m[1].toUpperCase(); const c=TRADE&&TRADE.countries.find(x=>x.iso===iso); return c?(c.name+' trade profile: exports, imports, top partners and product mix, with its world rank.'):'Country trade profile — exports, imports and partners.'; }
   if(p.indexOf('/trade/product/')===0) return 'Global trade in this product group — the world\'s top exporting and importing economies.';
-  return 'International HS codes and global trade data from Customs Nepal.';
+  return 'World trade data: exports and imports by country, country pair and product.';
 }
 function setBreadcrumb(p){ const B=CANON, cr=[['Home','/']]; let m;
   if(p==='/hs') cr.push(['HS Codes','/hs']);
@@ -309,7 +309,6 @@ function tradeHome(){
         <div class="s"><b>${W.count}</b><span>Economies</span></div>
       </div>
       <div class="card" style="margin-top:var(--s4)"><b style="font-size:.9rem">World trade over time</b>${trendSVG(W.trend)}</div>
-      ${np?`<a class="nepalcard" href="${BASE}/nepal" data-nav><span class="fl">${np.flag}</span><span><b>Nepal in the world</b> — real imports, exports &amp; sourcing opportunities by product ${ic(I.right)}</span></a>`:''}
       <a class="nepalcard" href="${BASE?CANON:''}/trade/region/south-asia"><span class="fl">🌏</span><span><b>South Asia</b> — the eight SAARC economies and what they trade with each other ${ic(I.right)}</span></a>
       <div class="sub2" style="margin-top:var(--s5)"><button class="${tFlow==='exp'?'on':''}" onclick="__tflow('exp')">Top exporters</button><button class="${tFlow==='imp'?'on':''}" onclick="__tflow('imp')">Top importers</button></div>
       ${leaderboard(top,col)}
