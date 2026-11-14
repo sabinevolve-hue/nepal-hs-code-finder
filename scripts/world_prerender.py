@@ -539,6 +539,7 @@ def v_nep_market(iso):
 <div class="s"><b>{len(prods)}</b><span>Products</span></div><div class="s"><b>{"<1" if share < 1 else share}%</b><span>of Nepal's exports</span></div></div>
 <h3 class="h">Products Nepal exports to {esc(name)}</h3>{rows}'''
                 + card(f'/trade/{iso.lower()}', flag, f'<b>{esc(name)}\'s full trade profile</b> — its total exports, imports &amp; top partners')
+                + (f'<a class="nepalcard" href="{MAIN}{main_partner(name)}"><span class="fl">🇳🇵</span><span><b>Nepal–{esc(name)} trade in official figures</b>: rupees, fiscal year and 8-digit codes on customsnepal.com {ic("right")}</span></a>' if main_partner(name) else '')
                 + src_box('Source', f'<p>From <b>BACI</b> (CEPII, reconciled UN Comtrade). Values are Nepal→{esc(name)} merchandise exports at HS-6, current US$. For official 8-digit, fiscal-year figures, see Nepal\'s Department of Customs and TEPC; for Nepal duty and taxes see <a href="{MAIN}/" target="_blank" rel="noopener">customsnepal.com ↗</a>.</p>', '2024'))
 
 def v_guide(slug):
@@ -603,6 +604,7 @@ def dataset(name, desc, cover, temporal, based_on, keywords):
 import world_deep, textfit
 MAIN_GUIDES = sorted(f.stem for f in (ROOT / 'public' / 'export').glob('*.html'))
 META['MAIN_GUIDES'] = [s for s in EXGUIDES if s in MAIN_GUIDES]
+META['MAIN_PARTNERS'] = sorted(f.stem for f in (ROOT / 'public' / 'trade-partner').glob('*.html'))
 
 def main_partner(name):
     s = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')

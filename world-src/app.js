@@ -97,6 +97,7 @@ document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.me
   if(!BASE&&(h==='/'||/^\/trade\/[a-z]{3}$/i.test(h))) return;      // the home page and country profiles are full static pages
   e.preventDefault(); if(BASE&&h.indexOf(BASE)===0) h=h.slice(BASE.length)||'/'; nav(h); });
 
+const MAIN_PARTNERS=(META&&META.MAIN_PARTNERS)||[];
 const MAIN_GUIDES=(META&&META.MAIN_GUIDES)||[];   // export guides that live on customsnepal.com/export
 function setNav(k){ document.querySelectorAll('details.gnm[data-k]').forEach(d=>d.classList.toggle('cur',d.dataset.k===k)); }
 
@@ -521,7 +522,7 @@ function nepExportMarket(iso){
     </div>
     <h3 class="h">Products Nepal exports to ${esc(name)}</h3>
     ${prods.map(x=>{ const p=PROD[x[0]]; return exRow(x[0],x[1], p&&p.u?`world price $${p.u}/kg`:''); }).join('')}
-    <a class="nepalcard" href="${BASE}/trade/${iso.toLowerCase()}" data-nav><span class="fl">${m[1]}</span><span><b>${esc(name)}'s full trade profile</b> — its total exports, imports &amp; top partners ${ic(I.right)}</span></a>
+    <a class="nepalcard" href="${BASE}/trade/${iso.toLowerCase()}" data-nav><span class="fl">${m[1]}</span><span><b>${esc(name)}'s full trade profile</b> — its total exports, imports &amp; top partners ${ic(I.right)}</span></a>${(s=>MAIN_PARTNERS.indexOf(s)>=0?`<a class="nepalcard" href="https://www.customsnepal.com/trade-partner/${s}"><span class="fl">🇳🇵</span><span><b>Nepal–${esc(name)} trade in official figures</b>: rupees, fiscal year and 8-digit codes on customsnepal.com ${ic(I.right)}</span></a>`:'')(name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''))}
     <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;color:var(--muted);font-weight:600">2024</span></div>
       <p>From <b>BACI</b> (CEPII, reconciled UN Comtrade). Values are Nepal→${esc(name)} merchandise exports at HS-6, current US$. For official 8-digit, fiscal-year figures, see Nepal's Department of Customs and TEPC; for Nepal duty and taxes see <a href="https://customsnepal.com/" target="_blank" rel="noopener">customsnepal.com ↗</a>.</p></div>
   </div></main>`;
