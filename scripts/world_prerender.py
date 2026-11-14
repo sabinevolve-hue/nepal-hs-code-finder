@@ -243,8 +243,8 @@ def v_home():
             + col('Country pairs', 'What two countries sell each other, product by product, both directions.',
                   [(f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', f'{e(DV.name(k.split("-")[0]))} – {e(DV.name(k.split("-")[1]))}', money((DV.P[k]['ab'] + DV.P[k]['ba']) * 1000.0)) for k in pk],
                   '/trade/pairs', f'All {len(DV.pair_keys()):,} pairs')
-            + col('Products', f'{len(SUBS):,} six-digit HS codes, each with its exporters and importers.',
-                  [(code_href(k), e(DV.pc_short(k, 30)) + f' <small class="hsc">{fmt_code(k)}</small>', money(w * 1000.0)) for k, w in topk], '/hs', 'Search all HS codes'))
+            + col('Products', f'{len(SUBS):,} products, each with its largest exporters and importers.',
+                  [(code_href(k), e(DV.pc_short(k, 30)) + f' <small class="hsc">{fmt_code(k)}</small>', money(w * 1000.0)) for k, w in topk], '/hs', 'Search all products'))
     # who leads what: the largest export of each of several economies where it ranks first in the world
     seen, leaders = set(), []
     for key in sorted((k for k, p in DV.PC.items() if p['r'] == 1), key=lambda k: -DV.PC[k]['v']):
@@ -770,11 +770,12 @@ def doors():
             ('/trade/pairs', 'All country pairs', f'{pairs_n:,} pairs, both directions'),
             ('/trade/chn/usa', 'China – United States', 'The largest pair'), ('/trade/can/usa', 'Canada – United States', 'Pair page'),
             ('/trade/deu/fra', 'Germany – France', 'Pair page'), ('/trade/region/south-asia', 'South Asia', 'Regional hub')] if DV else []),
-        ('hs', 'Products', '📦', 'HS codes and what is traded', [
-            ('/hs', 'HS code finder', f'Search {len(SUBS):,} six-digit codes'),
-            ('/trade/product/machinery-and-electronics', 'By product group', '16 groups of goods'),
-            ('/hs/chapter/85', 'Electrical machinery', 'Chapter 85, the most-traded chapter'),
-            ('/hs/chapter/27', 'Fuels and oils', 'Chapter 27'), ('/hs/chapter/87', 'Vehicles', 'Chapter 87')]),
+        ('hs', 'Products', '📦', 'What the world trades', [
+            ('/trade/product/machinery-and-electronics', 'Machinery and electronics', 'The largest product group'),
+            ('/trade/product/mineral-fuels-and-oils', 'Fuels and oils', 'Who exports and imports them'),
+            ('/trade/product/transport-equipment', 'Vehicles and transport', 'Product group'),
+            ('/trade/product/vegetable-products', 'Crops and food', 'Product group'),
+            ('/hs', 'Search any product', f'{len(SUBS):,} products by name or international HS code')]),
     ]
 
 MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="#4CC9C2" stroke-width="2.4"/><path d="M3 16h26M16 3c-5.5 4-5.5 22 0 26M16 3c5.5 4 5.5 22 0 26" fill="none" stroke="#4CC9C2" stroke-width="1.8"/><circle cx="23.5" cy="9.5" r="3.4" fill="#E2572B"/></svg>'
