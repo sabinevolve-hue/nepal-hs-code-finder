@@ -305,6 +305,7 @@ def v_chapter(ch):
     return main(back('/hs', 'HS finder') + f'''<div class="ph"><p style="margin:0;color:var(--muted);font-size:.85rem">Section {cn[2]} · Chapter {ch}</p><h1 class="h2">{esc(cn[1])}</h1><p>{len(rows)} six-digit codes{" · " + esc(sec[1]) if sec else ""}.</p></div>{body}''')
 
 def nepal_prod(code):
+    return ''      # World Trade Data is global: one country's duty or trade is not shown on product pages
     z = NEP.get(code)
     if not z or not (z.get('im') or z.get('ex')): return ''
     p = PROD.get(code); parts = []
@@ -335,6 +336,7 @@ def prod_block(code):
             + src_box('Source', '<p><b>BACI</b> (CEPII) — bilateral trade at HS 6-digit, reconciled from <b>UN Comtrade</b> across ~200 countries; unit values = value ÷ quantity. Current US$.</p>', '2024'))
 
 def landed_block(code):
+    return ''      # World Trade Data is global: one country's duty or trade is not shown on product pages
     d = DUTY.get(code)
     if not d or d[0] is None: return ''
     gen = d[0]; saarc = gen if d[1] is None else d[1]
@@ -358,7 +360,7 @@ def landed_block(code):
 def v_code(code):
     s = SUB[code]; ch, head = code[:2], code[:4]
     cn = CH.get(ch, [ch, '', '']); sec = SEC.get(cn[2], ['', '', ''])
-    np_ = s[3] if len(s) > 3 else None
+    np_ = None      # global site: no single country's tariff on the code page
     nepal = ''
     if np_ and np_.get('g') is not None:
         g = np_['g']; txt = f'{num(g[0])}–{num(g[1])}%' if isinstance(g, list) else ('Free' if g == 0 else num(g) + '%')
