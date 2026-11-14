@@ -87,6 +87,103 @@ class Views:
         tr = ''.join('<tr>' + ''.join(f'<td{" class=r" if i else ""}>{x}</td>' for i, x in enumerate(r)) + '</tr>' for r in rows)
         return f'<div class="dscroll"><table class="dt {cls}"><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>'
 
+    # ---------- graphics for the country profile (static HTML and SVG, no script)
+    MAP_BINS = [(15.0, 5, '15% or more'), (5.0, 4, '5 to 15%'), (1.0, 3, '1 to 5%'), (0.1, 2, '0.1 to 1%')]
+
+    def _map(self, iso, lst, total, verb):
+        """World map shaded by each partner's share of the flow. Shapes come from one shared file (/assets/worldmap.svg)."""
+        e = self.h['esc']; shapes = self.h['MAPIDS']; out = ['<use href="/assets/worldmap.svg#land" class="m0"/>']
+        for p, v in lst:
+            if p not in shapes or not total:
+                continue
+            s = 100.0 * v / total
+            cls = next((c for th, c, _ in self.MAP_BINS if s >= th), None)
+            if not cls:
+                continue
+            tip = f'{self.name(p)}: {self.usd(v)}, {s:.1f}% of {verb}'
+            u = f'<use href="/assets/worldmap.svg#{p}" class="m{cls}"><title>{e(tip)}</title></use>'
+            out.append(f'<a href="/trade/{p.lower()}">{u}</a>' if p in self.h['CBYISO'] else u)
+        if iso in shapes:
+            out.append(f'<use href="/assets/worldmap.svg#{iso}" class="me"><title>{e(self.name(iso))}</title></use>')
+        return f'<svg viewBox="0 60 960 400" role="img" aria-label="World map shaded by share of {e(self.name(iso))}&#39;s {verb}">{"".join(out)}</svg>'
+
+    def map_block(self, iso, d):
+        nm = self.h['esc'](self.name(iso)); k = iso.lower()
+        legend = ('<div class="mlg"><span><i class="me"></i>' + nm + '</span>' + ''.join(f'<span><i class="m{c}"></i>{lab}</span>' for _, c, lab in self.MAP_BINS)
+                  + '<span><i class="m0"></i>Under 0.1% or none</span></div>')
+        return (f'<div class="gmap"><input type="radio" name="gm-{k}" id="gmx-{k}" checked><input type="radio" name="gm-{k}" id="gmm-{k}">'
+                f'<div class="gtabs" role="group" aria-label="Map shows"><label for="gmx-{k}">Export markets</label><label for="gmm-{k}">Import suppliers</label></div>'
+                f'<div class="gm gmx">{self._map(iso, d["xp"], d["x"], "exports")}</div><div class="gm gmm">{self._map(iso, d["mp"], d["m"], "imports")}</div>'
+                f'{legend}<p class="fine">Shade shows each partner&#39;s share of {nm}&#39;s exports or imports. Hover or tap a country for the figure; every partner is in the table further down.</p></div>')
+
+    @staticmethod
+    def _squarify(vals, x, y, w, h):
+        tot = sum(vals) or 1.0
+        area = [v * w * h / tot for v in vals]; rects = []; i = 0
+        def worst(r, short):
+            s = sum(r)
+            return max(short * short * max(r) / (s * s), (s * s) / (short * short * min(r)))
+        while i < len(area):
+            short = max(min(w, h), 0.01); row = [area[i]]; i += 1
+            while i < len(area) and worst(row + [area[i]], short) <= worst(row, short):
+                row.append(area[i]); i += 1
+            s = sum(row)
+            if w >= h:
+                rw = s / max(h, 0.01); yy = y
+                for v in row:
+                    rh = v / max(rw, 0.01); rects.append((x, yy, rw, rh)); yy += rh
+                x += rw; w -= rw
+            else:
+                rh = s / max(w, 0.01); xx = x
+                for v in row:
+                    rw = v / max(rh, 0.01); rects.append((xx, y, rw, rh)); xx += rw
+                y += rh; h -= rh
+        return rects
+
+    def groups(self, chapters):
+        """[[chapter, value]] -> [(group name, value, top chapter)] for the 16 product groups, largest first."""
+        out = []
+        for name, a, b in self.h['PGROUPS']:
+            inside = [(ch, v) for ch, v in chapters if a <= int(ch) <= b]
+            tot = sum(v for _, v in inside)
+            if tot > 0:
+                out.append((name, tot, max(inside, key=lambda kv: kv[1])[0]))
+        return sorted(out, key=lambda r: -r[1])
+
+    def treemap(self, chapters, total, tone, who, verb):
+        e = self.h['esc']; gs = self.groups(chapters)
+        if not gs or not total:
+            return ''
+        gs = [g for g in gs if g[1] / total >= 0.004] or gs[:1]
+        rects = self._squarify([g[1] for g in gs], 0.0, 0.0, 100.0, 100.0)
+        cells = []
+        for (name, v, topch), (x, y, w, hh) in zip(gs, rects):
+            s = 100.0 * v / total; size = 'lg' if (w >= 22 and hh >= 30) else ('md' if (w >= 12 and hh >= 16) else 'sm')
+            tip = f'{name}: {self.usd(v)}, {s:.1f}% of {verb}'
+            cells.append(f'<a class="tc {size}" href="/trade/product/{self.h["group_slug"](name)}" style="left:{x:.2f}%;top:{y:.2f}%;width:{w:.2f}%;height:{hh:.2f}%" title="{e(tip)}">'
+                         f'<span><b>{e(name)}</b><i>{s:.0f}%</i><em>{self.usd(v)}</em></span></a>')
+        lst = ''.join(f'<li><a href="/trade/product/{self.h["group_slug"](name)}">{e(name)}</a><span>{self.usd(v)}</span><i>{100.0 * v / total:.1f}%</i></li>' for name, v, _ in gs)
+        return (f'<div class="tm {tone}" role="img" aria-label="{e(who)} {verb} by product group, area in proportion to value">{"".join(cells)}</div>'
+                f'<details class="tml"><summary>The same figures as a list</summary><ol>{lst}</ol></details>')
+
+    def glance(self, X, M):
+        mx = max(X, M) or 1
+        return (f'<div class="gl"><div class="glr"><span>Exports</span><div><i class="x" style="width:{max(1.0, 100.0 * X / mx):.1f}%"></i></div><b>{self.usd(X)}</b></div>'
+                f'<div class="glr"><span>Imports</span><div><i class="m" style="width:{max(1.0, 100.0 * M / mx):.1f}%"></i></div><b>{self.usd(M)}</b></div></div>')
+
+    def balance_chart(self, sur, dfc):
+        """Diverging bars: surpluses grow right in the export colour, deficits grow left in the import colour, one shared scale."""
+        rows = [(p, v) for p, v in sur] + [(p, v) for p, v in dfc]
+        if not rows:
+            return ''
+        mx = max(abs(v) for _, v in rows) or 1
+        out = []
+        for p, v in rows:
+            w = max(1.0, 50.0 * abs(v) / mx)
+            bar = (f'<i class="pos" style="left:50%;width:{w:.1f}%"></i>' if v >= 0 else f'<i class="neg" style="right:50%;width:{w:.1f}%"></i>')
+            out.append(f'<div class="dvr"><span>{self.clink(p)}</span><div>{bar}</div><b>{"+" if v >= 0 else "−"}{self.usd(abs(v))[1:]}</b></div>')
+        return ('<div class="dv">' + ''.join(out) + '<div class="dvk"><span><i class="neg"></i>Deficit: imports more than it exports</span><span><i class="pos"></i>Surplus</span></div></div>')
+
     # ---------- country
     def country_title(self, c):
         return f"{c['name']} Trade {self.Y}: Exports, Imports, Partners & Products"
@@ -123,8 +220,20 @@ class Views:
                 out.append((lab, v, f'{self.usd(v)} <small>{self.share(v, total)}</small>'))
             return out
 
-        sec_x = f'<h2 class="h">Where {nm} exports: top {min(15, len(xp))} markets</h2>' + self.barlist(partner_rows(xp, X), 'var(--exp)')
-        sec_m = f'<h2 class="h">Where {nm} imports from: top {min(15, len(mp))} suppliers</h2>' + self.barlist(partner_rows(mp, M), 'var(--imp)')
+        def conc(lst, total, what):
+            if len(lst) < 3 or not total:
+                return ''
+            t3 = sum(v for _, v in lst[:3])
+            return f'The top three {what} ({", ".join(e(self.name(p)) for p, _ in lst[:3])}) account for {self.share(t3, total, 0)}.'
+        xg, mg = self.groups(d.get('xc') or []), self.groups(d.get('mc') or [])
+        sec_x = (f'<section class="gsec"><h2>What {nm} sells, and to whom</h2><p class="gk">{nm} exported {self.usd(X)} of goods to {len(xp)} markets in {Y}. '
+                 + (f'{e(xg[0][0])} is the largest product group at {self.share(xg[0][1], X, 0)} of exports. ' if xg else '') + conc(xp, X, 'markets') + '</p>'
+                 + ('<h3>Exports by product group</h3>' + self.treemap(d.get('xc') or [], X, 'exp', c['name'], 'exports') if xg else '')
+                 + f'<h3>Top {min(10, len(xp))} export markets</h3>' + self.barlist(partner_rows(xp, X, 10), 'var(--exp)') + '</section>')
+        sec_m = (f'<section class="gsec"><h2>What {nm} buys, and from whom</h2><p class="gk">{nm} imported {self.usd(M)} of goods from {len(mp)} suppliers in {Y}. '
+                 + (f'{e(mg[0][0])} is the largest product group at {self.share(mg[0][1], M, 0)} of imports. ' if mg else '') + conc(mp, M, 'suppliers') + '</p>'
+                 + ('<h3>Imports by product group</h3>' + self.treemap(d.get('mc') or [], M, 'imp', c['name'], 'imports') if mg else '')
+                 + f'<h3>Top {min(10, len(mp))} suppliers</h3>' + self.barlist(partner_rows(mp, M, 10), 'var(--imp)') + '</section>')
 
         # surpluses and deficits by partner
         allp = {}
@@ -133,12 +242,12 @@ class Views:
         for p, v in mp:
             allp.setdefault(p, [0, 0])[1] = v
         bals = sorted(((p, a - b) for p, (a, b) in allp.items()), key=lambda kv: kv[1])
-        sur = [x for x in bals[::-1] if x[1] > 0][:5]; dfc = [x for x in bals if x[1] < 0][:5]
+        sur = [x for x in bals[::-1] if x[1] > 0][:6]; dfc = [x for x in bals if x[1] < 0][:6]
         sec_bal = ''
         if sur or dfc:
-            f = lambda lst, sign: ''.join(f'<li>{self.clink(p)} <b>{sign}{self.usd(abs(v))[1:]}</b></li>' for p, v in lst) or '<li>None</li>'
-            sec_bal = (f'<h2 class="h">Largest surpluses and deficits</h2><div class="two"><div class="card"><b>Surplus with</b><ul class="pl2">{f(sur, "+")}</ul></div>'
-                       f'<div class="card"><b>Deficit with</b><ul class="pl2">{f(dfc, "−")}</ul></div></div>')
+            sec_bal = (f'<section class="gsec"><h2>Where {nm} runs a surplus, and where a deficit</h2>'
+                       f'<p class="gk">Exports to each partner minus imports from it, {Y}. The six largest on each side, on one scale.</p>'
+                       + self.balance_chart(sur, dfc[::-1]) + '</section>')
 
         # products
         def badge(r, s):
@@ -186,8 +295,15 @@ class Views:
                            f'which can differ slightly from BACI for the same year. '
                            f'<a href="https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37" target="_blank" rel="noopener">About BACI ↗</a></p>', str(Y))
         peers = self.peers(c)
+        sec_time = ''
+        if hrows or long_trend:
+            sec_time = (f'<section class="gsec"><h2>{nm}&#39;s trade over time</h2>' + long_trend.replace(' style="margin-top:var(--s4)"', '')
+                        + (self.table(['Year', 'Exports', 'Imports', 'Balance'], hrows) if hrows else '') + '</section>')
+        prod_sec = (f'<section class="gsec"><h2>Products in detail</h2>' + sec_xk + sec_mk + sec_lead + sec_dep + '</section>') if (sec_xk or sec_mk) else ''
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade in {Y}</h1><p>{rk}</p></div>'
-                         + lead + tiles + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '') + sec_x + sec_m + sec_bal + sec_xk + sec_mk + sec_lead + sec_dep + sec_hist + long_trend + sec_pairs + sec_all + peers + src)
+                         + lead + tiles + self.glance(X, M)
+                         + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
+                         + self.map_block(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs + sec_all + peers + src)
 
     def peers(self, c):
         known = self.h['CBYISO']
@@ -495,6 +611,46 @@ table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:
 .wlead{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--fg);text-decoration:none}
 .wlead span{grid-row:span 3;font-size:1.5rem;line-height:1.1}.wlead b{font-size:.95rem}.wlead em{font-style:normal;color:var(--fg-2);font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wlead i{font-style:normal;font-size:.8rem;color:var(--accent);font-weight:700}.wlead:hover{border-color:var(--accent);text-decoration:none}
+/* country profile graphics */
+:root{--m0:#E3E9E6;--m2:#BFE1DD;--m3:#7CC3BD;--m4:#2F9A94;--m5:#0B5F5F;--mme:#E2572B;--msea:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--m0:#1A3540;--m2:#1F5458;--m3:#27807F;--m4:#4CC9C2;--m5:#B6F3EE;--mme:#FF7F57;--msea:#0E2630}}
+:root[data-theme="dark"]{--m0:#1A3540;--m2:#1F5458;--m3:#27807F;--m4:#4CC9C2;--m5:#B6F3EE;--mme:#FF7F57;--msea:#0E2630}
+.gmap{margin-top:var(--s4);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+.gmap>input{position:absolute;opacity:0;pointer-events:none}
+.gtabs{display:inline-flex;gap:4px;background:var(--muted-bg);border-radius:10px;padding:4px;margin-bottom:8px;max-width:100%;flex-wrap:wrap}
+.gtabs label{padding:7px 12px;border-radius:7px;font-weight:700;font-size:.86rem;color:var(--fg-2);cursor:pointer}
+.gmap>input:nth-of-type(1):checked~.gtabs label:nth-child(1),.gmap>input:nth-of-type(2):checked~.gtabs label:nth-child(2){background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.gmap>input:focus-visible~.gtabs{outline:2px solid var(--accent);outline-offset:2px}
+.gm{display:none;background:var(--msea);border-radius:10px}.gm svg{display:block;width:100%;height:auto}
+.gmap>input:nth-of-type(1):checked~.gmx,.gmap>input:nth-of-type(2):checked~.gmm{display:block}
+.gm use{stroke:var(--msea);stroke-width:.5;stroke-linejoin:round}.gm a:hover use,.gm a:focus use{stroke:var(--fg);stroke-width:1.2}
+.m0{fill:var(--m0)}.m2{fill:var(--m2)}.m3{fill:var(--m3)}.m4{fill:var(--m4)}.m5{fill:var(--m5)}.me{fill:var(--mme)}
+.mlg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 2px 0;font-size:.78rem;color:var(--fg-2)}
+.mlg span{display:inline-flex;align-items:center;gap:6px}.mlg i{width:14px;height:10px;border-radius:3px;display:inline-block;background:var(--m0)}
+.mlg i.m2{background:var(--m2)}.mlg i.m3{background:var(--m3)}.mlg i.m4{background:var(--m4)}.mlg i.m5{background:var(--m5)}.mlg i.me{background:var(--mme)}
+.gmap .fine{margin:8px 2px 0}
+.tm{position:relative;width:100%;aspect-ratio:16/7;margin-top:6px}
+.tc{position:absolute;display:block;padding:1px;color:#fff;text-decoration:none;overflow:hidden}
+.tc span{display:flex;flex-direction:column;justify-content:flex-end;height:100%;border-radius:5px;padding:7px 8px;overflow:hidden;background:#0B6E6E}
+.tm.imp .tc span{background:#C2461F}
+.tc b{font-size:.84rem;line-height:1.15;font-weight:700}.tc i{font-style:normal;font-family:var(--f-head);font-weight:800;font-size:1.5rem;line-height:1.05}.tc em{font-style:normal;font-size:.76rem;opacity:.9}
+.tc.md i{font-size:1.05rem}.tc.md em{display:none}.tc.md b{font-size:.74rem}.tc.sm b,.tc.sm em{display:none}.tc.sm i{font-size:.72rem}.tc.sm span{padding:2px 3px;justify-content:center;align-items:center}
+.tc:hover span,.tc:focus-visible span{filter:brightness(1.15)}.tc:hover{text-decoration:none}
+.tml{margin-top:8px;font-size:.88rem}.tml summary{cursor:pointer;color:var(--accent);font-weight:600}
+.tml ol{list-style:none;margin:8px 0 0;padding:0}.tml li{display:grid;grid-template-columns:minmax(0,1fr) auto 3.6em;gap:10px;padding:6px 0;border-top:1px solid var(--border)}
+.tml li span,.tml li i{font-style:normal;font-variant-numeric:tabular-nums;text-align:right}.tml li i{color:var(--muted)}
+.gl{margin:var(--s4) 0 0}.glr{display:grid;grid-template-columns:5em minmax(0,1fr) 5.5em;gap:12px;align-items:center;padding:5px 0;font-size:.92rem}
+.glr span{color:var(--fg-2);font-weight:600}.glr div{height:22px}.glr i{display:block;height:100%;border-radius:0 4px 4px 0}.glr i.x{background:var(--exp)}.glr i.m{background:var(--imp)}
+.glr b{text-align:right;font-variant-numeric:tabular-nums}
+.dv{margin-top:6px}.dvr{display:grid;grid-template-columns:minmax(0,10.5em) minmax(0,1fr) 5.2em;gap:10px;align-items:center;padding:5px 0;font-size:.9rem}
+.dvr span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dvr div{position:relative;height:18px;background:linear-gradient(var(--border),var(--border)) 50% 0/1px 100% no-repeat}
+.dvr i{position:absolute;top:0;bottom:0}.dvr i.pos{background:var(--exp);border-radius:0 4px 4px 0}.dvr i.neg{background:var(--imp);border-radius:4px 0 0 4px}
+.dvr b{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}
+.dvk{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:.78rem;color:var(--fg-2)}.dvk span{display:inline-flex;gap:6px;align-items:center}
+.dvk i{width:14px;height:10px;border-radius:3px}.dvk i.pos{background:var(--exp)}.dvk i.neg{background:var(--imp)}
+.gsec{margin-top:var(--s6);padding-top:var(--s4);border-top:2px solid var(--fg)}.gsec>h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin:0 0 4px;letter-spacing:-.015em}
+.gsec>p.gk{color:var(--fg-2);margin:0 0 10px;max-width:68ch}.gsec h3{font-size:1rem;margin:22px 0 4px}
+@media(max-width:700px){.tm{aspect-ratio:4/5}.tc.md b{font-size:.68rem;overflow-wrap:anywhere}.tc.lg b{overflow-wrap:anywhere}.tc span{padding:5px 6px}.dvr{grid-template-columns:minmax(0,7em) minmax(0,1fr) 4.6em}.glr{grid-template-columns:4.2em minmax(0,1fr) 4.6em}}
 @media(max-width:820px){.wcols{grid-template-columns:minmax(0,1fr);gap:22px}.wcol>p{min-height:0}.ws{height:64px}.ws-s,.ws-s.sm{padding:0}.ws-s b,.ws-s i,.ws-s span{display:none}.wsl{display:block}}
 @media(max-width:720px){body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}.wsearch button{padding:0 14px}}
 '''

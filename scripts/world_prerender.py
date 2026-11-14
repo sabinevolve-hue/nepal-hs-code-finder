@@ -644,6 +644,7 @@ def dataset(name, desc, cover, temporal, based_on, keywords):
 
 # ---------------------------------------------------------------- deep profiles + pair pages (static, no SPA script)
 import world_deep, textfit
+WMAP = json.load(open(D / 'worldmap.json', encoding='utf-8'))
 MAIN_GUIDES = sorted(f.stem for f in (ROOT / 'public' / 'export').glob('*.html'))
 META['MAIN_GUIDES'] = [s for s in EXGUIDES if s in MAIN_GUIDES]
 META['MAIN_PARTNERS'] = sorted(f.stem for f in (ROOT / 'public' / 'trade-partner').glob('*.html'))
@@ -658,7 +659,7 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP)))
 
 STATIC_PARTS = {'countries', 'pairs', 'regions', 'exports-by-product'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/'}
@@ -887,6 +888,8 @@ def write_assets():
         names[ext] = '/assets/' + name
         for old in (W / 'assets').glob(f'world.*.{ext}'):
             if old.name != name: old.unlink()
+    # one shared map file: each economy is a path with its ISO code as id; pages draw it with <use> and colour it themselves
+    (W / 'assets' / 'worldmap.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500"><g id="land">' + ''.join(f'<path id="{k}" d="{v}"/>' for k, v in sorted(WMAP.items())) + '</g></svg>', encoding='utf-8')
     (W / 'favicon.svg').write_text((SRC / 'favicon.svg').read_text(encoding='utf-8'), encoding='utf-8')
     return names
 
