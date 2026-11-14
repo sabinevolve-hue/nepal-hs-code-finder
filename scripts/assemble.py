@@ -202,7 +202,18 @@ page = page[:_m.start()] + '<script defer src="%s"></script>' % _asset('account'
 (root / 'public' / 'index.html').write_text(head + page + '</body></html>', encoding='utf-8')
 # write the data files the app fetches (see __boot in src.html)
 for _src, _out in DATA_FILES:
-    (root / 'public' / _out).write_text((root / 'data' / _src).read_text(encoding='utf-8'), encoding='utf-8')
+    _txt = (root / 'data' / _src).read_text(encoding='utf-8')
+    if _src == 'stats.json':
+        # the app shows product names straight from this file: repair lost letters and known misspellings
+        # (scripts/namefix.py). data/stats.json itself is left as the source wrote it.
+        import namefix as _nf
+        _st = json.loads(_txt)
+        for _k in ('imports', 'exports'):
+            for _row in _st.get(_k, {}).values():
+                if _row and _row[0]:
+                    _row[0] = _nf.fix(_row[0]) or _row[0]
+        _txt = json.dumps(_st, ensure_ascii=False, separators=(',', ':'))
+    (root / 'public' / _out).write_text(_txt, encoding='utf-8')
 
 # ---------------------------------------------------------------------------
 # robots.txt + sitemap.xml (regenerated every build so they stay in sync)

@@ -28,6 +28,7 @@ pub = root / 'public'
 SITE = 'https://www.customsnepal.com'
 TODAY = datetime.date.today().isoformat()
 S = json.load(open(root / 'data' / 'stats.json', encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(S)
 T = json.load(open(root / 'data' / 'tariff.json', encoding='utf-8'))
 FY = S['fy']; UNIT = S['unit']
 

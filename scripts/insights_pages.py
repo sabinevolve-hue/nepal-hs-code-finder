@@ -19,6 +19,7 @@ _m = re.search(r'^CHSHORT = (\{.*?\})\s*$', (root / 'scripts/trade_pages.py').re
 CHSHORT = ast.literal_eval(_m.group(1))
 
 S = json.loads((root / 'data/stats.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(S)
 T = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 FY, FYP = S['fy'], S['fy_prev']
 H = S['history']; Y = H['years']

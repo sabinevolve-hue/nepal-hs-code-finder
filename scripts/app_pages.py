@@ -24,6 +24,7 @@ SITE = 'https://www.customsnepal.com'
 TODAY = datetime.date.today().isoformat()
 BASE = (pub / 'index.html').read_text(encoding='utf-8')
 S = json.loads((root / 'data/stats.json').read_text(encoding='utf-8'))
+import statsfields as _sf; _sf.fix_names(S)
 T = json.loads((root / 'data/tariff.json').read_text(encoding='utf-8'))
 PUBLISHED = set(json.loads((root / 'data/import_duty_published.json').read_text(encoding='utf-8'))['codes'])
 FY = S['fy']
