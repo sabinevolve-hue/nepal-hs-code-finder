@@ -1,5 +1,6 @@
 {
   "cleanUrls": true,
+  "trailingSlash": false,
   "redirects": [
     {"source": "/trade/country/afghanistan", "destination": "/trade-partner/afghanistan", "permanent": true},
     {"source": "/trade/country/argentina", "destination": "/trade-partner/argentina", "permanent": true},
