@@ -399,9 +399,6 @@ for iso in order:
         out.append('<p class="xlink"><b>FY %s so far</b> (%s): imports %s · exports %s. Provisional, from the latest monthly '
                    'release; it will be replaced by the full-year figure.</p>' % (yt['fy'], esc(yt['label']), money(cy[0]), money(cy[1])))
 
-    wf, wf_tsv = story.waffle(p_imp, p_exp, name)
-    out.append('<h2 class="sec">The Rs 100 test</h2>')
-    out.append(viz.figure('Of every Rs 100 Nepal trades — the %s share' % name, wf, wf_tsv, SRC))
 
     def flows(chs, prods, total, src_label, note, t1, t2, fname, direction):
         chmap = {}

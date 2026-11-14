@@ -227,8 +227,8 @@ for name in sorted(CO_IMP, key=lambda n: -CO_IMP[n]):
     ]))
     ph = links.partner_href(name)
     if ph:
-        o.append('<p class="xlink"><a href="%s"><b>Nepal–%s trade profile →</b></a> the same trade as pictures: where every '
-                 'Rs 100 goes, product flows, customs revenue, the route goods take, and charts you can copy or download.</p>'
+        o.append('<p class="xlink"><a href="%s"><b>Nepal–%s trade profile →</b></a> the same trade as pictures: product flows, '
+                 'customs revenue, the route goods take and seven years of history.</p>'
                  % (ph, esc(name)))
     if is_saarc:
         o.append('<div class="note"><b>%s is a SAARC member.</b> Qualifying goods can be imported at the lower '
