@@ -648,8 +648,8 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('Country pairs', p)]
     elif p == '/trade/sanctions':
         cr += [('Trade', '/trade'), ('Trade under sanctions', p)]
-    elif (m := re.match(r'^/trade/sanctions/([a-z]{3})$', p)):
-        cr += [('Trade', '/trade'), ('Trade under sanctions', '/trade/sanctions'), (iso_name(m[1].upper()), p)]
+    elif (m := re.match(r'^/trade/sanctions/([a-z-]+)$', p)):
+        cr += [('Trade', '/trade'), ('Trade under sanctions', '/trade/sanctions'), (iso_name(next(k for k, v in world_deep.Views.SANC_SLUG.items() if v == m[1])), p)]
     elif (m := re.match(r'^/trade/region/([a-z-]+)$', p)) and m[1] != 'south-asia':
         cr += [('Trade', '/trade'), (next((n for n, s in world_deep.Views.REGION_SLUGS.items() if s == m[1]), m[1]), p)]
     elif p == '/trade/region/south-asia':
@@ -775,7 +775,7 @@ def routes():
         if DV.latest_year()[0] and DV.sanc_list():
             yield ('/trade/sanctions', 'trade', DV.sanc_title(), DV.sanc_desc(), DV.sanc_hub(), 'CollectionPage', [], 'topics')
             for si in DV.sanc_list():
-                yield (f'/trade/sanctions/{si.lower()}', 'trade', DV.sanc_title(si), DV.sanc_desc(si), DV.sanc_country(si), 'WebPage', [], 'topics')
+                yield (DV.sanc_href(si), 'trade', DV.sanc_title(si), DV.sanc_desc(si), DV.sanc_country(si), 'WebPage', [], 'topics')
         for rn, rs in (DV.regions_list() if DV.latest_year()[0] else []):
             yield (f'/trade/region/{rs}', 'trade', DV.wregion_title(rn), DV.wregion_desc(rn), DV.wregion(rn), 'CollectionPage', [], 'regions')
         yield ('/trade/region/south-asia', 'pairs', DV.region_title(), d, DV.region(), 'CollectionPage',

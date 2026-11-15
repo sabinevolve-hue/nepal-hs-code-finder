@@ -916,6 +916,7 @@ class Views:
                     data_note='Partners sometimes record trade with the Republic of Korea under this economy&#39;s code by mistake, so small markets on this page may be recording errors.'), 'CUB': dict(ofac=['Cuba Sanctions']), 'MMR': dict(ofac=['Burma-Related Sanctions']),
     }
     EU27 = ['AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL', 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE']
+    SANC_SLUG = {'RUS': 'russia', 'IRN': 'iran', 'VEN': 'venezuela', 'BLR': 'belarus', 'PRK': 'north-korea', 'CUB': 'cuba', 'MMR': 'myanmar'}      # readable addresses
     OFAC_URL = 'https://ofac.treasury.gov/sanctions-programs-and-country-information'
     UN_URL = 'https://main.un.org/securitycouncil/en/sanctions/information'
 
@@ -923,7 +924,7 @@ class Views:
         return [c for c in self.SANC if c in self.h['CBYISO'] and c in self.SD]
 
     def sanc_href(self, iso):
-        return f'/trade/sanctions/{iso.lower()}' if iso in self.SANC and iso in self.sanc_list() else None
+        return f'/trade/sanctions/{self.SANC_SLUG[iso]}' if iso in self.SANC and iso in self.sanc_list() else None
 
     def _sd(self, iso):
         return self.SD[iso]
