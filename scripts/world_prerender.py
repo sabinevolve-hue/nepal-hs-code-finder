@@ -218,14 +218,20 @@ def v_home():
     e = esc
     if not DV:
         return main('<div class="ph"><h1 class="h2">World trade data</h1></div>' + pgroup_grid().replace(' data-nav', ''))
-    world = DV.D['world']
-    exps = sorted(((c, DV.C[c]['x']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
-    imps = sorted(((c, DV.C[c]['m']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
-    tot = sorted(((c, DV.C[c]['x'] + DV.C[c]['m']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
+    ly, lt = DV.latest_year()
+    if ly:          # the latest complete year of customs figures
+        yr = ly; world = sum(v[0] for v in lt.values())
+        exps = sorted(((c, v[0]) for c, v in lt.items()), key=lambda kv: -kv[1]); imps = sorted(((c, v[1]) for c, v in lt.items()), key=lambda kv: -kv[1])
+        tot = sorted(((c, v[0] + v[1]) for c, v in lt.items()), key=lambda kv: -kv[1])
+    else:
+        world = DV.D['world']
+        exps = sorted(((c, DV.C[c]['x']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
+        imps = sorted(((c, DV.C[c]['m']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
+        tot = sorted(((c, DV.C[c]['x'] + DV.C[c]['m']) for c in DV.C if c in CBYISO), key=lambda kv: -kv[1])
     # signature: the world's exports as one strip, each segment drawn to its share
     seg = exps[:12]; rest = world - sum(v for _, v in seg)
     strip = ''.join(
-        f'<a class="ws-s{" sm" if v / world < 0.035 else ""}" href="/trade/{c.lower()}" style=""flex-grow:{v / world * 1000:.0f}" title="{e(CBYISO[c]["name"])}: {money(v * 1000.0)}, {100.0 * v / world:.1f}% of world exports">'
+        f'<a class="ws-s{" sm" if v / world < 0.035 else ""}" href="/trade/{c.lower()}" style="flex-grow:{v / world * 1000:.0f}" title="{e(CBYISO[c]["name"])}: {money(v * 1000.0)}, {100.0 * v / world:.1f}% of world exports">'
         f'<span>{CBYISO[c]["flag"]}</span><b>{e(CBYISO[c]["name"])}</b><i>{100.0 * v / world:.1f}%</i></a>' for c, v in seg)
     strip += f'<a class="ws-s ws-r" href="/trade" style="flex-grow:{rest / world * 1000:.0f}"><b>{len(COUNTRIES) - len(seg)} other economies</b><i>{100.0 * rest / world:.0f}%</i></a>'
     legend = ''.join(f'<li><a href="/trade/{c.lower()}">{CBYISO[c]["flag"]} {e(CBYISO[c]["name"])}</a><span>{money(v * 1000.0)}</span><i>{100.0 * v / world:.1f}%</i></li>' for c, v in seg)
@@ -234,17 +240,24 @@ def v_home():
         return (f'<section class="wcol"><h2>{title}</h2><p>{sub}</p><ol>'
                 + ''.join(f'<li><a href="{h}">{lab}</a><span>{val}</span></li>' for h, lab, val in rows)
                 + f'</ol><a class="wmore" href="{more_href}">{more}</a></section>')
-    pk = sorted(DV.pair_keys(), key=lambda k: -(DV.P[k]['ab'] + DV.P[k]['ba']))[:7]
+    pv = {}
+    for k in DV.pair_keys():
+        py = DV.pair_years(*k.split('-')) if ly else {}
+        pv[k] = sum(py[max(py)]) if (py and max(py) == ly) else None
+    if ly and sum(1 for v in pv.values() if v) >= 7:
+        pk = sorted((k for k in pv if pv[k]), key=lambda k: -pv[k])[:7]
+    else:
+        pv = {k: DV.P[k]['ab'] + DV.P[k]['ba'] for k in DV.pair_keys()}; pk = sorted(pv, key=lambda k: -pv[k])[:7]
     prod_w = {}
     for key, p in DV.PC.items():
         prod_w[key.split('-')[1]] = p['w']
     topk = sorted(prod_w.items(), key=lambda kv: -kv[1])[:7]
-    cols = (col('Countries', f'A trade profile for each of {len(COUNTRIES)} economies. Largest by exports plus imports.',
+    cols = (col('Countries', f'A trade profile for each of {len(COUNTRIES)} economies, year by year. Largest by exports plus imports, {yr}.',
                 [(f'/trade/{c.lower()}', f'{CBYISO[c]["flag"]} {e(CBYISO[c]["name"])}', money(v * 1000.0)) for c, v in tot[:7]], '/trade', f'All {len(COUNTRIES)} economies')
-            + col('Country pairs', 'What two countries sell each other, product by product, both directions.',
-                  [(f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', f'{e(DV.name(k.split("-")[0]))} – {e(DV.name(k.split("-")[1]))}', money((DV.P[k]['ab'] + DV.P[k]['ba']) * 1000.0)) for k in pk],
+            + col('Country pairs', f'What two countries sell each other, both directions. Largest in {yr}.',
+                  [(f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', f'{e(DV.name(k.split("-")[0]))} – {e(DV.name(k.split("-")[1]))}', money(pv[k] * 1000.0)) for k in pk],
                   '/trade/pairs', f'All {len(DV.pair_keys()):,} pairs')
-            + col('Products', f'{len(SUBS):,} products, each with its largest exporters and importers.',
+            + col('Products', f'{len(SUBS):,} products, each with its largest exporters and importers. World trade, {DV.Y}.',
                   [(code_href(k), e(DV.pc_short(k, 30)) + f' <small class="hsc">{fmt_code(k)}</small>', money(w * 1000.0)) for k, w in topk], '/hs', 'Search all products'))
     # who leads what: the largest export of each of several economies where it ranks first in the world
     seen, leaders = set(), []
@@ -259,7 +272,7 @@ def v_home():
                    f'<em>{e(DV.pc_short(k, 40))}</em><i>{DV.PC[c + "-" + k]["s"]:.0f}% of world exports</i></a>' for c, k in leaders)
     idx = json.dumps([[c['name'], c['iso'].lower()] for c in sorted(COUNTRIES, key=lambda c: -((c.get('exp') or 0) + (c.get('imp') or 0)))], ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     hero = (f'<section class="whero"><div class="wrap"><h1>Who sells what to whom</h1>'
-            f'<p>Trade figures for {len(COUNTRIES)} economies and {len(SUBS):,} products, {yr}. Search a country, a product or an HS code.</p>'
+            f'<p>Trade figures for {len(COUNTRIES)} economies and {len(SUBS):,} products, up to {DV.IM_DATE[:4] if ly else yr}, with every year back to 2019. Search a country, a product or an HS code.</p>'
             '<form class="wsearch" id="wsearch" action="/hs" method="get" role="search" autocomplete="off">'
             '<input id="wq" name="q" type="search" placeholder="Vietnam, coffee, 8517…" aria-label="Search a country, product or HS code" aria-controls="wsug" autocomplete="off">'
             '<button type="submit">Search</button><div class="wsug" id="wsug" role="listbox" hidden></div></form>'
@@ -275,15 +288,15 @@ def v_home():
           'document.addEventListener("click",function(e){if(!f.contains(e.target))s.hidden=true});'
           'q.addEventListener("keydown",function(e){if(e.key==="Escape")s.hidden=true});'
           'f.addEventListener("submit",function(e){var v=q.value.trim().toLowerCase(),m=match(v);if(m.length&&m[0][0].toLowerCase()===v){e.preventDefault();location.href="/trade/"+m[0][1]}});})();</script>')
-    body = (f'<section class="wstrip"><h2>{money(world * 1000.0)} of goods crossed a border in {yr}. This is who exported them.</h2>'
+    body = (f'<section class="wstrip"><h2>{money(world * 1000.0)} of goods {'were exported' if ly else 'crossed a border'} in {yr}. This is who exported them.</h2>'
             f'<div class="ws" role="img" aria-label="Share of world exports by economy">{strip}</div><ol class="wsl">{legend}</ol>'
             f'<p class="fine">Each segment is drawn to its share of world exports. The largest importer was {DV.clink(imps[0][0])} ({money(imps[0][1] * 1000.0)}), then {DV.clink(imps[1][0])} and {DV.clink(imps[2][0])}.</p></section>'
             + DV.home_latest()
             + f'<div class="wcols">{cols}</div>'
-            f'<section><h2 class="h">Where one country leads the world</h2><p class="fine" style="margin:0 0 12px">The largest export in which each of these economies ranks first.</p><div class="wleads">{lead}</div></section>'
+            f'<section><h2 class="h">Where one country leads the world</h2><p class="fine" style="margin:0 0 12px">The largest export in which each of these economies ranks first, {DV.Y}.</p><div class="wleads">{lead}</div></section>'
             '<section><h2 class="h">Trade by product group</h2>' + pgroup_grid().replace(' data-nav', '') + '</section>'
-            + src_box('Sources', '<p>Bilateral and product trade from <b>BACI</b> (CEPII), which reconciles what exporters and importers reported to <b>UN Comtrade</b>. '
-                      'HS nomenclature from the <b>World Customs Organization</b>. Long-run totals from the <b>World Bank</b>. Current US dollars.</p>', str(yr)))
+            + src_box('Sources', f'<p>Totals, countries and pairs for {yr}: each economy&#39;s customs figures from the <b>International Monetary Fund</b>. Products for {DV.Y}: <b>BACI</b> (CEPII), reconciled from <b>UN Comtrade</b>. '
+                      'HS nomenclature from the <b>World Customs Organization</b>. Current US dollars. <a href="/about">About the data</a></p>', str(yr)))
     return hero + main(body) + js
 
 
@@ -669,23 +682,29 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid))
 
 STATIC_PARTS = {'countries', 'country-years', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
-STATIC_PATHS = {'/', '/about'}
+STATIC_PATHS = {'/', '/about', '/trade'}
 
 # ---------------------------------------------------------------- route table
 def routes():
     """Yield (path, nav_key, title, description, body_html, page_type, extra_ld, sitemap_part)."""
     yield ('/', '', T.home(),
-           f'Search {len(SUBS):,} international HS codes and explore the import/export trade of {len(COUNTRIES)} economies — world prices, top exporters and importers, and landed cost by origin.',
+           f'Exports and imports of {len(COUNTRIES)} economies up to this year, with every year back to 2019: who sells what to whom, by partner and by product, plus {len(SUBS):,} HS codes.',
            v_home(), 'WebPage', [WEBSITE, ORG], 'hubs')
     yield ('/hs', 'hs', T.hs(),
            f'Search the full international Harmonized System — {len(SUBS):,} six-digit codes across {len(HS["chapters"])} chapters ({HS["edition"]}) — with world trade, top exporters and world prices for every code.',
            v_hs(), 'CollectionPage', [], 'hubs')
-    yield ('/trade', 'trade', T.trade(),
-           f'Global merchandise trade ({money(WORLD["totalExp"])} in {WORLD["year"]}): world rankings, exports and imports for {WORLD["count"]} economies, regional shares and trade by product group.',
-           v_trade(), 'CollectionPage', [], 'hubs')
+    if DV and DV.latest_year()[0]:
+        ry = DV.latest_year()[0]
+        yield ('/trade', 'trade', f'World Trade Rankings {ry}: Exports and Imports of {len(DV.latest_year()[1])} Economies',
+               f'Exports, imports and trade balance of {len(DV.latest_year()[1])} economies in {ry}, ranked, with the change on {ry - 1} and the current year so far. Each links to a year-by-year profile.',
+               DV.rankings(), 'CollectionPage', [], 'hubs')
+    else:
+        yield ('/trade', 'trade', T.trade(),
+               f'Global merchandise trade ({money(WORLD["totalExp"])} in {WORLD["year"]}): world rankings, exports and imports for {WORLD["count"]} economies, regional shares and trade by product group.',
+               v_trade(), 'CollectionPage', [], 'hubs')
     Tt = NEP.get('_t') or {'im': 0, 'ex': 0}
     yield ('/nepal', 'exports', T.nepal(),
            f"Nepal in world trade: {money(Tt['im'] * 1e6)} imports, {money(Tt['ex'] * 1e6)} exports and a {money((Tt['im'] - Tt['ex']) * 1e6)} deficit (2024) — where Nepal overpays versus the world price, and its biggest export openings.",

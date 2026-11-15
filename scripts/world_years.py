@@ -3,6 +3,7 @@
 
 deep.json holds the newest BACI year in full. This file holds, for every older year in the folder and every economy,
 only what a year page shows about products: totals, exports and imports by HS chapter, and the largest products.
+It also holds world trade in each product for those years (world), for the short history on product pages.
 
 Source: BACI (CEPII), HS 2022. Values in thousand US dollars; every figure is a sum of BACI rows.
 
@@ -27,7 +28,7 @@ with open(glob.glob(os.path.join(SRC, 'country_codes_V*.csv'))[0], encoding='utf
         except (ValueError, KeyError):
             continue
 R = lambda v: int(round(v))
-out = {}
+out = {}; world = {}
 for y in years:
     xk = defaultdict(lambda: defaultdict(float)); mk = defaultdict(lambda: defaultdict(float))
     with open(files[y], encoding='utf-8') as fh:
@@ -50,7 +51,12 @@ for y in years:
         if x + m > 0:
             rec[c] = dict(x=x, m=m, xc=xc, mc=mc, xk=xks, mk=mks, nx=len(xk.get(c, {})), nm=len(mk.get(c, {})))
     out[str(y)] = rec
+    wk = defaultdict(float)
+    for c in xk:
+        for k, v in xk[c].items():
+            wk[k] += v
+    world[str(y)] = {k: R(v) for k, v in sorted(wk.items()) if v >= 1}
     sys.stderr.write('%d: %d economies\n' % (y, len(rec)))
 with open(OUT, 'w', encoding='utf-8') as fh:
-    json.dump(dict(source='BACI (CEPII), HS 2022', unit='thousand USD', years=out), fh, ensure_ascii=False, separators=(',', ':'))
+    json.dump(dict(source='BACI (CEPII), HS 2022', unit='thousand USD', years=out, world=world), fh, ensure_ascii=False, separators=(',', ':'))
 sys.stderr.write('years.json: %.1f MB\n' % (os.path.getsize(OUT) / 1e6))

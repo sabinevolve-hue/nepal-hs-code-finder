@@ -39,7 +39,8 @@ class Views:
         im = json.loads(IMTS_FILE.read_text(encoding='utf-8')) if IMTS_FILE.exists() else {'countries': {}, 'fetched': ''}
         self.IM = im['countries']; self.IM_DATE = im.get('fetched', '')
         yf = ROOT / 'data' / 'world' / 'years.json'
-        self.YR = json.loads(yf.read_text(encoding='utf-8'))['years'] if yf.exists() else {}
+        yj = json.loads(yf.read_text(encoding='utf-8')) if yf.exists() else {}
+        self.YR = yj.get('years', {}); self.YW = yj.get('world', {})
         self._years = {}; self._yrank = {}
         # product detail for the latest periods, from national sources (same record shape in every file)
         self.PL = {}
@@ -159,7 +160,7 @@ class Views:
             return ''
         g = ''.join(f'<div class="yc"><div class="ycb"><i class="x" style="height:{max(1.5, 100.0 * v[0] / mx):.1f}%" title="{la}: {self.usd(v[0])}"><b>{self.usd(v[0])}</b></i>'
                     f'<i class="m" style="height:{max(1.5, 100.0 * v[1] / mx):.1f}%" title="{lb}: {self.usd(v[1])}"><b>{self.usd(v[1])}</b></i></div><span>{y}</span></div>' for y, v in ys)
-        return (f'<div class="ycs">{g}</div><div class="dvk"><span><i class="pos"></i>{la}</span><span><i class="neg"></i>{lb}</span></div>')
+        return (f'<div class="ycs{" many" if len(ys) > 4 else ""}">{g}</div><div class="dvk"><span><i class="pos"></i>{la}</span><span><i class="neg"></i>{lb}</span></div>')
 
     # ---------- every product: who exports and imports it (HS code pages)
     def has_product(self, code):
@@ -182,7 +183,8 @@ class Views:
         return (f'<section class="gsec"><h2>Who trades this product</h2>{lead}'
                 + self.map_tabs('p' + code, [('Exporters', mx), ('Importers', mm)], '', 'Shade shows each economy&#39;s share of world exports or imports of this product. Hover or tap for the figure.')
                 + f'<h3>Top {min(10, len(p["x"]))} exporters</h3>' + self.barlist(rows(p['x'], True), 'var(--exp)')
-                + (f'<h3>Top {min(10, len(p["m"]))} importers</h3>' + self.barlist(rows(p['m'], False), 'var(--imp)') if p['m'] else '') + '</section>')
+                + (f'<h3>Top {min(10, len(p["m"]))} importers</h3>' + self.barlist(rows(p['m'], False), 'var(--imp)') if p['m'] else '') + '</section>'
+                + self.product_history(code))
 
     @staticmethod
     def _squarify(vals, x, y, w, h):
@@ -361,7 +363,7 @@ class Views:
         return (f'<section class="wstrip"><h2>The latest: {full} and {cur or full + 1} so far</h2>'
                 + self.table(heads, rows)
                 + f'<p class="fine">Each economy&#39;s own customs figures in US dollars, from the International Monetary Fund&#39;s trade-by-partner database (retrieved {self.IM_DATE}). '
-                f'Every country profile has its {full} and {cur or full + 1} figures by partner; the chart above uses the reconciled {self.Y} figures.</p></section>')
+                f'Every country profile has its {full} and {cur or full + 1} figures by partner, and every year back to 2019. <a href="/trade">Rankings for all economies</a></p></section>')
 
     # ---------- PDF trade brief and the About page
     def brief_href(self, iso):
@@ -452,7 +454,7 @@ class Views:
                 + self.table(heads, rows)
                 + (f'<p class="fine">{self.EST} Not yet reported by the exporter; derived by the IMF from the partner&#39;s records. Treat as provisional.</p>' if est else '')
                 + f'<p class="fine">Source: International Monetary Fund, retrieved {self.IM_DATE}; converted to US dollars at each month&#39;s average exchange rate. '
-                f'The rest of this page uses BACI&#39;s reconciled figures for {self.Y}, which can differ for the same year.</p></section>')
+                f'The product sections of this page use BACI&#39;s reconciled figures for {self.Y}, which can differ for the same year.</p></section>')
 
     # ---------- highlights and flow (top of the country profile)
     def flow_side(self, items, total, tone, mirror, who, verb):
@@ -711,7 +713,7 @@ class Views:
         sec_bal = (f'<section class="gsec"><h2>Where {nm} ran a surplus, and where a deficit</h2>'
                    f'<p class="gk">Exports to each partner minus imports from it, {y}. The six largest on each side, on one scale.</p>'
                    + self.balance_chart(sur, dfc[::-1]) + '</section>') if (sur or dfc) else ''
-        prow = sorted(allp.items(), key=lambda kv: -(kv[1][0] + kv[1][1]))
+        prow = sorted(allp.items(), key=lambda kv: -(kv[1][0] + kv[1][1]))[:80]
         allrows = [(self.clink(p) + est(p), self.usd(a) if a else '—', self.usd(b) if b else '—', ('+' if a - b >= 0 else '−') + self.usd(abs(a - b))[1:]) for p, (a, b) in prow]
         sec_all = (f'<details class="dall"><summary>The {len(allrows)} largest trading partners of {nm} in {y}</summary>'
                    + self.table(['Partner', f'{nm} exports to', f'{nm} imports from', 'Balance'], allrows) + '</details>')
@@ -756,6 +758,68 @@ class Views:
                              + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
                              + self.latest(iso) + self.flow(iso, d) + sec_bal + sec_map + self.latest_products(iso) + prod + sec_time + sec_pairs + (self.peers(c) if iso in self.C else '') + src)
         return h['main'](top + tiles + self.highlights(iso, d) + self.flow(iso, d) + sec_p + sec_bal + sec_map + prod + sec_time + src)
+
+    # ---------- latest year across all economies (home page and the rankings page)
+    def latest_year(self):
+        """The newest complete year most economies have, and the totals for it: (year, {iso: (exports, imports)})."""
+        known = self.h['CBYISO']; cnt = {}
+        for c in self.IM:
+            if c in known and self.years_of(c):
+                cnt[self.years_of(c)[-1]] = cnt.get(self.years_of(c)[-1], 0) + 1
+        if not cnt:
+            return None, {}
+        y = max(cnt, key=lambda k: cnt[k])
+        return y, {c: self._year_tot(c, y) for c in self.IM if c in known and y in self.years_of(c)}
+
+    def rankings(self):
+        h = self.h; e = h['esc']; y, tot = self.latest_year()
+        WX = sum(v[0] for v in tot.values()); WM = sum(v[1] for v in tot.values())
+        prev = {c: self._year_tot(c, y - 1) for c in tot if (y - 1) in self.years_of(c)}
+        PX = sum(prev[c][0] for c in prev); CX = sum(tot[c][0] for c in prev)
+        any_cur = next((self.IM[c] for c in tot if self.IM[c].get('cur')), None); span = self._span(any_cur) if any_cur else ''
+        rm = {c: i + 1 for i, c in enumerate(sorted(tot, key=lambda c: -tot[c][1]))}
+        rows = []
+        for i, c in enumerate(sorted(tot, key=lambda c: -tot[c][0]), 1):
+            X, M = tot[c]; I = self.IM[c]; pv = prev.get(c)
+            ytd = sum(I['x'].get(f'{I["cur"]}-{k:02d}', 0) for k in range(1, I['upto'] + 1)) if (I.get('cur') and self._span(I) == span) else None
+            est = self.EST if any(m.startswith(str(y)) for m in I.get('xe', [])) else ''
+            rows.append(f'<tr data-n="{e(self.name(c).lower())}"><td class="rkn">{i}</td><td>{self.clink(c)}{est}</td><td class=r>{self.usd(X)}</td><td class=r>{self._chg(X, pv[0]) if pv else "—"}</td>'
+                        f'<td class=r>{self.usd(M)}</td><td class=r>#{rm[c]}</td><td class=r>{("+" if X - M >= 0 else "−") + self.usd(abs(X - M))[1:]}</td>' + (f'<td class=r>{self.usd(ytd) if ytd else "—"}</td>' if span else '') + '</tr>')
+        top = sorted(tot, key=lambda c: -tot[c][0])[:10]; mx = tot[top[0]][0]
+        bars = self.barlist([(self.clink(c), tot[c][0], f'{self.usd(tot[c][0])} <small>{self.share(tot[c][0], WX)}</small>') for c in top], 'var(--exp)')
+        topm = sorted(tot, key=lambda c: -tot[c][1])[:10]
+        barsm = self.barlist([(self.clink(c), tot[c][1], f'{self.usd(tot[c][1])} <small>{self.share(tot[c][1], WM)}</small>') for c in topm], 'var(--imp)')
+        js = ('<script>(function(){var q=document.getElementById("rq"),r=document.querySelectorAll("#rkt tbody tr");if(!q)return;'
+              'q.addEventListener("input",function(){var v=q.value.trim().toLowerCase();r.forEach(function(t){t.hidden=!!v&&t.getAttribute("data-n").indexOf(v)<0})})})();</script>')
+        return h['main'](h['back']('/', 'Home') + f'<div class="ph"><h1 class="h2">World trade rankings, {y}</h1>'
+                         f'<p>The {len(tot)} economies on this site exported <b>{self.usd(WX)}</b> of goods in {y}' + (f', {self._chg(CX, PX)} on {y - 1}' if PX else '') + '. Ranked by exports, with imports, balance'
+                         + (f' and {span}' if span else '') + '.</p></div>'
+                         f'<div class="statrow" style="margin-top:0"><div class="s"><b class="ex">{self.usd(WX)}</b><span>Exports, all economies ({y})</span></div>'
+                         f'<div class="s"><b class="im">{self.usd(WM)}</b><span>Imports, all economies ({y})</span></div><div class="s"><b>{len(tot)}</b><span>Economies</span></div></div>'
+                         f'<section class="gsec gx"><h2>The ten largest exporters, {y}</h2>{bars}</section><section class="gsec gm2"><h2>The ten largest importers, {y}</h2>{barsm}</section>'
+                         f'<section class="gsec"><h2>Every economy, {y}</h2><div class="sbox">{h["ic"]("search")}<input id="rq" type="search" placeholder="Find a country…" autocomplete="off" aria-label="Find a country"></div>'
+                         f'<div class="dscroll"><table class="dt" id="rkt"><thead><tr><th>#</th><th>Economy</th><th class=r>Exports {y}</th><th class=r>Change on {y - 1}</th><th class=r>Imports {y}</th><th class=r>Import rank</th><th class=r>Balance</th>'
+                         + (f'<th class=r>Exports {span}</th>' if span else '') + f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
+                         f'<p class="fine">{self.EST} Not yet reported by the economy for some or all of {y}; derived by the IMF from its partners&#39; records. Imports include freight and insurance and exports do not, so the two world totals differ.</p></section>'
+                         f'<section class="gsec"><h2>More ways in</h2><div class="two"><a class="nepalcard" href="/trade/pairs"><span class="fl">🤝</span><span><b>Country pairs</b> {h["ic"]("right")}</span></a>'
+                         f'<a class="nepalcard" href="/trade/region/south-asia"><span class="fl">🌏</span><span><b>South Asia</b> {h["ic"]("right")}</span></a></div>'
+                         f'<h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
+                         + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars, '
+                                        f'converted at the average exchange rate of each month. Each economy&#39;s page has every year back to 2019. <a href="/about">About the data</a></p>', str(y)) + js)
+
+    def product_history(self, code):
+        """World trade in one product for each BACI year on file."""
+        ys = {int(y): d.get(code) for y, d in (self.YW or {}).items() if d.get(code)}
+        if code in self.PW:
+            ys[self.Y] = self.PW[code]['w']
+        if len(ys) < 2:
+            return ''
+        mx = max(ys.values()); last = None; rows = []
+        for y in sorted(ys):
+            rows.append(f'<div class="barrow"><span class="lb">{y}</span><span class="tr"><span class="fi" style="width:{max(2.0, 100.0 * ys[y] / mx):.1f}%;background:var(--exp)"></span></span>'
+                        f'<span class="vl">{self.usd(ys[y])}' + (f' <small>{self._chg(ys[y], last)}</small>' if last else '') + '</span></div>'); last = ys[y]
+        return (f'<section class="gsec"><h2>World trade in this product, {min(ys)} to {max(ys)}</h2><div class="bars dp">{"".join(rows)}</div>'
+                f'<p class="fine">World exports of this product in current US dollars, with the change on the year before. {max(ys)} is the newest year with product detail for every economy.</p></section>')
 
     # ---------- country
     def country_title(self, c):
@@ -895,12 +959,30 @@ class Views:
     def pair_keys(self):
         return self._pair_keys
 
+    def pair_years(self, a, b):
+        """{year: [a's reported exports to b, b's reported exports to a]} from the IMF series, for years both sides have. Empty when
+        the latest complete year is missing on either side, and then the pair page stays on the BACI year."""
+        ya, yb = self.years_of(a), self.years_of(b)
+        if not ya or not yb or ya[-1] != yb[-1]:
+            return {}
+        out = {}
+        for y in ya:
+            if y in yb:
+                v = [(self.IM[a]['pa'][str(y)].get(b) or [0])[0], (self.IM[b]['pa'][str(y)].get(a) or [0])[0]]
+                if v[0] or v[1]:
+                    out[y] = v
+        return out if (ya[-1] in out and all(out[ya[-1]])) else {}
+
     def pair_title(self, a, b):
-        return f'{self.name(a)}–{self.name(b)} Trade {self.Y}: What Each Sells the Other'
+        return f'{self.name(a)}–{self.name(b)} Trade {self.year_label(a) if self.pair_years(a, b) else self.Y}: What Each Sells the Other'
 
     def pair_desc(self, a, b):
-        p = self.P[a + '-' + b]
-        s = f'{self.name(a)} exported {self.usd(p["ab"])} to {self.name(b)} and imported {self.usd(p["ba"])} in {self.Y}.'
+        p = self.P[a + '-' + b]; py = self.pair_years(a, b)
+        if py:
+            y = max(py)
+            s = f'{self.name(a)} exported {self.usd(py[y][0])} to {self.name(b)} and imported {self.usd(py[y][1])} in {y}. Year by year since {min(py)}.'
+        else:
+            s = f'{self.name(a)} exported {self.usd(p["ab"])} to {self.name(b)} and imported {self.usd(p["ba"])} in {self.Y}.'
         if p['abk']:
             s += f' Top {self.name(a)} export: {self.h["clip"](self.h["hs_desc"](p["abk"][0][0]), 46)}.'
         if p['bak']:
@@ -955,6 +1037,40 @@ class Views:
         src = h['src_box']('Source', f'<p><b>BACI</b> (CEPII), reconciled from what both countries reported to <b>UN Comtrade</b>, 6-digit HS, current US dollars. '
                            f'BACI gives one agreed figure for each flow, so it can differ from either country&#39;s own national statistics.</p>', str(Y))
         npl = self.nepal_official(b if a == 'NPL' else a) if 'NPL' in (a, b) else ''
+        py = self.pair_years(a, b)
+        if py:
+            y = max(py); xab, xba = py[y]; xt = xab + xba; xb = xab - xba; Ia = self.IM[a]; va, vb = self.year_view(a, y), self.year_view(b, y)
+            prev = py.get(y - 1)
+            lead = (f'<p class="ans">{A} exported <b>{self.usd(xab)}</b> of goods to {B} in {y}, and {B} exported <b>{self.usd(xba)}</b> to {A}. '
+                    f'Trade between the two totalled <b>{self.usd(xt)}</b>, with a {self.usd(abs(xb))} surplus for {A if xb >= 0 else B}.'
+                    + (f' Against {y - 1}, {A}&#39;s exports to {B} changed by {self._chg(xab, prev[0])} and {B}&#39;s to {A} by {self._chg(xba, prev[1])}.' if (prev and all(prev)) else '') + '</p>')
+            ra, rb = rank_in(va['xp'], b), rank_in(vb['xp'], a)
+            ctx = '<ul class="ctx">'
+            if ra:
+                ctx += f'<li>{B} was {A}&#39;s <b>#{ra}</b> export market in {y}, taking {self.share(xab, va["x"])} of {A}&#39;s exports.</li>'
+            if rb:
+                ctx += f'<li>{A} was {B}&#39;s <b>#{rb}</b> export market in {y}, taking {self.share(xba, vb["x"])} of {B}&#39;s exports.</li>'
+            ctx += '</ul>'
+            tiles = (f'<div class="statrow" style="margin-top:0"><div class="s"><b class="ex">{self.usd(xab)}</b><span>{A} → {B} ({y})</span></div>'
+                     f'<div class="s"><b class="im">{self.usd(xba)}</b><span>{B} → {A} ({y})</span></div>'
+                     f'<div class="s"><b>{self.usd(xt)}</b><span>Total trade ({y})</span></div></div>')
+            mx = max(xab, xba) or 1
+            scale = (f'<div class="card pscale"><div class="pr"><span>{fa} {A} → {fb} {B}</span><div><i style="width:{max(1.5, 100.0 * xab / mx):.1f}%;background:var(--exp)"></i></div><b>{self.usd(xab)}</b></div>'
+                     f'<div class="pr"><span>{fb} {B} → {fa} {A}</span><div><i style="width:{max(1.5, 100.0 * xba / mx):.1f}%;background:var(--imp)"></i></div><b>{self.usd(xba)}</b></div>'
+                     f'<p class="fine" style="margin:6px 0 0">Both bars on the same scale. Each is the exporting country&#39;s own customs figure for {y}.</p></div>')
+            yrows = [(str(yy), self.usd(v[0]) if v[0] else '—', self.usd(v[1]) if v[1] else '—', self.usd(v[0] + v[1]) if all(v) else '—') for yy, v in sorted(py.items(), reverse=True)]
+            sec_years = (f'<section class="gsec"><h2>Year by year, {min(py)} to {y}</h2><p class="gk">What each country reports exporting to the other, in US dollars.</p>'
+                         + self.year_cols({str(k): v for k, v in py.items()}, f'{A} → {B}', f'{B} → {A}') + self.table(['Year', f'{A} → {B}', f'{B} → {A}', 'Total'], yrows) + '</section>')
+            pnote = (f'<section class="gsec"><h2>What they trade: products in {Y}</h2><p class="gk">Product detail is published once a year, and {Y} is the newest year available. '
+                     f'It comes from BACI, which reconciles both countries&#39; records into one figure per flow: {self.usd(ab)} from {A} to {B} and {self.usd(ba)} from {B} to {A} in {Y}. '
+                     f'Those totals differ from the customs figures above; shares below are of the BACI totals.</p></section>')
+            src = h['src_box']('Sources', f'<p>Totals for every year: <b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each exporter&#39;s own customs figures, '
+                               f'converted to US dollars at the average exchange rate of each month. Products for {Y}: <b>BACI</b> (CEPII), reconciled from UN Comtrade, 6-digit HS. '
+                               f'The two use different methods, so compare like with like. <a href="/about">About the data</a></p>', str(y))
+            return h['main'](h['back']('/trade/pairs', 'Country pairs') + f'<div class="ph"><h1 class="h2">{fa} {A} – {fb} {B} trade, {y}' + (f' and {Ia["cur"]}' if Ia.get('cur') else '') + '</h1></div>'
+                             + lead + tiles + scale + ctx + npl + self.pair_latest(a, b) + sec_years + pnote
+                             + sec_ab.replace(f'<h2>What {A} sells to {B}</h2>', f'<h2>What {A} sells to {B}, {Y}</h2>') + sec_ba.replace(f'<h2>What {B} sells to {A}</h2>', f'<h2>What {B} sells to {A}, {Y}</h2>')
+                             + profiles + others + src)
         return h['main'](h['back']('/trade/pairs', 'Country pairs') + f'<div class="ph"><h1 class="h2">{fa} {A} – {fb} {B} trade, {Y}</h1></div>'
                          + lead + tiles + scale + ctx + npl + self.pair_latest(a, b) + sec_ab + sec_ba + sec_hist + profiles + others + src)
 
@@ -1251,6 +1367,7 @@ a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-chil
 .dvk i{width:14px;height:10px;border-radius:3px}.dvk i.pos{background:var(--exp)}.dvk i.neg{background:var(--imp)}
 .gsec{margin-top:var(--s6);padding-top:var(--s4);border-top:2px solid var(--fg)}.gsec>h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin:0 0 4px;letter-spacing:-.015em}
 .ycs{display:flex;gap:18px;align-items:flex-end;height:190px;margin:26px 0 6px;max-width:560px}
+.ycs.many{max-width:none;gap:12px}@media(max-width:820px){.ycs.many{gap:6px}.ycs.many .ycb i b{display:none}}
 .yc{flex:1;display:flex;flex-direction:column;height:100%;min-width:0}.ycb{flex:1;display:flex;gap:2px;align-items:flex-end;border-bottom:1px solid var(--border)}
 .ycb i{flex:1;position:relative;border-radius:4px 4px 0 0;min-width:0}.ycb i.x{background:var(--exp)}.ycb i.m{background:var(--imp)}
 .ycb i b{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);font-style:normal;font-size:.72rem;font-weight:650;color:var(--fg);white-space:nowrap;padding-bottom:2px}
@@ -1283,6 +1400,7 @@ sup.est{color:var(--imp);font-weight:700;cursor:help;margin-left:2px}.ltl .s spa
 .yar{flex:0 0 auto;width:36px;height:36px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:1.25rem;line-height:1;text-decoration:none}
 .yar:hover{background:var(--fg);color:var(--bg);text-decoration:none}.yar.off{opacity:.3}.hb.two i.p{background:var(--muted)}
 @media(max-width:560px){.ysl,.yar{display:none}.ysc a{padding:8px 11px}}
+.rkn{color:var(--muted);font-variant-numeric:tabular-nums;width:2.5em}#rkt tr[hidden]{display:none}
 .pdfl{margin:14px 0 0;font-size:.92rem;color:var(--muted)}.pdfl a{display:inline-block;margin-right:10px;padding:9px 14px;border-radius:10px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none}
 .pdfl span{display:block;margin-top:8px}.absrc{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:10px}.absrc>div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}.absrc b{display:block;margin-bottom:6px}.absrc p{margin:0 0 6px;font-size:.92rem;color:var(--fg-2)}.absrc span{display:block;font-size:.78rem;color:var(--muted)}
 .pdfl a:hover{background:var(--accent);text-decoration:none}.abl{margin:6px 0 0;padding-left:1.2em;max-width:76ch}.abl li{margin:0 0 10px;color:var(--fg-2)}.abl li b{color:var(--fg)}
