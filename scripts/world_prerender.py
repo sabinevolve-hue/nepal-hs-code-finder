@@ -1112,6 +1112,10 @@ def write_sitemaps(entries):
 def main_build():
     init_deep()
     assets = write_assets()
+    # server functions (world-src/api/*.js -> world/api/): Vercel runs each file as /api/<name>; keys come from the project's environment
+    shutil.rmtree(W / 'api', ignore_errors=True)
+    if (SRC / 'api').is_dir():
+        shutil.copytree(SRC / 'api', W / 'api')
     # generated route files are rebuilt from scratch each run (stale routes must disappear → 404)
     for d in ('hs', 'trade', 'nepal'):
         shutil.rmtree(W / d, ignore_errors=True)
