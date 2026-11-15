@@ -15,8 +15,8 @@ Stored per economy, values in thousand US dollars:
   p        {partner: [x_prev, x_full, x_ytd, x_ytd_prev, m_prev, m_full, m_ytd, m_ytd_prev, est]}
            full = latest complete calendar year, prev = the year before, ytd = current year to the newest month
   full, cur, upto   the years and newest month number those refer to
-  pa       {year: {partner: [x, m, est]}} calendar-year totals by partner from 2019, for the year pages: the 60 largest
-           markets and the 60 largest suppliers of each year
+  pa       {year: {partner: [x, m, est]}} calendar-year totals by partner from 2019, for the year pages: every partner
+           with at least $100,000 either way that year
   pn       {year: [number of export markets, number of suppliers]} (partners with at least $1,000 that year)
 Months are only added on refresh; nothing already stored is dropped.
 
@@ -88,8 +88,7 @@ def build(iso, old):
     p_out = {c: [K(v) for v in a[:8]] + [a[8]] for c, a in P.items() if max(a[:8]) >= 1000}
     pa, pn = {}, {}
     for y, d in sorted(A.items()):
-        keep = set(sorted(d, key=lambda c: -d[c][0])[:60]) | set(sorted(d, key=lambda c: -d[c][1])[:60])
-        pa[str(y)] = {c: [K(d[c][0]), K(d[c][1]), d[c][2]] for c in sorted(keep) if max(d[c][:2]) >= 1000}
+        pa[str(y)] = {c: [K(d[c][0]), K(d[c][1]), d[c][2]] for c in sorted(d) if max(d[c][:2]) >= 100000}
         pn[str(y)] = [sum(1 for v in d.values() if v[0] >= 1000), sum(1 for v in d.values() if v[1] >= 1000)]
     return iso, dict(x=dict(sorted(x.items())), m=dict(sorted(m.items())), xe=sorted(xe), me=sorted(me), p=p_out, full=full, cur=cur, upto=lm if cur else 12, pa=pa, pn=pn)
 
