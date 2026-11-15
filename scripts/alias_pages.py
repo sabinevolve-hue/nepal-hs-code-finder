@@ -92,9 +92,9 @@ FAVICON = ("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 vie
            "%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230F172A%27/%3E"
            "%3Ctext x=%2716%27 y=%2721%27 font-family=%27monospace%27 font-size=%2713%27 font-weight=%27700%27 "
            "fill=%27white%27 text-anchor=%27middle%27%3EHS%3C/text%3E%3C/svg%3E")
-ANALYTICS = ("<meta name=\"google-adsense-account\" content=\"ca-pub-8252183738521459\"><script>(function(){var h=location.hostname;"
+ANALYTICS = ("<meta name=\"google-adsense-account\" content=\"ca-pub-2178461169570588\"><script>(function(){var h=location.hostname;"
              "if(h.indexOf('customsnepal.com')<0&&h.indexOf('vercel.app')<0)return;"
-             "if(/(^|\\.)customsnepal\\.com$/.test(h)&&h.indexOf('world.')!==0){var a=document.createElement('script');a.async=true;a.crossOrigin='anonymous';a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8252183738521459';document.head.appendChild(a);}"
+             "if(/(^|\\.)customsnepal\\.com$/.test(h)&&h.indexOf('world.')!==0){var a=document.createElement('script');a.async=true;a.crossOrigin='anonymous';a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2178461169570588';document.head.appendChild(a);}"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{content_group:location.pathname.split('/')[1]||'home'});"
              "})();</script>")
