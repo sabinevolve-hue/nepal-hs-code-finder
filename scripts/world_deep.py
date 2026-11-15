@@ -65,6 +65,12 @@ class Views:
             for k, rec in mp['countries'].items():
                 self.PL[k] = dict(rec, fetched=mp['fetched'], note={'GBR': 'HMRC&#39;s product figures include non-monetary gold and follow its own coverage, so they do not add up to the IMF totals above.',
                                                                    'BRA': 'Imports are valued FOB here, without freight and insurance.'}.get(k, ''))
+        f = ROOT / 'data' / 'world' / 'us_products.json'
+        if f.exists():
+            up = json.loads(f.read_text(encoding='utf-8'))
+            for k, rec in up['countries'].items():
+                self.PL[k] = dict(rec, fetched=up['fetched'], note='Exports are valued free alongside ship and imports at customs value, without freight and insurance, so they do not add up to the IMF totals above. '
+                                                                   'This page uses the Census Bureau Data API but is not endorsed or certified by the Census Bureau.')
         self.PW = json.loads(PRODW_FILE.read_text(encoding='utf-8'))['products'] if PRODW_FILE.exists() else {}
         self._pc_keys = sorted(self.PC); self._pc_set = set(self.PC); self._pc_by_country = {}
         for k in sorted(self.PC, key=lambda k: -self.PC[k]['v']):
