@@ -632,6 +632,8 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('South Asia', p)]
     elif (m := re.match(r'^/trade/([a-z]{3})/exports/(\d{6})$', p)):
         cr += [('Trade', '/trade'), (iso_name(m[1].upper()), f'/trade/{m[1]}'), ('Exports of HS ' + fmt_code(m[2]), p)]
+    elif (m := re.match(r'^/trade/([a-z]{3})/(\d{4})$', p)):
+        cr += [('Trade', '/trade'), (iso_name(m[1].upper()), f'/trade/{m[1]}'), (m[2], p)]
     elif (m := re.match(r'^/trade/([a-z]{3})/([a-z]{3})$', p)):
         cr += [('Trade', '/trade'), (iso_name(m[1].upper()), f'/trade/{m[1]}'), (iso_name(m[1].upper()) + '–' + iso_name(m[2].upper()), p)]
     return cr
@@ -669,7 +671,7 @@ def init_deep():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
                                    ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY))
 
-STATIC_PARTS = {'countries', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
+STATIC_PARTS = {'countries', 'country-years', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/', '/about'}
 
 # ---------------------------------------------------------------- route table
@@ -721,6 +723,14 @@ def routes():
             d = f"{c['name']} trade profile: merchandise imports {money(c.get('imp'))} ({c.get('impYear')}), trend since {(c.get('trend') or [[None]])[0][0]} and official data sources."
         yrs = [r[0] for r in (c.get('trend') or [])]
         if DV and DV.has(c['iso']):
+            ys = DV.years_of(c['iso'])
+            if ys:
+                for y in ys:
+                    d = DV.cy_desc(c, y); last = (y == ys[-1])
+                    yield (f'/trade/{iso}' if last else f'/trade/{iso}/{y}', 'trade', DV.cy_title(c, y), d, DV.country_year(c, y), 'WebPage',
+                           [dataset(f"{c['name']} merchandise trade {y}: exports, imports and partners", d, {'@type': 'Country', 'name': c['name']}, str(y),
+                                    'https://data.imf.org/', [f"{c['name']} exports {y}", f"{c['name']} imports {y}", f"{c['name']} trading partners {y}"])], 'countries' if last else 'country-years')
+                continue
             d = DV.country_desc(c)
             yield (f'/trade/{iso}', 'trade', DV.country_title(c), d, DV.country(c), 'WebPage',
                    [dataset(f"{c['name']} merchandise trade {DV.Y} — partners and products", d, {'@type': 'Country', 'name': c['name']}, str(DV.Y),
@@ -946,7 +956,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'regions', 'product-groups', 'hs-chapters', 'countries', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()
