@@ -92,11 +92,17 @@ async function boot(){
   HS.sections.forEach(s=>SECByRoman[s[0]]=s);
   window.addEventListener('popstate',route); route();
 }
+// Country pages are addressed by country name (/trade/vietnam). Views here still build links with ISO codes, so every
+// link is corrected as it enters the page; old ISO addresses also redirect on the server.
+const CSLUG=/*@SLUGS@*/{};
+function fixCountryLinks(){ document.querySelectorAll('a[href^="/trade/"]').forEach(a=>{ const m=a.getAttribute('href').match(/^\/trade\/([a-z]{3})(\/\d{4}|\/exports\/\d{6})?$/i);
+  if(m&&CSLUG[m[1].toLowerCase()]) a.setAttribute('href','/trade/'+CSLUG[m[1].toLowerCase()]+(m[2]||'')); }); }
+if(!BASE&&typeof MutationObserver!=='undefined'){ new MutationObserver(fixCountryLinks).observe(document.documentElement,{childList:true,subtree:true}); document.addEventListener('DOMContentLoaded',fixCountryLinks); }
 function nav(path){ history.pushState(null,'',BASE+path); route(); window.scrollTo(0,0); }
 document.addEventListener('click',e=>{ if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
   const a=e.target.closest('a[data-nav]'); if(!a) return; let h=a.getAttribute('href')||''; if(!h.startsWith('/')) return;
   // Country profiles are full static pages on the subdomain (deep partner/product data the SPA does not hold): load them normally.
-  if(!BASE&&(h==='/'||h==='/trade'||/^\/trade\/[a-z]{3}$/i.test(h)||/^\/hs\/code\/\d{6}$/.test(h))) return;      // the home page and country profiles are full static pages
+  if(!BASE&&(h==='/'||h==='/trade'||/^\/trade\/(?!pairs$|region\/|product\/|sanctions)[a-z-]+(\/\d{4})?$/i.test(h)||/^\/hs\/code\/\d{6}$/.test(h))) return;      // the home page and country profiles are full static pages
   e.preventDefault(); if(BASE&&h.indexOf(BASE)===0) h=h.slice(BASE.length)||'/'; nav(h); });
 
 const MAIN_PARTNERS=(META&&META.MAIN_PARTNERS)||[];

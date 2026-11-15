@@ -270,7 +270,7 @@ def v_home():
             break
     lead = ''.join(f'<a class="wlead" href="/trade/{c.lower()}/exports/{k}"><span>{CBYISO[c]["flag"]}</span><b>{e(CBYISO[c]["name"])}</b>'
                    f'<em>{e(DV.pc_short(k, 40))}</em><i>{DV.PC[c + "-" + k]["s"]:.0f}% of world exports</i></a>' for c, k in leaders)
-    idx = json.dumps([[c['name'], c['iso'].lower()] for c in sorted(COUNTRIES, key=lambda c: -((c.get('exp') or 0) + (c.get('imp') or 0)))], ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
+    idx = json.dumps([[c['name'], world_urls.SLUG[c['iso']]] for c in sorted(COUNTRIES, key=lambda c: -((c.get('exp') or 0) + (c.get('imp') or 0)))], ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     hero = (f'<section class="whero"><div class="wrap"><h1>Who sells what to whom</h1>'
             f'<p>Trade figures for {len(COUNTRIES)} economies and {len(SUBS):,} products, up to {DV.IM_DATE[:4] if ly else yr}, with every year back to 2019. Search a country, a product or an HS code.</p>'
             '<form class="wsearch" id="wsearch" action="/hs" method="get" role="search" autocomplete="off">'
@@ -678,6 +678,7 @@ def dataset(name, desc, cover, temporal, based_on, keywords):
 
 # ---------------------------------------------------------------- deep profiles + pair pages (static, no SPA script)
 import world_deep, textfit
+import world_urls
 WMAP = json.load(open(D / 'worldmap.json', encoding='utf-8'))
 MAIN_GUIDES = sorted(f.stem for f in (ROOT / 'public' / 'export').glob('*.html'))
 META['MAIN_GUIDES'] = [s for s in EXGUIDES if s in MAIN_GUIDES]
@@ -693,7 +694,7 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href))
 
 STATIC_PARTS = {'countries', 'country-years', 'topics', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/', '/about', '/trade'}
@@ -954,6 +955,8 @@ def write_assets():
     css += world_deep.CSS + _nav.NAV_CSS + _footer.FOOTER_CSS + world_deep.SHELL_CSS
     js = (SRC / 'app.js').read_text(encoding='utf-8')
     assert '/*@META@*/null' in js, 'META placeholder missing from world-src/app.js'
+    assert '/*@SLUGS@*/{}' in js, 'SLUGS placeholder missing from world-src/app.js'
+    js = js.replace('/*@SLUGS@*/{}', json.dumps({k.lower(): v for k, v in world_urls.SLUG.items()}, separators=(',', ':')))
     js = js.replace('/*@META@*/null', json.dumps(META, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/'))
     names = {}
     for ext, body in (('css', css), ('js', js)):
@@ -981,6 +984,11 @@ def write_vercel_json():
         'cleanUrls': True, 'trailingSlash': False,
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
                                     'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys() if all(x in DV.D['pairset'] for x in k.split('-'))] if DV else [])
+                     # country pages moved from ISO codes to country names; pairs (/trade/chn/usa) are untouched
+                     + [r for iso, s in sorted(world_urls.SLUG.items()) for r in (
+                         {'source': f'/trade/{iso.lower()}', 'destination': f'/trade/{s}', 'permanent': True},
+                         {'source': f'/trade/{iso.lower()}/:year(\\d{{4}})', 'destination': f'/trade/{s}/:year', 'permanent': True},
+                         {'source': f'/trade/{iso.lower()}/exports/:code(\\d{{6}})', 'destination': f'/trade/{s}/exports/:code', 'permanent': True})]
                      + [{'source': '/index', 'destination': '/', 'permanent': True},
                         # the old www /world mount leaked /world URLs onto this host
                         {'source': '/world', 'destination': '/', 'permanent': True},
@@ -1036,22 +1044,24 @@ def main_build():
         assert p not in seen, p; seen.add(p)
         # lastmod only moves when the page's own content changes (not when shared CSS/JS change)
         h = hashlib.sha1(json.dumps([title, desc, body, extra_ld], ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest()[:16]
-        prev = lastmod.get(p)
+        p2 = world_urls.nice_path(p)          # country pages are filed under the country's name
+        prev = lastmod.get(p2) or lastmod.get(p)
         lm = prev[1] if prev and prev[0] == h else TODAY
-        new_lastmod[p] = [h, lm]
+        new_lastmod[p2] = [h, lm]
         doc = document(seo_head(p, title, desc, ptype, extra_ld, lm), k, body, assets['css'], None if (part in STATIC_PARTS or p in STATIC_PATHS) else assets['js'])
-        f = out_path(p); f.parent.mkdir(parents=True, exist_ok=True)
+        doc = world_urls.nice_html(doc)
+        f = out_path(p2); f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(doc, encoding='utf-8')
         total_bytes += len(doc.encode('utf-8')); n += 1
-        entries.append((p, lm, part))
-    (W / '404.html').write_text(page_404(assets['css']), encoding='utf-8')
+        entries.append((p2, lm, part))
+    (W / '404.html').write_text(world_urls.nice_html(page_404(assets['css'])), encoding='utf-8')
     bdir = ROOT / 'build' / 'briefs'; shutil.rmtree(bdir, ignore_errors=True); bdir.mkdir(parents=True)
     if DV:
         for c in COUNTRIES:
             if DV.has(c['iso']):
                 (bdir / (c['iso'].lower() + '.html')).write_text(
                     f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(c["name"])}: trade brief | World Trade Data</title>'
-                    f'<link rel="stylesheet" href="{assets["css"]}"><style>{world_deep.BRIEF_CSS}</style></head><body class="brief">{DV.brief(c)}</body></html>', encoding='utf-8')
+                    f'<link rel="stylesheet" href="{assets["css"]}"><style>{world_deep.BRIEF_CSS}</style></head><body class="brief">{world_urls.nice_html(DV.brief(c))}</body></html>', encoding='utf-8')
     odir = ROOT / 'build' / 'og'; shutil.rmtree(odir, ignore_errors=True); odir.mkdir(parents=True)
     if DV and DV.latest_year()[0]:
         wrap = lambda body: f'<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="{assets["css"]}"><style>{world_deep.OG_CSS}</style></head><body>{body}</body></html>'

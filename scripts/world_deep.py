@@ -385,7 +385,7 @@ class Views:
             return self.table([what, str(yv), 'Share'], rows) if rows else ''
         prods = lambda lst, total, what: self.table([what, str(self.Y), 'Share'], [(e(h['clip'](h['hs_desc'](r[0]), 58)) + f' <small class="hsc">{h["fmt_code"](r[0])}</small>', self.usd(r[1]), self.share(r[1], total)) for r in lst[:8]]) if lst else ''
         tm_x = self.treemap(d.get('xc') or [], BX, 'exp', c['name'], 'exports'); tm_m = self.treemap(d.get('mc') or [], BM, 'imp', c['name'], 'imports')
-        url = f'world.customsnepal.com/trade/{iso.lower()}'
+        url = 'world.customsnepal.com' + self.h['chref'](iso)
         return (f'<header class="bh"><div><span class="bm">{h["MARK"]}</span><b>World Trade Data</b></div><span>Trade brief · {url}</span></header>'
                 f'<h1>{c["flag"]} {nm}: trade brief</h1>'
                 f'<p class="bsub">{"Customs figures for " + str(I["full"]) + (" and " + str(I["cur"]) + " to date" if I.get("cur") else "") + "; products" if ys else "Reconciled figures"} for {self.Y}; long-run totals. Prepared {self.h["TODAY"]}.</p>'
