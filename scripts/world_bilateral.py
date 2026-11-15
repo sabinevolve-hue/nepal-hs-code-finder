@@ -27,7 +27,7 @@ PAIR_EXTRA = ['CHN']          # always in the pair set, with SAARC
 PAIR_TOP = 15                 # plus the world's largest exporters
 PAIR_MIN = 10000              # thousand USD: a pair page needs at least $10M of trade in one direction
 PAIR_PARTNERS = 10            # every economy also gets a pair page with each of its ten largest partners
-PC_TOP, PC_MIN, PC_BUYERS = 10, 50000, 15     # product-by-country pages: top export products per economy, min $50M
+PC_TOP, PC_MIN, PC_BUYERS = 10, 50000, 40     # product-by-country pages: top export products per economy, min $50M
 TOPK, TOPDEP, TOPLEAD, PAIRK = 40, 12, 15, 20
 
 files = {}
@@ -141,6 +141,13 @@ for c in sorted(set(tot_x[MAIN]) | set(tot_m[MAIN])):
         mc=[[ch, R(v)] for ch, v in sorted(mc[c].items(), key=lambda kv: -kv[1]) if v >= 1],
         hist={str(y): [R(tot_x[y].get(c, 0)), R(tot_m[y].get(c, 0))] for y in years})
 
+def chap(d):
+    c = defaultdict(float)
+    for k, v in d.items():
+        c[k[:2]] += v
+    return [[ch, R(v)] for ch, v in sorted(c.items(), key=lambda kv: -kv[1]) if v >= 1]
+
+
 pairs = {}
 ps = sorted(PSET)
 if True:
@@ -150,7 +157,7 @@ if True:
             ab=R(ab), ba=R(ba),
             abk=[[k, R(v)] for k, v in sorted(pk[(a, b)].items(), key=lambda kv: -kv[1])[:PAIRK]],
             bak=[[k, R(v)] for k, v in sorted(pk[(b, a)].items(), key=lambda kv: -kv[1])[:PAIRK]],
-            nab=len(pk[(a, b)]), nba=len(pk[(b, a)]),
+            nab=len(pk[(a, b)]), nba=len(pk[(b, a)]), abc=chap(pk[(a, b)]), bac=chap(pk[(b, a)]),
             hist={str(y): [R(pair[y].get((a, b), 0)), R(pair[y].get((b, a), 0))] for y in years})
 
 # ---- product-by-country: each economy's largest export products, with who buys them
@@ -178,7 +185,16 @@ for c, k in sorted(PCSET):
     prodc[c + '-' + k] = dict(v=R(v), q=round(xq.get((c, k), 0.0), 1), w=R(wk[k]), s=round(100.0 * v / wk[k], 2), r=order.index(c) + 1,
                               ne=len(order), nb=len(b), b=[[j, R(x)] for j, x in b[:PC_BUYERS]],
                               hist={str(y): R(pch[y].get((c, k), 0.0)) for y in pch})
+# ---- every product: who exports and who imports it (for the product maps)
+prodw = {}
+for k in wk:
+    xs = sorted(((c, xk[c][k]) for c in xk if xk[c].get(k)), key=lambda kv: -kv[1])
+    ms = sorted(((c, mk[c][k]) for c in mk if mk[c].get(k)), key=lambda kv: -kv[1])
+    cut = wk[k] * 0.001
+    prodw[k] = dict(w=R(wk[k]), nx=len(xs), nm=len(ms), x=[[c, R(v)] for c, v in xs[:40] if v >= cut and v >= 1], m=[[c, R(v)] for c, v in ms[:40] if v >= cut and v >= 1])
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
+with open(os.path.join(os.path.dirname(OUT), 'prodw.json'), 'w', encoding='utf-8') as fh:
+    json.dump(dict(year=MAIN, unit='thousand USD', products=prodw), fh, ensure_ascii=False, separators=(',', ':'))
 with open(os.path.join(os.path.dirname(OUT), 'prodc.json'), 'w', encoding='utf-8') as fh:
     json.dump(dict(year=MAIN, years=years, unit='thousand USD; q in tonnes', products=prodc, wtop=wtop), fh, ensure_ascii=False, separators=(',', ':'))
 sys.stderr.write('prodc.json: %d product-by-country entries, %d products\n' % (len(prodc), len(wtop)))
