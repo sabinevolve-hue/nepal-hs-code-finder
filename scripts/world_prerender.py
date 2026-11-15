@@ -495,7 +495,8 @@ def v_group(g):
                 + src_box('Official sources', '<p>Rankings computed from <b>World Bank WITS</b> product data (sourced from <b>UN Comtrade</b>) across the major trading economies — each country\'s merchandise exports in this HS group. Smaller economies are not yet included, so treat it as "leading major-economy traders".</p>', yr or ''))
 
 def nep_row(code, val, extra='', cls=''):
-    return (f'<a class="row" href="{code_href(code)}" data-nav><span class="code">{fmt_code(code)}</span><span class="d">{esc(hs_desc(code))}'
+    link = f'href="{code_href(code)}" data-nav' if code in SUB else ''      # a few trade codes (271000) have no page of their own
+    return (f'<a class="row" {link}><span class="code">{fmt_code(code)}</span><span class="d">{esc(hs_desc(code))}'
             f'{f"<small style=\"display:block;color:var(--muted)\">{extra}</small>" if extra else ""}</span>'
             f'<span class="end"><b{f" class=\"{cls}\"" if cls else ""}>{money(val * 1e6)}</b> {ic("right")}</span></a>')
 
@@ -651,6 +652,10 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('Compare countries', p)]
     elif p == '/trade/latest':
         cr += [('Trade', '/trade'), ('What changed', p)]
+    elif p == '/trade/blocs':
+        cr += [('Trade', '/trade'), ('Regions and blocs', p)]
+    elif (m := re.match(r'^/trade/bloc/([a-z0-9-]+)$', p)):
+        cr += [('Trade', '/trade'), ('Regions and blocs', '/trade/blocs'), (world_deep.Views.BLOCS[m[1]][0], p)]
     elif p == '/opportunities':
         cr += [('Trade', '/trade'), ('Market opportunities', p)]
     elif (m := re.match(r'^/opportunities/product/(\d{4})$', p)):
@@ -795,15 +800,15 @@ def routes():
                 yield ('/trade/latest', 'trade', DV.changes_title(), 'Which economies and which trade flows grew or shrank most this year so far, against the same months a year earlier. Customs figures in US dollars, updated monthly.',
                        ch_, 'WebPage', [], 'hubs')
         if DV.OP:
-            yield ('/opportunities', 'trade', f'Market Opportunities: Where Import Demand Grew, {DV.OP["y0"]}–{DV.OP["y1"]}',
+            yield ('/opportunities', 'opps', f'Market Opportunities: Where Import Demand Grew, {DV.OP["y0"]}–{DV.OP["y1"]}',
                    'For the 200 most-traded products, the countries that bought more, who supplies them and which exporters gained; and for each exporting economy, growing markets where its share is still small.',
                    DV.opp_hub(), 'CollectionPage', [], 'opportunities')
             for h4 in sorted(DV.OP['headings']):
                 if DV.opp_ok(h4):
-                    yield (DV.opp_href(h4), 'trade', DV.opp_title(h4), DV.opp_desc(h4), DV.opp(h4), 'WebPage', [], 'opportunities')
+                    yield (DV.opp_href(h4), 'opps', DV.opp_title(h4), DV.opp_desc(h4), DV.opp(h4), 'WebPage', [], 'opportunities')
             for c3 in sorted(DV.OP['c']):
                 if DV.copp_ok(c3):
-                    yield (DV.copp_href(c3), 'trade', DV.copp_title(c3), DV.copp_desc(c3), DV.copp(c3), 'WebPage', [], 'opportunities')
+                    yield (DV.copp_href(c3), 'opps', DV.copp_title(c3), DV.copp_desc(c3), DV.copp(c3), 'WebPage', [], 'opportunities')
         for h4 in sorted(HEADINGS):
             if DV.heading_ok(h4):
                 yield (f'/hs/heading/{h4}', 'hs', DV.heading_title(h4), DV.heading_desc(h4), DV.heading(h4), 'WebPage', [], 'hs-headings')
@@ -811,9 +816,15 @@ def routes():
             yield ('/trade/sanctions', 'trade', DV.sanc_title(), DV.sanc_desc(), DV.sanc_hub(), 'CollectionPage', [], 'topics')
             for si in DV.sanc_list():
                 yield (DV.sanc_href(si), 'trade', DV.sanc_title(si), DV.sanc_desc(si), DV.sanc_country(si), 'WebPage', [], 'topics')
+        if DV.bloc_list():
+            yield ('/trade/blocs', 'blocs', f'Trade Blocs and Regions {DV.latest_year()[0]}: EU, BRICS, ASEAN, G7 and More Compared',
+                   'Exports and imports of the European Union, BRICS, ASEAN, GCC, G7, G20, OPEC and other groups side by side, with the share of each group&#39;s exports that stays among its members.'.replace('&#39;', "'"),
+                   DV.bloc_hub(), 'CollectionPage', [], 'regions')
+            for bs in DV.bloc_list():
+                yield (DV.bloc_href(bs), 'blocs', DV.bloc_title(bs), DV.bloc_desc(bs), DV.bloc(bs), 'CollectionPage', [], 'regions')
         for rn, rs in (DV.regions_list() if DV.latest_year()[0] else []):
-            yield (f'/trade/region/{rs}', 'trade', DV.wregion_title(rn), DV.wregion_desc(rn), DV.wregion(rn), 'CollectionPage', [], 'regions')
-        yield ('/trade/region/south-asia', 'pairs', DV.region_title(), d, DV.region(), 'CollectionPage',
+            yield (f'/trade/region/{rs}', 'blocs', DV.wregion_title(rn), DV.wregion_desc(rn), DV.wregion(rn), 'CollectionPage', [], 'regions')
+        yield ('/trade/region/south-asia', 'blocs', DV.region_title(), d, DV.region(), 'CollectionPage',
                [dataset('South Asia (SAARC) merchandise trade ' + str(DV.Y), d, {'@type': 'Place', 'name': 'South Asia'}, str(DV.Y),
                         'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', ['SAARC trade', 'South Asia trade', 'intra-regional trade'])], 'regions')
         d = f'{len(DV.pair_keys())} country pairs: what each country sells the other, both directions, with the top products each way ({DV.Y}).'
@@ -850,13 +861,27 @@ def routes():
 # ---------------------------------------------------------------- document template
 # Four doors, the same menu component as customsnepal.com (scripts/nav.py: NAV_CSS + the close-on-outside script).
 # (key, label, icon, hint, [(href, title, sub)])
+_DOORS = None
 def doors():
+    global _DOORS
+    if _DOORS is None:      # the menu is the same on every page
+        _DOORS = _doors()
+    return _DOORS
+
+def _doors():
     pairs_n = len(DV.pair_keys()) if DV else 0
     return [
         ('trade', 'Countries', '🌍', 'Every economy, one profile each', [
             ('/trade', 'World rankings', f'All {len(COUNTRIES)} economies'),
+            ('/compare', 'Compare countries', 'Two or three side by side, since 2000'),
+            ('/trade/latest', 'What changed this year', 'Biggest rises and falls so far'),
             ('/trade/chn', 'China', 'Largest exporter'), ('/trade/usa', 'United States', 'Largest importer'),
-            ('/trade/deu', 'Germany', 'Trade profile'), ('/trade/ind', 'India', 'Trade profile')]),
+            ('/trade/sanctions', 'Trade under sanctions', 'Russia, Iran, Venezuela and others')] if DV else [('/trade', 'World rankings', f'All {len(COUNTRIES)} economies')]),
+        ('blocs', 'Regions', '🗺️', 'Regions and trade blocs', [
+            ('/trade/blocs', 'All regions and blocs', 'Compared side by side'),
+            ('/trade/bloc/european-union', 'European Union', '27 members'), ('/trade/bloc/brics', 'BRICS', 'Members and trade between them'),
+            ('/trade/bloc/asean', 'ASEAN', 'Southeast Asia'), ('/trade/bloc/middle-east', 'Middle East', 'Including the Gulf states'),
+            ('/trade/bloc/g7', 'G7', 'Seven advanced economies')] if (DV and DV.bloc_list()) else []),
         ('pairs', 'Pairs', '🤝', 'What two countries sell each other', [
             ('/trade/pairs', 'All country pairs', f'{pairs_n:,} pairs, both directions'),
             ('/trade/chn/usa', 'China – United States', 'The largest pair'), ('/trade/can/usa', 'Canada – United States', 'Pair page'),
@@ -867,6 +892,11 @@ def doors():
             ('/trade/product/transport-equipment', 'Vehicles and transport', 'Product group'),
             ('/trade/product/vegetable-products', 'Crops and food', 'Product group'),
             ('/hs', 'Search any product', f'{len(SUBS):,} products by name or international HS code')]),
+        ('opps', 'Markets', '📈', 'Where import demand is growing', [
+            ('/opportunities', 'Market opportunities', '200 products and 122 exporting countries'),
+            ('/opportunities/product/8703', 'Cars', 'Markets that bought more'), ('/opportunities/product/8542', 'Integrated circuits', 'Markets that bought more'),
+            ('/opportunities/product/3004', 'Medicines', 'Markets that bought more'),
+            (f"/opportunities/{world_urls.SLUG['CHN']}", 'China', 'Growing markets for its exports'), (f"/opportunities/{world_urls.SLUG['IND']}", 'India', 'Growing markets for its exports')] if (DV and DV.OP) else []),
     ]
 
 MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="#4CC9C2" stroke-width="2.4"/><path d="M3 16h26M16 3c-5.5 4-5.5 22 0 26M16 3c5.5 4 5.5 22 0 26" fill="none" stroke="#4CC9C2" stroke-width="1.8"/><circle cx="23.5" cy="9.5" r="3.4" fill="#E2572B"/></svg>'

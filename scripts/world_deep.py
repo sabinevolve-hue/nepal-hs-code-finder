@@ -817,7 +817,7 @@ class Views:
                          + (f'<th class=r>Exports {span}</th>' if span else '') + f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
                          f'<p class="fine">{self.EST} Not yet reported by the economy for some or all of {y}; derived by the IMF from its partners&#39; records. Imports include freight and insurance and exports do not, so the two world totals differ.</p></section>'
                          f'<section class="gsec"><h2>More ways in</h2><div class="two"><a class="nepalcard" href="/trade/pairs"><span class="fl">🤝</span><span><b>Country pairs</b> {h["ic"]("right")}</span></a></div>'
-                         f'<h3>By region</h3>{self.region_nav()}<h3>By theme</h3><div class="pairgrid"><a href="/trade/latest">What changed this year</a><a href="/compare">Compare countries</a><a href="/opportunities">Market opportunities</a><a href="/trade/sanctions">Trade under sanctions</a></div><h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
+                         f'<h3>By region</h3>{self.region_nav()}<h3>By trade bloc or group</h3>{self.bloc_nav()}<h3>By theme</h3><div class="pairgrid"><a href="/trade/latest">What changed this year</a><a href="/compare">Compare countries</a><a href="/opportunities">Market opportunities</a><a href="/trade/sanctions">Trade under sanctions</a></div><h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
                          + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars, '
                                         f'converted at the average exchange rate of each month. Each economy&#39;s page has every year back to 2019. <a href="/about">About the data</a></p>', str(y)) + js)
 
@@ -893,9 +893,140 @@ class Views:
                          + lead + tiles + f'<section class="gsec gx"><h2>The largest exporters in {N}, {y}</h2>{bars}</section>'
                          + f'<section class="gsec"><h2>Every economy in {N}, {y}</h2>{tbl}'
                          f'<p class="fine">{self.EST} Not yet reported by the economy for some or all of {y}; derived by the IMF from its partners&#39; records.</p></section>'
-                         + sec_out + sec_hist + '<section class="gsec"><h2>Other regions</h2>' + self.region_nav(name) + '</section>'
+                         + sec_out + sec_hist + '<section class="gsec"><h2>Other regions</h2>' + self.region_nav(name) + '<h3>Trade blocs and groups</h3>' + self.bloc_nav() + '</section>'
                          + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars. '
                                         f'Regional totals are sums of the economies listed, so they count trade between members. <a href="/about">About the data</a></p>', str(y)))
+
+    # ---------- trade blocs and groups (membership as stated in BLOC_DATE; one fixed member list applied to every year)
+    BLOC_DATE = '15 November 2026'
+    _EU = 'AUT BEL BGR HRV CYP CZE DNK EST FIN FRA DEU GRC HUN IRL ITA LVA LTU LUX MLT NLD POL PRT ROU SVK SVN ESP SWE'
+    _ASEAN = 'BRN KHM IDN LAO MYS MMR PHL SGP THA TLS VNM'
+    BLOCS = {      # slug: (name, kind, members, note)
+        'european-union': ('European Union', 'Customs union and single market', _EU, 'The 27 member states. The United Kingdom left in 2020 and is not included in any year.'),
+        'asean': ('ASEAN', 'Association of Southeast Asian Nations', _ASEAN, 'The 11 member states. Timor-Leste joined in October 2025 and is included in every year shown.'),
+        'gcc': ('GCC', 'Gulf Cooperation Council', 'BHR KWT OMN QAT SAU ARE', 'The six member states.'),
+        'mercosur': ('Mercosur', 'Southern Common Market', 'ARG BOL BRA PRY URY', 'The five active full members. Bolivia became a full member in 2024 and is included in every year. Venezuela has been suspended since 2016 and is not included.'),
+        'usmca': ('USMCA', 'United States–Mexico–Canada Agreement', 'CAN MEX USA', 'The three parties to the agreement, which replaced NAFTA in 2020.'),
+        'eaeu': ('Eurasian Economic Union', 'Customs union', 'ARM BLR KAZ KGZ RUS', 'The five member states.'),
+        'rcep': ('RCEP', 'Regional Comprehensive Economic Partnership', 'AUS BRN KHM CHN IDN JPN KOR LAO MYS MMR NZL PHL SGP THA VNM', 'The 15 signatories.'),
+        'cptpp': ('CPTPP', 'Comprehensive and Progressive Agreement for Trans-Pacific Partnership', 'AUS BRN CAN CHL JPN MYS MEX NZL PER SGP GBR VNM', 'The 12 parties. The United Kingdom joined in December 2024 and is included in every year shown.'),
+        'brics': ('BRICS', 'Group of emerging economies', 'BRA RUS IND CHN ZAF EGY ETH IRN ARE IDN',
+                  'Ten members: the original five, the four that joined in 2024 and Indonesia, which joined in 2025; all are included in every year shown. Saudi Arabia was invited in 2023 and some sources count it as a member; it is not included here.'),
+        'g7': ('G7', 'Group of Seven', 'CAN FRA DEU ITA JPN GBR USA', 'The seven member countries. The European Union also takes part and is not added.'),
+        'g20': ('G20', 'Group of Twenty', 'ARG AUS BRA CAN CHN FRA DEU IND IDN ITA JPN KOR MEX RUS SAU ZAF TUR GBR USA', 'The 19 member countries. The European Union and the African Union are also members and are not added, to avoid counting countries twice.'),
+        'opec': ('OPEC', 'Organization of the Petroleum Exporting Countries', 'DZA COG GNQ GAB IRN IRQ KWT LBY NGA SAU ARE VEN',
+                 'The 12 countries OPEC lists as members. The United Arab Emirates announced its withdrawal with effect from 1 May 2026; it is included because the yearly figures here end before that date. Figures are all goods, not only oil.'),
+        'oecd': ('OECD', 'Organisation for Economic Co-operation and Development', 'AUS AUT BEL CAN CHL COL CRI CZE DNK EST FIN FRA DEU GRC HUN ISL IRL ISR ITA JPN KOR LVA LTU LUX MEX NLD NZL NOR POL PRT SVK SVN ESP SWE CHE TUR GBR USA', 'The 38 member countries.'),
+        'arab-league': ('Arab League', 'League of Arab States', 'DZA BHR COM DJI EGY IRQ JOR KWT LBN LBY MRT MAR OMN PSE QAT SAU SOM SDN SYR TUN ARE YEM', 'The 22 members.'),
+        'african-union': ('African Union', 'Continental union', 'DZA AGO BEN BWA BFA BDI CPV CMR CAF TCD COM COG COD CIV DJI EGY GNQ ERI SWZ ETH GAB GMB GHA GIN GNB KEN LSO LBR LBY MDG MWI MLI MRT MUS MAR MOZ NAM NER NGA RWA STP SEN SYC SLE SOM ZAF SSD SDN TZA TGO TUN UGA ZMB ZWE',
+                          'The member states, including those whose participation is currently suspended. The Sahrawi Republic is a member with no trade figures.'),
+        'middle-east': ('Middle East', 'Geographic area', 'BHR IRN IRQ ISR JOR KWT LBN OMN QAT SAU SYR ARE YEM PSE',
+                        'There is no single agreed definition. This page uses 14 economies of Western Asia; Egypt is counted with Africa, and Turkey and Cyprus with Europe.'),
+    }
+
+    def bloc_members(self, slug):
+        """(members with figures for the latest year, members without)."""
+        y, tot = self.latest_year(); ms = self.BLOCS[slug][2].split()
+        return [c for c in ms if c in tot], [c for c in ms if c not in tot]
+
+    def bloc_list(self):
+        if getattr(self, '_blocs', None) is None:      # asked for on every page (the menu), so worked out once
+            self._blocs = [s for s in self.BLOCS if len(self.bloc_members(s)[0]) >= 2] if self.latest_year()[0] else []
+        return self._blocs
+
+    def bloc_href(self, slug):
+        return f'/trade/bloc/{slug}'
+
+    def _bloc_year(self, S, yy):
+        """Exports, imports, exports to members, imports from members for one year, or None unless every member has the year."""
+        if not all(yy in self.years_of(c) for c in S):
+            return None
+        inS = set(S); X = M = ix = im = 0
+        for c in S:
+            t = self._year_tot(c, yy); X += t[0]; M += t[1]
+            for p, v in self.IM[c]['pa'][str(yy)].items():
+                if p in inS:
+                    ix += v[0]; im += v[1]
+        return X, M, ix, im
+
+    def bloc_title(self, slug):
+        y, _ = self.latest_year()
+        return f'{self.BLOCS[slug][0]} Trade {y}: Exports, Imports and Trade Between Members'
+
+    def bloc_desc(self, slug):
+        y, tot = self.latest_year(); S, _ = self.bloc_members(slug); b = self._bloc_year(S, y); nm = self.BLOCS[slug][0]
+        top = sorted(S, key=lambda c: -tot[c][0])[:3]
+        return (f'{nm}: {len(S)} economies exported {self.usd(b[0])} of goods in {y}; {self.share(b[2], b[0], 0)} of it went to other members. '
+                f'Largest exporters: {", ".join(self.name(c) for c in top)}. Members ranked, outside partners, and totals since 2000.')
+
+    def bloc_nav(self, current=None):
+        return '<div class="pairgrid">' + ''.join(f'<a href="{self.bloc_href(s)}"' + (' aria-current="page" style="font-weight:700"' if s == current else '') + f'>{self.h["esc"](self.BLOCS[s][0])}</a>' for s in self.bloc_list()) + '</div>'
+
+    def bloc(self, slug):
+        h = self.h; e = h['esc']; y, tot = self.latest_year(); name, kind, _, note = self.BLOCS[slug]; N = e(name); S, missing = self.bloc_members(slug); inS = set(S)
+        RX, RM, ix, im = self._bloc_year(S, y); WX = sum(v[0] for v in tot.values()); prev = self._bloc_year(S, y - 1)
+        outx = {}; outm = {}
+        for c in S:
+            for p, v in self.IM[c]['pa'][str(y)].items():
+                if p not in inS:
+                    if v[0]: outx[p] = outx.get(p, 0) + v[0]
+                    if v[1]: outm[p] = outm.get(p, 0) + v[1]
+        signed = lambda v: ('+' if v >= 0 else '−') + self.usd(abs(v))
+        lead = (f'<p class="ans">The {len(S)} economies counted here exported <b>{self.usd(RX)}</b> of goods and imported <b>{self.usd(RM)}</b> in {y}'
+                + (f', with exports {self._chg(RX, prev[0])} on {y - 1}' if prev else '') + f'. <b>{self.share(ix, RX)}</b> of those exports, {self.usd(ix)}, went to other members; '
+                f'the remaining {self.usd(RX - ix)} went to the rest of the world. Members&#39; exports add up to {self.share(RX, WX)} of the exports of all {len(tot)} economies on this site.</p>')
+        tiles = (f'<div class="statrow" style="margin-top:0"><div class="s"><b class="ex">{self.usd(RX)}</b><span>Exports ({y})</span></div>'
+                 f'<div class="s"><b class="im">{self.usd(RM)}</b><span>Imports ({y})</span></div>'
+                 f'<div class="s"><b>{self.share(ix, RX)}</b><span>Exports going to members</span></div><div class="s"><b>{self.usd(RX - ix)}</b><span>Exports to the rest of the world</span></div></div>')
+        top = sorted(S, key=lambda c: -tot[c][0]); any_cur = next((self.IM[c] for c in S if self.IM[c].get('cur')), None); span = self._span(any_cur) if any_cur else ''
+        rows = []; yn = yt = 0
+        for i, c in enumerate(top, 1):
+            X, M = tot[c]; I = self.IM[c]; pv = self._year_tot(c, y - 1) if (y - 1) in self.years_of(c) else None
+            ok = bool(I.get('cur') and self._span(I) == span)
+            a = sum(I['x'].get(f'{I["cur"]}-{k:02d}', 0) for k in range(1, I['upto'] + 1)) if ok else 0
+            b = sum(I['x'].get(f'{I["cur"] - 1}-{k:02d}', 0) for k in range(1, I['upto'] + 1)) if ok else 0
+            if a and b:
+                yn += a; yt += b
+            tom = sum(v[0] for p, v in I['pa'][str(y)].items() if p in inS)
+            est = self.EST if any(m.startswith(str(y)) for m in I.get('xe', [])) else ''
+            rows.append([f'<span class="rkn">{i}</span> ' + self.clink(c) + est, self.usd(X), self._chg(X, pv[0]) if pv else '—', self.usd(M), signed(X - M), self.share(tom, X, 0)] + ([self.usd(a) if a else '—'] if span else []))
+        tbl = self.table(['Economy', f'Exports {y}', f'Change on {y - 1}', f'Imports {y}', 'Balance', 'Exports to members'] + ([f'Exports {span}'] if span else []), rows)
+        ytd = (f'<p>In {span}, the members with figures for those months exported {self.usd(yn)}, {self._chg(yn, yt)} on the same months a year earlier.</p>') if yn and yt else ''
+        bars = self.barlist([(self.clink(c), tot[c][0], f'{self.usd(tot[c][0])} <small>{self.share(tot[c][0], RX)}</small>') for c in top[:10]], 'var(--exp)')
+        ob = lambda d, tot_, col: self.barlist([(self.clink(p), v, f'{self.usd(v)} <small>{self.share(v, tot_)}</small>') for p, v in sorted(d.items(), key=lambda kv: -kv[1])[:10]], col)
+        sec_out = (f'<section class="gsec gx"><h2>Where {N} sells outside the group</h2><p class="gk">Members&#39; exports to partners that are not members, {y}, added up. Shares are of exports to the rest of the world.</p>{ob(outx, RX - ix, "var(--exp)")}</section>' if outx else '') \
+            + (f'<section class="gsec gm2"><h2>Where {N} buys outside the group</h2><p class="gk">Members&#39; imports from partners that are not members, {y}, added up.</p>{ob(outm, RM - im, "var(--imp)")}</section>' if outm else '')
+        intra = [(yy, self._bloc_year(S, yy)) for yy in range(2019, y + 1)]; intra = [(yy, b) for yy, b in intra if b]
+        sec_intra = (f'<section class="gsec"><h2>Trade between members, {intra[0][0]} to {intra[-1][0]}</h2><p class="gk">Exports of members to each other, and the share of all members&#39; exports that this makes up.</p>'
+                     + self.table(['Year', 'Exports of all members', 'Of which to members', 'Share', 'To the rest of the world'], [(str(yy), self.usd(b[0]), self.usd(b[2]), self.share(b[2], b[0]), self.usd(b[0] - b[2])) for yy, b in intra[::-1]])
+                     + '</section>') if len(intra) > 1 else ''
+        L = [self.long_years(c) for c in S]; ys = sorted(set.intersection(*[set(l) for l in L])) if L else []
+        hist = {str(yy): [sum(l[yy][0] for l in L), sum(l[yy][1] for l in L)] for yy in ys}
+        sec_hist = (f'<section class="gsec"><h2>{N} exports and imports, {ys[0]} to {ys[-1]}</h2><p class="gk">Sums of the members&#39; totals for the years in which every member has figures. They include trade between members.</p>'
+                    + self.year_cols(hist, 'Exports', 'Imports')
+                    + '<details class="more"><summary>Year-by-year table</summary>' + self.table(['Year', 'Exports', 'Imports', 'Balance'], [(k, self.usd(v[0]), self.usd(v[1]), signed(v[0] - v[1])) for k, v in sorted(hist.items(), reverse=True)]) + '</details></section>') if len(hist) > 2 else ''
+        miss = (f' No figures for {y}: {", ".join(e(self.name(c)) for c in missing)}.' if missing else '')
+        return h['main'](h['back']('/trade/blocs', 'Regions and blocs') + f'<div class="ph"><h1 class="h2">{N}: trade in {y}</h1><p>{e(kind)}. {len(S)} economies with figures, ranked by exports.</p></div>'
+                         + lead + tiles + ytd
+                         + f'<section class="gsec"><h2>Who is counted</h2><p>{e(note)}{miss} Membership as of {self.BLOC_DATE}; the same list is used for every year, so earlier years show today&#39;s members, not the membership of the time.</p></section>'
+                         + f'<section class="gsec gx"><h2>The largest exporters in {N}, {y}</h2>{bars}</section>'
+                         + f'<section class="gsec"><h2>Every member, {y}</h2>{tbl}<p class="fine">{self.EST} Not yet reported by the economy for some or all of {y}; derived by the IMF from its partners&#39; records.</p></section>'
+                         + sec_out + sec_intra + sec_hist + '<section class="gsec"><h2>Other blocs and groups</h2>' + self.bloc_nav(slug) + '<h3>Regions</h3>' + self.region_nav() + '</section>'
+                         + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars. '
+                                        f'Group totals are sums of the members listed. Trade between members is taken from the exporting member&#39;s records. <a href="/about">About the data</a></p>', str(y)))
+
+    def bloc_hub(self):
+        h = self.h; e = h['esc']; y, tot = self.latest_year(); WX = sum(v[0] for v in tot.values()); rows = []
+        for s in self.bloc_list():
+            S, _ = self.bloc_members(s); b = self._bloc_year(S, y)
+            rows.append((b[0], (f'<a href="{self.bloc_href(s)}"><b>{e(self.BLOCS[s][0])}</b></a> <small>{e(self.BLOCS[s][1])}</small>', str(len(S)), self.usd(b[0]), self.usd(b[1]), self.share(b[0], WX), self.share(b[2], b[0]))))
+        tbl = self.table(['Group', 'Members', f'Exports {y}', f'Imports {y}', 'Share of all exports', 'Exports going to members'], [r for _, r in sorted(rows, key=lambda r: -r[0])])
+        return h['main'](h['back']('/trade', 'World rankings') + f'<div class="ph"><h1 class="h2">Regions and trade blocs: trade in {y}</h1>'
+                         f'<p>{len(rows)} blocs and groups and seven regions, each with its members ranked, trade between members, outside partners and totals since 2000.</p></div>'
+                         f'<p class="ans">Groups overlap, so their shares do not add up to 100%. Each total is the sum of its members&#39; trade, including what members sell to each other; the last column shows how much that is.</p>'
+                         f'<section class="gsec"><h2>Blocs and groups compared, {y}</h2>{tbl}<p class="fine">Membership as of {self.BLOC_DATE}. Each page states who is counted.</p></section>'
+                         f'<section class="gsec"><h2>Regions</h2><p class="gk">Geographic grouping used by the World Bank. Every economy is in exactly one region.</p>{self.region_nav()}</section>'
+                         + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars. <a href="/about">About the data</a></p>', str(y)))
 
     def og_card(self, kind, c=None):
         """A 1200x630 share image as HTML (rendered to JPEG by scripts/world_og.py)."""
