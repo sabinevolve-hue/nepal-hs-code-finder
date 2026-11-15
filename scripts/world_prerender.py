@@ -832,7 +832,7 @@ OTHER_SITES = ('<p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other
                '<a href="https://nepalpublicdata.com/">Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com</a></p>')
 
 GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script>'
-        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>")
+        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());if(location.hostname==='world.customsnepal.com')gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>")
 
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''
@@ -840,7 +840,7 @@ def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-
     return (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f'<!--seo-->\n{seo_head}\n<!--/seo-->\n<meta name="robots" content="{robots}">\n<meta name="theme-color" content="#0C2530">\n'
             f'<link rel="icon" href="/favicon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">\n'
-            f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&display=swap">\n'
+            f'<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/archivo-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>\n'
             f'<link rel="stylesheet" href="{css_href}">\n{gtag}\n{js}\n</head>\n<body>\n{header(k)}\n<div id="app"><!--app-->{app_html}<!--/app--></div>\n{site_footer()}\n</body>\n</html>\n')
 
 def seo_head(p, title, desc, page_type, extra_ld, lastmod):
@@ -896,6 +896,10 @@ def write_assets():
             if old.name != name: old.unlink()
     # one shared map file: each economy is a path with its ISO code as id; pages draw it with <use> and colour it themselves
     (W / 'assets' / 'worldmap.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500"><g id="land">' + ''.join(f'<path id="{k}" d="{v}"/>' for k, v in sorted(WMAP.items())) + '</g></svg>', encoding='utf-8')
+    # self-hosted fonts (SIL Open Font License): no third-party request, and the text renders the same everywhere
+    (W / 'assets' / 'fonts').mkdir(exist_ok=True)
+    for f in (SRC / 'fonts').glob('*'):
+        (W / 'assets' / 'fonts' / f.name).write_bytes(f.read_bytes())
     (W / 'favicon.svg').write_text((SRC / 'favicon.svg').read_text(encoding='utf-8'), encoding='utf-8')
     return names
 

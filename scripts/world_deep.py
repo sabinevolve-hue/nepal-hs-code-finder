@@ -350,11 +350,11 @@ class Views:
             t3 = sum(v for _, v in lst[:3])
             return f'The top three {what} ({", ".join(e(self.name(p)) for p, _ in lst[:3])}) account for {self.share(t3, total, 0)}.'
         xg, mg = self.groups(d.get('xc') or []), self.groups(d.get('mc') or [])
-        sec_x = (f'<section class="gsec"><h2>What {nm} sells, and to whom</h2><p class="gk">{nm} exported {self.usd(X)} of goods to {len(xp)} markets in {Y}. '
+        sec_x = (f'<section class="gsec gx"><h2>What {nm} sells, and to whom</h2><p class="gk">{nm} exported {self.usd(X)} of goods to {len(xp)} markets in {Y}. '
                  + (f'{e(xg[0][0])} is the largest product group at {self.share(xg[0][1], X, 0)} of exports. ' if xg else '') + conc(xp, X, 'markets') + '</p>'
                  + ('<h3>Exports by product group</h3>' + self.treemap(d.get('xc') or [], X, 'exp', c['name'], 'exports') if xg else '')
                  + f'<h3>Top {min(10, len(xp))} export markets</h3>' + self.barlist(partner_rows(xp, X, 10), 'var(--exp)') + '</section>')
-        sec_m = (f'<section class="gsec"><h2>What {nm} buys, and from whom</h2><p class="gk">{nm} imported {self.usd(M)} of goods from {len(mp)} suppliers in {Y}. '
+        sec_m = (f'<section class="gsec gm2"><h2>What {nm} buys, and from whom</h2><p class="gk">{nm} imported {self.usd(M)} of goods from {len(mp)} suppliers in {Y}. '
                  + (f'{e(mg[0][0])} is the largest product group at {self.share(mg[0][1], M, 0)} of imports. ' if mg else '') + conc(mp, M, 'suppliers') + '</p>'
                  + ('<h3>Imports by product group</h3>' + self.treemap(d.get('mc') or [], M, 'imp', c['name'], 'imports') if mg else '')
                  + f'<h3>Top {min(10, len(mp))} suppliers</h3>' + self.barlist(partner_rows(mp, M, 10), 'var(--imp)') + '</section>')
@@ -692,7 +692,28 @@ h2.h{font-size:1.15rem;margin:var(--s6) 0 var(--s3)}
 
 # World Trade Data: the site's own look (sea-chart ink, teal for exports, buoy orange for imports; Archivo headings).
 SHELL_CSS = '''
-:root{--fg2:var(--fg-2);--navy:var(--hero1);--mono:var(--f-mono);--f:var(--f-body);--f-head:"Archivo",var(--f-body)}
+@font-face{font-family:"IBM Plex Sans";font-weight:400;font-style:normal;font-display:swap;src:url(/assets/fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:600;font-style:normal;font-display:swap;src:url(/assets/fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Sans";font-weight:700;font-style:normal;font-display:swap;src:url(/assets/fonts/ibm-plex-sans-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Archivo";font-weight:700;font-style:normal;font-display:swap;src:url(/assets/fonts/archivo-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Archivo";font-weight:800;font-style:normal;font-display:swap;src:url(/assets/fonts/archivo-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-weight:500;font-style:normal;font-display:swap;src:url(/assets/fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2")}
+:root{--fg2:var(--fg-2);--navy:var(--hero1);--mono:var(--f-mono);--f:var(--f-body);
+  --f-body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --f-mono:"IBM Plex Mono","SF Mono",SFMono-Regular,ui-monospace,Menlo,Consolas,monospace;
+  --f-head:"Archivo","IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--gold:#B7791F;--gold-bg:#FBF0D9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gold:#F2C265;--gold-bg:#3A2C0C}}
+:root[data-theme="dark"]{--gold:#F2C265;--gold-bg:#3A2C0C}
+body{font-size:1rem;line-height:1.55;font-feature-settings:"ss01"}
+b,strong,th{font-weight:600}td.r,.dt td,.statrow b,.vl{font-variant-numeric:tabular-nums}
+#app{background:linear-gradient(180deg,var(--accent-bg) 0,var(--bg) 240px)}
+.hsc,.mono,h1.dcode{font-family:var(--f-mono);font-weight:500}
+a{text-underline-offset:3px}main a:not([class]):hover{text-decoration:underline}
+.gsec.gx{border-top-color:var(--exp)}.gsec.gm2{border-top-color:var(--imp)}
+.gsec.gx>h2::after,.gsec.gm2>h2::after{content:"Exports";display:inline-block;vertical-align:middle;margin-left:12px;padding:3px 9px;border-radius:999px;font-family:var(--f-body);font-size:.72rem;font-weight:700;letter-spacing:0;color:#fff;background:#0B6E6E}
+.gsec.gm2>h2::after{content:"Imports";background:#C2461F}
+.hc:first-child>b,.hc:last-child>b{color:var(--gold)}.hc.pos>b{color:var(--free)}.hc.neg>b{color:var(--hi)}
+.dt thead th{font-size:.74rem;color:var(--muted);font-weight:600}.dt tbody tr:hover{background:var(--accent-bg)}
 .wrap,.bar .wrap{max-width:1060px}.nav.topnav{margin-left:auto;overflow:visible}
 .bar{background:var(--hero1)}
 .logo{font-family:var(--f-head);font-size:1.06rem;letter-spacing:-.01em}.logo .mk{background:none;width:28px;height:28px;border-radius:0}
@@ -706,7 +727,7 @@ h1,h1.h2,h2.h,.statrow .s b,.ph h1,.wcol h2,.wstrip h2{font-family:var(--f-head)
 h1.h2{font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.1;font-weight:800}
 a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:14px}
 
-.whero{background:var(--bg);border-bottom:1px solid var(--border)}
+.whero{background:none;border-bottom:1px solid var(--border)}
 .whero .wrap{padding-top:clamp(36px,7vw,84px);padding-bottom:clamp(28px,5vw,56px)}
 .whero h1{font-family:var(--f-head);font-weight:800;font-size:clamp(2.6rem,8.4vw,5.6rem);line-height:.94;letter-spacing:-.035em;margin:0 0 .28em;color:var(--fg);text-wrap:balance}
 .whero p{font-size:1.1rem;line-height:1.5;color:var(--fg-2);margin:0 0 1.1em;max-width:54ch}
