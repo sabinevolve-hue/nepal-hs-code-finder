@@ -646,6 +646,10 @@ def crumbs_for(p):
         cr.append(('About', p))
     elif p == '/trade/pairs':
         cr += [('Trade', '/trade'), ('Country pairs', p)]
+    elif p == '/trade/sanctions':
+        cr += [('Trade', '/trade'), ('Trade under sanctions', p)]
+    elif (m := re.match(r'^/trade/sanctions/([a-z]{3})$', p)):
+        cr += [('Trade', '/trade'), ('Trade under sanctions', '/trade/sanctions'), (iso_name(m[1].upper()), p)]
     elif (m := re.match(r'^/trade/region/([a-z-]+)$', p)) and m[1] != 'south-asia':
         cr += [('Trade', '/trade'), (next((n for n, s in world_deep.Views.REGION_SLUGS.items() if s == m[1]), m[1]), p)]
     elif p == '/trade/region/south-asia':
@@ -691,7 +695,7 @@ def init_deep():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
                                    ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid))
 
-STATIC_PARTS = {'countries', 'country-years', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
+STATIC_PARTS = {'countries', 'country-years', 'topics', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/', '/about', '/trade'}
 
 # ---------------------------------------------------------------- route table
@@ -768,6 +772,10 @@ def routes():
                         'https://data.worldbank.org/', [f"{c['name']} exports", f"{c['name']} imports", f"{c['name']} trade balance"])], 'countries')
     if DV:
         d = DV.region_desc()
+        if DV.latest_year()[0] and DV.sanc_list():
+            yield ('/trade/sanctions', 'trade', DV.sanc_title(), DV.sanc_desc(), DV.sanc_hub(), 'CollectionPage', [], 'topics')
+            for si in DV.sanc_list():
+                yield (f'/trade/sanctions/{si.lower()}', 'trade', DV.sanc_title(si), DV.sanc_desc(si), DV.sanc_country(si), 'WebPage', [], 'topics')
         for rn, rs in (DV.regions_list() if DV.latest_year()[0] else []):
             yield (f'/trade/region/{rs}', 'trade', DV.wregion_title(rn), DV.wregion_desc(rn), DV.wregion(rn), 'CollectionPage', [], 'regions')
         yield ('/trade/region/south-asia', 'pairs', DV.region_title(), d, DV.region(), 'CollectionPage',
@@ -969,6 +977,7 @@ def write_vercel_json():
     # anything else falls through to Vercel's static 404 handling, which serves 404.html with a real 404 status.
     redirects = [{'source': f'/hs/code/{c}', 'destination': f'/hs/chapter/{c[:2]}', 'permanent': True} for c in sorted(MISSING_CODES) if c[:2] in CH]
     cfg = {
+        'git': {'deploymentEnabled': {'**': False, 'main': True}},      # only merges to main deploy (the free plan limits deployments per day)
         'cleanUrls': True, 'trailingSlash': False,
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
                                     'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys() if all(x in DV.D['pairset'] for x in k.split('-'))] if DV else [])
@@ -992,7 +1001,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'regions', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()
