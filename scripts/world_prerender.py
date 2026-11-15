@@ -698,7 +698,7 @@ def dataset(name, desc, cover, temporal, based_on, keywords):
 
 # ---------------------------------------------------------------- deep profiles + pair pages (static, no SPA script)
 import world_deep, textfit
-import world_urls
+import world_urls, cross_site
 WMAP = json.load(open(D / 'worldmap.json', encoding='utf-8'))
 MAIN_GUIDES = sorted(f.stem for f in (ROOT / 'public' / 'export').glob('*.html'))
 META['MAIN_GUIDES'] = [s for s in EXGUIDES if s in MAIN_GUIDES]
@@ -1131,12 +1131,12 @@ def main_build():
         lm = prev[1] if prev and prev[0] == h else TODAY
         new_lastmod[p2] = [h, lm]
         doc = document(seo_head(p, title, desc, ptype, extra_ld, lm), k, body, assets['css'], None if (part in STATIC_PARTS or p in STATIC_PATHS) else assets['js'])
-        doc = world_urls.nice_html(doc)
+        doc = cross_site.new_tab(world_urls.nice_html(doc), cross_site.MAIN_RX)      # customsnepal.com is a separate site: its links open in a new tab
         f = out_path(p2); f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(doc, encoding='utf-8')
         total_bytes += len(doc.encode('utf-8')); n += 1
         entries.append((p2, lm, part))
-    (W / '404.html').write_text(world_urls.nice_html(page_404(assets['css'])), encoding='utf-8')
+    (W / '404.html').write_text(cross_site.new_tab(world_urls.nice_html(page_404(assets['css'])), cross_site.MAIN_RX), encoding='utf-8')
     bdir = ROOT / 'build' / 'briefs'; shutil.rmtree(bdir, ignore_errors=True); bdir.mkdir(parents=True)
     if DV:
         for c in COUNTRIES:
