@@ -15,6 +15,8 @@ Stored per economy, values in thousand US dollars:
   p        {partner: [x_prev, x_full, x_ytd, x_ytd_prev, m_prev, m_full, m_ytd, m_ytd_prev, est]}
            full = latest complete calendar year, prev = the year before, ytd = current year to the newest month
   full, cur, upto   the years and newest month number those refer to
+  ax, am   yearly totals {'YYYY': value} from 1990
+  pa       {partner: [[exports by year], [imports by year]]} from pa_from, for partners with a $10M flow in some year
 Months are only added on refresh; nothing already stored is dropped.
 
 Usage:  python3 scripts/world_imts.py [ISO ...]      (no arguments = every economy on the site)
@@ -23,12 +25,13 @@ import concurrent.futures as cf, csv, datetime, io, json, os, sys, time, urllib.
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'data', 'world', 'imts.json')
-API = 'https://api.imf.org/external/sdmx/2.1/data/IMF.STA,IMTS/%s.XG_FOB_USD+MG_CIF_USD.%s.M?startPeriod=%s%s'
+API = 'https://api.imf.org/external/sdmx/2.1/data/IMF.STA,IMTS/%s.XG_FOB_USD+MG_CIF_USD.%s.%s?startPeriod=%s%s'
+HIST_FROM, PAIR_FROM, PAIR_MIN = 1990, 2000, 10e6      # annual totals from 1990; annual partner series from 2000 for flows of $10M or more
 K = lambda v: int(round(v / 1000.0))
 
 
-def get(iso, counterpart, start, dataonly):
-    url = API % (iso, counterpart, start, '&detail=dataonly' if dataonly else '')
+def get(iso, counterpart, start, dataonly, freq='M'):
+    url = API % (iso, counterpart, freq, start, '&detail=dataonly' if dataonly else '')
     for attempt in range(4):
         try:
             req = urllib.request.Request(url, headers={'Accept': 'application/vnd.sdmx.data+csv', 'User-Agent': 'world.customsnepal.com data build'})
@@ -77,7 +80,21 @@ def build(iso, old):
         if cur and y == cur - 1 and mo <= lm: a[o + 3] += v
         if r.get('STATUS') and y >= full: a[8] = 1
     p_out = {c: [K(v) for v in a[:8]] + [a[8]] for c, a in P.items() if max(a[:8]) >= 1000}
-    return iso, dict(x=dict(sorted(x.items())), m=dict(sorted(m.items())), xe=sorted(xe), me=sorted(me), p=p_out, full=full, cur=cur, upto=lm if cur else 12)
+    # yearly history: totals from HIST_FROM, and each sizeable partner from PAIR_FROM (calendar years as the IMF publishes them)
+    ax = dict(old.get('ax', {})); am = dict(old.get('am', {})); pa = {}
+    for r in get(iso, '', str(HIST_FROM), True, 'A') or []:
+        c = r['COUNTERPART_COUNTRY']; y = r['TIME_PERIOD'][:4]
+        if not r['OBS_VALUE'] or not y.isdigit() or int(y) > full:
+            continue
+        v = float(r['OBS_VALUE']); ex = r['INDICATOR'] == 'XG_FOB_USD'
+        if c == 'G001':
+            (ax if ex else am)[y] = K(v)
+        elif len(c) == 3 and int(y) >= PAIR_FROM:
+            pa.setdefault(c, [{}, {}])[0 if ex else 1][y] = v
+    years = [str(y) for y in range(PAIR_FROM, full + 1)]
+    pa_out = {c: [[K(d.get(y, 0)) for y in years] for d in xm] for c, xm in pa.items() if max(list(xm[0].values()) + list(xm[1].values()) + [0]) >= PAIR_MIN}
+    return iso, dict(x=dict(sorted(x.items())), m=dict(sorted(m.items())), xe=sorted(xe), me=sorted(me), p=p_out, full=full, cur=cur, upto=lm if cur else 12,
+                     ax=dict(sorted(ax.items())), am=dict(sorted(am.items())), pa=pa_out, pa_from=PAIR_FROM)
 
 
 if __name__ == '__main__':

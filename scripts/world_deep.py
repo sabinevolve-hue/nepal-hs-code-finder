@@ -310,6 +310,65 @@ class Views:
                 f'and converts them to US dollars at the average exchange rate of the month the goods moved. Imports include freight and insurance; exports do not. '
                 f'The product and partner sections further down use BACI&#39;s reconciled figures for {self.Y}, which can differ noticeably for the same year, so compare like with like.</p></section>')
 
+    # ---------- long-run charts (IMF yearly figures)
+    def line_chart(self, pts, la, lb, label):
+        """pts: [(period label, a, b)] with None for a missing value. Two lines on one zero-based scale; year ticks every five years."""
+        e = self.h['esc']; vals = [v for _, a, b in pts for v in (a, b) if v]
+        if len(pts) < 3 or not vals:
+            return ''
+        mx = max(vals); W, H = 1000.0, 300.0
+        px = lambda i: W * i / (len(pts) - 1); py = lambda v: H - (H - 8.0) * v / mx
+        def path(k):
+            out = []; pen = False
+            for i, p in enumerate(pts):
+                v = p[k]
+                if v is None:
+                    pen = False; continue
+                out.append(('L' if pen else 'M') + f'{px(i):.1f},{py(v):.1f}'); pen = True
+            return ' '.join(out)
+        ticks = [(p[0], 100.0 * px(i) / W) for i, p in enumerate(pts) if i == 0 or (p[0].isdigit() and int(p[0]) % 5 == 0 and i < len(pts) - 2)]
+        grid = ''.join(f'<line x1="{W * x / 100:.1f}" y1="0" x2="{W * x / 100:.1f}" y2="{H}" class="lg"/>' for _, x in ticks[1:])
+        lastp = pts[-1]
+        return (f'<div class="lch"><span class="lmx">{self.usd(mx)}</span><svg viewBox="0 0 {W:.0f} {H:.0f}" preserveAspectRatio="none" role="img" aria-label="{e(label)}">'
+                f'{grid}<path d="{path(2)}" class="lm"/><path d="{path(1)}" class="lx"/></svg>'
+                '<div class="lyr">' + ''.join(f'<span style="left:{x:.1f}%">{y}</span>' for y, x in ticks) + '</div></div>'
+                f'<div class="dvk"><span><i class="pos"></i>{la}: {self.usd(lastp[1]) if lastp[1] else "—"} in {lastp[0]}</span>'
+                f'<span><i class="neg"></i>{lb}: {self.usd(lastp[2]) if lastp[2] else "—"}</span></div>')
+
+    def history(self, iso):
+        """Exports and imports for every year since 1990, so earlier years stay on the page as new ones are added."""
+        I = self.IM.get(iso) or {}; ax, am = I.get('ax') or {}, I.get('am') or {}
+        years = sorted(set(ax) | set(am))
+        if len(years) < 5:
+            return ''
+        nm = self.h['esc'](self.name(iso))
+        pts = [(y, ax.get(y) or None, am.get(y) or None) for y in years]
+        rows = [(y, self.usd(a) if a else '—', self.usd(b) if b else '—', (('+' if a - b >= 0 else '−') + self.usd(abs(a - b))[1:]) if a and b else '—') for y, a, b in reversed(pts)]
+        first = next((p for p in pts if p[1]), None); lastp = pts[-1]
+        fact = ''
+        if first and lastp[1] and first[1] and first[0] != lastp[0]:
+            fact = f' Exports were {self.usd(first[1])} in {first[0]} and {self.usd(lastp[1])} in {lastp[0]}, in the dollars of each year (not adjusted for inflation).'
+        return (f'<section class="gsec"><h2>{nm}&#39;s trade since {years[0]}</h2><p class="gk">Yearly exports and imports, {years[0]} to {years[-1]}.{fact}</p>'
+                + self.line_chart(pts, 'Exports', 'Imports', f'Yearly exports and imports of {self.name(iso)}, {years[0]} to {years[-1]}')
+                + f'<details class="dall"><summary>Every year, {years[0]} to {years[-1]}</summary>' + self.table(['Year', 'Exports', 'Imports', 'Balance'], rows) + '</details>'
+                + f'<p class="fine">Source: International Monetary Fund, International Trade in Goods by partner country (customs figures, current US dollars), retrieved {self.IM_DATE}.</p></section>')
+
+    def pair_history(self, a, b):
+        """Each side's exports to the other for every year since 2000, as the exporter reports them."""
+        Ia, Ib = self.IM.get(a) or {}, self.IM.get(b) or {}
+        sa = (Ia.get('pa') or {}).get(b); sb = (Ib.get('pa') or {}).get(a)
+        if not sa and not sb:
+            return ''
+        y0 = (Ia or Ib).get('pa_from', 2000); n = len((sa or sb)[0])
+        xa = sa[0] if sa else [0] * n; xb = sb[0] if sb else [0] * n
+        pts = [(str(y0 + i), xa[i] or None, xb[i] or None) for i in range(min(len(xa), len(xb)))]
+        if sum(1 for p in pts if p[1] or p[2]) < 5:
+            return ''
+        e = self.h['esc']; A, B = e(self.name(a)), e(self.name(b))
+        rows = [(y, self.usd(u) if u else '—', self.usd(v) if v else '—') for y, u, v in reversed(pts)]
+        return (f'<h3>Since {pts[0][0]}</h3>' + self.line_chart(pts, f'{A} → {B}', f'{B} → {A}', f'Yearly exports between {self.name(a)} and {self.name(b)} since {pts[0][0]}')
+                + f'<details class="dall"><summary>Every year, {pts[0][0]} to {pts[-1][0]}</summary>' + self.table(['Year', f'{A} → {B}', f'{B} → {A}'], rows) + '</details>')
+
     def latest_products(self, iso):
         """Product detail for the last complete year and the current year to date, where a national source publishes it."""
         R = self.PL.get(iso)
@@ -373,7 +432,7 @@ class Views:
         heads = ['Exports', str(full - 1), str(full), 'Change'] + ([span, f'Change on a year earlier'] if cur else [])
         return (f'<section class="gsec"><h2>{full} and {cur or full + 1} so far</h2>'
                 f'<p class="gk">Each row is the exporting country&#39;s own customs figure, in US dollars, from the IMF&#39;s trade-by-partner database.</p>'
-                + self.table(heads, rows)
+                + self.table(heads, rows) + self.pair_history(a, b)
                 + (f'<p class="fine">{self.EST} Not yet reported by the exporter; derived by the IMF from the partner&#39;s records. Treat as provisional.</p>' if est else '')
                 + f'<p class="fine">Source: International Monetary Fund, retrieved {self.IM_DATE}; converted to US dollars at each month&#39;s average exchange rate. '
                 f'The rest of this page uses BACI&#39;s reconciled figures for {self.Y}, which can differ for the same year.</p></section>')
@@ -586,8 +645,8 @@ class Views:
                            f'which can differ slightly from BACI for the same year. '
                            f'<a href="https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37" target="_blank" rel="noopener">About BACI ↗</a></p>', str(Y))
         peers = self.peers(c)
-        sec_time = ''
-        if hrows or long_trend:
+        sec_time = self.history(iso)
+        if not sec_time and (hrows or long_trend):
             sec_time = (f'<section class="gsec"><h2>{nm}&#39;s trade over time</h2>' + long_trend.replace(' style="margin-top:var(--s4)"', '')
                         + (self.table(['Year', 'Exports', 'Imports', 'Balance'], hrows) if hrows else '') + '</section>')
         prod_sec = (f'<section class="gsec"><h2>Products in detail</h2>' + sec_xk + sec_mk + sec_lead + sec_dep + '</section>') if (sec_xk or sec_mk) else ''
