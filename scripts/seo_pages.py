@@ -149,8 +149,9 @@ footer a{color:var(--muted)}
 """
 
 # ---- guarded analytics (same as assemble.py: live domain only) ----
-ANALYTICS = ("<script>(function(){var h=location.hostname;"
+ANALYTICS = ("<meta name=\"google-adsense-account\" content=\"ca-pub-8252183738521459\"><script>(function(){var h=location.hostname;"
              "if(h.indexOf('customsnepal.com')<0&&h.indexOf('vercel.app')<0)return;"
+             "if(/(^|\\.)customsnepal\\.com$/.test(h)&&h.indexOf('world.')!==0){var a=document.createElement('script');a.async=true;a.crossOrigin='anonymous';a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8252183738521459';document.head.appendChild(a);}"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
              "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{content_group:location.pathname.split('/')[1]||'home'});"
              "})();</script>")
