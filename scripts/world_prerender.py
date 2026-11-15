@@ -158,6 +158,7 @@ def row_html(s, current=None):
             f'<span class="end">{duty_chip(np_)} {ic("right")}</span></a>')
 
 def duty_chip(np_):
+    return ''      # global site: no single country's duty tag on product rows
     if not np_ or np_.get('g') is None: return ''
     g = np_['g']
     txt = f'{num(g[0])}–{num(g[1])}%' if isinstance(g, list) else ('Free' if g == 0 else num(g) + '%')
