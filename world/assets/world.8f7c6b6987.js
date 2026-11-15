@@ -502,7 +502,7 @@ function nepExportsHome(){
     <p class="fine" style="margin:0 0 8px">Nepal's top exports — open one for who buys it worldwide and the price Nepal gets.</p>
     ${(NEP._ex||[]).filter(d=>d[1]>0).slice(0,15).map(d=>exRow(d[0],d[1],exsText(d[0]))).join('')}
     <h3 class="h">Export guides</h3>
-    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<a class="sec" href="${MAIN_GUIDES.indexOf(s)>=0?'https://www.customsnepal.com/export/'+s:BASE+'/nepal/exports/guide/'+s}"${MAIN_GUIDES.indexOf(s)>=0?'':' data-nav'}><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">${MAIN_GUIDES.indexOf(s)>=0?'How to export, on customsnepal.com':'Trade data + how to export'}</span></a>`).join('')}</div>
+    <div class="secs">${Object.keys(EXGUIDES).map(s=>`<a class="sec" href="${MAIN_GUIDES.indexOf(s)>=0?'https://www.customsnepal.com/export/'+s:BASE+'/nepal/exports/guide/'+s}"${MAIN_GUIDES.indexOf(s)>=0?' target="_blank" rel="noopener"':' data-nav'}><span class="t">${EXGUIDES[s].fl} ${esc(EXGUIDES[s].name)}</span><span class="c">${MAIN_GUIDES.indexOf(s)>=0?'How to export, on customsnepal.com':'Trade data + how to export'}</span></a>`).join('')}</div>
     <h3 class="h">Export openings — big world demand, small Nepal share</h3>
     <p class="fine" style="margin:0 0 8px">Products Nepal already exports, where world import demand dwarfs Nepal's current sales.</p>
     ${open.length?open.slice(0,10).map(o=>exRow(o[0],o[1],`World imports ${money(o[2]*1e6)} · Nepal ${o[3]<1?'<1':Math.round(o[3])}%`)).join(''):'<p class="fine">—</p>'}
@@ -530,7 +530,7 @@ function nepExportMarket(iso){
     </div>
     <h3 class="h">Products Nepal exports to ${esc(name)}</h3>
     ${prods.map(x=>{ const p=PROD[x[0]]; return exRow(x[0],x[1], p&&p.u?`world price $${p.u}/kg`:''); }).join('')}
-    <a class="nepalcard" href="${BASE}/trade/${iso.toLowerCase()}" data-nav><span class="fl">${m[1]}</span><span><b>${esc(name)}'s full trade profile</b> — its total exports, imports &amp; top partners ${ic(I.right)}</span></a>${(s=>MAIN_PARTNERS.indexOf(s)>=0?`<a class="nepalcard" href="https://www.customsnepal.com/trade-partner/${s}"><span class="fl">🇳🇵</span><span><b>Nepal–${esc(name)} trade in official figures</b>: rupees, fiscal year and 8-digit codes on customsnepal.com ${ic(I.right)}</span></a>`:'')(name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''))}
+    <a class="nepalcard" href="${BASE}/trade/${iso.toLowerCase()}" data-nav><span class="fl">${m[1]}</span><span><b>${esc(name)}'s full trade profile</b> — its total exports, imports &amp; top partners ${ic(I.right)}</span></a>${(s=>MAIN_PARTNERS.indexOf(s)>=0?`<a class="nepalcard" href="https://www.customsnepal.com/trade-partner/${s}" target="_blank" rel="noopener"><span class="fl">🇳🇵</span><span><b>Nepal–${esc(name)} trade in official figures</b>: rupees, fiscal year and 8-digit codes on customsnepal.com ${ic(I.right)}</span></a>`:'')(name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''))}
     <div class="src"><div class="src-h">${ic(I.shield)}<span>Source</span><span style="margin-left:auto;color:var(--muted);font-weight:600">2024</span></div>
       <p>From <b>BACI</b> (CEPII, reconciled UN Comtrade). Values are Nepal→${esc(name)} merchandise exports at HS-6, current US$. For official 8-digit, fiscal-year figures, see Nepal's Department of Customs and TEPC; for Nepal duty and taxes see <a href="https://customsnepal.com/" target="_blank" rel="noopener">customsnepal.com ↗</a>.</p></div>
   </div></main>`;
