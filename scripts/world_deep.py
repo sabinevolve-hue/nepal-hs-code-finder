@@ -358,6 +358,77 @@ class Views:
                 + f'<p class="fine">Each economy&#39;s own customs figures in US dollars, from the International Monetary Fund&#39;s trade-by-partner database (retrieved {self.IM_DATE}). '
                 f'Every country profile has its {full} and {cur or full + 1} figures by partner; the chart above uses the reconciled {self.Y} figures.</p></section>')
 
+    # ---------- PDF trade brief and the About page
+    def brief_href(self, iso):
+        return f'/reports/{iso.lower()}-trade-brief.pdf'
+
+    def brief(self, c):
+        """A short, self-contained report for one economy, laid out for A4. Built from the same parts as the profile."""
+        h = self.h; e = h['esc']; iso = c['iso']; d = self.C[iso]; nm = e(c['name']); X, M = d['x'], d['m']; bal = X - M
+        I = self.IM.get(iso) or {}
+        xp, mp = d['xp'], d['mp']
+        lead = (f'<p class="ans">{nm} exported <b>{self.usd(X)}</b> of goods and imported <b>{self.usd(M)}</b> in {self.Y}, a trade {"surplus" if bal >= 0 else "deficit"} of <b>{self.usd(abs(bal))}</b>.'
+                + (f' Its largest export market was {e(self.name(xp[0][0]))} ({self.share(xp[0][1], X)} of exports)' if xp else '')
+                + (f' and its largest supplier was {e(self.name(mp[0][0]))} ({self.share(mp[0][1], M)} of imports).' if mp else '.') + '</p>')
+        def top(lst, total, what):
+            rows = [(f'{self.flag(p)} {e(self.name(p))}', self.usd(v), self.share(v, total)) for p, v in lst[:10]]
+            return self.table([what, str(self.Y), 'Share'], rows) if rows else ''
+        prods = lambda lst, total, what: self.table([what, str(self.Y), 'Share'], [(e(h['clip'](h['hs_desc'](r[0]), 58)) + f' <small class="hsc">{h["fmt_code"](r[0])}</small>', self.usd(r[1]), self.share(r[1], total)) for r in lst[:8]]) if lst else ''
+        tm_x = self.treemap(d.get('xc') or [], X, 'exp', c['name'], 'exports'); tm_m = self.treemap(d.get('mc') or [], M, 'imp', c['name'], 'imports')
+        url = f'world.customsnepal.com/trade/{iso.lower()}'
+        return (f'<header class="bh"><div><span class="bm">{h["MARK"]}</span><b>World Trade Data</b></div><span>Trade brief · {url}</span></header>'
+                f'<h1>{c["flag"]} {nm}: trade brief</h1>'
+                f'<p class="bsub">Reconciled figures for {self.Y}; {"customs figures for " + str(I["full"]) + (" and " + str(I["cur"]) + " to date" if I.get("cur") else "") + "; " if I.get("full") else ""}long-run totals. Prepared {self.h["TODAY"]}.</p>'
+                + lead + self.highlights(iso, d)
+                + self.latest(iso)
+                + self.flow(iso, d)
+                + f'<section class="gsec"><h2>Partners in {self.Y}</h2><div class="b2"><div><h3>Export markets</h3>{top(xp, X, "Market")}</div><div><h3>Suppliers</h3>{top(mp, M, "Supplier")}</div></div></section>'
+                + (f'<section class="gsec"><h2>What {nm} exports, {self.Y}</h2>{tm_x}<h3>Largest export products</h3>{prods(d["xk"], X, "Product")}</section>' if tm_x else '')
+                + (f'<section class="gsec"><h2>What {nm} imports, {self.Y}</h2>{tm_m}<h3>Largest import products</h3>{prods(d["mk"], M, "Product")}</section>' if tm_m else '')
+                + (f'<section class="gsec"><h2>{nm}&#39;s trade over the long run</h2><p class="gk">Merchandise exports and imports, World Bank series, current US dollars.</p>{h["trend_svg"](c.get("trend") or [])}</section>' if c.get('trend') else '')
+                + f'<section class="gsec bsrc"><h2>Sources and method</h2><ul>'
+                f'<li><b>{self.Y} partners and products:</b> BACI (CEPII), which reconciles what exporters and importers each reported to UN Comtrade, six-digit HS, current US dollars.</li>'
+                f'<li><b>Latest year and current year:</b> International Monetary Fund, International Trade in Goods by partner country: each economy&#39;s own monthly customs figures, converted to US dollars at the average exchange rate of each month. Values marked † were derived by the IMF from partners&#39; records because the economy had not yet reported.</li>'
+                f'<li><b>Long-run totals:</b> World Bank, merchandise exports and imports, current US dollars.</li>'
+                f'<li>The two sources use different methods and can give different totals for the same year. Compare like with like.</li>'
+                f'<li>Product classification: Harmonized System, © World Customs Organization.</li></ul>'
+                f'<p>World Trade Data is an independent reference published by Evolve Tech Pvt. Ltd. It is not affiliated with any government, the IMF, the WCO or the United Nations. '
+                f'Free to share with attribution. The live page, with every partner and product, is at {url}.</p></section>')
+
+    def about(self):
+        h = self.h; e = h['esc']; n_c = len(h['CBYISO']); im = len(self.IM); pl = len(self.PL)
+        src = [('BACI, by CEPII (Paris)', f'Partners and products for {self.Y}: every country pair and every six-digit product', 'Reconciles what the exporter and the importer each reported to UN Comtrade into one figure per flow. Updated each January.', 'Etalab Open Licence 2.0'),
+               ('International Monetary Fund, International Trade in Goods by partner country', f'The latest complete year and the current year to date, month by month since 2019, for {im} economies', 'Each economy&#39;s own customs figures, collected monthly and published in US dollars.', 'IMF data terms: free to use with attribution'),
+               ('World Bank, World Development Indicators', 'Long-run export and import totals for each economy', 'Yearly merchandise trade in current US dollars.', 'CC BY 4.0'),
+               ('Eurostat (DS-045409)', 'Latest product detail for the 27 EU members', 'EU customs and Intrastat figures in euros, by product and month.', 'Eurostat reuse policy: free with attribution'),
+               ('HM Revenue &amp; Customs, Overseas Trade Statistics', 'Latest product detail for the United Kingdom', 'UK customs figures in pounds, by product and month.', 'Open Government Licence'),
+               ('Ministry of Development, Industry, Trade and Services of Brazil, Comex Stat', 'Latest product detail for Brazil', 'Brazil&#39;s customs figures, published in US dollars.', 'Open data'),
+               ('World Customs Organization', 'The Harmonized System product classification (HS 2022)', 'The names and codes of products.', '© WCO'),
+               ('European Central Bank', 'Monthly average exchange rates', 'Used only to convert euro and sterling figures to US dollars.', 'ECB reuse policy')]
+        srcl = '<div class="absrc">' + ''.join(f'<div><b>{a}</b><p><span>Used for</span>{b}.</p><p><span>What it is</span>{c_}</p><p><span>Terms</span>{d_}</p></div>' for a, b, c_, d_ in src) + '</div>'
+        return h['main'](h['back']('/', 'Home') + '<div class="ph"><h1 class="h2">About World Trade Data</h1>'
+                         '<p>What this site is for, where every figure comes from, and how far to trust it.</p></div>'
+                         '<section class="gsec"><h2>The goal</h2><p class="gk">Trade statistics are public, but they are scattered across agencies, published in different currencies and formats, and hard to read. '
+                         f'World Trade Data puts them in one place and shows, for each of {n_c} economies, what it sells, what it buys and with whom, in plain words and charts. It is free, needs no sign-in and carries no advertising.</p>'
+                         '<p class="gk">The site does not produce statistics of its own. Every number is taken from a published official source, named on the page where it appears, with the year it refers to.</p></section>'
+                         '<section class="gsec"><h2>Where the figures come from</h2>' + srcl + '</section>'
+                         '<section class="gsec"><h2>How to read the numbers</h2><ul class="abl">'
+                         f'<li><b>Two kinds of figure.</b> The detailed {self.Y} pages use reconciled figures (BACI), where each export is matched to the partner&#39;s import record. The latest-year sections use customs figures as each economy reports them. The two can differ for the same country and year, sometimes by a lot, so each section says which it uses. Do not add or compare across them.</li>'
+                         '<li><b>Currency.</b> Everything is in current US dollars. Where the source publishes in another currency, each month is converted at that month&#39;s average exchange rate and the months are added up. Figures are not adjusted for inflation.</li>'
+                         '<li><b>Exports and imports are valued differently.</b> In customs figures, imports usually include freight and insurance and exports do not, so two countries&#39; figures for the same flow rarely match.</li>'
+                         '<li><b>Derived values.</b> When an economy has not yet reported a recent flow, the IMF derives it from the partner&#39;s records. These are marked † and should be treated as provisional.</li>'
+                         '<li><b>Goods only.</b> Services, such as tourism, transport and software, are not included.</li>'
+                         '<li><b>Small flows and small economies.</b> Very small flows can be missing, and a few territories have no map shape or no profile.</li></ul></section>'
+                         f'<section class="gsec"><h2>How often it is updated</h2><p class="gk">The latest-year figures are refreshed monthly. The detailed partner and product year moves forward once a year, when CEPII publishes a new BACI release, usually in January. '
+                         f'Latest-year figures on this build were retrieved on {self.IM_DATE}. Earlier years are kept on the site as new ones are added.</p></section>'
+                         '<section class="gsec"><h2>Using the figures</h2><p class="gk">You may quote and share anything here. Please name the original source shown on the page, for example '
+                         '&ldquo;Source: BACI (CEPII), via World Trade Data&rdquo;. Each country profile has a PDF trade brief you can download and pass on.</p>'
+                         '<p class="gk">Nothing here is advice. For a business or legal decision, check the figure with the source agency.</p></section>'
+                         '<section class="gsec"><h2>Who publishes it</h2><p class="gk">World Trade Data is published by Evolve Tech Pvt. Ltd., a private company based in Kathmandu, Nepal, which also publishes '
+                         '<a href="https://www.customsnepal.com/">customsnepal.com</a> and <a href="https://nepalpublicdata.com/">nepalpublicdata.com</a>. '
+                         'It is an independent reference and is not affiliated with, or endorsed by, any government, CEPII, the IMF, Eurostat, the World Customs Organization or the United Nations.</p>'
+                         '<p class="gk">Found a mistake, or a figure that does not match its source? Write to <a href="mailto:info@customsnepal.com">info@customsnepal.com</a> with the page address. Corrections are made at the next build.</p></section>')
+
     def pair_latest(self, a, b):
         """What each side reports selling the other in the latest complete year and the current year to date."""
         e = self.h['esc']; rows = []; est = False; span = ''; full = cur = None
@@ -593,6 +664,7 @@ class Views:
         prod_sec = (f'<section class="gsec"><h2>Products in detail</h2>' + sec_xk + sec_mk + sec_lead + sec_dep + '</section>') if (sec_xk or sec_mk) else ''
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade in {Y}</h1><p>{rk}</p></div>'
                          + lead + tiles + self.highlights(iso, d)
+                         + f'<p class="pdfl"><a href="{self.brief_href(iso)}" download>Download the {nm} trade brief (PDF)</a> <span>Key figures, partners, products and history on a few pages, free to share.</span></p>'
                          + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
                          + self.latest(iso) + self.latest_products(iso) + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
                          + f'<section class="gsec"><h2>{nm}&#39;s partners on the map</h2>' + self.map_block(iso, d) + sec_all + '</section>' + peers + src)
@@ -993,9 +1065,35 @@ sup.est{color:var(--imp);font-weight:700;cursor:help;margin-left:2px}.ltl .s spa
 .lch path{fill:none;stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-linejoin:round}.lch .lx{stroke:var(--exp)}.lch .lm{stroke:var(--imp)}
 .lch .lg{stroke:var(--border);stroke-width:1;vector-effect:non-scaling-stroke}
 .lmx{position:absolute;left:0;top:-16px;font-size:.72rem;color:var(--muted)}.lyr{position:relative;height:24px;overflow:hidden}.lyr span{position:absolute;top:5px;font-size:.78rem;color:var(--fg-2);padding-left:4px}
+.pdfl{margin:14px 0 0;font-size:.92rem;color:var(--muted)}.pdfl a{display:inline-block;margin-right:10px;padding:9px 14px;border-radius:10px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none}
+.pdfl span{display:block;margin-top:8px}.absrc{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:10px}.absrc>div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}.absrc b{display:block;margin-bottom:6px}.absrc p{margin:0 0 6px;font-size:.92rem;color:var(--fg-2)}.absrc span{display:block;font-size:.78rem;color:var(--muted)}
+.pdfl a:hover{background:var(--accent);text-decoration:none}.abl{margin:6px 0 0;padding-left:1.2em;max-width:76ch}.abl li{margin:0 0 10px;color:var(--fg-2)}.abl li b{color:var(--fg)}
 .gsec>p.ans{margin-top:6px}
 .gsec>p.gk{color:var(--fg-2);margin:0 0 10px;max-width:68ch}.gsec h3{font-size:1rem;margin:22px 0 4px}
 @media(max-width:700px){.tm{aspect-ratio:4/5}.tc.md b{font-size:.68rem;overflow-wrap:anywhere}.tc.lg b{overflow-wrap:anywhere}.tc span{padding:5px 6px}.dvr{grid-template-columns:minmax(0,7em) minmax(0,1fr) 4.6em}.glr{grid-template-columns:4.2em minmax(0,1fr) 4.6em}}
 @media(max-width:820px){.wcols{grid-template-columns:minmax(0,1fr);gap:22px}.wcol>p{min-height:0}.ws{height:64px}.ws-s,.ws-s.sm{padding:0}.ws-s b,.ws-s i,.ws-s span{display:none}.wsl{display:block}}
 @media(max-width:720px){body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}.wsearch button{padding:0 14px}}
+'''
+
+
+# Print layout for the PDF trade briefs (A4). The brief reuses the profile's components; this only arranges them on paper.
+BRIEF_CSS = '''
+@page{size:A4;margin:13mm 12mm 14mm}
+html{font-size:11.5px}body.brief{background:#fff;color:#0C2530;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body.brief #app,body.brief{background:#fff}
+.bh{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #0C2530;padding-bottom:6px;margin-bottom:12px;font-size:.9rem;color:#58686B}
+.bh div{display:flex;align-items:center;gap:7px;color:#0C2530;font-family:var(--f-head);font-size:1.1rem}.bm svg{width:20px;height:20px;display:block}
+body.brief h1{font-size:2.3rem;line-height:1.05;margin:0 0 4px}.bsub{color:#58686B;margin:0 0 10px}
+body.brief .ans{font-size:1.08rem;margin:0 0 6px}
+body.brief .gsec{margin-top:16px;padding-top:10px;break-inside:auto}body.brief .gsec>h2{font-size:1.35rem;break-after:avoid}
+body.brief h3{break-after:avoid;margin:12px 0 4px}
+body.brief .hcs{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}body.brief .hc{padding:10px 12px;break-inside:avoid}body.brief .hc>b{font-size:1.9rem}
+body.brief .flw{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);padding:8px;break-inside:avoid}body.brief .flc{flex-direction:column;order:0;min-width:90px}
+body.brief .gsec:has(.flw){break-inside:avoid}body.brief .statrow{break-inside:avoid}body.brief .lch,body.brief .tm,body.brief table{break-inside:avoid}body.brief .lch svg{height:150px}
+body.brief .tm{aspect-ratio:16/6}body.brief .tml,body.brief .pl,body.brief details>summary{display:none}
+body.brief details.dall{display:block}body.brief details.dall>*:not(summary){display:block}
+body.brief details.dall table tbody tr:nth-child(n+16){display:none}
+body.brief .dt td,body.brief .dt th{padding:4px 8px;font-size:.92rem}body.brief a{color:inherit;text-decoration:none}
+.b2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.b2 h3{margin-top:0}
+.bsrc ul{margin:4px 0 8px;padding-left:1.2em}.bsrc li{margin-bottom:5px}.bsrc p{margin:0;color:#2F4A52}
 '''
