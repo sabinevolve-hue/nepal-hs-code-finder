@@ -285,7 +285,7 @@ for idx, ch in enumerate(CHAPTERS):
     (pub / 'tariff' / (nn + '.html')).write_text(''.join(out), encoding='utf-8')
 
 # ---- tariff index ----
-title = 'Nepal Customs Tariff %s (%s) — All HS Codes & Duty Rates' % (FY_BS, YEAR)
+title = 'Nepal Customs Tariff %s (%s): Bhansar Rate List' % (FY_BS, YEAR)      # wording follows Search Console queries, Nov 2026
 desc = ('Nepal customs tariff %s (%s) by chapter: every HS code with its general and SAARC import duty '
         '(bhansar rate) — %d chapters, %s tariff lines, from the Department of Customs. Free search and calculator.'
         % (FY_BS, YEAR, len(CHAPTERS), format(len(D['rows']), ',')))
@@ -295,6 +295,7 @@ out.append('<h1>Nepal Customs Tariff %s (%s) — all chapters</h1>' % (FY_BS, YE
 out.append('<p class="lede">Every chapter of the Nepal Customs Tariff %s (%s, HS 2022), with %s HS code lines and '
            'their general and SAARC import duty (bhansar rate). Pick a chapter, or search any product on the '
            '<a href="/">home page</a>.</p>' % (FY_BS, YEAR, format(len(D['rows']), ',')))
+out.append('<h2>Customs Tariff %s PDF</h2>' % FY_BS)
 out.append('<p>Need the official document? The Department of Customs publishes the '
            '<a href="https://customs.gov.np/content/50/customs-tarrif/" target="_blank" rel="noopener noreferrer">Customs Tariff %s PDF '
            '(FY %s)</a> on customs.gov.np. Every line on this site is transcribed from it, with the source page noted in each '

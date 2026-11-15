@@ -379,12 +379,12 @@ def product_page(code, row, imp, val):
 paths = [product_page(code, row, imp, val) for code, row, imp, val in items]
 
 # ---------------- hub ----------------
-hub_title = 'Nepal import duty by product — customs duty & tax lookup | Customs Nepal'
+hub_title = 'Customs Duty in Nepal: Import Duty by Product | Customs Nepal'      # wording follows Search Console queries, Nov 2026
 hub_desc = ('Customs duty on everything Nepal imports, product by product: general and India/SAARC (SAFTA) duty, '
             '13% VAT and a worked landed-cost example for each. The products Nepal actually imports, ranked by value.')
 bc = [('Home', '/'), ('Import duty', '')]
 out = [page_head(hub_title, hub_desc, '/import-duty', bc), crumb_html(bc)]
-out.append('<h1>Nepal import duty by product</h1>')
+out.append('<h1>Customs duty in Nepal, product by product</h1>')
 out.append('<p class="lede">The customs duty and landed cost for the products Nepal imports — each with its general and '
            'India/SAARC (SAFTA) rate, 13%% VAT and a worked example. Covering <b>%d</b> traded products, ranked by import value. '
            'Looking for one specific item? <a href="/">Search the full tariff</a> or '
