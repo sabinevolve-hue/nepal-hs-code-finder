@@ -109,7 +109,7 @@ FAVICON = ("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 vie
 ANALYTICS = ("<script>(function(){var h=location.hostname;"
              "if(h.indexOf('customsnepal.com')<0&&h.indexOf('vercel.app')<0)return;"
              "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
-             "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('set',{content_group:location.pathname.split('/')[1]||'home'});gtag('config','G-T1FQWWL2VV');"
+             "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{content_group:location.pathname.split('/')[1]||'home'});"
              "})();</script>")
 from nav import render_nav, OTHER_SITES
 import links

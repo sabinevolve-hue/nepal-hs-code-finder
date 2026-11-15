@@ -95,7 +95,7 @@ ANALYTICS = (
     "<script>(function(){var h=location.hostname;"
     "if(h.indexOf('customsnepal.com')<0&&h.indexOf('vercel.app')<0)return;"
     "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
-    "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('set',{content_group:location.pathname.split('/')[1]||'home'});gtag('config','G-T1FQWWL2VV');"
+    "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{content_group:location.pathname.split('/')[1]||'home'});"
     "var v=document.createElement('script');v.defer=true;v.src='/_vercel/insights/script.js';document.head.appendChild(v);"
     "})();</script>"
 )
