@@ -429,7 +429,8 @@ function nepalView(){
   if(NEP===null||PROD===null){ Promise.all([loadNep(),loadProd()]).then(()=>{ if(location.pathname.indexOf('/nepal')>=0) nepalView(); }); app.innerHTML='<main><div class="wrap"><div class="empty" style="padding-top:70px">Loading Nepal trade…</div></div></main>'; return; }
   setTitle(PT.nepal());
   const T=NEP._t||{im:0,ex:0}, bal=T.ex-T.im;
-  const row=(code,val,extra)=>`<a class="row" href="${BASE}/hs/code/${code}" data-nav><span class="code">${fmtCode(code)}</span><span class="d">${esc(hsDesc(code))}${extra?`<small style="display:block;color:var(--muted)">${extra}</small>`:''}</span><span class="end"><b>${money(val*1e6)}</b> ${ic(I.right)}</span></a>`;
+  const has=code=>SUBS.some(x=>x[0]===code);      // a few trade codes (271000) have no page of their own: show the row without a link
+  const row=(code,val,extra)=>`<a class="row" ${has(code)?`href="${BASE}/hs/code/${code}" data-nav`:''}><span class="code">${fmtCode(code)}</span><span class="d">${esc(hsDesc(code))}${extra?`<small style="display:block;color:var(--muted)">${extra}</small>`:''}</span><span class="end"><b>${money(val*1e6)}</b> ${ic(I.right)}</span></a>`;
   const over=[];
   (NEP._im||[]).forEach(([code,val])=>{ const z=NEP[code],p=PROD[code]; if(z&&z.iu&&p&&p.u&&z.iu>p.u*1.2&&val>=1) over.push([code,val,Math.round((z.iu/p.u-1)*100),z.iu,p.u]); });
   over.sort((a,b)=>b[1]*b[2]-a[1]*a[2]);

@@ -9,11 +9,6 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/hs/code/271000",
-      "destination": "/hs/chapter/27",
-      "permanent": true
-    },
-    {
       "source": "/nepal/exports/guide/cardamom",
       "destination": "https://www.customsnepal.com/export/cardamom",
       "permanent": true
