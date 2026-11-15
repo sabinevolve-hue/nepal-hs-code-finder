@@ -49,6 +49,7 @@ class Views:
         self.HD = json.loads(hf.read_text(encoding='utf-8'))['headings'] if hf.exists() else {}
         of = ROOT / 'data' / 'world' / 'opps.json'
         self.OP = json.loads(of.read_text(encoding='utf-8')) if of.exists() else {}
+        self.TPO = json.loads(f.read_text(encoding='utf-8')) if (f := ROOT / 'data' / 'world' / 'tpo.json').exists() else {}
         # product detail for the latest periods, from national sources (same record shape in every file)
         self.PL = {}
         f = ROOT / 'data' / 'world' / 'eu_products.json'
@@ -771,6 +772,7 @@ class Views:
                              + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
                              + (f'<p class="fine" style="margin-top:10px"><a href="{cmp_[0]}">Compare {nm} with {e(cmp_[1][0])} and {e(cmp_[1][1])}</a></p>' if cmp_ else '')
                              + (f'<p class="fine"><a href="{self.copp_href(iso)}">Export markets with rising demand for {nm}</a></p>' if self.copp_ok(iso) else '')
+                             + self.tpo_line(iso)
                              + self.latest(iso) + self.flow(iso, d) + sec_bal + sec_map + self.latest_products(iso) + prod + sec_time + sec_pairs + (self.peers(c) if iso in self.C else '') + src)
         return h['main'](top + tiles + self.highlights(iso, d) + self.flow(iso, d) + sec_p + sec_bal + sec_map + prod + sec_time + src)
 
@@ -1491,7 +1493,7 @@ class Views:
         return h['main'](h['back']('/opportunities', 'Market opportunities') + f'<div class="ph"><h1 class="h2">{self.flag(iso)} {nm}: export markets with rising demand, {y0} to {y1}</h1>'
                          f'<p>For the products {nm} already exports at scale, the markets that bought more from the world and where {nm} holds a smaller share than it does worldwide. <a href="/trade/{iso.lower()}">{nm} trade profile</a></p></div>'
                          + f'<p class="ans">{len(rs)} of the 200 most-traded product headings are ones where {nm} supplies at least 1% of world exports. For each, the table lists up to four markets whose imports rose by at least $20M.</p>'
-                         + secs + self._OPP_NOTE + self._opp_src())
+                         + secs + (f'<section class="gsec"><h2>Finding suppliers in {nm}</h2>{self.tpo_line(iso)}</section>' if self.tpo(iso) else '') + self._OPP_NOTE + self._opp_src())
 
     def opp_hub(self):
         h = self.h; e = h['esc']; y0, y1 = self.OP['y0'], self.OP['y1']
@@ -1510,7 +1512,33 @@ class Views:
                          f'<section class="gsec"><h2>By exporting country</h2><p class="gk">Pick an economy to see, for its main export products, the markets with rising imports where it is under-represented.</p><div class="pairgrid">'
                          + ''.join(f'<a href="{self.copp_href(c)}">{self.flag(c)} {e(self.name(c))}</a>' for c in cs) + '</div></section>'
                          f'<section class="gsec"><h2>All {len(hs)} products, by HS chapter</h2>{prod}</section>'
+                         + (f'<section class="gsec"><h2>Open tenders</h2><p>Invitations to bid from World Bank-financed projects, loaded live and searchable by country. <a href="/tenders">See open tenders</a></p></section>')
+                         + (f'<section class="gsec"><h2>Finding suppliers: official trade bodies</h2><p class="gk">Government or government-backed export promotion bodies. Most keep a directory of exporters or will point you to one. '
+                            f'Links open their own sites; checked on {e(self.TPO.get("checked", ""))}.</p>{self.tpo_grid()}</section>' if self.TPO.get('bodies') else '')
                          + self._OPP_NOTE + self._opp_src())
+
+    # ---------- finding suppliers: official trade bodies (data/world/tpo.json), and the tenders page
+    def tpo(self, iso):
+        return (self.TPO.get('bodies') or {}).get(iso)
+
+    def tpo_line(self, iso):
+        t = self.tpo(iso); e = self.h['esc']
+        return (f'<p class="fine">Looking for exporters in {e(self.name(iso))}? Start with its official trade promotion body: '
+                f'<a href="{e(t[1])}" target="_blank" rel="noopener">{e(t[0])}</a>.</p>') if t else ''
+
+    def tpo_grid(self):
+        e = self.h['esc']; b = self.TPO.get('bodies') or {}
+        return '<div class="pairgrid">' + ''.join(f'<a href="{e(b[c][1])}" target="_blank" rel="noopener">{self.flag(c)} {e(self.name(c))}: {e(b[c][0])}</a>' for c in sorted(b, key=self.name) if c in self.h['CBYISO']) + '</div>'
+
+    def tenders_page(self):
+        h = self.h
+        return h['main'](h['back']('/opportunities', 'Market opportunities') + '<div class="ph"><h1 class="h2">Open tenders: World Bank-financed projects</h1>'
+                         '<p>Invitations to bid and requests for expressions of interest from projects the World Bank finances, newest first. Filter by country, category or words in the notice.</p></div>'
+                         '<div id="tnd"><p class="tmsg">Loading notices…</p></div>'
+                         '<noscript><p class="fine">This list needs JavaScript. The same notices are on the <a href="https://projects.worldbank.org/en/projects-operations/procurement">World Bank procurement page</a>.</p></noscript>'
+                         '<section class="gsec"><h2>How to read this page</h2><p>Notices are loaded live from the World Bank each time you search, so the list is as current as its own. Each title opens the full notice on the World Bank site, '
+                         'which has the documents, the contact and the rules for bidding. World Trade Data does not run these tenders and cannot answer questions about them. Always confirm the deadline on the notice itself.</p></section>'
+                         + h['src_box']('Source', '<p><b>World Bank</b>, Procurement Notices, licensed under Creative Commons Attribution 4.0. Covers projects financed by the World Bank only; other lenders and national tenders are not included.</p>', 'Live'))
 
     def changes_title(self):
         I = next((self.IM[c] for c in self.IM if self.IM[c].get('cur')), None)
@@ -1997,6 +2025,12 @@ h2.h{font-size:1.15rem;margin:var(--s6) 0 var(--s3)}
 .rk1{background:#FDE68A;color:#713F12}.rk2{background:#E2E8F0;color:#334155}.rk3{background:#FED7AA;color:#7C2D12}
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--s3)}
 .pl2{list-style:none;margin:8px 0 0;padding:0}.pl2 li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--border);font-size:.9rem}.pl2 li:first-child{border-top:0}
+.tf{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end;margin:6px 0 16px}.tf label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;font-weight:600;color:var(--muted)}
+.tf select,.tf input[type=search]{font:inherit;font-weight:400;color:var(--fg);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;min-height:42px;width:100%;box-sizing:border-box}
+.tf .tck{flex-direction:row;align-items:center;gap:8px;min-height:42px;color:var(--fg)}.tbtn{font:inherit;font-weight:700;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 18px;min-height:42px;cursor:pointer}.tbtn:disabled{opacity:.6;cursor:default}
+.tf :focus-visible,.tbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tnl{list-style:none;margin:0;padding:0;display:grid;gap:10px}.tn{border:1px solid var(--border);background:var(--card);border-radius:12px;padding:12px 14px;display:grid;gap:3px}.tn a{color:var(--fg);text-decoration:none}.tn a:hover b{text-decoration:underline}
+.tn b{font-size:.98rem;line-height:1.35}.tn span{font-size:.84rem;color:var(--muted)}.tn .tn-m{color:var(--fg)}.tn.closed{opacity:.6}.tmsg{padding:18px;border:1px dashed var(--border);border-radius:12px;color:var(--muted)}
 .pairgrid{display:flex;flex-wrap:wrap;gap:8px}.pairgrid a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.85rem;color:var(--fg);text-decoration:none}
 .pairgrid a:hover{border-color:var(--accent)}.pairgrid small{color:var(--muted)}
 .dall{margin-top:var(--s5)}.dall>summary{cursor:pointer;font-weight:650;padding:10px 0;color:var(--accent)}
