@@ -321,7 +321,8 @@ def v_chapter(ch):
     rows = [s for s in SUBS if s[0].startswith(ch)]
     by = {}
     for s in rows: by.setdefault(s[2], []).append(s)
-    body = ''.join(f'<h3 class="h">{h[:2]}.{h[2:]} — {esc(HEADINGS.get(h, ""))}</h3>' + ''.join(row_html(s) for s in by[h]) for h in sorted(by))
+    hl = lambda h: (f' <a class="pl" href="/hs/heading/{h}">exporters and importers</a>' if (DV and DV.heading_ok(h)) else '')
+    body = ''.join(f'<h3 class="h">{h[:2]}.{h[2:]} — {esc(HEADINGS.get(h, ""))}{hl(h)}</h3>' + ''.join(row_html(s) for s in by[h]) for h in sorted(by))
     return main(back('/hs', 'HS finder') + f'''<div class="ph"><p style="margin:0;color:var(--muted);font-size:.85rem">Section {cn[2]} · Chapter {ch}</p><h1 class="h2">{esc(cn[1])}</h1><p>{len(rows)} six-digit codes{" · " + esc(sec[1]) if sec else ""}.</p></div>{body}''')
 
 def nepal_prod(code):
@@ -397,7 +398,7 @@ def v_code(code):
     sib = ''.join(row_html(x, current=code) for x in SUBS if x[0].startswith(head))
     return main(back(f'/hs/chapter/{ch}', f'Chapter {ch}') + f'''<h1 class="dcode">{fmt_code(code)}</h1><p class="dtitle">{esc(s[1])}</p>
 <p class="crumb">Section {cn[2]} · <b>{esc(sec[1])}</b></p>{nepal}
-<table class="bk"><tbody><tr><td>Six-digit HS code</td><td>{fmt_code(code)} <span class="fine">({code})</span></td></tr><tr><td>Heading</td><td>{head}</td></tr>
+<table class="bk"><tbody><tr><td>Six-digit HS code</td><td>{fmt_code(code)} <span class="fine">({code})</span></td></tr><tr><td>Heading</td><td>{(f'<a href="/hs/heading/{head}">{head[:2]}.{head[2:]}: exporters and importers of the whole heading</a>' if (DV and DV.heading_ok(head)) else head)}</td></tr>
 <tr><td>Chapter</td><td>{ch} — {esc(cn[1])}</td></tr><tr><td>Section</td><td>{cn[2]}</td></tr></tbody></table>
 <p class="crumb" style="margin-top:14px"><b>Heading {head[:2]}.{head[2:]}:</b> {esc(HEADINGS.get(head, ""))}</p>
 {prod_block(code)}{landed_block(code)}'''
@@ -646,6 +647,12 @@ def crumbs_for(p):
         cr.append(('About', p))
     elif p == '/trade/pairs':
         cr += [('Trade', '/trade'), ('Country pairs', p)]
+    elif p == '/compare':
+        cr += [('Trade', '/trade'), ('Compare countries', p)]
+    elif p == '/trade/latest':
+        cr += [('Trade', '/trade'), ('What changed', p)]
+    elif (m := re.match(r'^/hs/heading/(\d{4})$', p)):
+        cr += [('HS Codes', '/hs'), (f'Chapter {m[1][:2]} — {CH[m[1][:2]][1]}', f'/hs/chapter/{m[1][:2]}'), (f'{m[1][:2]}.{m[1][2:]}', p)]
     elif p == '/trade/sanctions':
         cr += [('Trade', '/trade'), ('Trade under sanctions', p)]
     elif (m := re.match(r'^/trade/sanctions/([a-z-]+)$', p)):
@@ -694,10 +701,10 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href, SLUG=world_urls.SLUG, HEADINGS=HEADINGS))
 
-STATIC_PARTS = {'countries', 'country-years', 'topics', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
-STATIC_PATHS = {'/', '/about', '/trade'}
+STATIC_PARTS = {'countries', 'country-years', 'topics', 'hs-headings', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
+STATIC_PATHS = {'/', '/about', '/trade', '/compare', '/trade/latest'}
 
 # ---------------------------------------------------------------- route table
 def routes():
@@ -773,6 +780,17 @@ def routes():
                         'https://data.worldbank.org/', [f"{c['name']} exports", f"{c['name']} imports", f"{c['name']} trade balance"])], 'countries')
     if DV:
         d = DV.region_desc()
+        if DV.latest_year()[0]:
+            yield ('/compare', 'trade', 'Compare Countries: Exports, Imports and Trading Partners Side by Side',
+                   f'Compare the trade of two or three countries: exports and imports since 2000, largest markets and suppliers, and what they export. {len(DV.latest_year()[1])} economies.',
+                   DV.compare_page() + '<script>' + (SRC / 'compare.js').read_text(encoding='utf-8').replace('</', '<\\/') + '</script>', 'WebPage', [], 'hubs')
+            ch_ = DV.changes()
+            if ch_:
+                yield ('/trade/latest', 'trade', DV.changes_title(), 'Which economies and which trade flows grew or shrank most this year so far, against the same months a year earlier. Customs figures in US dollars, updated monthly.',
+                       ch_, 'WebPage', [], 'hubs')
+        for h4 in sorted(HEADINGS):
+            if DV.heading_ok(h4):
+                yield (f'/hs/heading/{h4}', 'hs', DV.heading_title(h4), DV.heading_desc(h4), DV.heading(h4), 'WebPage', [], 'hs-headings')
         if DV.latest_year()[0] and DV.sanc_list():
             yield ('/trade/sanctions', 'trade', DV.sanc_title(), DV.sanc_desc(), DV.sanc_hub(), 'CollectionPage', [], 'topics')
             for si in DV.sanc_list():
@@ -1011,7 +1029,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'hs-headings', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()
@@ -1071,6 +1089,9 @@ def main_build():
         for c in COUNTRIES:
             if DV.years_of(c['iso']):
                 (odir / (c['iso'].lower() + '.html')).write_text(wrap(DV.og_card('country', c)), encoding='utf-8')
+    if DV and DV.latest_year()[0]:
+        (W / 'data').mkdir(exist_ok=True)
+        (W / 'data' / 'compare.json').write_text(json.dumps(DV.compare_data(), ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     # product names for the home page search (loaded only when someone types)
     (W / 'data').mkdir(exist_ok=True)
     (W / 'data' / 'psearch.json').write_text(json.dumps([[k, clip(hs_desc(k), 72)] for k in sorted(SUB) if DV and DV.has_product(k)], ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
