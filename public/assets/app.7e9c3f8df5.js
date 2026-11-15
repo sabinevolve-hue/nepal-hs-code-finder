@@ -369,6 +369,13 @@ let tmr, htmr;
 function syncSearchHist(){ try { if (curTab !== 'search') return; const q = $('#q').value.trim(), s = history.state || {}, u = location.pathname + location.search;
   if (q && !s.cnq && !s.cnd) history.pushState({ cnq: q }, '', u); else if (q && s.cnq && s.cnq !== q) history.replaceState({ cnq: q }, '', u); else if (!q && s.cnq) history.back(); } catch(e){} }
 const queueSearchHist = () => { clearTimeout(htmr); htmr = setTimeout(syncSearchHist, 600); };
+// Browse and Trade data: opening a chapter, a country or a sub-page adds ONE history step that remembers what was open,
+// so browser Back returns to the list instead of leaving the page. The on-page back buttons use the same step.
+const viewState = () => ({ bc: browseChap, bp: browsePage, sc: stChapter, sco: stCountry, sv: stView });
+function pushView(){ try { history.pushState({ cnv: viewState() }, '', location.pathname + location.search); } catch(e){} }
+function viewBack(){ try { if (history.state && history.state.cnv){ history.back(); return true; } } catch(e){} return false; }
+function applyView(v){ v = v || {}; browseChap = v.bc || null; browsePage = v.bp || ''; browseQ = ''; stChapter = v.sc || null; stCountry = v.sco || null; if (v.sv) stView = v.sv;
+  if (curTab === 'browse') renderBrowse(); else if (curTab === 'stats') renderStats(); window.scrollTo({ top: 0 }); }
 $('#q').addEventListener('input', () => { shown = 40; clearTimeout(tmr); tmr = setTimeout(renderResults, 110); queueSearchHist(); });
 $('#q').addEventListener('keydown', e => { if (e.key === 'Enter'){ $('#q').blur(); remember($('#q').value.trim()); } });
 $('#qclear').addEventListener('click', () => { $('#q').value = ''; renderResults(); $('#q').focus(); clearTimeout(htmr); syncSearchHist(); });
@@ -551,12 +558,12 @@ $('#v-browse').addEventListener('change', e => { if (e.target.id === 'oprov'){ o
 $('#v-browse').addEventListener('input', e => { if (e.target.id === 'bq'){ browseQ = e.target.value.trim(); const pos = e.target.selectionStart; renderBrowse(); const el = $('#bq'); if (el){ el.focus(); try{ el.setSelectionRange(pos, pos); }catch(x){} } } });
 $('#v-browse').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.page !== undefined){ browsePage = b.dataset.page; browseQ = ''; renderBrowse(); window.scrollTo({top:0}); return; }
+  if (b.dataset.page !== undefined){ if (!b.dataset.page && viewBack()) return; browsePage = b.dataset.page; browseQ = ''; renderBrowse(); window.scrollTo({top:0}); if (browsePage) pushView(); return; }
   if (b.dataset.otype){ offType = b.dataset.otype; renderBrowse(); return; }
   if (b.dataset.cu){ stView = 'customs'; go('stats'); window.scrollTo({top:0}); return; }
-  if (b.id === 'b-back'){ browseChap = null; browseQ = ''; renderBrowse(); window.scrollTo({top:0}); return; }
+  if (b.id === 'b-back'){ if (viewBack()) return; browseChap = null; browseQ = ''; renderBrowse(); window.scrollTo({top:0}); return; }
   if (b.dataset.sec){ openSec = openSec === b.dataset.sec ? null : b.dataset.sec; renderBrowse(); return; }
-  if (b.dataset.chapter){ browseChap = +b.dataset.chapter; browseQ = ''; openSec = sectionOf(browseChap).n; renderBrowse(); window.scrollTo({top:0}); return; }
+  if (b.dataset.chapter){ browseChap = +b.dataset.chapter; browseQ = ''; openSec = sectionOf(browseChap).n; renderBrowse(); window.scrollTo({top:0}); pushView(); return; }
   if (b.dataset.h){ const l = b.nextElementSibling; l.hidden = !l.hidden; b.setAttribute('aria-expanded', !l.hidden); return; }
   if (b.dataset.code) openDetail(b.dataset.code);
 });
@@ -1555,11 +1562,11 @@ $('#v-stats').addEventListener('click', e => {
   if (b.dataset.year !== undefined){ stYear = +b.dataset.year; renderStats(); return; }
   if (b.dataset.sv){ stView = b.dataset.sv; stQ = ''; stCountry = null; stChapter = null; renderStats(); return; }
   if (b.dataset.sort){ stSort = b.dataset.sort; renderStats(); return; }
-  if (b.dataset.back){ if (b.dataset.back === 'co') stCountry = null; else stChapter = null; renderStats(); window.scrollTo({top:0}); return; }
+  if (b.dataset.back){ if (viewBack()) return; if (b.dataset.back === 'co') stCountry = null; else stChapter = null; renderStats(); window.scrollTo({top:0}); return; }
   const k = b.dataset.k; if (!k) return;
   if (k.startsWith('hs:')){ const c = k.slice(3); const code = c.slice(0,4)+'.'+c.slice(4,6)+'.'+c.slice(6); if (BY[code]) openDetail(code); else toast('Code not in the 2026/27 tariff'); return; }
-  if (k.startsWith('ch:')){ stView = 'chapters'; stChapter = +k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
-  if (k.startsWith('co:')){ stView = 'countries'; stCountry = k.slice(3); renderStats(); window.scrollTo({top:0}); return; }
+  if (k.startsWith('ch:')){ stView = 'chapters'; stChapter = +k.slice(3); renderStats(); window.scrollTo({top:0}); pushView(); return; }
+  if (k.startsWith('co:')){ stView = 'countries'; stCountry = k.slice(3); renderStats(); window.scrollTo({top:0}); pushView(); return; }
   if (k === 'cu'){ stView = 'customs'; renderStats(); window.scrollTo({top:0}); }
   if (k === 'offices'){ browsePage = 'offices'; browseChap = null; browseQ = ''; go('browse'); renderBrowse(); window.scrollTo({top:0}); }
 });
@@ -1621,6 +1628,7 @@ window.addEventListener('popstate', function(e){
     return;
   }
   if (hadSheet && t === curTab) return;                                                                                            // same page underneath: leave it as it was
+  if (t === curTab && (t === 'browse' || t === 'stats')){ applyView(s.cnv); return; }                                               // Back/Forward between a list and what was opened from it
   if (t) go(t, false);
 });
 const h = (location.hash || '').slice(1);
