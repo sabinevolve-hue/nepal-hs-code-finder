@@ -1,0 +1,154 @@
+{
+ "checked": "2026-11-15",
+ "note": "Official or government-backed trade promotion bodies. Each address was opened on the checked date.",
+ "bodies": {
+  "CHN": [
+   "China Council for the Promotion of International Trade (CCPIT)",
+   "https://en.ccpit.org/"
+  ],
+  "USA": [
+   "International Trade Administration",
+   "https://www.trade.gov/"
+  ],
+  "DEU": [
+   "Germany Trade & Invest",
+   "https://www.gtai.de/en"
+  ],
+  "JPN": [
+   "Japan External Trade Organization (JETRO)",
+   "https://www.jetro.go.jp/en/"
+  ],
+  "KOR": [
+   "KOTRA buyKOREA",
+   "https://www.buykorea.org/"
+  ],
+  "IND": [
+   "Federation of Indian Export Organisations (FIEO)",
+   "https://www.fieo.org/"
+  ],
+  "VNM": [
+   "Vietnam Trade Promotion Agency (Vietrade)",
+   "https://www.vietrade.gov.vn/en"
+  ],
+  "THA": [
+   "Department of International Trade Promotion (DITP)",
+   "https://www.ditp.go.th/en"
+  ],
+  "MYS": [
+   "MATRADE",
+   "https://www.matrade.gov.my/en/"
+  ],
+  "SGP": [
+   "Enterprise Singapore",
+   "https://www.enterprisesg.gov.sg/"
+  ],
+  "HKG": [
+   "Hong Kong Trade Development Council (HKTDC)",
+   "https://www.hktdc.com/"
+  ],
+  "GBR": [
+   "Department for Business and Trade",
+   "https://www.business.gov.uk/"
+  ],
+  "FRA": [
+   "Business France",
+   "https://www.businessfrance.fr/en"
+  ],
+  "ITA": [
+   "Italian Trade Agency (ITA/ICE)",
+   "https://www.ice.it/en"
+  ],
+  "ESP": [
+   "ICEX Spain Trade and Investment",
+   "https://www.icex.es/"
+  ],
+  "NLD": [
+   "Netherlands Enterprise Agency (RVO)",
+   "https://english.rvo.nl/"
+  ],
+  "BEL": [
+   "Belgian Foreign Trade Agency",
+   "https://www.abh-ace.be/en"
+  ],
+  "CHE": [
+   "Switzerland Global Enterprise",
+   "https://www.s-ge.com/en"
+  ],
+  "POL": [
+   "Polish Investment and Trade Agency (PAIH)",
+   "https://www.paih.gov.pl/en/"
+  ],
+  "TUR": [
+   "Turkish Exporters Assembly (TİM)",
+   "https://www.tim.org.tr/en"
+  ],
+  "BRA": [
+   "ApexBrasil",
+   "https://apexbrasil.com.br/"
+  ],
+  "CAN": [
+   "Canadian Trade Commissioner Service",
+   "https://www.tradecommissioner.gc.ca/"
+  ],
+  "AUS": [
+   "Austrade",
+   "https://www.austrade.gov.au/"
+  ],
+  "NZL": [
+   "New Zealand Trade and Enterprise",
+   "https://www.nzte.govt.nz/"
+  ],
+  "BGD": [
+   "Export Promotion Bureau",
+   "https://epb.gov.bd/"
+  ],
+  "PAK": [
+   "Trade Development Authority of Pakistan",
+   "https://tdap.gov.pk/"
+  ],
+  "LKA": [
+   "Sri Lanka Export Development Board",
+   "https://www.srilankabusiness.com/"
+  ],
+  "NPL": [
+   "Trade and Export Promotion Centre",
+   "https://www.tepc.gov.np/"
+  ],
+  "CHL": [
+   "ProChile",
+   "https://www.prochile.gob.cl/en"
+  ],
+  "PER": [
+   "PromPerú",
+   "https://www.promperu.gob.pe/"
+  ],
+  "COL": [
+   "ProColombia",
+   "https://procolombia.co/en"
+  ],
+  "IRL": [
+   "Enterprise Ireland",
+   "https://www.enterprise-ireland.com/en/"
+  ],
+  "SWE": [
+   "Business Sweden",
+   "https://www.business-sweden.com/"
+  ],
+  "FIN": [
+   "Business Finland",
+   "https://www.businessfinland.fi/en"
+  ],
+  "NOR": [
+   "Innovation Norway",
+   "https://www.innovasjonnorge.no/en"
+  ],
+  "AUT": [
+   "Advantage Austria",
+   "https://www.advantageaustria.org/"
+  ],
+  "PRT": [
+   "AICEP Portugal Global",
+   "https://www.portugalglobal.pt/en"
+  ]
+ }
+}

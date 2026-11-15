@@ -656,6 +656,8 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('Regions and blocs', p)]
     elif (m := re.match(r'^/trade/bloc/([a-z0-9-]+)$', p)):
         cr += [('Trade', '/trade'), ('Regions and blocs', '/trade/blocs'), (world_deep.Views.BLOCS[m[1]][0], p)]
+    elif p == '/tenders':
+        cr += [('Market opportunities', '/opportunities'), ('Open tenders', p)]
     elif p == '/opportunities':
         cr += [('Trade', '/trade'), ('Market opportunities', p)]
     elif (m := re.match(r'^/opportunities/product/(\d{4})$', p)):
@@ -809,6 +811,9 @@ def routes():
             for c3 in sorted(DV.OP['c']):
                 if DV.copp_ok(c3):
                     yield (DV.copp_href(c3), 'opps', DV.copp_title(c3), DV.copp_desc(c3), DV.copp(c3), 'WebPage', [], 'opportunities')
+        yield ('/tenders', 'opps', 'Open Tenders: World Bank-Financed Projects by Country',
+               'Invitations to bid and requests for expressions of interest from World Bank-financed projects, loaded live. Filter by country, category or keyword; each notice links to the World Bank.',
+               DV.tenders_page() + '<script>' + (SRC / 'tenders.js').read_text(encoding='utf-8').replace('</', '<\\/') + '</script>', 'WebPage', [], 'opportunities')
         for h4 in sorted(HEADINGS):
             if DV.heading_ok(h4):
                 yield (f'/hs/heading/{h4}', 'hs', DV.heading_title(h4), DV.heading_desc(h4), DV.heading(h4), 'WebPage', [], 'hs-headings')
@@ -895,7 +900,7 @@ def _doors():
         ('opps', 'Markets', '📈', 'Where import demand is growing', [
             ('/opportunities', 'Market opportunities', '200 products and 122 exporting countries'),
             ('/opportunities/product/8703', 'Cars', 'Markets that bought more'), ('/opportunities/product/8542', 'Integrated circuits', 'Markets that bought more'),
-            ('/opportunities/product/3004', 'Medicines', 'Markets that bought more'),
+            ('/tenders', 'Open tenders', 'World Bank-financed projects, live'),
             (f"/opportunities/{world_urls.SLUG['CHN']}", 'China', 'Growing markets for its exports'), (f"/opportunities/{world_urls.SLUG['IND']}", 'India', 'Growing markets for its exports')] if (DV and DV.OP) else []),
     ]
 
@@ -1046,6 +1051,8 @@ def write_vercel_json():
     cfg = {
         'git': {'deploymentEnabled': {'**': False, 'main': True}},      # only merges to main deploy (the free plan limits deployments per day)
         'cleanUrls': True, 'trailingSlash': False,
+        # the tenders page reads the World Bank's public notices API through this path (that API sends no cross-origin header)
+        'rewrites': [{'source': '/api/wb-notices', 'destination': 'https://search.worldbank.org/api/v2/procnotices'}],
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
                                     'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys() if all(x in DV.D['pairset'] for x in k.split('-'))] if DV else [])
                      # country pages moved from ISO codes to country names; pairs (/trade/chn/usa) are untouched
@@ -1061,6 +1068,7 @@ def write_vercel_json():
                         {'source': '/world/:path*', 'destination': '/:path*', 'permanent': True}],
         'headers': [
             {'source': '/assets/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]},
+            {'source': '/api/(.*)', 'headers': [{'key': 'CDN-Cache-Control', 'value': 'max-age=900'}, {'key': 'X-Robots-Tag', 'value': 'noindex'}]},
             {'source': '/reports/(.*)', 'headers': [{'key': 'X-Robots-Tag', 'value': 'noindex'}, {'key': 'Cache-Control', 'value': 'public, max-age=86400'}]},
             {'source': '/data/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'},
                                                  {'key': 'X-Robots-Tag', 'value': 'noindex'}]},
