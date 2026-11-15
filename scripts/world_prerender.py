@@ -831,8 +831,15 @@ OTHER_SITES = ('<p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other
                '<a href="https://www.customsnepal.com/">Nepal HS codes, customs tariff 2083/84 &amp; import-duty calculator — customsnepal.com</a> · '
                '<a href="https://nepalpublicdata.com/">Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com</a></p>')
 
-GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script>'
-        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());if(location.hostname==='world.customsnepal.com')gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>")
+# world.customsnepal.com has its own GA4 property since 15 Nov 2026 ("world.customsnepal.com", property 564366260,
+# stream 16342942965), separate from the main site's G-T1FQWWL2VV. Every page view carries content_group (the site
+# section, from wsec). App pages send the page view from pageview() in app.js; static pages let gtag send it.
+# The tag only fires on the live hostname, so previews and test runs add no visits.
+GA_ID = 'G-E2HLC62N88'
+WSEC = "function wsec(p){var s=(p||'/').split('/');if(s[1]==='hs')return s[2]==='code'?'hs-codes':s[2]==='chapter'?'hs-chapters':'hs';if(s[1]==='trade'){if(s[2]==='product')return'product-groups';if(s[2]==='pairs')return'pairs';if(s[2]==='region')return'regions';if(s[3]==='exports')return'exports-by-product';if(s[3])return'pairs';return s[2]?'countries':'trade'}if(s[1]==='nepal')return s[2]==='exports'?'nepal-exports':'nepal';return s[1]||'home'}"
+GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=%s"></script>'
+        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}%sgtag('js',new Date());"
+        "if(location.hostname==='world.customsnepal.com'){gtag('set',{content_group:wsec(location.pathname)});gtag('config','%s',{send_page_view:false});}</script>" % (GA_ID, WSEC, GA_ID))
 
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''
