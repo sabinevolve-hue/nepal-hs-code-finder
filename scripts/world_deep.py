@@ -333,6 +333,31 @@ class Views:
                 + f'<p class="fine">Source: {R["src"]}; retrieved {R["fetched"]}. {R.get("note", "")} '
                 f'These are the reporting office&#39;s own figures and are not the reconciled {self.Y} figures used in the sections below.</p></section>')
 
+    def home_latest(self):
+        """Home page: the largest exporters in the latest complete year and the current year to date (customs figures via the IMF)."""
+        e = self.h['esc']; rows = []; full = cur = None; span = ''
+        def yt(d, y, upto=12):
+            v = [d.get(f'{y}-{k:02d}') for k in range(1, upto + 1)]
+            return sum(v) if all(x is not None for x in v) else None
+        cand = []
+        for iso, I in self.IM.items():
+            if iso not in self.h['CBYISO']:
+                continue
+            a = yt(I['x'], I['full'])
+            if a:
+                cand.append((a, iso, I))
+        for a, iso, I in sorted(cand, key=lambda r: -r[0])[:10]:
+            full, cur = I['full'], I.get('cur'); span = self._span(I)
+            b = yt(I['x'], full - 1); c = yt(I['x'], cur, I['upto']) if cur else None; d = yt(I['x'], cur - 1, I['upto']) if cur else None
+            rows.append([self.clink(iso), self.usd(a), self._chg(a, b)] + ([self.usd(c) if c else '—', self._chg(c, d)] if cur else []))
+        if not rows:
+            return ''
+        heads = ['Exporter', str(full), f'Change on {full - 1}'] + ([span, 'Change on a year earlier'] if cur else [])
+        return (f'<section class="wstrip"><h2>The latest: {full} and {cur or full + 1} so far</h2>'
+                + self.table(heads, rows)
+                + f'<p class="fine">Each economy&#39;s own customs figures in US dollars, from the International Monetary Fund&#39;s trade-by-partner database (retrieved {self.IM_DATE}). '
+                f'Every country profile has its {full} and {cur or full + 1} figures by partner; the chart above uses the reconciled {self.Y} figures.</p></section>')
+
     def pair_latest(self, a, b):
         """What each side reports selling the other in the latest complete year and the current year to date."""
         e = self.h['esc']; rows = []; est = False; span = ''; full = cur = None
