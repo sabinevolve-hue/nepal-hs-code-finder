@@ -281,8 +281,13 @@ def v_home():
     js = ('<script>(function(){var C=' + idx + ',q=document.getElementById("wq"),s=document.getElementById("wsug"),f=document.getElementById("wsearch");'
           'function esc(t){return t.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",\'"\':"&quot;"}[c]})}'
           'function match(v){v=v.trim().toLowerCase();if(v.length<2||/^\\d/.test(v))return[];var a=[],b=[];C.forEach(function(c){var n=c[0].toLowerCase();if(n.indexOf(v)===0)a.push(c);else if(n.indexOf(v)>0)b.push(c)});return a.concat(b).slice(0,6)}'
-          'function draw(){var v=q.value,m=match(v);if(!v.trim()){s.hidden=true;return}'
-          's.innerHTML=m.map(function(c){return\'<a role="option" href="/trade/\'+c[1]+\'"><b>\'+esc(c[0])+\'</b><small>Trade profile</small></a>\'}).join("")'
+          'var P=null,PL=false;function loadP(){if(PL)return;PL=true;fetch("/data/psearch.json").then(function(r){return r.json()}).then(function(d){P=d;draw()}).catch(function(){})}'
+          'function pmatch(v){v=v.trim().toLowerCase();if(!P||v.length<3)return[];var w=v.split(/\\s+/),a=[],b=[],dg=/^\\d+$/.test(v.replace(/\\./g,""))?v.replace(/\\./g,""):"";'
+          'for(var i=0;i<P.length&&a.length<5;i++){var n=" "+P[i][1].toLowerCase().replace(/[^a-z0-9]+/g," ");if(dg){if(P[i][0].indexOf(dg)===0)a.push(P[i]);continue}'
+          'if(w.every(function(x){return n.indexOf(" "+x)>=0})){if(n.indexOf(" "+w[0])===0)a.push(P[i]);else if(b.length<5)b.push(P[i])}}return a.concat(b).slice(0,5)}'
+          'function draw(){var v=q.value,m=match(v);if(!v.trim()){s.hidden=true;return}if(v.trim().length>=3)loadP();var pm=pmatch(v);'
+          's.innerHTML=m.slice(0,pm.length?3:6).map(function(c){return\'<a role="option" href="/trade/\'+c[1]+\'"><b>\'+esc(c[0])+\'</b><small>Trade profile</small></a>\'}).join("")'
+          '+pm.map(function(p){return\'<a role="option" href="/hs/code/\'+p[0]+\'"><b>\'+esc(p[1])+\'</b><small>Product, HS \'+p[0].slice(0,4)+"."+p[0].slice(4)+\'</small></a>\'}).join("")'
           '+\'<a role="option" href="/hs?q=\'+encodeURIComponent(v.trim())+\'"><b>\'+esc(v.trim())+\'</b><small>Search products and HS codes</small></a>\';s.hidden=false}'
           'q.addEventListener("input",draw);q.addEventListener("focus",draw);'
           'document.addEventListener("click",function(e){if(!f.contains(e.target))s.hidden=true});'
@@ -641,6 +646,8 @@ def crumbs_for(p):
         cr.append(('About', p))
     elif p == '/trade/pairs':
         cr += [('Trade', '/trade'), ('Country pairs', p)]
+    elif (m := re.match(r'^/trade/region/([a-z-]+)$', p)) and m[1] != 'south-asia':
+        cr += [('Trade', '/trade'), (next((n for n, s in world_deep.Views.REGION_SLUGS.items() if s == m[1]), m[1]), p)]
     elif p == '/trade/region/south-asia':
         cr += [('Trade', '/trade'), ('South Asia', p)]
     elif (m := re.match(r'^/trade/([a-z]{3})/exports/(\d{6})$', p)):
@@ -761,6 +768,8 @@ def routes():
                         'https://data.worldbank.org/', [f"{c['name']} exports", f"{c['name']} imports", f"{c['name']} trade balance"])], 'countries')
     if DV:
         d = DV.region_desc()
+        for rn, rs in (DV.regions_list() if DV.latest_year()[0] else []):
+            yield (f'/trade/region/{rs}', 'trade', DV.wregion_title(rn), DV.wregion_desc(rn), DV.wregion(rn), 'CollectionPage', [], 'regions')
         yield ('/trade/region/south-asia', 'pairs', DV.region_title(), d, DV.region(), 'CollectionPage',
                [dataset('South Asia (SAARC) merchandise trade ' + str(DV.Y), d, {'@type': 'Place', 'name': 'South Asia'}, str(DV.Y),
                         'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', ['SAARC trade', 'South Asia trade', 'intra-regional trade'])], 'regions')
@@ -887,6 +896,14 @@ def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-
             f'<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/archivo-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>\n'
             f'<link rel="stylesheet" href="{css_href}">\n{gtag}\n{js}\n</head>\n<body>\n{header(k)}\n<div id="app"><!--app-->{app_html}<!--/app--></div>\n{site_footer()}\n</body>\n</html>\n')
 
+def og_image(p):
+    """Each country profile (and its year pages) has its own share image; everything else uses the site card."""
+    m = re.match(r'^/trade/([a-z]{3})(?:/\d{4})?$', p)
+    if m and DV and DV.years_of(m[1].upper()) and m[1].upper() in CBYISO:
+        return f'{B}/og/{m[1]}.jpg'
+    return f'{B}/og/world.jpg' if (DV and DV.latest_year()[0]) else 'https://www.customsnepal.com/og.png'
+
+
 def seo_head(p, title, desc, page_type, extra_ld, lastmod):
     u = url(p); cr = crumbs_for(p)
     bc = {'@type': 'BreadcrumbList', '@id': u + '#breadcrumb', 'itemListElement': [
@@ -898,8 +915,8 @@ def seo_head(p, title, desc, page_type, extra_ld, lastmod):
     t, d = esc(title), esc(desc)
     return (f'<title>{t}</title>\n<meta name="description" content="{d}">\n<link rel="canonical" href="{u}">\n<meta name="cn-route" content="{p}">\n'
             f'<meta property="og:site_name" content="World Trade Data"><meta property="og:type" content="website"><meta property="og:url" content="{u}">'
-            f'<meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:image" content="https://www.customsnepal.com/og.png">\n'
-            f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.customsnepal.com/og.png">\n'
+            f'<meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:image" content="{og_image(p)}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">\n'
+            f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{og_image(p)}">\n'
             f'<script type="application/ld+json">{ld}</script>')
 
 def out_path(p):
@@ -1026,6 +1043,16 @@ def main_build():
                 (bdir / (c['iso'].lower() + '.html')).write_text(
                     f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(c["name"])}: trade brief | World Trade Data</title>'
                     f'<link rel="stylesheet" href="{assets["css"]}"><style>{world_deep.BRIEF_CSS}</style></head><body class="brief">{DV.brief(c)}</body></html>', encoding='utf-8')
+    odir = ROOT / 'build' / 'og'; shutil.rmtree(odir, ignore_errors=True); odir.mkdir(parents=True)
+    if DV and DV.latest_year()[0]:
+        wrap = lambda body: f'<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="{assets["css"]}"><style>{world_deep.OG_CSS}</style></head><body>{body}</body></html>'
+        (odir / 'world.html').write_text(wrap(DV.og_card('world')), encoding='utf-8')
+        for c in COUNTRIES:
+            if DV.years_of(c['iso']):
+                (odir / (c['iso'].lower() + '.html')).write_text(wrap(DV.og_card('country', c)), encoding='utf-8')
+    # product names for the home page search (loaded only when someone types)
+    (W / 'data').mkdir(exist_ok=True)
+    (W / 'data' / 'psearch.json').write_text(json.dumps([[k, clip(hs_desc(k), 72)] for k in sorted(SUB) if DV and DV.has_product(k)], ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     LASTMOD_FILE.write_text(json.dumps(new_lastmod, separators=(',', ':'), sort_keys=True) + '\n', encoding='utf-8')
     counts = write_sitemaps(entries)
     nred = write_vercel_json()
