@@ -989,6 +989,8 @@ def write_vercel_json():
                          {'source': f'/trade/{iso.lower()}', 'destination': f'/trade/{s}', 'permanent': True},
                          {'source': f'/trade/{iso.lower()}/:year(\\d{{4}})', 'destination': f'/trade/{s}/:year', 'permanent': True},
                          {'source': f'/trade/{iso.lower()}/exports/:code(\\d{{6}})', 'destination': f'/trade/{s}/exports/:code', 'permanent': True})]
+                     # the sanctions pages were live for a few hours under three-letter addresses
+                     + [{'source': f'/trade/sanctions/{k.lower()}', 'destination': f'/trade/sanctions/{v}', 'permanent': True} for k, v in sorted(world_deep.Views.SANC_SLUG.items())]
                      + [{'source': '/index', 'destination': '/', 'permanent': True},
                         # the old www /world mount leaked /world URLs onto this host
                         {'source': '/world', 'destination': '/', 'permanent': True},

@@ -4004,6 +4004,41 @@
       "permanent": true
     },
     {
+      "source": "/trade/sanctions/blr",
+      "destination": "/trade/sanctions/belarus",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/cub",
+      "destination": "/trade/sanctions/cuba",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/irn",
+      "destination": "/trade/sanctions/iran",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/mmr",
+      "destination": "/trade/sanctions/myanmar",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/prk",
+      "destination": "/trade/sanctions/north-korea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/rus",
+      "destination": "/trade/sanctions/russia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/ven",
+      "destination": "/trade/sanctions/venezuela",
+      "permanent": true
+    },
+    {
       "source": "/index",
       "destination": "/",
       "permanent": true
