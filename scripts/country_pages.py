@@ -13,6 +13,7 @@ Mirrors seo_pages.py / export_pages.py (same header/nav/canonical/GA/seo.css).
 Run after safta_page.py:  python3 scripts/country_pages.py
 """
 import pathlib, json, datetime, html, re
+import world_urls
 
 root = pathlib.Path(__file__).resolve().parents[1]
 pub = root / 'public'
@@ -412,8 +413,8 @@ for iso in order:
         _k = '-'.join(sorted([_iso, 'NPL']))
         _pair = (' Both directions, product by product: <a href="https://world.customsnepal.com/trade/%s/%s">%s–Nepal trade in US dollars</a>.'
                  % (_k.split('-')[0].lower(), _k.split('-')[1].lower(), esc(name))) if _k in WORLD_DEEP.get('pairs', {}) else ''
-        out.append('<p class="xlink"><b>%s and the rest of the world:</b> <a href="https://world.customsnepal.com/trade/%s">every partner and top product of %s, %s</a>.%s</p>'
-                   % (esc(name), _iso.lower(), esc(name), WORLD_DEEP.get('year', ''), _pair))
+        out.append('<p class="xlink"><b>%s and the rest of the world:</b> <a href="https://world.customsnepal.com%s">every partner and top product of %s, %s</a>.%s</p>'
+                   % (esc(name), world_urls.href(_iso), esc(name), WORLD_DEEP.get('year', ''), _pair))
 
     def flows(chs, prods, total, src_label, note, t1, t2, fname, direction):
         chmap = {}
@@ -564,10 +565,10 @@ for iso in order:
     # related
     out.append('<h2 class="sec">Other trade partners</h2>')
     out.append(other_partners(iso))
-    _wp = (root / 'world' / 'trade' / (iso.lower() + '.html')).exists()
+    _wp = (root / 'world' / (world_urls.href(iso).lstrip('/') + '.html')).exists()
     out.append('<p class="fineprint">Bilateral figures: Department of Customs, Nepal — FTS FY %s.%s</p>'
-               % (FY, (' Global context on the <a href="https://world.customsnepal.com/trade/%s">%s world trade profile</a>.'
-                       % (iso.lower(), esc(name))) if _wp else ''))
+               % (FY, (' Global context on the <a href="https://world.customsnepal.com%s">%s world trade profile</a>.'
+                       % (world_urls.href(iso), esc(name))) if _wp else ''))
     out.append('</div>' + FOOT)
     (pub / 'trade-partner' / (slug + '.html')).write_text(''.join(out), encoding='utf-8')
     made += 1

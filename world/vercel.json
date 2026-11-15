@@ -899,6 +899,3146 @@
       "permanent": true
     },
     {
+      "source": "/trade/abw",
+      "destination": "/trade/aruba",
+      "permanent": true
+    },
+    {
+      "source": "/trade/abw/:year(\\d{4})",
+      "destination": "/trade/aruba/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/abw/exports/:code(\\d{6})",
+      "destination": "/trade/aruba/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/afg",
+      "destination": "/trade/afghanistan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/afg/:year(\\d{4})",
+      "destination": "/trade/afghanistan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/afg/exports/:code(\\d{6})",
+      "destination": "/trade/afghanistan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ago",
+      "destination": "/trade/angola",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ago/:year(\\d{4})",
+      "destination": "/trade/angola/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ago/exports/:code(\\d{6})",
+      "destination": "/trade/angola/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/alb",
+      "destination": "/trade/albania",
+      "permanent": true
+    },
+    {
+      "source": "/trade/alb/:year(\\d{4})",
+      "destination": "/trade/albania/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/alb/exports/:code(\\d{6})",
+      "destination": "/trade/albania/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/and",
+      "destination": "/trade/andorra",
+      "permanent": true
+    },
+    {
+      "source": "/trade/and/:year(\\d{4})",
+      "destination": "/trade/andorra/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/and/exports/:code(\\d{6})",
+      "destination": "/trade/andorra/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/are",
+      "destination": "/trade/united-arab-emirates",
+      "permanent": true
+    },
+    {
+      "source": "/trade/are/:year(\\d{4})",
+      "destination": "/trade/united-arab-emirates/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/are/exports/:code(\\d{6})",
+      "destination": "/trade/united-arab-emirates/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/arg",
+      "destination": "/trade/argentina",
+      "permanent": true
+    },
+    {
+      "source": "/trade/arg/:year(\\d{4})",
+      "destination": "/trade/argentina/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/arg/exports/:code(\\d{6})",
+      "destination": "/trade/argentina/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/arm",
+      "destination": "/trade/armenia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/arm/:year(\\d{4})",
+      "destination": "/trade/armenia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/arm/exports/:code(\\d{6})",
+      "destination": "/trade/armenia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/asm",
+      "destination": "/trade/american-samoa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/asm/:year(\\d{4})",
+      "destination": "/trade/american-samoa/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/asm/exports/:code(\\d{6})",
+      "destination": "/trade/american-samoa/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/atg",
+      "destination": "/trade/antigua-and-barbuda",
+      "permanent": true
+    },
+    {
+      "source": "/trade/atg/:year(\\d{4})",
+      "destination": "/trade/antigua-and-barbuda/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/atg/exports/:code(\\d{6})",
+      "destination": "/trade/antigua-and-barbuda/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aus",
+      "destination": "/trade/australia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aus/:year(\\d{4})",
+      "destination": "/trade/australia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aus/exports/:code(\\d{6})",
+      "destination": "/trade/australia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aut",
+      "destination": "/trade/austria",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aut/:year(\\d{4})",
+      "destination": "/trade/austria/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aut/exports/:code(\\d{6})",
+      "destination": "/trade/austria/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aze",
+      "destination": "/trade/azerbaijan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aze/:year(\\d{4})",
+      "destination": "/trade/azerbaijan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/aze/exports/:code(\\d{6})",
+      "destination": "/trade/azerbaijan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bdi",
+      "destination": "/trade/burundi",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bdi/:year(\\d{4})",
+      "destination": "/trade/burundi/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bdi/exports/:code(\\d{6})",
+      "destination": "/trade/burundi/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bel",
+      "destination": "/trade/belgium",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bel/:year(\\d{4})",
+      "destination": "/trade/belgium/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bel/exports/:code(\\d{6})",
+      "destination": "/trade/belgium/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ben",
+      "destination": "/trade/benin",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ben/:year(\\d{4})",
+      "destination": "/trade/benin/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ben/exports/:code(\\d{6})",
+      "destination": "/trade/benin/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bfa",
+      "destination": "/trade/burkina-faso",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bfa/:year(\\d{4})",
+      "destination": "/trade/burkina-faso/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bfa/exports/:code(\\d{6})",
+      "destination": "/trade/burkina-faso/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bgd",
+      "destination": "/trade/bangladesh",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bgd/:year(\\d{4})",
+      "destination": "/trade/bangladesh/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bgd/exports/:code(\\d{6})",
+      "destination": "/trade/bangladesh/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bgr",
+      "destination": "/trade/bulgaria",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bgr/:year(\\d{4})",
+      "destination": "/trade/bulgaria/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bgr/exports/:code(\\d{6})",
+      "destination": "/trade/bulgaria/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bhr",
+      "destination": "/trade/bahrain",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bhr/:year(\\d{4})",
+      "destination": "/trade/bahrain/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bhr/exports/:code(\\d{6})",
+      "destination": "/trade/bahrain/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bhs",
+      "destination": "/trade/bahamas",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bhs/:year(\\d{4})",
+      "destination": "/trade/bahamas/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bhs/exports/:code(\\d{6})",
+      "destination": "/trade/bahamas/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bih",
+      "destination": "/trade/bosnia-and-herzegovina",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bih/:year(\\d{4})",
+      "destination": "/trade/bosnia-and-herzegovina/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bih/exports/:code(\\d{6})",
+      "destination": "/trade/bosnia-and-herzegovina/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/blr",
+      "destination": "/trade/belarus",
+      "permanent": true
+    },
+    {
+      "source": "/trade/blr/:year(\\d{4})",
+      "destination": "/trade/belarus/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/blr/exports/:code(\\d{6})",
+      "destination": "/trade/belarus/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/blz",
+      "destination": "/trade/belize",
+      "permanent": true
+    },
+    {
+      "source": "/trade/blz/:year(\\d{4})",
+      "destination": "/trade/belize/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/blz/exports/:code(\\d{6})",
+      "destination": "/trade/belize/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bmu",
+      "destination": "/trade/bermuda",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bmu/:year(\\d{4})",
+      "destination": "/trade/bermuda/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bmu/exports/:code(\\d{6})",
+      "destination": "/trade/bermuda/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bol",
+      "destination": "/trade/bolivia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bol/:year(\\d{4})",
+      "destination": "/trade/bolivia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bol/exports/:code(\\d{6})",
+      "destination": "/trade/bolivia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bra",
+      "destination": "/trade/brazil",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bra/:year(\\d{4})",
+      "destination": "/trade/brazil/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bra/exports/:code(\\d{6})",
+      "destination": "/trade/brazil/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/brb",
+      "destination": "/trade/barbados",
+      "permanent": true
+    },
+    {
+      "source": "/trade/brb/:year(\\d{4})",
+      "destination": "/trade/barbados/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/brb/exports/:code(\\d{6})",
+      "destination": "/trade/barbados/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/brn",
+      "destination": "/trade/brunei",
+      "permanent": true
+    },
+    {
+      "source": "/trade/brn/:year(\\d{4})",
+      "destination": "/trade/brunei/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/brn/exports/:code(\\d{6})",
+      "destination": "/trade/brunei/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/btn",
+      "destination": "/trade/bhutan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/btn/:year(\\d{4})",
+      "destination": "/trade/bhutan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/btn/exports/:code(\\d{6})",
+      "destination": "/trade/bhutan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bwa",
+      "destination": "/trade/botswana",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bwa/:year(\\d{4})",
+      "destination": "/trade/botswana/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/bwa/exports/:code(\\d{6})",
+      "destination": "/trade/botswana/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/caf",
+      "destination": "/trade/central-african-republic",
+      "permanent": true
+    },
+    {
+      "source": "/trade/caf/:year(\\d{4})",
+      "destination": "/trade/central-african-republic/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/caf/exports/:code(\\d{6})",
+      "destination": "/trade/central-african-republic/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/can",
+      "destination": "/trade/canada",
+      "permanent": true
+    },
+    {
+      "source": "/trade/can/:year(\\d{4})",
+      "destination": "/trade/canada/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/can/exports/:code(\\d{6})",
+      "destination": "/trade/canada/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/che",
+      "destination": "/trade/switzerland",
+      "permanent": true
+    },
+    {
+      "source": "/trade/che/:year(\\d{4})",
+      "destination": "/trade/switzerland/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/che/exports/:code(\\d{6})",
+      "destination": "/trade/switzerland/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chl",
+      "destination": "/trade/chile",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chl/:year(\\d{4})",
+      "destination": "/trade/chile/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chl/exports/:code(\\d{6})",
+      "destination": "/trade/chile/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chn",
+      "destination": "/trade/china",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chn/:year(\\d{4})",
+      "destination": "/trade/china/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/chn/exports/:code(\\d{6})",
+      "destination": "/trade/china/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/civ",
+      "destination": "/trade/cote-divoire",
+      "permanent": true
+    },
+    {
+      "source": "/trade/civ/:year(\\d{4})",
+      "destination": "/trade/cote-divoire/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/civ/exports/:code(\\d{6})",
+      "destination": "/trade/cote-divoire/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cmr",
+      "destination": "/trade/cameroon",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cmr/:year(\\d{4})",
+      "destination": "/trade/cameroon/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cmr/exports/:code(\\d{6})",
+      "destination": "/trade/cameroon/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cod",
+      "destination": "/trade/dr-congo",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cod/:year(\\d{4})",
+      "destination": "/trade/dr-congo/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cod/exports/:code(\\d{6})",
+      "destination": "/trade/dr-congo/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cog",
+      "destination": "/trade/congo",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cog/:year(\\d{4})",
+      "destination": "/trade/congo/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cog/exports/:code(\\d{6})",
+      "destination": "/trade/congo/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/col",
+      "destination": "/trade/colombia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/col/:year(\\d{4})",
+      "destination": "/trade/colombia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/col/exports/:code(\\d{6})",
+      "destination": "/trade/colombia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/com",
+      "destination": "/trade/comoros",
+      "permanent": true
+    },
+    {
+      "source": "/trade/com/:year(\\d{4})",
+      "destination": "/trade/comoros/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/com/exports/:code(\\d{6})",
+      "destination": "/trade/comoros/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cpv",
+      "destination": "/trade/cabo-verde",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cpv/:year(\\d{4})",
+      "destination": "/trade/cabo-verde/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cpv/exports/:code(\\d{6})",
+      "destination": "/trade/cabo-verde/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cri",
+      "destination": "/trade/costa-rica",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cri/:year(\\d{4})",
+      "destination": "/trade/costa-rica/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cri/exports/:code(\\d{6})",
+      "destination": "/trade/costa-rica/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cub",
+      "destination": "/trade/cuba",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cub/:year(\\d{4})",
+      "destination": "/trade/cuba/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cub/exports/:code(\\d{6})",
+      "destination": "/trade/cuba/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cuw",
+      "destination": "/trade/curacao",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cuw/:year(\\d{4})",
+      "destination": "/trade/curacao/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cuw/exports/:code(\\d{6})",
+      "destination": "/trade/curacao/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cym",
+      "destination": "/trade/cayman-islands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cym/:year(\\d{4})",
+      "destination": "/trade/cayman-islands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cym/exports/:code(\\d{6})",
+      "destination": "/trade/cayman-islands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cyp",
+      "destination": "/trade/cyprus",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cyp/:year(\\d{4})",
+      "destination": "/trade/cyprus/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cyp/exports/:code(\\d{6})",
+      "destination": "/trade/cyprus/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cze",
+      "destination": "/trade/czechia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cze/:year(\\d{4})",
+      "destination": "/trade/czechia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/cze/exports/:code(\\d{6})",
+      "destination": "/trade/czechia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu",
+      "destination": "/trade/germany",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu/:year(\\d{4})",
+      "destination": "/trade/germany/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/deu/exports/:code(\\d{6})",
+      "destination": "/trade/germany/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dji",
+      "destination": "/trade/djibouti",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dji/:year(\\d{4})",
+      "destination": "/trade/djibouti/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dji/exports/:code(\\d{6})",
+      "destination": "/trade/djibouti/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dma",
+      "destination": "/trade/dominica",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dma/:year(\\d{4})",
+      "destination": "/trade/dominica/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dma/exports/:code(\\d{6})",
+      "destination": "/trade/dominica/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dnk",
+      "destination": "/trade/denmark",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dnk/:year(\\d{4})",
+      "destination": "/trade/denmark/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dnk/exports/:code(\\d{6})",
+      "destination": "/trade/denmark/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dom",
+      "destination": "/trade/dominican-republic",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dom/:year(\\d{4})",
+      "destination": "/trade/dominican-republic/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dom/exports/:code(\\d{6})",
+      "destination": "/trade/dominican-republic/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dza",
+      "destination": "/trade/algeria",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dza/:year(\\d{4})",
+      "destination": "/trade/algeria/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/dza/exports/:code(\\d{6})",
+      "destination": "/trade/algeria/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ecu",
+      "destination": "/trade/ecuador",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ecu/:year(\\d{4})",
+      "destination": "/trade/ecuador/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ecu/exports/:code(\\d{6})",
+      "destination": "/trade/ecuador/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/egy",
+      "destination": "/trade/egypt",
+      "permanent": true
+    },
+    {
+      "source": "/trade/egy/:year(\\d{4})",
+      "destination": "/trade/egypt/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/egy/exports/:code(\\d{6})",
+      "destination": "/trade/egypt/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/eri",
+      "destination": "/trade/eritrea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/eri/:year(\\d{4})",
+      "destination": "/trade/eritrea/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/eri/exports/:code(\\d{6})",
+      "destination": "/trade/eritrea/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/esp",
+      "destination": "/trade/spain",
+      "permanent": true
+    },
+    {
+      "source": "/trade/esp/:year(\\d{4})",
+      "destination": "/trade/spain/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/esp/exports/:code(\\d{6})",
+      "destination": "/trade/spain/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/est",
+      "destination": "/trade/estonia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/est/:year(\\d{4})",
+      "destination": "/trade/estonia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/est/exports/:code(\\d{6})",
+      "destination": "/trade/estonia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/eth",
+      "destination": "/trade/ethiopia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/eth/:year(\\d{4})",
+      "destination": "/trade/ethiopia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/eth/exports/:code(\\d{6})",
+      "destination": "/trade/ethiopia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fin",
+      "destination": "/trade/finland",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fin/:year(\\d{4})",
+      "destination": "/trade/finland/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fin/exports/:code(\\d{6})",
+      "destination": "/trade/finland/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fji",
+      "destination": "/trade/fiji",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fji/:year(\\d{4})",
+      "destination": "/trade/fiji/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fji/exports/:code(\\d{6})",
+      "destination": "/trade/fiji/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra",
+      "destination": "/trade/france",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/:year(\\d{4})",
+      "destination": "/trade/france/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fra/exports/:code(\\d{6})",
+      "destination": "/trade/france/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fro",
+      "destination": "/trade/faroe-islands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fro/:year(\\d{4})",
+      "destination": "/trade/faroe-islands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fro/exports/:code(\\d{6})",
+      "destination": "/trade/faroe-islands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fsm",
+      "destination": "/trade/micronesia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fsm/:year(\\d{4})",
+      "destination": "/trade/micronesia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/fsm/exports/:code(\\d{6})",
+      "destination": "/trade/micronesia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gab",
+      "destination": "/trade/gabon",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gab/:year(\\d{4})",
+      "destination": "/trade/gabon/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gab/exports/:code(\\d{6})",
+      "destination": "/trade/gabon/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr",
+      "destination": "/trade/united-kingdom",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/:year(\\d{4})",
+      "destination": "/trade/united-kingdom/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gbr/exports/:code(\\d{6})",
+      "destination": "/trade/united-kingdom/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/geo",
+      "destination": "/trade/georgia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/geo/:year(\\d{4})",
+      "destination": "/trade/georgia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/geo/exports/:code(\\d{6})",
+      "destination": "/trade/georgia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gha",
+      "destination": "/trade/ghana",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gha/:year(\\d{4})",
+      "destination": "/trade/ghana/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gha/exports/:code(\\d{6})",
+      "destination": "/trade/ghana/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gib",
+      "destination": "/trade/gibraltar",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gib/:year(\\d{4})",
+      "destination": "/trade/gibraltar/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gib/exports/:code(\\d{6})",
+      "destination": "/trade/gibraltar/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gin",
+      "destination": "/trade/guinea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gin/:year(\\d{4})",
+      "destination": "/trade/guinea/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gin/exports/:code(\\d{6})",
+      "destination": "/trade/guinea/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gmb",
+      "destination": "/trade/gambia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gmb/:year(\\d{4})",
+      "destination": "/trade/gambia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gmb/exports/:code(\\d{6})",
+      "destination": "/trade/gambia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gnb",
+      "destination": "/trade/guinea-bissau",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gnb/:year(\\d{4})",
+      "destination": "/trade/guinea-bissau/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gnb/exports/:code(\\d{6})",
+      "destination": "/trade/guinea-bissau/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gnq",
+      "destination": "/trade/equatorial-guinea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gnq/:year(\\d{4})",
+      "destination": "/trade/equatorial-guinea/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gnq/exports/:code(\\d{6})",
+      "destination": "/trade/equatorial-guinea/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grc",
+      "destination": "/trade/greece",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grc/:year(\\d{4})",
+      "destination": "/trade/greece/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grc/exports/:code(\\d{6})",
+      "destination": "/trade/greece/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grd",
+      "destination": "/trade/grenada",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grd/:year(\\d{4})",
+      "destination": "/trade/grenada/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grd/exports/:code(\\d{6})",
+      "destination": "/trade/grenada/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grl",
+      "destination": "/trade/greenland",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grl/:year(\\d{4})",
+      "destination": "/trade/greenland/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/grl/exports/:code(\\d{6})",
+      "destination": "/trade/greenland/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gtm",
+      "destination": "/trade/guatemala",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gtm/:year(\\d{4})",
+      "destination": "/trade/guatemala/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gtm/exports/:code(\\d{6})",
+      "destination": "/trade/guatemala/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gum",
+      "destination": "/trade/guam",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gum/:year(\\d{4})",
+      "destination": "/trade/guam/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/gum/exports/:code(\\d{6})",
+      "destination": "/trade/guam/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/guy",
+      "destination": "/trade/guyana",
+      "permanent": true
+    },
+    {
+      "source": "/trade/guy/:year(\\d{4})",
+      "destination": "/trade/guyana/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/guy/exports/:code(\\d{6})",
+      "destination": "/trade/guyana/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hkg",
+      "destination": "/trade/hong-kong",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hkg/:year(\\d{4})",
+      "destination": "/trade/hong-kong/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hkg/exports/:code(\\d{6})",
+      "destination": "/trade/hong-kong/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hnd",
+      "destination": "/trade/honduras",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hnd/:year(\\d{4})",
+      "destination": "/trade/honduras/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hnd/exports/:code(\\d{6})",
+      "destination": "/trade/honduras/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hrv",
+      "destination": "/trade/croatia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hrv/:year(\\d{4})",
+      "destination": "/trade/croatia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hrv/exports/:code(\\d{6})",
+      "destination": "/trade/croatia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hti",
+      "destination": "/trade/haiti",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hti/:year(\\d{4})",
+      "destination": "/trade/haiti/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hti/exports/:code(\\d{6})",
+      "destination": "/trade/haiti/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hun",
+      "destination": "/trade/hungary",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hun/:year(\\d{4})",
+      "destination": "/trade/hungary/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/hun/exports/:code(\\d{6})",
+      "destination": "/trade/hungary/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/idn",
+      "destination": "/trade/indonesia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/idn/:year(\\d{4})",
+      "destination": "/trade/indonesia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/idn/exports/:code(\\d{6})",
+      "destination": "/trade/indonesia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind",
+      "destination": "/trade/india",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/:year(\\d{4})",
+      "destination": "/trade/india/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ind/exports/:code(\\d{6})",
+      "destination": "/trade/india/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irl",
+      "destination": "/trade/ireland",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irl/:year(\\d{4})",
+      "destination": "/trade/ireland/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irl/exports/:code(\\d{6})",
+      "destination": "/trade/ireland/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irn",
+      "destination": "/trade/iran",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irn/:year(\\d{4})",
+      "destination": "/trade/iran/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irn/exports/:code(\\d{6})",
+      "destination": "/trade/iran/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irq",
+      "destination": "/trade/iraq",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irq/:year(\\d{4})",
+      "destination": "/trade/iraq/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/irq/exports/:code(\\d{6})",
+      "destination": "/trade/iraq/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/isl",
+      "destination": "/trade/iceland",
+      "permanent": true
+    },
+    {
+      "source": "/trade/isl/:year(\\d{4})",
+      "destination": "/trade/iceland/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/isl/exports/:code(\\d{6})",
+      "destination": "/trade/iceland/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/isr",
+      "destination": "/trade/israel",
+      "permanent": true
+    },
+    {
+      "source": "/trade/isr/:year(\\d{4})",
+      "destination": "/trade/israel/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/isr/exports/:code(\\d{6})",
+      "destination": "/trade/israel/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita",
+      "destination": "/trade/italy",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/:year(\\d{4})",
+      "destination": "/trade/italy/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ita/exports/:code(\\d{6})",
+      "destination": "/trade/italy/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jam",
+      "destination": "/trade/jamaica",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jam/:year(\\d{4})",
+      "destination": "/trade/jamaica/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jam/exports/:code(\\d{6})",
+      "destination": "/trade/jamaica/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jor",
+      "destination": "/trade/jordan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jor/:year(\\d{4})",
+      "destination": "/trade/jordan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jor/exports/:code(\\d{6})",
+      "destination": "/trade/jordan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn",
+      "destination": "/trade/japan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/:year(\\d{4})",
+      "destination": "/trade/japan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/jpn/exports/:code(\\d{6})",
+      "destination": "/trade/japan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kaz",
+      "destination": "/trade/kazakhstan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kaz/:year(\\d{4})",
+      "destination": "/trade/kazakhstan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kaz/exports/:code(\\d{6})",
+      "destination": "/trade/kazakhstan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ken",
+      "destination": "/trade/kenya",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ken/:year(\\d{4})",
+      "destination": "/trade/kenya/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ken/exports/:code(\\d{6})",
+      "destination": "/trade/kenya/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kgz",
+      "destination": "/trade/kyrgyzstan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kgz/:year(\\d{4})",
+      "destination": "/trade/kyrgyzstan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kgz/exports/:code(\\d{6})",
+      "destination": "/trade/kyrgyzstan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/khm",
+      "destination": "/trade/cambodia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/khm/:year(\\d{4})",
+      "destination": "/trade/cambodia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/khm/exports/:code(\\d{6})",
+      "destination": "/trade/cambodia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kir",
+      "destination": "/trade/kiribati",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kir/:year(\\d{4})",
+      "destination": "/trade/kiribati/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kir/exports/:code(\\d{6})",
+      "destination": "/trade/kiribati/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kna",
+      "destination": "/trade/st-kitts-and-nevis",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kna/:year(\\d{4})",
+      "destination": "/trade/st-kitts-and-nevis/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kna/exports/:code(\\d{6})",
+      "destination": "/trade/st-kitts-and-nevis/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor",
+      "destination": "/trade/south-korea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/:year(\\d{4})",
+      "destination": "/trade/south-korea/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kor/exports/:code(\\d{6})",
+      "destination": "/trade/south-korea/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kwt",
+      "destination": "/trade/kuwait",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kwt/:year(\\d{4})",
+      "destination": "/trade/kuwait/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/kwt/exports/:code(\\d{6})",
+      "destination": "/trade/kuwait/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lao",
+      "destination": "/trade/laos",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lao/:year(\\d{4})",
+      "destination": "/trade/laos/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lao/exports/:code(\\d{6})",
+      "destination": "/trade/laos/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lbn",
+      "destination": "/trade/lebanon",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lbn/:year(\\d{4})",
+      "destination": "/trade/lebanon/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lbn/exports/:code(\\d{6})",
+      "destination": "/trade/lebanon/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lbr",
+      "destination": "/trade/liberia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lbr/:year(\\d{4})",
+      "destination": "/trade/liberia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lbr/exports/:code(\\d{6})",
+      "destination": "/trade/liberia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lby",
+      "destination": "/trade/libya",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lby/:year(\\d{4})",
+      "destination": "/trade/libya/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lby/exports/:code(\\d{6})",
+      "destination": "/trade/libya/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lca",
+      "destination": "/trade/st-lucia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lca/:year(\\d{4})",
+      "destination": "/trade/st-lucia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lca/exports/:code(\\d{6})",
+      "destination": "/trade/st-lucia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka",
+      "destination": "/trade/sri-lanka",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/:year(\\d{4})",
+      "destination": "/trade/sri-lanka/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lka/exports/:code(\\d{6})",
+      "destination": "/trade/sri-lanka/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lso",
+      "destination": "/trade/lesotho",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lso/:year(\\d{4})",
+      "destination": "/trade/lesotho/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lso/exports/:code(\\d{6})",
+      "destination": "/trade/lesotho/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ltu",
+      "destination": "/trade/lithuania",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ltu/:year(\\d{4})",
+      "destination": "/trade/lithuania/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ltu/exports/:code(\\d{6})",
+      "destination": "/trade/lithuania/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lux",
+      "destination": "/trade/luxembourg",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lux/:year(\\d{4})",
+      "destination": "/trade/luxembourg/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lux/exports/:code(\\d{6})",
+      "destination": "/trade/luxembourg/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lva",
+      "destination": "/trade/latvia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lva/:year(\\d{4})",
+      "destination": "/trade/latvia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/lva/exports/:code(\\d{6})",
+      "destination": "/trade/latvia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mac",
+      "destination": "/trade/macao",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mac/:year(\\d{4})",
+      "destination": "/trade/macao/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mac/exports/:code(\\d{6})",
+      "destination": "/trade/macao/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/maf",
+      "destination": "/trade/saint-martin",
+      "permanent": true
+    },
+    {
+      "source": "/trade/maf/:year(\\d{4})",
+      "destination": "/trade/saint-martin/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/maf/exports/:code(\\d{6})",
+      "destination": "/trade/saint-martin/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mar",
+      "destination": "/trade/morocco",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mar/:year(\\d{4})",
+      "destination": "/trade/morocco/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mar/exports/:code(\\d{6})",
+      "destination": "/trade/morocco/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mda",
+      "destination": "/trade/moldova",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mda/:year(\\d{4})",
+      "destination": "/trade/moldova/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mda/exports/:code(\\d{6})",
+      "destination": "/trade/moldova/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdg",
+      "destination": "/trade/madagascar",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdg/:year(\\d{4})",
+      "destination": "/trade/madagascar/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdg/exports/:code(\\d{6})",
+      "destination": "/trade/madagascar/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv",
+      "destination": "/trade/maldives",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/:year(\\d{4})",
+      "destination": "/trade/maldives/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mdv/exports/:code(\\d{6})",
+      "destination": "/trade/maldives/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex",
+      "destination": "/trade/mexico",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/:year(\\d{4})",
+      "destination": "/trade/mexico/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mex/exports/:code(\\d{6})",
+      "destination": "/trade/mexico/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mhl",
+      "destination": "/trade/marshall-islands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mhl/:year(\\d{4})",
+      "destination": "/trade/marshall-islands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mhl/exports/:code(\\d{6})",
+      "destination": "/trade/marshall-islands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mkd",
+      "destination": "/trade/north-macedonia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mkd/:year(\\d{4})",
+      "destination": "/trade/north-macedonia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mkd/exports/:code(\\d{6})",
+      "destination": "/trade/north-macedonia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mli",
+      "destination": "/trade/mali",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mli/:year(\\d{4})",
+      "destination": "/trade/mali/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mli/exports/:code(\\d{6})",
+      "destination": "/trade/mali/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mlt",
+      "destination": "/trade/malta",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mlt/:year(\\d{4})",
+      "destination": "/trade/malta/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mlt/exports/:code(\\d{6})",
+      "destination": "/trade/malta/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mmr",
+      "destination": "/trade/myanmar",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mmr/:year(\\d{4})",
+      "destination": "/trade/myanmar/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mmr/exports/:code(\\d{6})",
+      "destination": "/trade/myanmar/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mne",
+      "destination": "/trade/montenegro",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mne/:year(\\d{4})",
+      "destination": "/trade/montenegro/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mne/exports/:code(\\d{6})",
+      "destination": "/trade/montenegro/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mng",
+      "destination": "/trade/mongolia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mng/:year(\\d{4})",
+      "destination": "/trade/mongolia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mng/exports/:code(\\d{6})",
+      "destination": "/trade/mongolia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mnp",
+      "destination": "/trade/northern-mariana-islands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mnp/:year(\\d{4})",
+      "destination": "/trade/northern-mariana-islands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mnp/exports/:code(\\d{6})",
+      "destination": "/trade/northern-mariana-islands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/moz",
+      "destination": "/trade/mozambique",
+      "permanent": true
+    },
+    {
+      "source": "/trade/moz/:year(\\d{4})",
+      "destination": "/trade/mozambique/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/moz/exports/:code(\\d{6})",
+      "destination": "/trade/mozambique/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mrt",
+      "destination": "/trade/mauritania",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mrt/:year(\\d{4})",
+      "destination": "/trade/mauritania/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mrt/exports/:code(\\d{6})",
+      "destination": "/trade/mauritania/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mus",
+      "destination": "/trade/mauritius",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mus/:year(\\d{4})",
+      "destination": "/trade/mauritius/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mus/exports/:code(\\d{6})",
+      "destination": "/trade/mauritius/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mwi",
+      "destination": "/trade/malawi",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mwi/:year(\\d{4})",
+      "destination": "/trade/malawi/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mwi/exports/:code(\\d{6})",
+      "destination": "/trade/malawi/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys",
+      "destination": "/trade/malaysia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/:year(\\d{4})",
+      "destination": "/trade/malaysia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/mys/exports/:code(\\d{6})",
+      "destination": "/trade/malaysia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nam",
+      "destination": "/trade/namibia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nam/:year(\\d{4})",
+      "destination": "/trade/namibia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nam/exports/:code(\\d{6})",
+      "destination": "/trade/namibia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ncl",
+      "destination": "/trade/new-caledonia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ncl/:year(\\d{4})",
+      "destination": "/trade/new-caledonia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ncl/exports/:code(\\d{6})",
+      "destination": "/trade/new-caledonia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ner",
+      "destination": "/trade/niger",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ner/:year(\\d{4})",
+      "destination": "/trade/niger/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ner/exports/:code(\\d{6})",
+      "destination": "/trade/niger/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nga",
+      "destination": "/trade/nigeria",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nga/:year(\\d{4})",
+      "destination": "/trade/nigeria/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nga/exports/:code(\\d{6})",
+      "destination": "/trade/nigeria/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nic",
+      "destination": "/trade/nicaragua",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nic/:year(\\d{4})",
+      "destination": "/trade/nicaragua/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nic/exports/:code(\\d{6})",
+      "destination": "/trade/nicaragua/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld",
+      "destination": "/trade/netherlands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/:year(\\d{4})",
+      "destination": "/trade/netherlands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nld/exports/:code(\\d{6})",
+      "destination": "/trade/netherlands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nor",
+      "destination": "/trade/norway",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nor/:year(\\d{4})",
+      "destination": "/trade/norway/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nor/exports/:code(\\d{6})",
+      "destination": "/trade/norway/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl",
+      "destination": "/trade/nepal",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/:year(\\d{4})",
+      "destination": "/trade/nepal/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/npl/exports/:code(\\d{6})",
+      "destination": "/trade/nepal/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nru",
+      "destination": "/trade/naoero",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nru/:year(\\d{4})",
+      "destination": "/trade/naoero/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nru/exports/:code(\\d{6})",
+      "destination": "/trade/naoero/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nzl",
+      "destination": "/trade/new-zealand",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nzl/:year(\\d{4})",
+      "destination": "/trade/new-zealand/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/nzl/exports/:code(\\d{6})",
+      "destination": "/trade/new-zealand/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/omn",
+      "destination": "/trade/oman",
+      "permanent": true
+    },
+    {
+      "source": "/trade/omn/:year(\\d{4})",
+      "destination": "/trade/oman/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/omn/exports/:code(\\d{6})",
+      "destination": "/trade/oman/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak",
+      "destination": "/trade/pakistan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/:year(\\d{4})",
+      "destination": "/trade/pakistan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pak/exports/:code(\\d{6})",
+      "destination": "/trade/pakistan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pan",
+      "destination": "/trade/panama",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pan/:year(\\d{4})",
+      "destination": "/trade/panama/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pan/exports/:code(\\d{6})",
+      "destination": "/trade/panama/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/per",
+      "destination": "/trade/peru",
+      "permanent": true
+    },
+    {
+      "source": "/trade/per/:year(\\d{4})",
+      "destination": "/trade/peru/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/per/exports/:code(\\d{6})",
+      "destination": "/trade/peru/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/phl",
+      "destination": "/trade/philippines",
+      "permanent": true
+    },
+    {
+      "source": "/trade/phl/:year(\\d{4})",
+      "destination": "/trade/philippines/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/phl/exports/:code(\\d{6})",
+      "destination": "/trade/philippines/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/plw",
+      "destination": "/trade/palau",
+      "permanent": true
+    },
+    {
+      "source": "/trade/plw/:year(\\d{4})",
+      "destination": "/trade/palau/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/plw/exports/:code(\\d{6})",
+      "destination": "/trade/palau/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/png",
+      "destination": "/trade/papua-new-guinea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/png/:year(\\d{4})",
+      "destination": "/trade/papua-new-guinea/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/png/exports/:code(\\d{6})",
+      "destination": "/trade/papua-new-guinea/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pol",
+      "destination": "/trade/poland",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pol/:year(\\d{4})",
+      "destination": "/trade/poland/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pol/exports/:code(\\d{6})",
+      "destination": "/trade/poland/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/prk",
+      "destination": "/trade/north-korea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/prk/:year(\\d{4})",
+      "destination": "/trade/north-korea/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/prk/exports/:code(\\d{6})",
+      "destination": "/trade/north-korea/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/prt",
+      "destination": "/trade/portugal",
+      "permanent": true
+    },
+    {
+      "source": "/trade/prt/:year(\\d{4})",
+      "destination": "/trade/portugal/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/prt/exports/:code(\\d{6})",
+      "destination": "/trade/portugal/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pry",
+      "destination": "/trade/paraguay",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pry/:year(\\d{4})",
+      "destination": "/trade/paraguay/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pry/exports/:code(\\d{6})",
+      "destination": "/trade/paraguay/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pyf",
+      "destination": "/trade/french-polynesia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pyf/:year(\\d{4})",
+      "destination": "/trade/french-polynesia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/pyf/exports/:code(\\d{6})",
+      "destination": "/trade/french-polynesia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/qat",
+      "destination": "/trade/qatar",
+      "permanent": true
+    },
+    {
+      "source": "/trade/qat/:year(\\d{4})",
+      "destination": "/trade/qatar/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/qat/exports/:code(\\d{6})",
+      "destination": "/trade/qatar/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rou",
+      "destination": "/trade/romania",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rou/:year(\\d{4})",
+      "destination": "/trade/romania/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rou/exports/:code(\\d{6})",
+      "destination": "/trade/romania/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rus",
+      "destination": "/trade/russia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rus/:year(\\d{4})",
+      "destination": "/trade/russia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rus/exports/:code(\\d{6})",
+      "destination": "/trade/russia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rwa",
+      "destination": "/trade/rwanda",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rwa/:year(\\d{4})",
+      "destination": "/trade/rwanda/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/rwa/exports/:code(\\d{6})",
+      "destination": "/trade/rwanda/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sau",
+      "destination": "/trade/saudi-arabia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sau/:year(\\d{4})",
+      "destination": "/trade/saudi-arabia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sau/exports/:code(\\d{6})",
+      "destination": "/trade/saudi-arabia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sdn",
+      "destination": "/trade/sudan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sdn/:year(\\d{4})",
+      "destination": "/trade/sudan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sdn/exports/:code(\\d{6})",
+      "destination": "/trade/sudan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sen",
+      "destination": "/trade/senegal",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sen/:year(\\d{4})",
+      "destination": "/trade/senegal/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sen/exports/:code(\\d{6})",
+      "destination": "/trade/senegal/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sgp",
+      "destination": "/trade/singapore",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sgp/:year(\\d{4})",
+      "destination": "/trade/singapore/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sgp/exports/:code(\\d{6})",
+      "destination": "/trade/singapore/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/slb",
+      "destination": "/trade/solomon-islands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/slb/:year(\\d{4})",
+      "destination": "/trade/solomon-islands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/slb/exports/:code(\\d{6})",
+      "destination": "/trade/solomon-islands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sle",
+      "destination": "/trade/sierra-leone",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sle/:year(\\d{4})",
+      "destination": "/trade/sierra-leone/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sle/exports/:code(\\d{6})",
+      "destination": "/trade/sierra-leone/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/slv",
+      "destination": "/trade/el-salvador",
+      "permanent": true
+    },
+    {
+      "source": "/trade/slv/:year(\\d{4})",
+      "destination": "/trade/el-salvador/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/slv/exports/:code(\\d{6})",
+      "destination": "/trade/el-salvador/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/som",
+      "destination": "/trade/somalia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/som/:year(\\d{4})",
+      "destination": "/trade/somalia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/som/exports/:code(\\d{6})",
+      "destination": "/trade/somalia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/srb",
+      "destination": "/trade/serbia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/srb/:year(\\d{4})",
+      "destination": "/trade/serbia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/srb/exports/:code(\\d{6})",
+      "destination": "/trade/serbia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ssd",
+      "destination": "/trade/south-sudan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ssd/:year(\\d{4})",
+      "destination": "/trade/south-sudan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ssd/exports/:code(\\d{6})",
+      "destination": "/trade/south-sudan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/stp",
+      "destination": "/trade/sao-tome-and-principe",
+      "permanent": true
+    },
+    {
+      "source": "/trade/stp/:year(\\d{4})",
+      "destination": "/trade/sao-tome-and-principe/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/stp/exports/:code(\\d{6})",
+      "destination": "/trade/sao-tome-and-principe/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sur",
+      "destination": "/trade/suriname",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sur/:year(\\d{4})",
+      "destination": "/trade/suriname/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sur/exports/:code(\\d{6})",
+      "destination": "/trade/suriname/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/svk",
+      "destination": "/trade/slovakia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/svk/:year(\\d{4})",
+      "destination": "/trade/slovakia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/svk/exports/:code(\\d{6})",
+      "destination": "/trade/slovakia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/svn",
+      "destination": "/trade/slovenia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/svn/:year(\\d{4})",
+      "destination": "/trade/slovenia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/svn/exports/:code(\\d{6})",
+      "destination": "/trade/slovenia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/swe",
+      "destination": "/trade/sweden",
+      "permanent": true
+    },
+    {
+      "source": "/trade/swe/:year(\\d{4})",
+      "destination": "/trade/sweden/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/swe/exports/:code(\\d{6})",
+      "destination": "/trade/sweden/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/swz",
+      "destination": "/trade/eswatini",
+      "permanent": true
+    },
+    {
+      "source": "/trade/swz/:year(\\d{4})",
+      "destination": "/trade/eswatini/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/swz/exports/:code(\\d{6})",
+      "destination": "/trade/eswatini/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sxm",
+      "destination": "/trade/sint-maarten",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sxm/:year(\\d{4})",
+      "destination": "/trade/sint-maarten/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sxm/exports/:code(\\d{6})",
+      "destination": "/trade/sint-maarten/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/syc",
+      "destination": "/trade/seychelles",
+      "permanent": true
+    },
+    {
+      "source": "/trade/syc/:year(\\d{4})",
+      "destination": "/trade/seychelles/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/syc/exports/:code(\\d{6})",
+      "destination": "/trade/seychelles/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/syr",
+      "destination": "/trade/syria",
+      "permanent": true
+    },
+    {
+      "source": "/trade/syr/:year(\\d{4})",
+      "destination": "/trade/syria/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/syr/exports/:code(\\d{6})",
+      "destination": "/trade/syria/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tca",
+      "destination": "/trade/turks-and-caicos-islands",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tca/:year(\\d{4})",
+      "destination": "/trade/turks-and-caicos-islands/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tca/exports/:code(\\d{6})",
+      "destination": "/trade/turks-and-caicos-islands/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tcd",
+      "destination": "/trade/chad",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tcd/:year(\\d{4})",
+      "destination": "/trade/chad/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tcd/exports/:code(\\d{6})",
+      "destination": "/trade/chad/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tgo",
+      "destination": "/trade/togo",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tgo/:year(\\d{4})",
+      "destination": "/trade/togo/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tgo/exports/:code(\\d{6})",
+      "destination": "/trade/togo/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tha",
+      "destination": "/trade/thailand",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tha/:year(\\d{4})",
+      "destination": "/trade/thailand/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tha/exports/:code(\\d{6})",
+      "destination": "/trade/thailand/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tjk",
+      "destination": "/trade/tajikistan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tjk/:year(\\d{4})",
+      "destination": "/trade/tajikistan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tjk/exports/:code(\\d{6})",
+      "destination": "/trade/tajikistan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tkm",
+      "destination": "/trade/turkmenistan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tkm/:year(\\d{4})",
+      "destination": "/trade/turkmenistan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tkm/exports/:code(\\d{6})",
+      "destination": "/trade/turkmenistan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tls",
+      "destination": "/trade/timor-leste",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tls/:year(\\d{4})",
+      "destination": "/trade/timor-leste/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tls/exports/:code(\\d{6})",
+      "destination": "/trade/timor-leste/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ton",
+      "destination": "/trade/tonga",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ton/:year(\\d{4})",
+      "destination": "/trade/tonga/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ton/exports/:code(\\d{6})",
+      "destination": "/trade/tonga/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tto",
+      "destination": "/trade/trinidad-and-tobago",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tto/:year(\\d{4})",
+      "destination": "/trade/trinidad-and-tobago/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tto/exports/:code(\\d{6})",
+      "destination": "/trade/trinidad-and-tobago/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tun",
+      "destination": "/trade/tunisia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tun/:year(\\d{4})",
+      "destination": "/trade/tunisia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tun/exports/:code(\\d{6})",
+      "destination": "/trade/tunisia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tur",
+      "destination": "/trade/turkiye",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tur/:year(\\d{4})",
+      "destination": "/trade/turkiye/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tur/exports/:code(\\d{6})",
+      "destination": "/trade/turkiye/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tuv",
+      "destination": "/trade/tuvalu",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tuv/:year(\\d{4})",
+      "destination": "/trade/tuvalu/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tuv/exports/:code(\\d{6})",
+      "destination": "/trade/tuvalu/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tza",
+      "destination": "/trade/tanzania",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tza/:year(\\d{4})",
+      "destination": "/trade/tanzania/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/tza/exports/:code(\\d{6})",
+      "destination": "/trade/tanzania/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/uga",
+      "destination": "/trade/uganda",
+      "permanent": true
+    },
+    {
+      "source": "/trade/uga/:year(\\d{4})",
+      "destination": "/trade/uganda/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/uga/exports/:code(\\d{6})",
+      "destination": "/trade/uganda/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ukr",
+      "destination": "/trade/ukraine",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ukr/:year(\\d{4})",
+      "destination": "/trade/ukraine/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ukr/exports/:code(\\d{6})",
+      "destination": "/trade/ukraine/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ury",
+      "destination": "/trade/uruguay",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ury/:year(\\d{4})",
+      "destination": "/trade/uruguay/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ury/exports/:code(\\d{6})",
+      "destination": "/trade/uruguay/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa",
+      "destination": "/trade/united-states",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/:year(\\d{4})",
+      "destination": "/trade/united-states/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/usa/exports/:code(\\d{6})",
+      "destination": "/trade/united-states/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/uzb",
+      "destination": "/trade/uzbekistan",
+      "permanent": true
+    },
+    {
+      "source": "/trade/uzb/:year(\\d{4})",
+      "destination": "/trade/uzbekistan/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/uzb/exports/:code(\\d{6})",
+      "destination": "/trade/uzbekistan/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vct",
+      "destination": "/trade/st-vincent-and-the-grenadines",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vct/:year(\\d{4})",
+      "destination": "/trade/st-vincent-and-the-grenadines/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vct/exports/:code(\\d{6})",
+      "destination": "/trade/st-vincent-and-the-grenadines/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ven",
+      "destination": "/trade/venezuela",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ven/:year(\\d{4})",
+      "destination": "/trade/venezuela/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/ven/exports/:code(\\d{6})",
+      "destination": "/trade/venezuela/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm",
+      "destination": "/trade/vietnam",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/:year(\\d{4})",
+      "destination": "/trade/vietnam/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vnm/exports/:code(\\d{6})",
+      "destination": "/trade/vietnam/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vut",
+      "destination": "/trade/vanuatu",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vut/:year(\\d{4})",
+      "destination": "/trade/vanuatu/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/vut/exports/:code(\\d{6})",
+      "destination": "/trade/vanuatu/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/wsm",
+      "destination": "/trade/samoa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/wsm/:year(\\d{4})",
+      "destination": "/trade/samoa/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/wsm/exports/:code(\\d{6})",
+      "destination": "/trade/samoa/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/yem",
+      "destination": "/trade/yemen",
+      "permanent": true
+    },
+    {
+      "source": "/trade/yem/:year(\\d{4})",
+      "destination": "/trade/yemen/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/yem/exports/:code(\\d{6})",
+      "destination": "/trade/yemen/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zaf",
+      "destination": "/trade/south-africa",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zaf/:year(\\d{4})",
+      "destination": "/trade/south-africa/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zaf/exports/:code(\\d{6})",
+      "destination": "/trade/south-africa/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zmb",
+      "destination": "/trade/zambia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zmb/:year(\\d{4})",
+      "destination": "/trade/zambia/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zmb/exports/:code(\\d{6})",
+      "destination": "/trade/zambia/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zwe",
+      "destination": "/trade/zimbabwe",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zwe/:year(\\d{4})",
+      "destination": "/trade/zimbabwe/:year",
+      "permanent": true
+    },
+    {
+      "source": "/trade/zwe/exports/:code(\\d{6})",
+      "destination": "/trade/zimbabwe/exports/:code",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/blr",
+      "destination": "/trade/sanctions/belarus",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/cub",
+      "destination": "/trade/sanctions/cuba",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/irn",
+      "destination": "/trade/sanctions/iran",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/mmr",
+      "destination": "/trade/sanctions/myanmar",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/prk",
+      "destination": "/trade/sanctions/north-korea",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/rus",
+      "destination": "/trade/sanctions/russia",
+      "permanent": true
+    },
+    {
+      "source": "/trade/sanctions/ven",
+      "destination": "/trade/sanctions/venezuela",
+      "permanent": true
+    },
+    {
       "source": "/index",
       "destination": "/",
       "permanent": true

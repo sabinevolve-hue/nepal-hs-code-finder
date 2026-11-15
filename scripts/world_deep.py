@@ -42,6 +42,9 @@ class Views:
         yj = json.loads(yf.read_text(encoding='utf-8')) if yf.exists() else {}
         self.YR = yj.get('years', {}); self.YW = yj.get('world', {})
         self._years = {}; self._yrank = {}
+        sf = ROOT / 'data' / 'world' / 'sanctions.json'
+        sj = json.loads(sf.read_text(encoding='utf-8')) if sf.exists() else {}
+        self.SD = sj.get('countries', {}); self.SD_DATE = sj.get('fetched', '')
         # product detail for the latest periods, from national sources (same record shape in every file)
         self.PL = {}
         f = ROOT / 'data' / 'world' / 'eu_products.json'
@@ -160,7 +163,7 @@ class Views:
             return ''
         g = ''.join(f'<div class="yc"><div class="ycb"><i class="x" style="height:{max(1.5, 100.0 * v[0] / mx):.1f}%" title="{la}: {self.usd(v[0])}"><b>{self.usd(v[0])}</b></i>'
                     f'<i class="m" style="height:{max(1.5, 100.0 * v[1] / mx):.1f}%" title="{lb}: {self.usd(v[1])}"><b>{self.usd(v[1])}</b></i></div><span>{y}</span></div>' for y, v in ys)
-        return (f'<div class="ycs{" many" if len(ys) > 4 else ""}">{g}</div><div class="dvk"><span><i class="pos"></i>{la}</span><span><i class="neg"></i>{lb}</span></div>')
+        return (f'<div class="ycs{" many" if len(ys) > 4 else ""}{" lots" if len(ys) > 10 else ""}">{g}</div><div class="dvk"><span><i class="pos"></i>{la}</span><span><i class="neg"></i>{lb}</span></div>')
 
     # ---------- every product: who exports and imports it (HS code pages)
     def has_product(self, code):
@@ -382,7 +385,7 @@ class Views:
             return self.table([what, str(yv), 'Share'], rows) if rows else ''
         prods = lambda lst, total, what: self.table([what, str(self.Y), 'Share'], [(e(h['clip'](h['hs_desc'](r[0]), 58)) + f' <small class="hsc">{h["fmt_code"](r[0])}</small>', self.usd(r[1]), self.share(r[1], total)) for r in lst[:8]]) if lst else ''
         tm_x = self.treemap(d.get('xc') or [], BX, 'exp', c['name'], 'exports'); tm_m = self.treemap(d.get('mc') or [], BM, 'imp', c['name'], 'imports')
-        url = f'world.customsnepal.com/trade/{iso.lower()}'
+        url = 'world.customsnepal.com' + self.h['chref'](iso)
         return (f'<header class="bh"><div><span class="bm">{h["MARK"]}</span><b>World Trade Data</b></div><span>Trade brief · {url}</span></header>'
                 f'<h1>{c["flag"]} {nm}: trade brief</h1>'
                 f'<p class="bsub">{"Customs figures for " + str(I["full"]) + (" and " + str(I["cur"]) + " to date" if I.get("cur") else "") + "; products" if ys else "Reconciled figures"} for {self.Y}; long-run totals. Prepared {self.h["TODAY"]}.</p>'
@@ -909,60 +912,85 @@ class Views:
                     more=[('Bruegel: Russian foreign trade tracker', 'https://www.bruegel.org/dataset/russian-foreign-trade-tracker', 'monthly, rebuilt from the customs data of 38 partner countries, with product detail'),
                           ('CREA: Russia Fossil Tracker', 'https://www.russiafossiltracker.com/', 'oil, gas and coal shipments by destination, from ship tracking and pipeline data')]),
         'IRN': dict(ofac=['Iran Sanctions']), 'VEN': dict(ofac=['Venezuela-Related Sanctions']), 'BLR': dict(ofac=['Belarus Sanctions']),
-        'PRK': dict(ofac=['North Korea Sanctions'], un='1718 Sanctions Committee (DPRK)'), 'CUB': dict(ofac=['Cuba Sanctions']), 'MMR': dict(ofac=['Burma-Related Sanctions']),
+        'PRK': dict(ofac=['North Korea Sanctions'], un='1718 Sanctions Committee (DPRK)',
+                    data_note='Partners sometimes record trade with the Republic of Korea under this economy&#39;s code by mistake, so small markets on this page may be recording errors.'), 'CUB': dict(ofac=['Cuba Sanctions']), 'MMR': dict(ofac=['Burma-Related Sanctions']),
     }
     EU27 = ['AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL', 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE']
+    SANC_SLUG = {'RUS': 'russia', 'IRN': 'iran', 'VEN': 'venezuela', 'BLR': 'belarus', 'PRK': 'north-korea', 'CUB': 'cuba', 'MMR': 'myanmar'}      # readable addresses
     OFAC_URL = 'https://ofac.treasury.gov/sanctions-programs-and-country-information'
     UN_URL = 'https://main.un.org/securitycouncil/en/sanctions/information'
 
     def sanc_list(self):
-        return [c for c in self.SANC if c in self.h['CBYISO'] and len(self.years_of(c)) >= 3]
+        return [c for c in self.SANC if c in self.h['CBYISO'] and c in self.SD]
 
     def sanc_href(self, iso):
-        return f'/trade/sanctions/{iso.lower()}' if iso in self.SANC and iso in self.sanc_list() else None
+        return f'/trade/sanctions/{self.SANC_SLUG[iso]}' if iso in self.SANC and iso in self.sanc_list() else None
+
+    def _sd(self, iso):
+        return self.SD[iso]
+
+    def _sanc_years(self, iso):
+        S = self._sd(iso); return list(range(min(int(y) for y in S['yx']), S['full'] + 1))
+
+    def _sanc_tot(self, iso, side, y):
+        return sum(self._sd(iso)['yx' if side == 'x' else 'ym'][str(y)].values())
+
+    def _sanc_val(self, iso, side, p, y):
+        d = self._sd(iso)['yx' if side == 'x' else 'ym'][str(y)]
+        return sum(d.get(q, 0) for q in self.EU27) if p == 'EU27' else d.get(p, 0)
+
+    def _sanc_cmp(self, iso):
+        """The year the latest one is compared with: a stated base year, else the year recorded exports were highest."""
+        ys = self._sanc_years(iso); base = self.SANC[iso].get('base')
+        if base in ys:
+            return base, True
+        peak = max(ys[:-1], key=lambda y: self._sanc_tot(iso, 'x', y))
+        return peak, False
 
     def sanc_title(self, iso=None):
         if not iso:
             return 'Trade Under Sanctions: Russia, Iran, Venezuela and Others, Year by Year'
-        ys = self.years_of(iso)
+        ys = self._sanc_years(iso)
         return f'{self.name(iso)} Trade Under Sanctions: Exports by Destination, {ys[0]}–{ys[-1]}'
 
     def sanc_desc(self, iso=None):
         if not iso:
-            return ('Exports and imports of economies under sanctions programmes, read from what their trading partners report: where the goods went each year, '
-                    'which markets grew and which shrank, and what such figures cannot show.')
-        ys = self.years_of(iso); a = self._year_tot(iso, ys[0]); b = self._year_tot(iso, ys[-1]); d = self.year_view(iso, ys[-1])
-        return (f"{self.name(iso)}'s recorded exports were {self.usd(a[0])} in {ys[0]} and {self.usd(b[0])} in {ys[-1]}, as reported by its trading partners. "
-                + (f"Largest market in {ys[-1]}: {self.name(d['xp'][0][0])}. " if d['xp'] else '') + 'Markets and suppliers year by year, and the limits of the data.')
+            return ('Exports and imports of economies under sanctions programmes, read from what their trading partners record: where the goods went each year since 2010, '
+                    'which markets grew and which shrank, what buyers still take by product, oil in barrels, and what such figures cannot show.')
+        ys = self._sanc_years(iso); a = self._sanc_tot(iso, 'x', ys[0]); b = self._sanc_tot(iso, 'x', ys[-1])
+        top = max(self._sd(iso)['yx'][str(ys[-1])].items(), key=lambda kv: kv[1])[0]
+        return (f"Partners recorded {self.usd(a)} of imports from {self.name(iso)} in {ys[0]} and {self.usd(b)} in {ys[-1]}. Largest market in {ys[-1]}: {self.name(top)}. "
+                'Markets and suppliers year by year, month by month, and the limits of the data.')
 
     def _sanc_caveat(self, nm):
-        return ('<div class="outcome" style="margin-top:var(--s4)"><div><b>How to read these figures.</b> ' + nm + ' does not report complete trade figures to the IMF, so everything here is what its trading partners report, '
-                'as compiled by the IMF. That leaves gaps. The first two mean the recorded totals understate the real trade.<ul class="abl" style="margin-top:8px">'
-                '<li><b>Partners that do not report either.</b> Trade between two economies that both withhold data is mostly missing.</li>'
+        return ('<div class="outcome" style="margin-top:var(--s4)"><div><b>How to read these figures.</b> ' + nm + ' does not report complete trade figures, so every number here, for every year, is what its trading partners record: '
+                'their imports from it and their exports to it, as collected by the IMF. That keeps the years comparable, and it leaves gaps. The first two mean the recorded totals understate the real trade.<ul class="abl" style="margin-top:8px">'
+                '<li><b>Partners that do not report either.</b> Trade between two economies that both withhold data is missing, or is an IMF estimate.</li>'
                 '<li><b>Goods declared under another origin.</b> Cargo that is relabelled or transshipped is recorded against the other country, not this one.</li>'
-                '<li><b>Valuation.</b> Exports here are partners&#39; import records, which include freight and insurance.</li></ul>'
+                '<li><b>Valuation.</b> Exports here are partners&#39; import records, which include freight and insurance, so they run a little above the figures on the country profile.</li></ul>'
                 'This page reports the recorded figures only. It does not estimate unrecorded trade.</div></div>')
 
+    def _sanc_cols(self, ys):
+        first, last = ys[0], ys[-1]
+        return sorted(set([first] + list(range(first + 3, last - 4, 3)) + list(range(last - 4, last + 1))))
+
     def _sanc_matrix(self, iso, side, ys):
-        """Top partners across the years: rows are partners (by the latest year, plus any that led in the first year), columns are years."""
-        I = self.IM[iso]; k = 0 if side == 'x' else 1
-        val = lambda p, y: (I['pa'][str(y)].get(p) or [0, 0])[k]
-        tot = {y: self._year_tot(iso, y)[k] for y in ys}
-        last, first = ys[-1], ys[0]
-        order = sorted(I['pa'][str(last)], key=lambda p: -val(p, last))[:10]
-        for p in sorted(I['pa'][str(first)], key=lambda p: -val(p, first))[:5]:
+        cols = self._sanc_cols(ys); first, last = ys[0], ys[-1]
+        val = lambda p, y: self._sanc_val(iso, side, p, y); tot = {y: self._sanc_tot(iso, side, y) for y in ys}
+        d_last = self._sd(iso)['yx' if side == 'x' else 'ym'][str(last)]; d_first = self._sd(iso)['yx' if side == 'x' else 'ym'][str(first)]
+        order = sorted(d_last, key=lambda p: -d_last[p])[:10]
+        for p in sorted(d_first, key=lambda p: -d_first[p])[:5]:
             if p not in order:
                 order.append(p)
         rows = []
-        eu = {y: sum(val(p, y) for p in self.EU27) for y in ys}
-        if eu[first] or eu[last]:
-            rows.append(['<b>European Union (27)</b>'] + [self.usd(eu[y]) if eu[y] else '—' for y in ys] + [self.share(eu[first], tot[first]), self.share(eu[last], tot[last])])
+        has_eu = val('EU27', first) or val('EU27', last)
+        if has_eu:
+            rows.append(['<b>European Union (27)</b>'] + [self.usd(val('EU27', y)) if val('EU27', y) else '—' for y in cols] + [self.share(val('EU27', first), tot[first]), self.share(val('EU27', last), tot[last])])
         for p in order:
-            rows.append([self.clink(p)] + [self.usd(val(p, y)) if val(p, y) else '—' for y in ys] + [self.share(val(p, first), tot[first]), self.share(val(p, last), tot[last])])
-        rows.append(['<b>All partners</b>'] + [f'<b>{self.usd(tot[y])}</b>' for y in ys] + ['100%', '100%'])
-        pairs = [(('European Union (27)', None), eu[first], eu[last])] if (eu[first] or eu[last]) else []
-        pairs += [((self.name(p), p), val(p, first), val(p, last)) for p in order[:8]]
-        return self.table(['Partner'] + [str(y) for y in ys] + [f'Share {first}', f'Share {last}'], rows), pairs, tot
+            rows.append([self.clink(p)] + [self.usd(val(p, y)) if val(p, y) else '—' for y in cols] + [self.share(val(p, first), tot[first]), self.share(val(p, last), tot[last])])
+        rows.append(['<b>All partners</b>'] + [f'<b>{self.usd(tot[y])}</b>' for y in cols] + ['100%', '100%'])
+        pairs = ([(('European Union (27)', None), val('EU27', first), val('EU27', last))] if has_eu else []) + [((self.name(p), p), val(p, first), val(p, last)) for p in order[:8]]
+        return self.table(['Partner'] + [str(y) for y in cols] + [f'Share {first}', f'Share {last}'], rows), pairs, tot
 
     def _sanc_shift(self, pairs, tot, first, last, tone):
         """Paired bars: each partner's share of the flow in the first and the latest year, one scale."""
@@ -975,26 +1003,103 @@ class Views:
                        f'<b>{sa:.1f}% → {sb:.1f}%</b></div>')
         return ('<div class="shs">' + ''.join(out) + f'<div class="dvk"><span><i style="background:var(--muted)"></i>{first}</span><span><i class="{"pos" if tone == "x" else "neg"}"></i>{last}</span></div></div>')
 
+    def _sanc_months(self, iso, side):
+        """Small multiples: one panel per market, monthly, all on one scale so heights compare."""
+        e = self.h['esc']; S = self._sd(iso); M = S['mx' if side == 'x' else 'mm']; names = [k for k in M if k != 'TOTAL']
+        months = sorted(M['TOTAL']); n = len(months)
+        if n < 24 or not names:
+            return ''
+        mx = max(max(M[k].values() or [0]) for k in names) or 1
+        W, H = 300.0, 110.0; cls = 'lx' if side == 'x' else 'lm'
+        ticks = [(i, p[:4]) for i, p in enumerate(months) if p.endswith('-01') and int(p[:4]) % 5 == 0]
+        panels = []
+        for k in names:
+            d = M[k]; pts = ' '.join(('M' if i == 0 else 'L') + f'{W * i / (n - 1):.1f},{H - (H - 6.0) * d.get(p, 0) / mx:.1f}' for i, p in enumerate(months))
+            grid = ''.join(f'<line x1="{W * i / (n - 1):.1f}" y1="0" x2="{W * i / (n - 1):.1f}" y2="{H}" class="lg"/>' for i, _ in ticks)
+            lasty = months[-1][:4]; ly = sum(v for p, v in d.items() if p[:4] == lasty); fy = sum(v for p, v in d.items() if p[:4] == months[0][:4])
+            lab = '<b>European Union (27)</b>' if k == 'EU27' else self.clink(k)
+            panels.append(f'<div class="smp"><div class="smh">{lab}<span>{self.usd(fy)} in {months[0][:4]} · {self.usd(ly)} in {lasty}</span></div>'
+                          f'<svg viewBox="0 0 {W:.0f} {H:.0f}" preserveAspectRatio="none" role="img" aria-label="{e(self.name(k) if k != "EU27" else "European Union")}, monthly: {self.usd(fy)} in {months[0][:4]}, {self.usd(ly)} in {lasty}">'
+                          f'{grid}<path d="{pts}" class="{cls}"/></svg><div class="smx">' + ''.join(f'<span style="left:{100.0 * i / (n - 1):.1f}%">{y}</span>' for i, y in ticks) + '</div></div>')
+        return (f'<div class="sms">{"".join(panels)}</div><p class="fine">Monthly value recorded by each partner, {months[0][:4]} to {months[-1][:4]}. Every panel uses the same vertical scale, top of panel = {self.usd(mx)} a month.</p>')
+
+    PROD_REP = [('EU', 'the European Union', 'The EU', 'Eurostat, EU trade by HS chapter (DS-045409), reporter EU-27; euros converted to US dollars at each month&#39;s average ECB reference rate'),
+                ('UK', 'the United Kingdom', 'The UK', 'HM Revenue &amp; Customs, Overseas Trade Statistics; pounds converted at monthly average ECB reference rates'),
+                ('BR', 'Brazil', 'Brazil', 'Ministry of Development, Industry, Trade and Services of Brazil, Comex Stat; US dollars, FOB')]
+
+    def _sanc_products(self, iso, cmp_y):
+        """What reporters with open product data buy from and sell to the economy, by product group: the comparison year, the latest
+        year, and the current year so far. A reporter is shown when the trade reached $100 million in either year."""
+        h = self.h; e = h['esc']; P = self._sd(iso).get('prod') or {}; nm = e(self.name(iso)); last = self._sd(iso)['full']; out = []; srcs = []
+        for key, long_name, short, src in self.PROD_REP:
+            E = P.get(key) or {}
+            upto = E.get('upto', ''); cur = int(upto[:4]) if upto and int(upto[:4]) > last else None
+            def block(side, verb):
+                D = E.get(side) or {}
+                a = D.get(str(cmp_y)) or {}; b = D.get(str(last)) or {}; c = (D.get(str(cur)) or {}) if cur else {}
+                ta, tb, tc = sum(a.values()), sum(b.values()), sum(c.values())
+                if max(ta, tb) < 100000:
+                    return ''
+                ga = {g: v for g, v, _ in self.groups(list(a.items()))}; gb = {g: v for g, v, _ in self.groups(list(b.items()))}; gc = {g: v for g, v, _ in self.groups(list(c.items()))}
+                names = sorted(set(ga) | set(gb), key=lambda g: -max(ga.get(g, 0), gb.get(g, 0)))[:8]
+                rows = [(f'<a href="/trade/product/{h["group_slug"](g)}">{e(g)}</a>', self.usd(ga[g]) if ga.get(g) else '—', self.usd(gb[g]) if gb.get(g) else '—', self._chg(gb.get(g, 0), ga.get(g, 0)))
+                        + ((self.usd(gc[g]) if gc.get(g) else '—',) if cur else ()) for g in names]
+                rows.append(('<b>All products</b>', f'<b>{self.usd(ta)}</b>', f'<b>{self.usd(tb)}</b>', self._chg(tb, ta)) + ((f'<b>{self.usd(tc)}</b>',) if cur else ()))
+                heads = ['Product group', str(cmp_y), str(last), 'Change'] + ([f'{cur}, Jan–{self.MONTHS[int(upto[5:]) - 1]}'] if cur else [])
+                return f'<h3>{verb}</h3>' + self.table(heads, rows)
+            bx = block('x', f'What {long_name} bought from {nm}'); bm = block('m', f'What {long_name} sold to {nm}')
+            if bx or bm:
+                out.append(bx + bm); srcs.append(f'{short}: {src}.')
+        if not out:
+            return ''
+        return (f'<section class="gsec"><h2>{nm}&#39;s trade by product, from the buyers&#39; own customs data</h2><p class="gk">Product detail from reporters that publish it openly, by product group, for {cmp_y}, {last} '
+                f'and the current year so far. A reporter appears when its trade with {nm} reached $100 million in either year.</p>' + ''.join(out)
+                + '<p class="fine">Sources: ' + ' '.join(srcs) + '</p></section>')
+
+    def _sanc_oil(self, iso):
+        """Crude oil in barrels a day, as the economy reported it to JODI, with the last month it reported."""
+        O = self._sd(iso).get('oil'); nm = self.h['esc'](self.name(iso))
+        if not O or not O.get('prod'):
+            return ''
+        have = sorted(set(O['prod']) | set(O.get('exp') or {})); years = [str(y) for y in range(int(have[0]), max(int(have[-1]), self._sd(iso)['full']) + 1)]      # empty years stay on the axis
+        mx = max([v[0] for v in O['prod'].values()] + [v[0] for v in (O.get('exp') or {}).values()] + [1])
+        kb = lambda v: (f'{v / 1000.0:.2f}M' if v >= 1000 else f'{v:,}K')
+        cols = ''
+        for y in years:
+            a = (O['prod'].get(y) or [0])[0]; b = ((O.get('exp') or {}).get(y) or [0])[0]
+            cols += (f'<div class="yc"><div class="ycb"><i class="x" style="height:{max(0.0, 100.0 * a / mx):.1f}%;background:var(--fg-2)" title="Production {y}: {kb(a)} barrels a day"></i>'
+                     f'<i class="m" style="height:{max(0.0, 100.0 * b / mx):.1f}%;background:var(--gold, #B7791F)" title="Exports {y}: {kb(b) if b else "not reported"}"></i></div><span>{y}</span></div>')
+        rows = [(y, kb(O['prod'][y][0]) if y in O['prod'] else 'not reported', kb(O['exp'][y][0]) if y in (O.get('exp') or {}) else 'not reported') for y in years[::-1]]
+        mlab = lambda p: f'{self.MONTHS[int(p[5:]) - 1]} {p[:4]}' if p else 'never'
+        return (f'<section class="gsec"><h2>{nm}&#39;s crude oil in barrels</h2><p class="gk">Dollar figures move with the oil price. These are volumes: crude oil produced and exported, in barrels a day, '
+                f'as {nm} itself reported them to the Joint Organisations Data Initiative. The last month it reported production is {mlab(O.get("last_prod"))}, and exports {mlab(O.get("last_exp"))}.</p>'
+                f'<div class="ycs many lots">{cols}</div><div class="dvk"><span><i style="background:var(--fg-2)"></i>Production</span><span><i style="background:var(--gold, #B7791F)"></i>Exports</span></div>'
+                + '<details class="tml"><summary>The same figures as a table</summary>' + self.table(['Year', 'Production, barrels a day', 'Exports, barrels a day'], rows) + '</details>'
+                f'<p class="fine">Top of the chart is {kb(mx)} barrels a day. Yearly average of the months reported; a year is shown only when at least nine months were reported, and an empty year means the economy did not report. '
+                'Source: <a href="https://www.jodidata.org/oil/" target="_blank" rel="noopener">JODI-Oil World Database ↗</a>, primary products, crude oil.</p></section>')
+
     def sanc_country(self, iso):
-        h = self.h; e = h['esc']; S = self.SANC[iso]; nm = e(self.name(iso)); ys = self.years_of(iso); first, last = ys[0], ys[-1]
+        h = self.h; e = h['esc']; S = self.SANC[iso]; D = self._sd(iso); nm = e(self.name(iso)); ys = self._sanc_years(iso); first, last = ys[0], ys[-1]
         c = h['CBYISO'][iso]
         tx, px, totx = self._sanc_matrix(iso, 'x', ys); tm, pm, totm = self._sanc_matrix(iso, 'm', ys)
-        d = self.year_view(iso, last)
+        topx = max(D['yx'][str(last)].items(), key=lambda kv: kv[1])
+        cmp_y, stated = self._sanc_cmp(iso)
+        ex, em = D['ye'][str(last)]
         lead = (f'<p class="ans">Partners recorded <b>{self.usd(totx[last])}</b> of goods bought from {nm} in {last} and <b>{self.usd(totm[last])}</b> sold to it. '
-                f'In {first} the figures were {self.usd(totx[first])} and {self.usd(totm[first])}.'
-                + (f' The largest recorded market in {last} was {self.clink(d["xp"][0][0])}, with {self.share(d["xp"][0][1], d["x"])} of exports.' if d['xp'] else '') + '</p>')
-        base = S.get('base')
-        base_sec = ''
-        if base and base in ys:
-            I = self.IM[iso]; val = lambda p, y, k: (I['pa'][str(y)].get(p) or [0, 0])[k]
-            eu_b = sum(val(p, base, 0) for p in self.EU27); eu_l = sum(val(p, last, 0) for p in self.EU27); tb = self._year_tot(iso, base)[0]
-            movers = sorted(set(I['pa'][str(base)]) | set(I['pa'][str(last)]), key=lambda p: val(p, last, 0) - val(p, base, 0))
-            up = [(p, val(p, last, 0) - val(p, base, 0)) for p in movers[::-1][:6] if val(p, last, 0) - val(p, base, 0) > 0]
-            down = [(p, val(p, last, 0) - val(p, base, 0)) for p in movers[:6] if val(p, last, 0) - val(p, base, 0) < 0]
-            base_sec = (f'<section class="gsec"><h2>{base} to {last}: which markets grew and which shrank</h2>'
-                        f'<p class="gk">{base} is the last full year before the measures of {base + 1}. Recorded exports to the European Union were {self.usd(eu_b)} in {base} ({self.share(eu_b, tb)} of the total) '
-                        f'and {self.usd(eu_l)} in {last} ({self.share(eu_l, totx[last])}). Change in recorded exports by market, the six largest each way, on one scale.</p>'
-                        + self.balance_chart(up, down[::-1]).replace('Deficit: imports more than it exports', f'Fell between {base} and {last}').replace('>Surplus<', f'>Rose between {base} and {last}<') + '</section>')
+                f'In {first} the figures were {self.usd(totx[first])} and {self.usd(totm[first])}. '
+                f'The largest recorded market in {last} was {self.clink(topx[0])}, with {self.share(topx[1], totx[last])} of the total.</p>'
+                f'<p class="fine">Of the {last} figures, {100 - ex:.0f}% of the exports and {100 - em:.0f}% of the imports were reported directly by the partner; the IMF estimated the rest for partners that had not reported.</p>')
+        val = lambda p, y: self._sanc_val(iso, 'x', p, y)
+        allp = set(D['yx'][str(cmp_y)]) | set(D['yx'][str(last)])
+        movers = sorted(allp, key=lambda p: val(p, last) - val(p, cmp_y))
+        up = [(p, val(p, last) - val(p, cmp_y)) for p in movers[::-1][:6] if val(p, last) - val(p, cmp_y) > 0]
+        down = [(p, val(p, last) - val(p, cmp_y)) for p in movers[:6] if val(p, last) - val(p, cmp_y) < 0]
+        why = (f'{cmp_y} is the last full year before the measures of {cmp_y + 1}.' if stated else f'{cmp_y} is the year in which recorded exports were highest since {first}: {self.usd(totx[cmp_y])}.')
+        eu_c, eu_l = val('EU27', cmp_y), val('EU27', last)
+        move_sec = (f'<section class="gsec"><h2>{cmp_y} to {last}: which markets grew and which shrank</h2>'
+                    f'<p class="gk">{why}' + (f' Recorded exports to the European Union were {self.usd(eu_c)} in {cmp_y} ({self.share(eu_c, totx[cmp_y])} of the total) and {self.usd(eu_l)} in {last} ({self.share(eu_l, totx[last])}).' if (eu_c or eu_l) else '')
+                    + ' Change in recorded exports by market, the six largest each way, on one scale.</p>'
+                    + self.balance_chart(up, down[::-1]).replace('Deficit: imports more than it exports', f'Fell between {cmp_y} and {last}').replace('>Surplus<', f'>Rose between {cmp_y} and {last}<') + '</section>') if (up or down) else ''
         hist = {str(y): [totx[y], totm[y]] for y in ys}
         prog = ''.join(f'<li><b>United States Treasury (OFAC):</b> {e(p)}</li>' for p in S['ofac'])
         if S.get('un'):
@@ -1010,41 +1115,49 @@ class Views:
                     'other governments have their own, and each programme has its own scope and exemptions.</p>'
                     f'<ul class="abl">{prog}</ul><p class="fine">' + ' · '.join(f'<a href="{u}" target="_blank" rel="noopener">{e(t)} ↗</a>' for t, u in links) + f'</p>{more}</section>')
         others = ''.join(f'<a href="{self.sanc_href(x)}">{self.flag(x)} {e(self.name(x))}</a>' for x in self.sanc_list() if x != iso)
+        extra = f'<p class="fine">{S["data_note"]}</p>' if S.get('data_note') else ''
         return h['main'](h['back']('/trade/sanctions', 'Trade under sanctions') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade under sanctions, {first} to {last}</h1>'
                          f'<p>Where {nm}&#39;s goods went and came from each year, as its trading partners recorded it.</p></div>'
-                         + lead + self._sanc_caveat(nm)
-                         + f'<section class="gsec"><h2>Recorded trade year by year</h2>' + self.year_cols(hist, 'Exports', 'Imports') + '</section>'
-                         + f'<section class="gsec gx"><h2>Where {nm}&#39;s exports went</h2><p class="gk">Share of recorded exports in {first} and in {last}, the largest markets of {last}.</p>'
-                         + self._sanc_shift(px, totx, first, last, 'x') + '<h3>Recorded exports by market, every year</h3>' + tx + '</section>'
-                         + base_sec
-                         + f'<section class="gsec gm2"><h2>Where {nm}&#39;s imports came from</h2><p class="gk">Share of recorded imports in {first} and in {last}, the largest suppliers of {last}.</p>'
-                         + self._sanc_shift(pm, totm, first, last, 'm') + '<h3>Recorded imports by supplier, every year</h3>' + tm + '</section>'
-                         + sec_prog
+                         + lead + extra + self._sanc_caveat(nm)
+                         + f'<section class="gsec"><h2>Recorded trade year by year</h2>' + self.year_cols(hist, 'Exports', 'Imports')
+                         + '<details class="tml"><summary>The same figures as a table</summary>' + self.table(['Year', 'Exports', 'Imports'], [(str(y), self.usd(totx[y]), self.usd(totm[y])) for y in ys[::-1]]) + '</details></section>'
+                         + f'<section class="gsec gx"><h2>Where {nm}&#39;s exports went</h2><p class="gk">Share of recorded exports in {first} and in {last}, for the largest markets of {last}.</p>'
+                         + self._sanc_shift(px, totx, first, last, 'x')
+                         + '<h3>Month by month, by market</h3>' + self._sanc_months(iso, 'x')
+                         + '<h3>Recorded exports by market, selected years</h3>' + tx + '</section>'
+                         + move_sec
+                         + f'<section class="gsec gm2"><h2>Where {nm}&#39;s imports came from</h2><p class="gk">Share of recorded imports in {first} and in {last}, for the largest suppliers of {last}.</p>'
+                         + self._sanc_shift(pm, totm, first, last, 'm')
+                         + '<h3>Month by month, by supplier</h3>' + self._sanc_months(iso, 'm')
+                         + '<h3>Recorded imports by supplier, selected years</h3>' + tm + '</section>'
+                         + self._sanc_products(iso, cmp_y) + self._sanc_oil(iso) + sec_prog
                          + f'<section class="gsec"><h2>More on {nm}</h2><div class="two"><a class="nepalcard" href="/trade/{iso.lower()}"><span class="fl">{c["flag"]}</span><span><b>{nm}: full trade profile</b> {h["ic"]("right")}</span></a>'
                          f'<a class="nepalcard" href="/trade/sanctions"><span class="fl">🧭</span><span><b>Trade under sanctions: all economies</b> {h["ic"]("right")}</span></a></div>'
                          f'<h3>Other economies</h3><div class="pairgrid">{others}</div></section>'
-                         + h['src_box']('Sources', f'<p>Trade: <b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}. For {nm} the IMF derives every figure from its partners&#39; records. '
-                                        f'Current US dollars, converted at each month&#39;s average exchange rate. Sanctions programmes: as listed by each authority on {self.SANC_DATE}. <a href="/about">About the data</a></p>', f'{first}–{last}'))
+                         + h['src_box']('Sources', f'<p>Trade: <b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.SD_DATE}: every reporting economy&#39;s own record of its trade with {nm}, '
+                                        f'in current US dollars at each month&#39;s average exchange rate. Products: the buyers&#39; own customs offices, named in that section. Oil volumes: <b>JODI</b>. Sanctions programmes: as listed by each authority on {self.SANC_DATE}. <a href="/about">About the data</a></p>', f'{first}–{last}'))
 
     def sanc_hub(self):
         h = self.h; e = h['esc']; L = self.sanc_list(); rows = []
-        for iso in sorted(L, key=lambda c: -self._year_tot(c, self.years_of(c)[-1])[0]):
-            ys = self.years_of(iso); a = self._year_tot(iso, ys[0]); b = self._year_tot(iso, ys[-1]); d = self.year_view(iso, ys[-1])
-            rows.append((f'<a href="{self.sanc_href(iso)}">{self.flag(iso)} {e(self.name(iso))}</a>', self.usd(a[0]), self.usd(b[0]), self._chg(b[0], a[0]), self.usd(b[1]),
-                         self.clink(d['xp'][0][0]) + f' <small>{self.share(d["xp"][0][1], d["x"], 0)}</small>' if d['xp'] else '—'))
-        y0 = self.years_of(L[0])[0]; y1 = self.years_of(L[0])[-1]
+        for iso in sorted(L, key=lambda c: -self._sanc_tot(c, 'x', self._sanc_years(c)[-1])):
+            ys = self._sanc_years(iso); cy, _ = self._sanc_cmp(iso); a = self._sanc_tot(iso, 'x', ys[0]); pk = self._sanc_tot(iso, 'x', cy); b = self._sanc_tot(iso, 'x', ys[-1])
+            top = max(self._sd(iso)['yx'][str(ys[-1])].items(), key=lambda kv: kv[1])
+            rows.append((f'<a href="{self.sanc_href(iso)}">{self.flag(iso)} {e(self.name(iso))}</a>', self.usd(a), f'{self.usd(pk)} <small>{cy}</small>', self.usd(b), self._chg(b, a),
+                         self.clink(top[0]) + f' <small>{self.share(top[1], b, 0)}</small>'))
+        y0 = self._sanc_years(L[0])[0]; y1 = self._sanc_years(L[0])[-1]
         cards = ''.join(f'<a class="nepalcard" href="{self.sanc_href(x)}"><span class="fl">{self.flag(x)}</span><span><b>{e(self.name(x))}</b> — markets and suppliers, {y0} to {y1} {h["ic"]("right")}</span></a>' for x in L)
         return h['main'](h['back']('/trade', 'World rankings') + '<div class="ph"><h1 class="h2">Trade under sanctions</h1>'
-                         f'<p>{len(L)} economies that are named in sanctions programmes and do not report complete trade figures. Their trade is read here from what their partners report.</p></div>'
+                         f'<p>{len(L)} economies that are named in sanctions programmes and do not report complete trade figures. Their trade is read here from what their partners record.</p></div>'
                          f'<p class="ans">When a country does not report its trade, that trade does not disappear from the record: every shipment is also an import or export in someone else&#39;s books. '
-                         f'These pages follow each economy&#39;s recorded exports and imports by partner from {y0} to {y1}, and say plainly what that method misses.</p>'
+                         f'These pages follow each economy&#39;s recorded exports and imports by partner from {y0} to {y1}, year by year and month by month, and say plainly what that method misses.</p>'
                          + self._sanc_caveat('Each of these economies')
-                         + f'<section class="gsec"><h2>Recorded exports, {y0} and {y1}</h2>' + self.table(['Economy', f'Exports {y0}', f'Exports {y1}', 'Change', f'Imports {y1}', f'Largest market {y1}'], rows) + '</section>'
+                         + f'<section class="gsec"><h2>Recorded exports, {y0} to {y1}</h2>' + self.table(['Economy', f'Exports {y0}', 'Comparison year', f'Exports {y1}', f'Change {y0} to {y1}', f'Largest market {y1}'], rows)
+                         + '<p class="fine">Comparison year: the last full year before a stated set of measures where the page gives one, otherwise the year recorded exports were highest.</p></section>'
                          + f'<section class="gsec"><h2>Economy by economy</h2><div class="two">{cards}</div></section>'
                          + '<section class="gsec"><h2>Which economies are here</h2><p class="gk">An economy is included when it is named in a country sanctions programme of the United States Treasury on the retrieval date '
-                         'and the IMF has to derive all of its trade from partner records. It is a statement about the data, not a judgement on any programme. Many other governments and the United Nations run programmes of their own.</p>'
+                         'and does not report complete trade figures to the IMF. It is a statement about the data, not a judgement on any programme. Many other governments and the United Nations run programmes of their own.</p>'
                          f'<p class="fine"><a href="{self.OFAC_URL}" target="_blank" rel="noopener">US Treasury: sanctions programmes ↗</a> · <a href="{self.UN_URL}" target="_blank" rel="noopener">UN Security Council: sanctions committees ↗</a></p></section>'
-                         + h['src_box']('Sources', f'<p>Trade: <b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}; figures derived by the IMF from partner records. '
+                         + h['src_box']('Sources', f'<p>Trade: <b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.SD_DATE}: partners&#39; own records. '
                                         f'Sanctions programmes: as listed by each authority on {self.SANC_DATE}. <a href="/about">About the data</a></p>', f'{y0}–{y1}'))
 
     def product_history(self, code):
@@ -1608,7 +1721,7 @@ a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-chil
 .dvk i{width:14px;height:10px;border-radius:3px}.dvk i.pos{background:var(--exp)}.dvk i.neg{background:var(--imp)}
 .gsec{margin-top:var(--s6);padding-top:var(--s4);border-top:2px solid var(--fg)}.gsec>h2{font-family:var(--f-head);font-size:1.5rem;font-weight:800;margin:0 0 4px;letter-spacing:-.015em}
 .ycs{display:flex;gap:18px;align-items:flex-end;height:190px;margin:26px 0 6px;max-width:560px}
-.ycs.many{max-width:none;gap:12px}@media(max-width:820px){.ycs.many{gap:6px}.ycs.many .ycb i b{display:none}}
+.ycs.many{max-width:none;gap:12px}.ycs.lots{gap:6px}.ycs.lots .ycb i b{display:none}.ycs.lots .yc>span{font-size:.72rem}@media(max-width:820px){.ycs.many{gap:6px}.ycs.many .ycb i b{display:none}}
 .yc{flex:1;display:flex;flex-direction:column;height:100%;min-width:0}.ycb{flex:1;display:flex;gap:2px;align-items:flex-end;border-bottom:1px solid var(--border)}
 .ycb i{flex:1;position:relative;border-radius:4px 4px 0 0;min-width:0}.ycb i.x{background:var(--exp)}.ycb i.m{background:var(--imp)}
 .ycb i b{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);font-style:normal;font-size:.72rem;font-weight:650;color:var(--fg);white-space:nowrap;padding-bottom:2px}
@@ -1641,6 +1754,10 @@ sup.est{color:var(--imp);font-weight:700;cursor:help;margin-left:2px}.ltl .s spa
 .yar{flex:0 0 auto;width:36px;height:36px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:1.25rem;line-height:1;text-decoration:none}
 .yar:hover{background:var(--fg);color:var(--bg);text-decoration:none}.yar.off{opacity:.3}.hb.two i.p{background:var(--muted)}
 @media(max-width:560px){.ysl,.yar{display:none}.ysc a{padding:8px 11px}}
+.sms{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:10px}.smp{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px 8px}
+.smh{font-weight:600;font-size:.95rem}.smh span{display:block;font-weight:400;font-size:.8rem;color:var(--muted);margin-top:2px}.smp svg{display:block;width:100%;height:92px;margin-top:8px;overflow:visible}
+.smp path{fill:none;stroke-width:1.6;vector-effect:non-scaling-stroke}.smp path.lx{stroke:var(--exp)}.smp path.lm{stroke:var(--imp)}.smp line.lg{stroke:var(--border);stroke-width:1;vector-effect:non-scaling-stroke}
+.smx{position:relative;height:16px;font-size:.7rem;color:var(--muted)}.smx span{position:absolute;transform:translateX(-50%)}
 .shs{margin-top:10px}.shr{display:grid;grid-template-columns:minmax(110px,190px) 1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
 .shr>div{display:flex;flex-direction:column;gap:3px}.shr i{display:block;height:9px;border-radius:0 4px 4px 0}.shr i.p{background:var(--muted)}.shr i.x{background:var(--exp)}.shr i.m{background:var(--imp)}
 .shr>b{font-variant-numeric:tabular-nums;font-size:.9rem;white-space:nowrap}@media(max-width:560px){.shr{grid-template-columns:1fr auto}.shr>div{grid-column:1/-1;order:3}}
