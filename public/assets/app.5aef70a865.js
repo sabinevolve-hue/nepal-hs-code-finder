@@ -363,15 +363,20 @@ function renderResults(){
   }
   $('#results').innerHTML = html;
 }
-let tmr;
-$('#q').addEventListener('input', () => { shown = 40; clearTimeout(tmr); tmr = setTimeout(renderResults, 110); });
+let tmr, htmr;
+// Browser Back inside the search page: a search adds ONE history step (its text is kept in the step and updated as you type),
+// so Back clears the search and returns to the start of the page, not to whatever site came before.
+function syncSearchHist(){ try { if (curTab !== 'search') return; const q = $('#q').value.trim(), s = history.state || {}, u = location.pathname + location.search;
+  if (q && !s.cnq && !s.cnd) history.pushState({ cnq: q }, '', u); else if (q && s.cnq && s.cnq !== q) history.replaceState({ cnq: q }, '', u); else if (!q && s.cnq) history.back(); } catch(e){} }
+const queueSearchHist = () => { clearTimeout(htmr); htmr = setTimeout(syncSearchHist, 600); };
+$('#q').addEventListener('input', () => { shown = 40; clearTimeout(tmr); tmr = setTimeout(renderResults, 110); queueSearchHist(); });
 $('#q').addEventListener('keydown', e => { if (e.key === 'Enter'){ $('#q').blur(); remember($('#q').value.trim()); } });
-$('#qclear').addEventListener('click', () => { $('#q').value = ''; renderResults(); $('#q').focus(); });
+$('#qclear').addEventListener('click', () => { $('#q').value = ''; renderResults(); $('#q').focus(); clearTimeout(htmr); syncSearchHist(); });
 // Matches the count line in renderResults(): search() + the duty-band and chapter filters in effect.
 function shownCount(q){ if (lastShown.q === q) return lastShown.n; return search(q).rows.filter(r => passDuty(r) && (!chapF || r.ch === +chapF)).length; }
 const searchLang = q => /[\u0900-\u097F]/.test(q) ? 'ne' : 'en';
 function remember(q){ if (q.length < 2) return; const n = shownCount(q); track('hs_search', { search_term: q.slice(0,80), results: n, zero_results: n === 0, search_lang: searchLang(q) }); const r = store.get('recent', []).filter(x => x.toLowerCase() !== q.toLowerCase()); r.unshift(q); store.set('recent', r.slice(0, 6)); }
-function runQuery(q){ $('#q').value = q; shown = 40; renderResults(); remember(q); window.scrollTo({top:0}); }
+function runQuery(q){ $('#q').value = q; shown = 40; renderResults(); remember(q); window.scrollTo({top:0}); clearTimeout(htmr); syncSearchHist(); }
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.closest('#v-search') || b.closest('#suggest')){
@@ -453,12 +458,20 @@ function openDetail(code, keep){
   $('#sheet').hidden = false; $('#scrim').hidden = false; document.body.style.overflow = 'hidden';
   if (!keep) $('#sh-body').scrollTop = 0;
   if (was) $('#sh-x').focus();
-  try { history.replaceState(null, '', '#hs-' + code); } catch(e){}
+  // Opening the sheet adds a history step so Back closes it; moving between codes inside an open sheet reuses that step.
+  try { clearTimeout(htmr); syncSearchHist();
+        if (was && !detailFromHistory) history.pushState({ cnd: code }, '', '#hs-' + code);
+        else history.replaceState((history.state && history.state.cnd) ? { cnd: code } : history.state, '', '#hs-' + code); } catch(e){}
+}
+let detailFromHistory = false;
+function hideDetail(){
+  $('#sheet').hidden = true; $('#scrim').hidden = true; document.body.style.overflow = ''; curDetail = null;
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 function closeDetail(){
-  $('#sheet').hidden = true; $('#scrim').hidden = true; document.body.style.overflow = ''; curDetail = null;
-  try{ history.replaceState(null, '', '#' + curTab); }catch(e){}
-  if (lastFocus && lastFocus.focus) lastFocus.focus();
+  if (history.state && history.state.cnd){ try { history.back(); return; } catch(e){} }      // the popstate handler hides the sheet
+  hideDetail();
+  try{ history.replaceState(history.state, '', location.pathname + location.search + '#' + curTab); }catch(e){}
 }
 $('#scrim').onclick = closeDetail; $('#sh-x').onclick = closeDetail;
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) closeDetail(); });
@@ -469,7 +482,7 @@ $('#sh-body').addEventListener('click', e => { const b = e.target.closest('butto
   if (b.dataset.code) openDetail(b.dataset.code); });
 $('#sh-save').onclick = () => { let s = store.get('saved', []); const had = s.includes(curDetail); s = had ? s.filter(x => x !== curDetail) : [curDetail, ...s]; store.set('saved', s); openDetail(curDetail, true); toast(had ? 'Removed from saved' : 'Saved'); if (curTab === 'saved') renderSaved(); };
 $('#sh-link').onclick = () => copy(location.href.split('#')[0] + '#hs-' + curDetail, 'Link copied');
-$('#sh-calc').onclick = () => { const c = curDetail; closeDetail(); pickCalc(c); go('calc'); };
+$('#sh-calc').onclick = () => { const c = curDetail; hideDetail(); pickCalc(c); go('calc'); };      // the sheet's history step becomes the calculator's
 function toast(t){ const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(el._t); el._t = setTimeout(() => el.hidden = true, 1800); }
 function copy(text, msg){
   const fb = () => { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast(msg); }catch(e){ toast(text); } ta.remove(); };
@@ -1597,7 +1610,19 @@ try { const uq = new URLSearchParams(location.search).get('q'); if (uq && uq.tri
 const PATHS = { '/':'search','/index.html':'search','/search':'search','/ask-ai':'ai','/trade-data':'stats','/exports':'exports','/imports':'imports','/browse':'browse','/calculator':'calc','/invoice':'invoice','/saved':'saved','/about':'about','/privacy':'privacy' };
 const _pt = PATHS[location.pathname];
 if (_pt && _pt !== 'search') go(_pt, 'init');
-window.addEventListener('popstate', function(){ var t = PATHS[location.pathname]; if (t) go(t, false); });
+window.addEventListener('popstate', function(e){
+  var s = e.state || {}, t = PATHS[location.pathname];
+  if (s.cnd && BY[s.cnd]){ detailFromHistory = true; try { openDetail(s.cnd); } finally { detailFromHistory = false; } return; }      // Forward into a product sheet
+  var hadSheet = !$('#sheet').hidden;
+  if (hadSheet) hideDetail();                                                                                                      // Back out of a product sheet
+  if (t === 'search' && curTab === 'search'){                                                                                       // still on the search page: restore or clear the search
+    var want = s.cnq || '';
+    if ($('#q').value.trim() !== want){ $('#q').value = want; shown = 40; renderResults(); if (!want) window.scrollTo({ top: 0 }); }
+    return;
+  }
+  if (hadSheet && t === curTab) return;                                                                                            // same page underneath: leave it as it was
+  if (t) go(t, false);
+});
 const h = (location.hash || '').slice(1);
 if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
 else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].includes(h)) go(h);
