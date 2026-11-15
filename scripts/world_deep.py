@@ -211,6 +211,85 @@ class Views:
         return (f'<div class="tm {tone}" role="img" aria-label="{e(who)} {verb} by product group, area in proportion to value">{"".join(cells)}</div>'
                 f'<details class="tml"><summary>The same figures as a list</summary><ol>{lst}</ol></details>')
 
+    # ---------- highlights and flow (top of the country profile)
+    def flow_side(self, items, total, tone, mirror, who, verb):
+        """One side of the flow diagram: a bar for the country and ribbons to each partner, widths in proportion to value.
+        items: [(iso or None, value)], largest first, last may be the 'all others' remainder. mirror=True draws partners on the left."""
+        e = self.h['esc']; W, BAR, GAP, LAB = 400.0, 14.0, 10.0, 196.0
+        n = len(items); S = 300.0; scale = S / total if total else 0
+        hs = [max(3.0, v * scale) for _, v in items]
+        slot = [max(hh, 38.0) for hh in hs]                      # room for a two-line label beside each node
+        H = sum(slot) + GAP * (n - 1); src_h = sum(hs)
+        y0 = (H - src_h) / 2.0                                   # the country's bar is centred
+        xs, xn = (W - BAR, LAB) if mirror else (0.0, W - LAB - BAR)       # source bar x, node bar x
+        col = 'var(--imp)' if tone == 'imp' else 'var(--exp)'
+        out = [f'<rect x="{xs:.1f}" y="{y0:.1f}" width="{BAR}" height="{src_h:.1f}" rx="3" fill="{col}"/>']
+        sy = y0; ny = 0.0
+        for (p, v), hh, sl in zip(items, hs, slot):
+            cy = ny + (sl - hh) / 2.0
+            a, b = (xn + BAR, xs) if mirror else (xs + BAR, xn)   # ribbon from a to b
+            mid = (a + b) / 2.0
+            op = '.34' if p else '.16'
+            out.append(f'<path d="M{a:.1f},{(cy if mirror else sy):.1f} C{mid:.1f},{(cy if mirror else sy):.1f} {mid:.1f},{(sy if mirror else cy):.1f} {b:.1f},{(sy if mirror else cy):.1f} '
+                       f'L{b:.1f},{(sy if mirror else cy) + hh:.1f} C{mid:.1f},{(sy if mirror else cy) + hh:.1f} {mid:.1f},{(cy if mirror else sy) + hh:.1f} {a:.1f},{(cy if mirror else sy) + hh:.1f} Z" fill="{col}" opacity="{op}"/>')
+            out.append(f'<rect x="{xn:.1f}" y="{cy:.1f}" width="{BAR}" height="{hh:.1f}" rx="3" fill="{col}"{"" if p else " opacity=\".45\""}/>')
+            name = self.name(p) if p else 'All other partners'
+            tx = (xn - 8) if mirror else (xn + BAR + 8); anc = 'end' if mirror else 'start'
+            lab = (f'<text x="{tx:.1f}" y="{ny + sl / 2.0 - 3:.1f}" text-anchor="{anc}" class="fn">{e(self.h["clip"](name, 22))}</text>'
+                   f'<text x="{tx:.1f}" y="{ny + sl / 2.0 + 14:.1f}" text-anchor="{anc}" class="fv">{self.usd(v)} · {self.share(v, total)}</text>')
+            out.append(f'<a href="/trade/{p.lower()}">{lab}</a>' if p and p in self.h['CBYISO'] else lab)
+            sy += hh; ny += sl + GAP
+        return (f'<svg viewBox="0 0 {W:.0f} {H:.0f}" role="img" aria-label="{e(who)} {verb}: ' + e('; '.join(f'{self.name(p) if p else "all others"} {self.share(v, total)}' for p, v in items)) + f'">{"".join(out)}</svg>')
+
+    def flow(self, iso, d, n=5):
+        nm = self.h['esc'](self.name(iso)); X, M = d['x'], d['m']
+        def side(lst, total):
+            top = [(p, v) for p, v in lst[:n]]; rest = total - sum(v for _, v in top)
+            return top + ([(None, rest)] if rest > total * 0.005 else [])
+        if not d['xp'] or not d['mp']:
+            return ''
+        return (f'<section class="gsec"><h2>Where {nm}&#39;s goods come from, and where they go</h2>'
+                f'<p class="gk">The five largest suppliers and the five largest markets in {self.Y}. Ribbon width is in proportion to value within each side.</p>'
+                f'<div class="flw"><div><b class="flh">Imports from</b>{self.flow_side(side(d["mp"], M), M, "imp", True, self.name(iso), "imports by supplier")}</div>'
+                f'<div class="flc"><span>{self.flag(iso)}</span><b>{nm}</b><i>{self.usd(M)} in</i><i>{self.usd(X)} out</i></div>'
+                f'<div><b class="flh">Exports to</b>{self.flow_side(side(d["xp"], X), X, "exp", False, self.name(iso), "exports by market")}</div></div></section>')
+
+    def highlights(self, iso, d):
+        """Six facts, each with a small graphic. Every figure is read straight from the data; nothing is inferred."""
+        e = self.h['esc']; nm = e(self.name(iso)); X, M = d['x'], d['m']; n = len(self.rank_x); cards = []
+        def bar(pct, tone='x'):
+            return f'<div class="hb"><i class="{tone}" style="width:{max(1.5, min(100.0, pct)):.1f}%"></i></div>'
+        def card(big, text, graphic, tone=''):
+            cards.append(f'<div class="hc {tone}"><b>{big}</b><p>{text}</p>{graphic}</div>')
+        rx = self.rank_x.get(iso)
+        if rx:
+            pos = 100.0 * (rx - 1) / max(n - 1, 1)
+            card(f'#{rx}', f'largest exporter of {n} economies, and #{self.rank_m.get(iso, "–")} importer',
+                 f'<div class="hr"><i style="left:{pos:.1f}%"></i></div><div class="hrl"><span>#1</span><span>#{n}</span></div>')
+        xg = self.groups(d.get('xc') or [])
+        if xg and X:
+            s = 100.0 * xg[0][1] / X
+            card(f'{s:.0f}%', f'of exports are <a href="/trade/product/{self.h["group_slug"](xg[0][0])}">{e(xg[0][0].lower())}</a>, the largest product group', bar(s))
+        if d['xp'] and X:
+            p, v = d['xp'][0]; s = 100.0 * v / X
+            card(f'{s:.0f}%', f'of exports go to {self.clink(p)}, the largest market', bar(s))
+        if len(d['xp']) >= 3 and X:
+            t3 = [100.0 * v / X for _, v in d['xp'][:3]]
+            seg = ''.join(f'<i class="x" style="width:{w:.1f}%"></i>' for w in t3)
+            card(f'{sum(t3):.0f}%', f'of exports go to just three markets, out of {len(d["xp"])}', f'<div class="hb seg">{seg}</div>')
+        if X and M:
+            bal = X - M; cov = 100.0 * X / M
+            card(('+' if bal >= 0 else '−') + self.usd(abs(bal))[1:], f'trade {"surplus" if bal >= 0 else "deficit"}: exports pay for {cov:.0f}% of imports',
+                 f'<div class="hb two"><i class="x" style="width:{100.0 * X / max(X, M):.1f}%"></i><i class="m" style="width:{100.0 * M / max(X, M):.1f}%"></i></div>', 'pos' if bal >= 0 else 'neg')
+        lead = [r for r in d.get('lead') or [] if r[2] == 1]
+        if lead:
+            k, v, r, s = lead[0]; href = self.pc_href(iso, k) or self.h['code_href'](k)
+            card('#1', f'in the world for <a href="{href}">{e(self.pc_short(k, 46).lower())}</a>, with {s:.0f}% of world exports', bar(s))
+        elif d['mp'] and M:
+            p, v = d['mp'][0]; s = 100.0 * v / M
+            card(f'{s:.0f}%', f'of imports come from {self.clink(p)}, the largest supplier', bar(s, 'm'))
+        return f'<div class="hcs">{"".join(cards)}</div>' if cards else ''
+
     def glance(self, X, M):
         mx = max(X, M) or 1
         return (f'<div class="gl"><div class="glr"><span>Exports</span><div><i class="x" style="width:{max(1.0, 100.0 * X / mx):.1f}%"></i></div><b>{self.usd(X)}</b></div>'
@@ -346,9 +425,10 @@ class Views:
                         + (self.table(['Year', 'Exports', 'Imports', 'Balance'], hrows) if hrows else '') + '</section>')
         prod_sec = (f'<section class="gsec"><h2>Products in detail</h2>' + sec_xk + sec_mk + sec_lead + sec_dep + '</section>') if (sec_xk or sec_mk) else ''
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade in {Y}</h1><p>{rk}</p></div>'
-                         + lead + tiles + self.glance(X, M)
+                         + lead + tiles + self.highlights(iso, d)
                          + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
-                         + self.map_block(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs + sec_all + peers + src)
+                         + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
+                         + f'<section class="gsec"><h2>{nm}&#39;s partners on the map</h2>' + self.map_block(iso, d) + sec_all + '</section>' + peers + src)
 
     def peers(self, c):
         known = self.h['CBYISO']
@@ -704,6 +784,22 @@ a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-chil
 .ycb i{flex:1;position:relative;border-radius:4px 4px 0 0;min-width:0}.ycb i.x{background:var(--exp)}.ycb i.m{background:var(--imp)}
 .ycb i b{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);font-style:normal;font-size:.72rem;font-weight:650;color:var(--fg);white-space:nowrap;padding-bottom:2px}
 .yc>span{text-align:center;font-size:.82rem;color:var(--fg-2);padding-top:5px}.rkn{color:var(--muted);font-variant-numeric:tabular-nums}
+.hcs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:var(--s5)}
+.hc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column}
+.hc>b{font-family:var(--f-head);font-weight:800;font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1;letter-spacing:-.02em;color:var(--fg)}
+.hc.pos>b{color:var(--free)}.hc.neg>b{color:var(--hi)}
+.hc>p{margin:6px 0 12px;color:var(--fg-2);font-size:.92rem;line-height:1.4;flex:1}
+.hb{height:10px;border-radius:5px;background:var(--muted-bg);overflow:hidden;display:flex;gap:2px}.hb i{display:block;height:100%}.hb i.x{background:var(--exp)}.hb i.m{background:var(--imp)}
+.hb.two{flex-direction:column;height:22px;background:none;gap:2px}.hb.two i{height:10px;border-radius:0 5px 5px 0}
+.hr{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--exp),var(--muted-bg) 70%)}.hr i{position:absolute;top:-4px;width:4px;height:18px;margin-left:-2px;border-radius:2px;background:var(--fg);box-shadow:0 0 0 2px var(--card)}
+.hrl{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:5px}
+.flw{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:0;align-items:center;margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.flw svg{display:block;width:100%;height:auto}.flw .fn{font-size:15px;font-weight:700;fill:var(--fg)}.flw .fv{font-size:13.5px;fill:var(--muted)}.flw a:hover .fn{fill:var(--accent);text-decoration:underline}
+.flh{display:block;font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:8px}.flw>div:first-child .flh{text-align:left}.flw>div:last-child .flh{text-align:right}
+.flc{display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px 12px;text-align:center;min-width:120px}
+.flc span{font-size:2.2rem;line-height:1}.flc b{font-family:var(--f-head);font-size:1.05rem}.flc i{font-style:normal;font-size:.8rem;color:var(--fg-2);font-variant-numeric:tabular-nums}
+@media(max-width:820px){.hcs{grid-template-columns:repeat(2,minmax(0,1fr))}.flw{grid-template-columns:minmax(0,1fr);gap:14px}.flc{flex-direction:row;justify-content:center;gap:10px;padding:4px;order:-1}.flc span{font-size:1.6rem}.flw>div:last-child .flh{text-align:left}}
+@media(max-width:460px){.hcs{grid-template-columns:minmax(0,1fr)}}
 .gsec>p.ans{margin-top:6px}
 .gsec>p.gk{color:var(--fg-2);margin:0 0 10px;max-width:68ch}.gsec h3{font-size:1rem;margin:22px 0 4px}
 @media(max-width:700px){.tm{aspect-ratio:4/5}.tc.md b{font-size:.68rem;overflow-wrap:anywhere}.tc.lg b{overflow-wrap:anywhere}.tc span{padding:5px 6px}.dvr{grid-template-columns:minmax(0,7em) minmax(0,1fr) 4.6em}.glr{grid-template-columns:4.2em minmax(0,1fr) 4.6em}}
