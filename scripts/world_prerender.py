@@ -961,9 +961,16 @@ OTHER_SITES = ('<p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other
 # own (that would count app pages twice) and cannot attach a section label; use page path in GA for sections.
 # The tag is only loaded on the live hostname, so previews and test runs add no visits.
 GA_ID = 'G-E2HLC62N88'
-GTAG = ("<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+# Google AdSense (Auto ads), account pub-2178461169570588 (sabin.evolve@gmail.com); the subdomain is covered by the
+# customsnepal.com site entry in AdSense. The meta tag is what AdSense verifies; the script, like the Google tag,
+# loads only on the live hostname. world/ads.txt is a hand-placed static file. The CSP below lists the ad hosts.
+ADS_PUB = 'ca-pub-2178461169570588'
+GTAG = ("<meta name=\"google-adsense-account\" content=\"%s\">"
+        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
         "if(location.hostname==='world.customsnepal.com'){var g=document.createElement('script');g.async=true;"
-        "g.src='https://www.googletagmanager.com/gtag/js?id=%s';document.head.appendChild(g);gtag('js',new Date());gtag('config','%s');}</script>" % (GA_ID, GA_ID))
+        "g.src='https://www.googletagmanager.com/gtag/js?id=%s';document.head.appendChild(g);gtag('js',new Date());gtag('config','%s');"
+        "var a=document.createElement('script');a.async=true;a.crossOrigin='anonymous';"
+        "a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=%s';document.head.appendChild(a);}</script>" % (ADS_PUB, GA_ID, GA_ID, ADS_PUB))
 
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''
@@ -1045,8 +1052,12 @@ def write_assets():
     return names
 
 # Pages use inline scripts and styles (each page is one self-contained file) and Google Analytics; everything else is same-origin.
-CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; "
-       "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com; "
+# ADS_HOSTS: what Google AdSense loads scripts from, calls and frames (ads render in Google's iframes).
+ADS_HOSTS = ("https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com https://*.gstatic.com "
+             "https://*.adtrafficquality.google https://fundingchoicesmessages.google.com")
+CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com " + ADS_HOSTS + "; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; "
+       "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net " + ADS_HOSTS + "; "
+       "frame-src 'self' " + ADS_HOSTS + "; "
        "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'")
 
 def write_vercel_json():
@@ -1077,7 +1088,7 @@ def write_vercel_json():
             {'source': '/reports/(.*)', 'headers': [{'key': 'X-Robots-Tag', 'value': 'noindex'}, {'key': 'Cache-Control', 'value': 'public, max-age=86400'}]},
             {'source': '/data/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'},
                                                  {'key': 'X-Robots-Tag', 'value': 'noindex'}]},
-            {'source': '/(llms\\.txt|robots\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
+            {'source': '/(llms\\.txt|robots\\.txt|ads\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
                                                                 {'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             # IndexNow ownership key (<32 hex>.txt, hand-placed, see scripts/indexnow_submit.py) — plain text, short cache
             {'source': '/([0-9a-f]{32}\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
