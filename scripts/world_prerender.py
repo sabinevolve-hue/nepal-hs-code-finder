@@ -624,6 +624,8 @@ def crumbs_for(p):
         g = next(x for x in PGROUPS if group_slug(x[0]) == m[1]); cr += [('Trade', '/trade'), (g[0], p)]
     elif (m := re.match(r'^/trade/([a-z]{3})$', p)):
         cr += [('Trade', '/trade'), (iso_name(m[1].upper()), p)]
+    elif p == '/about':
+        cr.append(('About', p))
     elif p == '/trade/pairs':
         cr += [('Trade', '/trade'), ('Country pairs', p)]
     elif p == '/trade/region/south-asia':
@@ -665,10 +667,10 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP)))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY))
 
 STATIC_PARTS = {'countries', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
-STATIC_PATHS = {'/'}
+STATIC_PATHS = {'/', '/about'}
 
 # ---------------------------------------------------------------- route table
 def routes():
@@ -734,6 +736,7 @@ def routes():
                [dataset('South Asia (SAARC) merchandise trade ' + str(DV.Y), d, {'@type': 'Place', 'name': 'South Asia'}, str(DV.Y),
                         'https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37', ['SAARC trade', 'South Asia trade', 'intra-regional trade'])], 'regions')
         d = f'{len(DV.pair_keys())} country pairs: what each country sells the other, both directions, with the top products each way ({DV.Y}).'
+        yield ('/about', '', 'About World Trade Data: Goal, Sources and Method', 'What World Trade Data is for, where every figure comes from (BACI, IMF, World Bank, Eurostat and national customs offices), how currencies are converted and how to read the numbers.', DV.about(), 'AboutPage', [], 'hubs')
         yield ('/trade/pairs', 'pairs', f'Bilateral Trade by Country Pair, {DV.Y}: {len(DV.pair_keys()):,} Pairs', d, DV.pairs_index(), 'CollectionPage', [], 'regions')
         for key in DV.pair_keys():
             a_, b_ = key.split('-'); d = DV.pair_desc(a_, b_)
@@ -817,14 +820,17 @@ def site_footer():
                 + '<a class="sf-more" href="/trade/pairs">All pairs</a></p></div>')
     return ('<footer class="sf"><div class="sf-in"><div class="sf-trust">' + ''.join(f'<div><span aria-hidden="true">{i}</span><b>{esc(b)}</b><small>{esc(s)}</small></div>' for i, b, s in trust) + '</div>'
             f'<div class="sf-grid"><div class="sf-brand"><a class="sf-logo" href="/"><span class="mark">{MARK}</span>World Trade Data</a>'
-            '<p>Who sells what to whom: the trade of every economy and every product, read from reconciled UN data.</p>'
+            '<p>A free reference to what every country sells and buys, and with whom, built only from published official statistics.</p>'
             '<p><a href="mailto:info@customsnepal.com">info@customsnepal.com</a></p>'
             '<form class="sf-track" role="search" aria-label="Search HS codes" action="/hs" method="get"><input name="q" type="search" autocomplete="off" placeholder="Search a product or HS code" aria-label="Search HS codes"><button type="submit">Search</button></form></div>'
             + cols + '</div>'
             f'<div class="sf-pop"><div><h2>Trade profiles</h2><p>{pop1}</p></div>{pop2}</div>'
-            '<div class="sf-src"><p>HS nomenclature © World Customs Organization. Bilateral and product trade: BACI (CEPII), reconciled from UN Comtrade. Long-run totals: World Bank. '
-            'An independent reference, not affiliated with any government, the WCO or the UN.</p></div>'
-            '<div class="sf-bot"><p class="other-sites">World Trade Data is published by the team behind <a href="https://www.customsnepal.com/">customsnepal.com</a> and <a href="https://nepalpublicdata.com/">nepalpublicdata.com</a>.</p></div></div></footer>')
+            '<div class="sf-src"><p><b>Where the figures come from.</b> Partners and products for 2024: BACI by CEPII, reconciled from UN Comtrade. '
+            'The latest year and the current year: the International Monetary Fund&#39;s trade-by-partner database, which carries each economy&#39;s own customs figures. Long-run totals: World Bank. '
+            'Latest product detail: Eurostat for EU members, HM Revenue &amp; Customs for the United Kingdom, and Brazil&#39;s trade ministry. Product names and codes: the Harmonized System, © World Customs Organization. '
+            'All values are in current US dollars; each page names its source and year. <a href="/about">About the data and method</a></p></div>'
+            '<div class="sf-bot"><p class="other-sites">World Trade Data is an independent reference published by Evolve Tech Pvt. Ltd. It is not affiliated with any government, CEPII, the IMF, Eurostat, the WCO or the United Nations. '
+            'Also from the publisher: <a href="https://www.customsnepal.com/">customsnepal.com</a> and <a href="https://nepalpublicdata.com/">nepalpublicdata.com</a>.</p></div></div></footer>')
 
 # "Our other sites": the Nepal-data cluster siblings (AI-search / site-network spec) — plain followed links whose anchor is
 # the site's role + domain. Same wording as OTHER_SITES in scripts/nav.py (main site). No links to unrelated sites.
@@ -926,6 +932,7 @@ def write_vercel_json():
                         {'source': '/world/:path*', 'destination': '/:path*', 'permanent': True}],
         'headers': [
             {'source': '/assets/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]},
+            {'source': '/reports/(.*)', 'headers': [{'key': 'X-Robots-Tag', 'value': 'noindex'}, {'key': 'Cache-Control', 'value': 'public, max-age=86400'}]},
             {'source': '/data/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'},
                                                  {'key': 'X-Robots-Tag', 'value': 'noindex'}]},
             {'source': '/(llms\\.txt|robots\\.txt)', 'headers': [{'key': 'Content-Type', 'value': 'text/plain; charset=utf-8'},
@@ -983,6 +990,13 @@ def main_build():
         total_bytes += len(doc.encode('utf-8')); n += 1
         entries.append((p, lm, part))
     (W / '404.html').write_text(page_404(assets['css']), encoding='utf-8')
+    bdir = ROOT / 'build' / 'briefs'; shutil.rmtree(bdir, ignore_errors=True); bdir.mkdir(parents=True)
+    if DV:
+        for c in COUNTRIES:
+            if DV.has(c['iso']):
+                (bdir / (c['iso'].lower() + '.html')).write_text(
+                    f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>{esc(c["name"])}: trade brief | World Trade Data</title>'
+                    f'<link rel="stylesheet" href="{assets["css"]}"><style>{world_deep.BRIEF_CSS}</style></head><body class="brief">{DV.brief(c)}</body></html>', encoding='utf-8')
     LASTMOD_FILE.write_text(json.dumps(new_lastmod, separators=(',', ':'), sort_keys=True) + '\n', encoding='utf-8')
     counts = write_sitemaps(entries)
     nred = write_vercel_json()
