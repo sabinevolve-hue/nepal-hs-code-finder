@@ -237,7 +237,7 @@ function runSearch(qv){
   res.innerHTML=hits.map(s=>rowHTML(s)).join('');
 }
 function fmtCode(c){ return c.slice(0,4)+'.'+c.slice(4,6); }
-function dutyChip(s){ const np=s[3]; if(!np||np.g==null)return ''; const g=np.g; const txt=Array.isArray(g)?g[0]+'–'+g[1]+'%':(g===0?'Free':g+'%'); return `<span class="chip dutychip">NP ${txt}</span>`; }
+function dutyChip(s){ return '';   /* global site: no single country's duty tag */ const np=s[3]; if(!np||np.g==null)return ''; const g=np.g; const txt=Array.isArray(g)?g[0]+'–'+g[1]+'%':(g===0?'Free':g+'%'); return `<span class="chip dutychip">NP ${txt}</span>`; }
 function rowHTML(s){ return `<a class="row" href="${BASE}/hs/code/${s[0]}" data-nav><span class="code">${fmtCode(s[0])}</span><span class="d">${esc(s[1])}</span><span class="end">${dutyChip(s)} ${ic(I.right)}</span></a>`; }
 
 function hsChapter(ch){
