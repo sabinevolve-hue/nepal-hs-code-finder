@@ -233,7 +233,7 @@ def v_home():
     strip = ''.join(
         f'<a class="ws-s{" sm" if v / world < 0.035 else ""}" href="/trade/{c.lower()}" style="flex-grow:{v / world * 1000:.0f}" title="{e(CBYISO[c]["name"])}: {money(v * 1000.0)}, {100.0 * v / world:.1f}% of world exports">'
         f'<span>{CBYISO[c]["flag"]}</span><b>{e(CBYISO[c]["name"])}</b><i>{100.0 * v / world:.1f}%</i></a>' for c, v in seg)
-    strip += f'<a class="ws-s ws-r" href="/trade" style="flex-grow:{rest / world * 1000:.0f}"><b>{len(COUNTRIES) - len(seg)} other economies</b><i>{100.0 * rest / world:.0f}%</i></a>'
+    strip += f'<a class="ws-s ws-r" href="/trade" aria-label="{len(COUNTRIES) - len(seg)} other economies, {100.0 * rest / world:.0f}% of world exports" style="flex-grow:{rest / world * 1000:.0f}"><b>{len(COUNTRIES) - len(seg)} other economies</b><i>{100.0 * rest / world:.0f}%</i></a>'
     legend = ''.join(f'<li><a href="/trade/{c.lower()}">{CBYISO[c]["flag"]} {e(CBYISO[c]["name"])}</a><span>{money(v * 1000.0)}</span><i>{100.0 * v / world:.1f}%</i></li>' for c, v in seg)
 
     def col(title, sub, rows, more_href, more):
@@ -294,7 +294,7 @@ def v_home():
           'q.addEventListener("keydown",function(e){if(e.key==="Escape")s.hidden=true});'
           'f.addEventListener("submit",function(e){var v=q.value.trim().toLowerCase(),m=match(v);if(m.length&&m[0][0].toLowerCase()===v){e.preventDefault();location.href="/trade/"+m[0][1]}});})();</script>')
     body = (f'<section class="wstrip"><h2>{money(world * 1000.0)} of goods {'were exported' if ly else 'crossed a border'} in {yr}. This is who exported them.</h2>'
-            f'<div class="ws" role="img" aria-label="Share of world exports by economy">{strip}</div><ol class="wsl">{legend}</ol>'
+            f'<div class="ws" role="group" aria-label="Share of world exports by economy">{strip}</div><ol class="wsl">{legend}</ol>'
             f'<p class="fine">Each segment is drawn to its share of world exports. The largest importer was {DV.clink(imps[0][0])} ({money(imps[0][1] * 1000.0)}), then {DV.clink(imps[1][0])} and {DV.clink(imps[2][0])}.</p></section>'
             + DV.home_latest()
             + f'<div class="wcols">{cols}</div>'
@@ -1044,6 +1044,11 @@ def write_assets():
     (W / 'favicon.svg').write_text((SRC / 'favicon.svg').read_text(encoding='utf-8'), encoding='utf-8')
     return names
 
+# Pages use inline scripts and styles (each page is one self-contained file) and Google Analytics; everything else is same-origin.
+CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; "
+       "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.g.doubleclick.net https://*.google.com; "
+       "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'")
+
 def write_vercel_json():
     # GENERATED file (vercel.json allows no comment keys): every public route is a prerendered static file;
     # anything else falls through to Vercel's static 404 handling, which serves 404.html with a real 404 status.
@@ -1079,7 +1084,10 @@ def write_vercel_json():
                                                           {'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             {'source': '/(sitemap.*\\.xml)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=3600, must-revalidate'}]},
             {'source': '/(.*)', 'headers': [{'key': 'X-Content-Type-Options', 'value': 'nosniff'},
-                                            {'key': 'Referrer-Policy', 'value': 'strict-origin-when-cross-origin'}]}]}
+                                            {'key': 'Referrer-Policy', 'value': 'strict-origin-when-cross-origin'},
+                                            {'key': 'X-Frame-Options', 'value': 'SAMEORIGIN'},
+                                            {'key': 'Permissions-Policy', 'value': 'camera=(), microphone=(), geolocation=(), payment=()'},
+                                            {'key': 'Content-Security-Policy', 'value': CSP}]}]}
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
