@@ -92,9 +92,9 @@ LD_JSON = json.dumps(LD, ensure_ascii=False).replace('</', '<\\/')
 # Analytics (Google Analytics 4 + Vercel Web Analytics). Guarded to the live domain only, so the
 # standalone artifact/preview copy and local file:// never load trackers or send phantom data.
 ANALYTICS = (
-    "<meta name=\"google-adsense-account\" content=\"ca-pub-8252183738521459\"><script>(function(){var h=location.hostname;"
+    "<meta name=\"google-adsense-account\" content=\"ca-pub-2178461169570588\"><script>(function(){var h=location.hostname;"
     "if(h.indexOf('customsnepal.com')<0&&h.indexOf('vercel.app')<0)return;"
-    "if(/(^|\\.)customsnepal\\.com$/.test(h)&&h.indexOf('world.')!==0){var a=document.createElement('script');a.async=true;a.crossOrigin='anonymous';a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8252183738521459';document.head.appendChild(a);}"
+    "if(/(^|\\.)customsnepal\\.com$/.test(h)&&h.indexOf('world.')!==0){var a=document.createElement('script');a.async=true;a.crossOrigin='anonymous';a.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2178461169570588';document.head.appendChild(a);}"
     "var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV';document.head.appendChild(g);"
     "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-T1FQWWL2VV',{content_group:location.pathname.split('/')[1]||'home'});"
     "var v=document.createElement('script');v.defer=true;v.src='/_vercel/insights/script.js';document.head.appendChild(v);"
