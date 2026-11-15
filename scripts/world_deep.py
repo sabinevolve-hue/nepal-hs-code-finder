@@ -47,6 +47,8 @@ class Views:
         self.SD = sj.get('countries', {}); self.SD_DATE = sj.get('fetched', '')
         hf = ROOT / 'data' / 'world' / 'headings.json'
         self.HD = json.loads(hf.read_text(encoding='utf-8'))['headings'] if hf.exists() else {}
+        of = ROOT / 'data' / 'world' / 'opps.json'
+        self.OP = json.loads(of.read_text(encoding='utf-8')) if of.exists() else {}
         # product detail for the latest periods, from national sources (same record shape in every file)
         self.PL = {}
         f = ROOT / 'data' / 'world' / 'eu_products.json'
@@ -102,7 +104,8 @@ class Views:
 
     def prod(self, code, n=62):
         e = self.h['esc']
-        return f'<a href="{self.h["code_href"](code)}">{e(self.h["clip"](self.h["hs_desc"](code), n))}</a> <small class="hsc">{self.h["fmt_code"](code)}</small>'
+        lab = e(self.h["clip"](self.h["hs_desc"](code), n))      # a few BACI codes (271000) have no page of their own: show the name without a link
+        return (f'<a href="{self.h["code_href"](code)}">{lab}</a>' if self.h['has_code'](code) else lab) + f' <small class="hsc">{self.h["fmt_code"](code)}</small>'
 
     def barlist(self, rows, color):
         """rows: [(label_html, value_k, right_html)]"""
@@ -368,7 +371,7 @@ class Views:
         return (f'<section class="wstrip"><h2>The latest: {full} and {cur or full + 1} so far</h2>'
                 + self.table(heads, rows)
                 + f'<p class="fine">Each economy&#39;s own customs figures in US dollars, from the International Monetary Fund&#39;s trade-by-partner database (retrieved {self.IM_DATE}). '
-                f'Every country profile has its {full} and {cur or full + 1} figures by partner, and yearly totals back to 2000. <a href="/trade">Rankings for all economies</a> · <a href="/trade/latest">What changed this year</a> · <a href="/compare">Compare countries</a></p></section>')
+                f'Every country profile has its {full} and {cur or full + 1} figures by partner, and yearly totals back to 2000. <a href="/trade">Rankings for all economies</a> · <a href="/trade/latest">What changed this year</a> · <a href="/compare">Compare countries</a> · <a href="/opportunities">Market opportunities</a></p></section>')
 
     # ---------- PDF trade brief and the About page
     def brief_href(self, iso):
@@ -767,6 +770,7 @@ class Views:
                              + (f'<p class="pdfl"><a href="{self.brief_href(iso)}" download>Download the {nm} trade brief (PDF)</a> <span>Key figures, partners, products and history on a few pages, free to share.</span></p>' if iso in self.C else '')
                              + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
                              + (f'<p class="fine" style="margin-top:10px"><a href="{cmp_[0]}">Compare {nm} with {e(cmp_[1][0])} and {e(cmp_[1][1])}</a></p>' if cmp_ else '')
+                             + (f'<p class="fine"><a href="{self.copp_href(iso)}">Export markets with rising demand for {nm}</a></p>' if self.copp_ok(iso) else '')
                              + self.latest(iso) + self.flow(iso, d) + sec_bal + sec_map + self.latest_products(iso) + prod + sec_time + sec_pairs + (self.peers(c) if iso in self.C else '') + src)
         return h['main'](top + tiles + self.highlights(iso, d) + self.flow(iso, d) + sec_p + sec_bal + sec_map + prod + sec_time + src)
 
@@ -813,7 +817,7 @@ class Views:
                          + (f'<th class=r>Exports {span}</th>' if span else '') + f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
                          f'<p class="fine">{self.EST} Not yet reported by the economy for some or all of {y}; derived by the IMF from its partners&#39; records. Imports include freight and insurance and exports do not, so the two world totals differ.</p></section>'
                          f'<section class="gsec"><h2>More ways in</h2><div class="two"><a class="nepalcard" href="/trade/pairs"><span class="fl">🤝</span><span><b>Country pairs</b> {h["ic"]("right")}</span></a></div>'
-                         f'<h3>By region</h3>{self.region_nav()}<h3>By theme</h3><div class="pairgrid"><a href="/trade/latest">What changed this year</a><a href="/compare">Compare countries</a><a href="/trade/sanctions">Trade under sanctions</a></div><h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
+                         f'<h3>By region</h3>{self.region_nav()}<h3>By theme</h3><div class="pairgrid"><a href="/trade/latest">What changed this year</a><a href="/compare">Compare countries</a><a href="/opportunities">Market opportunities</a><a href="/trade/sanctions">Trade under sanctions</a></div><h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
                          + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars, '
                                         f'converted at the average exchange rate of each month. Each economy&#39;s page has every year back to 2019. <a href="/about">About the data</a></p>', str(y)) + js)
 
@@ -1269,7 +1273,7 @@ class Views:
                       f'<span class="vl">{self.usd(v)}' + (f' <small>{self._chg(v, prevv)}</small>' if prevv else '') + '</span></div>'); prevv = v
         kids = [(k, v) for k, v in d['k'] if h['has_code'](k)]
         ktab = self.table(['Product', 'World trade', 'Share of the heading'], [(self.prod(k), self.usd(v), self.share(v, w)) for k, v in kids]) if kids else ''
-        return h['main'](h['back'](f'/hs/chapter/{ch}', f'Chapter {ch}') + f'<div class="ph"><h1 class="h2">{nm}: largest exporters and importers, {Y}</h1><p>HS heading {h4[:2]}.{h4[2:]}: {full}</p></div>'
+        return h['main'](h['back'](f'/hs/chapter/{ch}', f'Chapter {ch}') + f'<div class="ph"><h1 class="h2">{nm}: largest exporters and importers, {Y}</h1><p>HS heading {h4[:2]}.{h4[2:]}: {full}</p>' + (f'<p class="fine"><a href="{self.opp_href(h4)}">Where imports of {nm.lower()} grew, {self.OP["y0"]} to {self.OP["y1"]}</a></p>' if self.opp_ok(h4) else '') + '</div>'
                          + lead
                          + '<section class="gsec"><h2>On the map</h2>' + self.map_tabs('h' + h4, [('Exporters', self._map(None, d['x'], w, 'world exports')), ('Importers', self._map(None, d['m'], w, 'world imports'))], '',
                                                                                     'Shade shows each economy&#39;s share of world exports or imports of this heading. Hover or tap for the figure.') + '</section>'
@@ -1279,6 +1283,103 @@ class Views:
                          + (f'<section class="gsec"><h2>Products inside heading {h4[:2]}.{h4[2:]}</h2>{ktab}<p class="fine">Each product page lists its own exporters and importers.</p></section>' if ktab else '')
                          + h['src_box']('Source', f'<p><b>BACI</b> (CEPII), reconciled from what exporters and importers reported to UN Comtrade, HS 2022, current US dollars. Shares are of world trade in the heading. '
                                         f'{Y} is the newest year with product detail for every economy. <a href="/about">About the data</a></p>', str(Y)))
+
+    # ------------------------------------------------------------ where import demand moved (BACI, oldest vs newest year)
+    def _dchg(self, a, b):
+        return ('+' if a >= b else '−') + self.usd(abs(a - b))
+
+    def opp_ok(self, h4):
+        return h4 in self.OP.get('headings', {}) and self.heading_ok(h4) and bool(self.OP['headings'][h4]['g'])
+
+    def opp_href(self, h4):
+        return f'/opportunities/product/{h4}'
+
+    def copp_ok(self, iso):
+        return iso in self.OP.get('c', {}) and iso in self.h['CBYISO'] and iso in self.h['SLUG'] and any(self.opp_ok(r[0]) for r in self.OP['c'][iso])
+
+    def copp_href(self, iso):
+        return '/opportunities/' + self.h['SLUG'][iso]
+
+    def opp_title(self, h4):
+        return f'{self.heading_name(h4, 30)}: Growing Import Markets {self.OP["y0"]}–{self.OP["y1"]}'
+
+    def opp_desc(self, h4):
+        d = self.OP['headings'][h4]; g = d['g'][0]
+        return (f'Which countries bought more {self.heading_name(h4).lower()} between {self.OP["y0"]} and {self.OP["y1"]}: imports into {self.name(g[0])} rose by {self.usd(g[2] - g[1])}. '
+                'The markets that grew most, who supplies them, and the exporters that gained.')
+
+    _OPP_NOTE = ('<section class="gsec"><h2>How to read this page</h2><p>These are recorded trade values, not forecasts. A rise in imports shows that a market bought more in dollar terms; it can reflect higher prices as well as larger volumes, '
+                 'and it says nothing about tariffs, standards, licences or demand next year. Check the importing country&#39;s rules and current prices before acting on any figure here.</p></section>')
+
+    def _opp_src(self):
+        return self.h['src_box']('Source', f'<p><b>BACI</b> (CEPII), reconciled from what exporters and importers reported to UN Comtrade, HS 2022, current US dollars. '
+                                 f'Changes compare {self.OP["y0"]} with {self.OP["y1"]}, the oldest and newest years in the current release. Markets below {self.usd(self.OP["floor"])} of imports are left out. '
+                                 f'<a href="/about">About the data</a></p>', str(self.OP['y1']))
+
+    def opp(self, h4):
+        h = self.h; d = self.OP['headings'][h4]; y0, y1 = self.OP['y0'], self.OP['y1']; nm = h['esc'](self.heading_name(h4)); low = nm.lower()
+        known = h['CBYISO']; ok = lambda c: c in known
+        g = [r for r in d['g'] if ok(r[0])]; f = [r for r in d['f'] if ok(r[0])]; dn = [r for r in d['d'] if ok(r[0])]; xg = [r for r in d['xg'] if ok(r[0])]
+        sup = lambda r: ', '.join(f'{self.flag(c)} {h["esc"](self.name(c))} {self.share(v, r[2], 0)}' for c, v in r[3])
+        lead = (f'<p class="ans">World trade in {low} went from <b>{self.usd(d["w"][0])}</b> in {y0} to <b>{self.usd(d["w"][1])}</b> in {y1} ({self._chg(d["w"][1], d["w"][0])}). '
+                f'Imports rose most in {self.clink(g[0][0])}, by {self.usd(g[0][2] - g[0][1])}'
+                + (f', followed by {self.clink(g[1][0])} and {self.clink(g[2][0])}.' if len(g) > 2 else '.') + '</p>')
+        row3 = lambda r: (self.clink(r[0]), self.usd(r[1]) if r[1] else '—', self.usd(r[2]), self._dchg(r[2], r[1]), self._chg(r[2], r[1]))
+        return h['main'](h['back']('/opportunities', 'Market opportunities') + f'<div class="ph"><h1 class="h2">{nm}: where imports grew, {y0} to {y1}</h1>'
+                         f'<p>HS heading {h4[:2]}.{h4[2:]}. Which markets bought more, who supplies them now, and which exporters gained. <a href="/hs/heading/{h4}">Largest exporters and importers of {low}</a></p></div>'
+                         + lead
+                         + f'<section class="gsec"><h2>Markets where imports of {low} rose most</h2><p class="gk">Ranked by the rise in dollars, {y0} to {y1}. The last column shows the three largest suppliers of each market in {y1} and their share of it.</p>'
+                         + self.table(['Importing market', str(y0), str(y1), 'Change', '%', f'Largest suppliers, {y1}'], [row3(r) + (sup(r),) for r in g], 'opp') + '</section>'
+                         + (f'<section class="gsec"><h2>Fastest-growing markets in per cent</h2><p class="gk">Markets that already imported at least {self.usd(self.OP["floor"])} in {y0}.</p>'
+                            + self.table(['Importing market', str(y0), str(y1), 'Change', '%'], [row3(r) for r in f]) + '</section>' if f else '')
+                         + (f'<section class="gsec"><h2>Markets where imports fell most</h2>' + self.table(['Importing market', str(y0), str(y1), 'Change', '%'], [row3(r) for r in dn]) + '</section>' if dn else '')
+                         + (f'<section class="gsec"><h2>Exporters of {low} that gained most</h2><p class="gk">Ranked by the rise in export value, {y0} to {y1}.</p>'
+                            + self.table(['Exporter', str(y0), str(y1), 'Change', '%'], [row3(r) for r in xg]) + '</section>' if xg else '')
+                         + self._OPP_NOTE + self._opp_src())
+
+    def copp_title(self, iso):
+        return f'{self.name(iso)}: Export Markets With Rising Demand {self.OP["y0"]}–{self.OP["y1"]}'
+
+    def copp_desc(self, iso):
+        rs = [r for r in self.OP['c'][iso] if self.opp_ok(r[0])]
+        return (f'For {self.name(iso)}&#39;s largest export products, the markets whose imports rose between {self.OP["y0"]} and {self.OP["y1"]} and where its share is below its share of world exports. '
+                f'{len(rs)} products, led by {self.heading_name(rs[0][0]).lower()}.').replace('&#39;', "'")
+
+    def copp(self, iso):
+        h = self.h; e = h['esc']; y0, y1 = self.OP['y0'], self.OP['y1']; nm = e(self.name(iso)); known = h['CBYISO']
+        rs = [r for r in self.OP['c'][iso] if self.opp_ok(r[0])]
+        secs = ''
+        for h4, v, ws, mk in rs:
+            hn = e(self.heading_name(h4)); mk = [m for m in mk if m[0] in known]
+            if not mk:
+                continue
+            rows = [(self.clink(m[0]), self.usd(m[1]) if m[1] else '—', self.usd(m[2]), self._dchg(m[2], m[1]), self.usd(m[3]) if m[3] else '—', self.share(m[3], m[2])) for m in mk]
+            secs += (f'<section class="gsec"><h2>{hn}</h2><p class="gk">{nm} exported {self.usd(v)} of {hn.lower()} in {y1}, {ws:.1f}% of world exports. '
+                     f'In each market below its share is smaller than that. <a href="{self.opp_href(h4)}">All growing markets for {hn.lower()}</a></p>'
+                     + self.table(['Importing market', f'Imports {y0}', f'Imports {y1}', 'Change', f'From {nm}, {y1}', f'{nm}&#39;s share'], rows, 'opp') + '</section>')
+        return h['main'](h['back']('/opportunities', 'Market opportunities') + f'<div class="ph"><h1 class="h2">{self.flag(iso)} {nm}: export markets with rising demand, {y0} to {y1}</h1>'
+                         f'<p>For the products {nm} already exports at scale, the markets that bought more from the world and where {nm} holds a smaller share than it does worldwide. <a href="/trade/{iso.lower()}">{nm} trade profile</a></p></div>'
+                         + f'<p class="ans">{len(rs)} of the 200 most-traded product headings are ones where {nm} supplies at least 1% of world exports. For each, the table lists up to four markets whose imports rose by at least $20M.</p>'
+                         + secs + self._OPP_NOTE + self._opp_src())
+
+    def opp_hub(self):
+        h = self.h; e = h['esc']; y0, y1 = self.OP['y0'], self.OP['y1']
+        hs = sorted([x for x in self.OP['headings'] if self.opp_ok(x)], key=lambda x: -self.OP['headings'][x]['w'][1])
+        cs = sorted([c for c in self.OP['c'] if self.copp_ok(c)], key=lambda c: self.name(c))
+        bych = {}
+        for x in sorted(hs):
+            bych.setdefault(x[:2], []).append(x)
+        prod = ''.join(f'<h3>Chapter {ch}: {e(h["clip"](h["CHNAME"](ch), 70))}</h3><div class="pairgrid">' + ''.join(f'<a href="{self.opp_href(x)}">{e(self.heading_name(x, 40))}</a>' for x in xs) + '</div>' for ch, xs in bych.items())
+        big = self.table(['Product', f'World trade {y1}', f'Change on {y0}', 'Market that grew most'],
+                         [(f'<a href="{self.opp_href(x)}">{e(self.heading_name(x, 48))}</a>', self.usd(self.OP['headings'][x]['w'][1]), self._chg(self.OP['headings'][x]['w'][1], self.OP['headings'][x]['w'][0]),
+                           next((self.clink(r[0]) + f' <small>{self._dchg(r[2], r[1])}</small>' for r in self.OP['headings'][x]['g'] if r[0] in h['CBYISO']), '—')) for x in hs[:25]])
+        return h['main'](h['back']('/trade', 'World rankings') + f'<div class="ph"><h1 class="h2">Market opportunities: where import demand grew, {y0} to {y1}</h1>'
+                         f'<p>For the {len(hs)} most-traded product headings: which countries bought more, who supplies them, and which exporters gained. For {len(cs)} exporting economies: the growing markets where their share is still small.</p></div>'
+                         f'<section class="gsec"><h2>The 25 largest products</h2>{big}</section>'
+                         f'<section class="gsec"><h2>By exporting country</h2><p class="gk">Pick an economy to see, for its main export products, the markets with rising imports where it is under-represented.</p><div class="pairgrid">'
+                         + ''.join(f'<a href="{self.copp_href(c)}">{self.flag(c)} {e(self.name(c))}</a>' for c in cs) + '</div></section>'
+                         f'<section class="gsec"><h2>All {len(hs)} products, by HS chapter</h2>{prod}</section>'
+                         + self._OPP_NOTE + self._opp_src())
 
     def changes_title(self):
         I = next((self.IM[c] for c in self.IM if self.IM[c].get('cur')), None)

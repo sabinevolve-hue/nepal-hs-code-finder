@@ -651,6 +651,12 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('Compare countries', p)]
     elif p == '/trade/latest':
         cr += [('Trade', '/trade'), ('What changed', p)]
+    elif p == '/opportunities':
+        cr += [('Trade', '/trade'), ('Market opportunities', p)]
+    elif (m := re.match(r'^/opportunities/product/(\d{4})$', p)):
+        cr += [('Trade', '/trade'), ('Market opportunities', '/opportunities'), (DV.heading_name(m[1], 40), p)]
+    elif (m := re.match(r'^/opportunities/([a-z-]+)$', p)):
+        cr += [('Trade', '/trade'), ('Market opportunities', '/opportunities'), (iso_name(next(k for k, v in world_urls.SLUG.items() if v == m[1])), p)]
     elif (m := re.match(r'^/hs/heading/(\d{4})$', p)):
         cr += [('HS Codes', '/hs'), (f'Chapter {m[1][:2]} — {CH[m[1][:2]][1]}', f'/hs/chapter/{m[1][:2]}'), (f'{m[1][:2]}.{m[1][2:]}', p)]
     elif p == '/trade/sanctions':
@@ -701,9 +707,9 @@ def init_deep():
     global DV
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href, SLUG=world_urls.SLUG, HEADINGS=HEADINGS))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href, SLUG=world_urls.SLUG, HEADINGS=HEADINGS, CHNAME=lambda ch: CH[ch][1]))
 
-STATIC_PARTS = {'countries', 'country-years', 'topics', 'hs-headings', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
+STATIC_PARTS = {'opportunities', 'countries', 'country-years', 'topics', 'hs-headings', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/', '/about', '/trade', '/compare', '/trade/latest'}
 
 # ---------------------------------------------------------------- route table
@@ -788,6 +794,16 @@ def routes():
             if ch_:
                 yield ('/trade/latest', 'trade', DV.changes_title(), 'Which economies and which trade flows grew or shrank most this year so far, against the same months a year earlier. Customs figures in US dollars, updated monthly.',
                        ch_, 'WebPage', [], 'hubs')
+        if DV.OP:
+            yield ('/opportunities', 'trade', f'Market Opportunities: Where Import Demand Grew, {DV.OP["y0"]}–{DV.OP["y1"]}',
+                   'For the 200 most-traded products, the countries that bought more, who supplies them and which exporters gained; and for each exporting economy, growing markets where its share is still small.',
+                   DV.opp_hub(), 'CollectionPage', [], 'opportunities')
+            for h4 in sorted(DV.OP['headings']):
+                if DV.opp_ok(h4):
+                    yield (DV.opp_href(h4), 'trade', DV.opp_title(h4), DV.opp_desc(h4), DV.opp(h4), 'WebPage', [], 'opportunities')
+            for c3 in sorted(DV.OP['c']):
+                if DV.copp_ok(c3):
+                    yield (DV.copp_href(c3), 'trade', DV.copp_title(c3), DV.copp_desc(c3), DV.copp(c3), 'WebPage', [], 'opportunities')
         for h4 in sorted(HEADINGS):
             if DV.heading_ok(h4):
                 yield (f'/hs/heading/{h4}', 'hs', DV.heading_title(h4), DV.heading_desc(h4), DV.heading(h4), 'WebPage', [], 'hs-headings')
@@ -1029,7 +1045,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'hs-headings', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'opportunities', 'hs-headings', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()
