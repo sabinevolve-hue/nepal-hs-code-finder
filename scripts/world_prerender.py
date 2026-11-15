@@ -969,6 +969,7 @@ def write_vercel_json():
     # anything else falls through to Vercel's static 404 handling, which serves 404.html with a real 404 status.
     redirects = [{'source': f'/hs/code/{c}', 'destination': f'/hs/chapter/{c[:2]}', 'permanent': True} for c in sorted(MISSING_CODES) if c[:2] in CH]
     cfg = {
+        'git': {'deploymentEnabled': {'**': False, 'main': True}},      # only merges to main deploy (the free plan limits deployments per day)
         'cleanUrls': True, 'trailingSlash': False,
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
                                     'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys() if all(x in DV.D['pairset'] for x in k.split('-'))] if DV else [])
