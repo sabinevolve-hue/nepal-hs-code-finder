@@ -10,6 +10,7 @@ import json, pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PRODC_FILE = ROOT / 'data' / 'world' / 'prodc.json'
 PRODW_FILE = ROOT / 'data' / 'world' / 'prodw.json'
+IMTS_FILE = ROOT / 'data' / 'world' / 'imts.json'
 DEEP_FILE = ROOT / 'data' / 'world' / 'deep.json'
 
 
@@ -35,6 +36,8 @@ class Views:
         pc = json.loads(PRODC_FILE.read_text(encoding='utf-8')) if PRODC_FILE.exists() else {'products': {}, 'wtop': {}}
         self.PC = {k: v for k, v in pc['products'].items() if k.split('-')[0] in known and h['has_code'](k.split('-')[1])}
         self.WTOP = pc['wtop']
+        im = json.loads(IMTS_FILE.read_text(encoding='utf-8')) if IMTS_FILE.exists() else {'countries': {}, 'fetched': ''}
+        self.IM = im['countries']; self.IM_DATE = im.get('fetched', '')
         self.PW = json.loads(PRODW_FILE.read_text(encoding='utf-8'))['products'] if PRODW_FILE.exists() else {}
         self._pc_keys = sorted(self.PC); self._pc_set = set(self.PC); self._pc_by_country = {}
         for k in sorted(self.PC, key=lambda k: -self.PC[k]['v']):
@@ -210,6 +213,107 @@ class Views:
         lst = ''.join(f'<li><a href="/trade/product/{self.h["group_slug"](name)}">{e(name)}</a><span>{self.usd(v)}</span><i>{100.0 * v / total:.1f}%</i></li>' for name, v, _ in gs)
         return (f'<div class="tm {tone}" role="img" aria-label="{e(who)} {verb} by product group, area in proportion to value">{"".join(cells)}</div>'
                 f'<details class="tml"><summary>The same figures as a list</summary><ol>{lst}</ol></details>')
+
+    # ---------- latest months (IMF trade by partner: the last complete year and the current year to date)
+    MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    EST = '<sup class="est" title="Derived by the IMF from the partner&#39;s records, not yet reported by this economy">†</sup>'
+
+    def _chg(self, a, b):
+        return '—' if not a or not b else f'{"+" if a >= b else "−"}{abs(100.0 * (a - b) / b):.1f}%'
+
+    def _span(self, I):
+        return (f'{self.MONTHS[0]}–{self.MONTHS[I["upto"] - 1]} {I["cur"]}' if I['upto'] > 1 else f'{self.MONTHS[0]} {I["cur"]}') if I.get('cur') else ''
+
+    def latest(self, iso):
+        I = self.IM.get(iso)
+        if not I or not I['x'] or not I['m']:
+            return ''
+        e = self.h['esc']; nm = e(self.name(iso)); X, M = I['x'], I['m']; usd = self.usd
+        months = sorted(set(X) & set(M)); last = months[-1]; ly, lm = int(last[:4]), int(last[5:])
+        full, cur, upto = I['full'], I.get('cur'), I['upto']; span = self._span(I)
+        def year_total(d, y):
+            v = [d.get(f'{y}-{k:02d}') for k in range(1, 13)]
+            return sum(v) if all(x is not None for x in v) else None
+        def ytd(d, y):
+            v = [d.get(f'{y}-{k:02d}') for k in range(1, upto + 1)]
+            return sum(v) if all(x is not None for x in v) else None
+        small = lambda a, b, tail: (f' <small>{self._chg(a, b)}</small> {tail}' if a and b else '')
+        tiles = []
+        for lab, d, cls in (('Exports', X, 'ex'), ('Imports', M, 'im')):
+            a, b = year_total(d, full), year_total(d, full - 1)
+            if a is not None:
+                tiles.append(f'<div class="s"><b class="{cls}">{usd(a)}</b><span>{lab}, {full}{small(a, b, "on " + str(full - 1))}</span></div>')
+        if cur:
+            for lab, d, cls in (('Exports', X, 'ex'), ('Imports', M, 'im')):
+                a, b = ytd(d, cur), ytd(d, cur - 1)
+                if a is not None:
+                    tiles.append(f'<div class="s"><b class="{cls}">{usd(a)}</b><span>{lab}, {span}{small(a, b, "on the same months of " + str(cur - 1))}</span></div>')
+        # monthly chart from January three years back
+        ms = [p for p in months if p >= f'{ly - 3}-01']
+        mx = max(max(X[p], M[p]) for p in ms) or 1
+        W, H = 1000.0, 300.0
+        px = lambda i: W * i / max(len(ms) - 1, 1); py = lambda v: H - (H - 8.0) * v / mx
+        path = lambda d: ' '.join(('M' if i == 0 else 'L') + f'{px(i):.1f},{py(d[p]):.1f}' for i, p in enumerate(ms))
+        years = [(p[:4], 100.0 * px(i) / W) for i, p in enumerate(ms) if p.endswith('-01') or i == 0]
+        grid = ''.join(f'<line x1="{W * x / 100:.1f}" y1="0" x2="{W * x / 100:.1f}" y2="{H}" class="lg"/>' for _, x in years[1:])
+        tip = '; '.join(f'{self.MONTHS[int(p[5:]) - 1]} {p[:4]}: exports {usd(X[p])}, imports {usd(M[p])}' for p in ms[-6:])
+        chart = (f'<div class="lch"><span class="lmx">{usd(mx)}</span><svg viewBox="0 0 {W:.0f} {H:.0f}" preserveAspectRatio="none" role="img" aria-label="Monthly exports and imports of {nm}. Last six months: {e(tip)}">'
+                 f'{grid}<path d="{path(M)}" class="lm"/><path d="{path(X)}" class="lx"/></svg>'
+                 '<div class="lyr">' + ''.join(f'<span style="left:{x:.1f}%">{y}</span>' for y, x in years) + '</div></div>'
+                 f'<div class="dvk"><span><i class="pos"></i>Exports: {usd(X[last])} in {self.MONTHS[lm - 1]} {ly}</span><span><i class="neg"></i>Imports: {usd(M[last])}</span></div>')
+        rows = []
+        for y in range(ly, ly - 5, -1):
+            if cur and y == cur:
+                a, b = ytd(X, y), ytd(M, y); lab = f'{y} ({span.rsplit(" ", 1)[0]})'
+            else:
+                a, b = year_total(X, y), year_total(M, y); lab = str(y)
+            if a is not None and b is not None:
+                rows.append((lab, usd(a), usd(b), ('+' if a - b >= 0 else '−') + usd(abs(a - b))[1:]))
+        # partners: the latest complete year and the current year to date
+        def ptable(o, what):
+            lst = sorted(((p, v) for p, v in I['p'].items() if v[o + 1] > 0), key=lambda kv: -kv[1][o + 1])[:10]
+            if not lst:
+                return '', False
+            tot = sum(v[o + 1] for v in I['p'].values()) or 1
+            any_est = any(v[8] for _, v in lst)
+            heads = [what, str(full), f'Change on {full - 1}', 'Share'] + ([span, f'Change on {span.rsplit(" ", 1)[0]} {cur - 1}'] if cur else [])
+            body = []
+            for p, v in lst:
+                ph = self.pair_href(iso, p)
+                lab = self.clink(p) + (self.EST if v[8] else '') + (f' <a class="pl" href="{ph}">pair</a>' if ph else '')
+                body.append([lab, usd(v[o + 1]), self._chg(v[o + 1], v[o]), self.share(v[o + 1], tot)] + ([usd(v[o + 2]) if v[o + 2] else '—', self._chg(v[o + 2], v[o + 3])] if cur else []))
+            return self.table(heads, body), any_est
+        tx, ex_est = ptable(0, 'Export market'); tm, im_est = ptable(4, 'Supplier')
+        est_note = (f'<p class="fine">{self.EST} {nm} had not yet reported this flow, so the IMF derived it from the partner&#39;s own records. Treat these as provisional.</p>' if (ex_est or im_est) else '')
+        return (f'<section class="gsec"><h2>{nm} in {full} and {cur or full + 1}: the latest figures</h2>'
+                f'<p class="gk">Monthly customs figures in US dollars from the IMF&#39;s trade-by-partner database. The newest month is {self.MONTHS[lm - 1]} {ly}.</p>'
+                f'<div class="statrow ltl" style="margin-top:0">{"".join(tiles)}</div>{chart}'
+                + (self.table(['Period', 'Exports', 'Imports', 'Balance'], rows) if rows else '')
+                + (f'<h3>Largest export markets in {full}{" and " + str(cur) + " so far" if cur else ""}</h3>' + tx if tx else '')
+                + (f'<h3>Largest suppliers in {full}{" and " + str(cur) + " so far" if cur else ""}</h3>' + tm if tm else '') + est_note
+                + f'<p class="fine">Source: International Monetary Fund, International Trade in Goods by partner country, retrieved {self.IM_DATE}. The IMF collects each economy&#39;s national customs figures '
+                f'and converts them to US dollars at the average exchange rate of the month the goods moved. Imports include freight and insurance; exports do not. '
+                f'The product and partner sections further down use BACI&#39;s reconciled figures for {self.Y}, which can differ noticeably for the same year, so compare like with like.</p></section>')
+
+    def pair_latest(self, a, b):
+        """What each side reports selling the other in the latest complete year and the current year to date."""
+        e = self.h['esc']; rows = []; est = False; span = ''; full = cur = None
+        for x, y in ((a, b), (b, a)):
+            I = self.IM.get(x); v = (I or {}).get('p', {}).get(y)
+            if not I or not v or not v[1]:
+                continue
+            full, cur = I['full'], I.get('cur'); span = self._span(I); est = est or bool(v[8])
+            rows.append([f'{e(self.name(x))} → {e(self.name(y))}' + (self.EST if v[8] else ''), self.usd(v[0]) if v[0] else '—', self.usd(v[1]), self._chg(v[1], v[0])]
+                        + ([self.usd(v[2]) if v[2] else '—', self._chg(v[2], v[3])] if cur else []))
+        if not rows:
+            return ''
+        heads = ['Exports', str(full - 1), str(full), 'Change'] + ([span, f'Change on a year earlier'] if cur else [])
+        return (f'<section class="gsec"><h2>{full} and {cur or full + 1} so far</h2>'
+                f'<p class="gk">Each row is the exporting country&#39;s own customs figure, in US dollars, from the IMF&#39;s trade-by-partner database.</p>'
+                + self.table(heads, rows)
+                + (f'<p class="fine">{self.EST} Not yet reported by the exporter; derived by the IMF from the partner&#39;s records. Treat as provisional.</p>' if est else '')
+                + f'<p class="fine">Source: International Monetary Fund, retrieved {self.IM_DATE}; converted to US dollars at each month&#39;s average exchange rate. '
+                f'The rest of this page uses BACI&#39;s reconciled figures for {self.Y}, which can differ for the same year.</p></section>')
 
     # ---------- highlights and flow (top of the country profile)
     def flow_side(self, items, total, tone, mirror, who, verb):
@@ -427,7 +531,7 @@ class Views:
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade in {Y}</h1><p>{rk}</p></div>'
                          + lead + tiles + self.highlights(iso, d)
                          + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
-                         + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
+                         + self.latest(iso) + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
                          + f'<section class="gsec"><h2>{nm}&#39;s partners on the map</h2>' + self.map_block(iso, d) + sec_all + '</section>' + peers + src)
 
     def peers(self, c):
@@ -506,7 +610,7 @@ class Views:
                            f'BACI gives one agreed figure for each flow, so it can differ from either country&#39;s own national statistics.</p>', str(Y))
         npl = self.nepal_official(b if a == 'NPL' else a) if 'NPL' in (a, b) else ''
         return h['main'](h['back']('/trade/pairs', 'Country pairs') + f'<div class="ph"><h1 class="h2">{fa} {A} – {fb} {B} trade, {Y}</h1></div>'
-                         + lead + tiles + scale + ctx + npl + sec_ab + sec_ba + sec_hist + profiles + others + src)
+                         + lead + tiles + scale + ctx + npl + self.pair_latest(a, b) + sec_ab + sec_ba + sec_hist + profiles + others + src)
 
     def pairs_index(self):
         h = self.h; e = h['esc']; keys = sorted(self.pair_keys(), key=lambda k: -(self.P[k]['ab'] + self.P[k]['ba']))
@@ -821,6 +925,11 @@ a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-chil
 .flc span{font-size:2.2rem;line-height:1}.flc b{font-family:var(--f-head);font-size:1.05rem}.flc i{font-style:normal;font-size:.8rem;color:var(--fg-2);font-variant-numeric:tabular-nums}
 @media(max-width:820px){.hcs{grid-template-columns:repeat(2,minmax(0,1fr))}.flw{grid-template-columns:minmax(0,1fr);gap:14px}.flc{flex-direction:row;justify-content:center;gap:10px;padding:4px;order:-1}.flc span{font-size:1.6rem}.flw>div:last-child .flh{text-align:left}}
 @media(max-width:460px){.hcs{grid-template-columns:minmax(0,1fr)}}
+sup.est{color:var(--imp);font-weight:700;cursor:help;margin-left:2px}.ltl .s span small{font-weight:700;font-size:.8rem;margin-left:4px;color:var(--fg)}
+.lch{position:relative;margin:18px 0 6px}.lch svg{display:block;width:100%;height:220px;border-bottom:1px solid var(--border);overflow:visible}
+.lch path{fill:none;stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-linejoin:round}.lch .lx{stroke:var(--exp)}.lch .lm{stroke:var(--imp)}
+.lch .lg{stroke:var(--border);stroke-width:1;vector-effect:non-scaling-stroke}
+.lmx{position:absolute;left:0;top:-16px;font-size:.72rem;color:var(--muted)}.lyr{position:relative;height:24px;overflow:hidden}.lyr span{position:absolute;top:5px;font-size:.78rem;color:var(--fg-2);padding-left:4px}
 .gsec>p.ans{margin-top:6px}
 .gsec>p.gk{color:var(--fg-2);margin:0 0 10px;max-width:68ch}.gsec h3{font-size:1rem;margin:22px 0 4px}
 @media(max-width:700px){.tm{aspect-ratio:4/5}.tc.md b{font-size:.68rem;overflow-wrap:anywhere}.tc.lg b{overflow-wrap:anywhere}.tc span{padding:5px 6px}.dvr{grid-template-columns:minmax(0,7em) minmax(0,1fr) 4.6em}.glr{grid-template-columns:4.2em minmax(0,1fr) 4.6em}}
