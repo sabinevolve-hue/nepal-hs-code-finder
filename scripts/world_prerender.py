@@ -278,7 +278,8 @@ def v_home():
     body = (f'<section class="wstrip"><h2>{money(world * 1000.0)} of goods crossed a border in {yr}. This is who exported them.</h2>'
             f'<div class="ws" role="img" aria-label="Share of world exports by economy">{strip}</div><ol class="wsl">{legend}</ol>'
             f'<p class="fine">Each segment is drawn to its share of world exports. The largest importer was {DV.clink(imps[0][0])} ({money(imps[0][1] * 1000.0)}), then {DV.clink(imps[1][0])} and {DV.clink(imps[2][0])}.</p></section>'
-            f'<div class="wcols">{cols}</div>'
+            + DV.home_latest()
+            + f'<div class="wcols">{cols}</div>'
             f'<section><h2 class="h">Where one country leads the world</h2><p class="fine" style="margin:0 0 12px">The largest export in which each of these economies ranks first.</p><div class="wleads">{lead}</div></section>'
             '<section><h2 class="h">Trade by product group</h2>' + pgroup_grid().replace(' data-nav', '') + '</section>'
             + src_box('Sources', '<p>Bilateral and product trade from <b>BACI</b> (CEPII), which reconciles what exporters and importers reported to <b>UN Comtrade</b>. '

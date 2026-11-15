@@ -38,6 +38,21 @@ class Views:
         self.WTOP = pc['wtop']
         im = json.loads(IMTS_FILE.read_text(encoding='utf-8')) if IMTS_FILE.exists() else {'countries': {}, 'fetched': ''}
         self.IM = im['countries']; self.IM_DATE = im.get('fetched', '')
+        # product detail for the latest periods, from national sources (same record shape in every file)
+        self.PL = {}
+        f = ROOT / 'data' / 'world' / 'eu_products.json'
+        if f.exists():
+            eu = json.loads(f.read_text(encoding='utf-8'))
+            for k, rec in eu['countries'].items():
+                self.PL[k] = dict(rec, last=eu['last'], full=eu['full'], cur=eu['cur'], upto=eu['upto'], fetched=eu['fetched'], short='Eurostat, the EU&#39;s statistical office',
+                                  src='Eurostat, EU trade by HS2-4-6 and CN8 (DS-045409), trade with all partners inside and outside the EU; euros converted to US dollars at each month&#39;s average ECB reference rate',
+                                  note='Eurostat records goods by the member state where they are declared, so for transit hubs such as the Netherlands and Belgium its totals run higher than national figures.')
+        f = ROOT / 'data' / 'world' / 'more_products.json'
+        if f.exists():
+            mp = json.loads(f.read_text(encoding='utf-8'))
+            for k, rec in mp['countries'].items():
+                self.PL[k] = dict(rec, fetched=mp['fetched'], note={'GBR': 'HMRC&#39;s product figures include non-monetary gold and follow its own coverage, so they do not add up to the IMF totals above.',
+                                                                   'BRA': 'Imports are valued FOB here, without freight and insurance.'}.get(k, ''))
         self.PW = json.loads(PRODW_FILE.read_text(encoding='utf-8'))['products'] if PRODW_FILE.exists() else {}
         self._pc_keys = sorted(self.PC); self._pc_set = set(self.PC); self._pc_by_country = {}
         for k in sorted(self.PC, key=lambda k: -self.PC[k]['v']):
@@ -295,6 +310,54 @@ class Views:
                 f'and converts them to US dollars at the average exchange rate of the month the goods moved. Imports include freight and insurance; exports do not. '
                 f'The product and partner sections further down use BACI&#39;s reconciled figures for {self.Y}, which can differ noticeably for the same year, so compare like with like.</p></section>')
 
+    def latest_products(self, iso):
+        """Product detail for the last complete year and the current year to date, where a national source publishes it."""
+        R = self.PL.get(iso)
+        if not R or not R.get('xc'):
+            return ''
+        e = self.h['esc']; nm = e(self.name(iso)); full, cur, upto = R['full'], R.get('cur'), R['upto']
+        span = (f'{self.MONTHS[0]}–{self.MONTHS[upto - 1]} {cur}' if upto > 1 else f'{self.MONTHS[0]} {cur}') if cur else ''
+        def block(f, verb, tone, what):
+            chap = [[r[0], r[2]] for r in R[f + 'c']]; tot = sum(v for _, v in chap)
+            rows = []
+            for r in R[f + 'k'][:10]:
+                if not self.h['has_code'](r[0]):
+                    continue
+                rows.append([self.prod(r[0], 56), self.usd(r[2]), self._chg(r[2], r[1]), self.share(r[2], tot)] + ([self.usd(r[3]) if r[3] else '—', self._chg(r[3], r[4])] if cur else []))
+            heads = ['Product', str(full), f'Change on {full - 1}', f'Share of {verb}'] + ([span, 'Change on a year earlier'] if cur else [])
+            return (f'<h3>{what} by product group, {full}</h3>' + self.treemap(chap, tot, tone, self.name(iso), f'{verb} in {full}')
+                    + (f'<h3>Ten largest {verb[:-1]} products, {full}{" and " + str(cur) + " so far" if cur else ""}</h3>' + self.table(heads, rows) if rows else ''))
+        return (f'<section class="gsec"><h2>What {nm} traded in {full} and {cur or full + 1}, by product</h2>'
+                f'<p class="gk">Product detail for the latest periods, from {R["short"]}. The newest month is {self.MONTHS[int(R["last"][5:]) - 1]} {R["last"][:4]}.</p>'
+                + block('x', 'exports', 'exp', 'Exports') + block('m', 'imports', 'imp', 'Imports')
+                + f'<p class="fine">Source: {R["src"]}; retrieved {R["fetched"]}. {R.get("note", "")} '
+                f'These are the reporting office&#39;s own figures and are not the reconciled {self.Y} figures used in the sections below.</p></section>')
+
+    def home_latest(self):
+        """Home page: the largest exporters in the latest complete year and the current year to date (customs figures via the IMF)."""
+        e = self.h['esc']; rows = []; full = cur = None; span = ''
+        def yt(d, y, upto=12):
+            v = [d.get(f'{y}-{k:02d}') for k in range(1, upto + 1)]
+            return sum(v) if all(x is not None for x in v) else None
+        cand = []
+        for iso, I in self.IM.items():
+            if iso not in self.h['CBYISO']:
+                continue
+            a = yt(I['x'], I['full'])
+            if a:
+                cand.append((a, iso, I))
+        for a, iso, I in sorted(cand, key=lambda r: -r[0])[:10]:
+            full, cur = I['full'], I.get('cur'); span = self._span(I)
+            b = yt(I['x'], full - 1); c = yt(I['x'], cur, I['upto']) if cur else None; d = yt(I['x'], cur - 1, I['upto']) if cur else None
+            rows.append([self.clink(iso), self.usd(a), self._chg(a, b)] + ([self.usd(c) if c else '—', self._chg(c, d)] if cur else []))
+        if not rows:
+            return ''
+        heads = ['Exporter', str(full), f'Change on {full - 1}'] + ([span, 'Change on a year earlier'] if cur else [])
+        return (f'<section class="wstrip"><h2>The latest: {full} and {cur or full + 1} so far</h2>'
+                + self.table(heads, rows)
+                + f'<p class="fine">Each economy&#39;s own customs figures in US dollars, from the International Monetary Fund&#39;s trade-by-partner database (retrieved {self.IM_DATE}). '
+                f'Every country profile has its {full} and {cur or full + 1} figures by partner; the chart above uses the reconciled {self.Y} figures.</p></section>')
+
     def pair_latest(self, a, b):
         """What each side reports selling the other in the latest complete year and the current year to date."""
         e = self.h['esc']; rows = []; est = False; span = ''; full = cur = None
@@ -531,7 +594,7 @@ class Views:
         return h['main'](h['back']('/trade', 'Global trade') + f'<div class="ph"><h1 class="h2">{c["flag"]} {nm}: trade in {Y}</h1><p>{rk}</p></div>'
                          + lead + tiles + self.highlights(iso, d)
                          + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
-                         + self.latest(iso) + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
+                         + self.latest(iso) + self.latest_products(iso) + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
                          + f'<section class="gsec"><h2>{nm}&#39;s partners on the map</h2>' + self.map_block(iso, d) + sec_all + '</section>' + peers + src)
 
     def peers(self, c):
