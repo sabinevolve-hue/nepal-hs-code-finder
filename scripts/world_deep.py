@@ -120,7 +120,7 @@ class Views:
     def table(self, heads, rows, cls=''):
         th = ''.join(f'<th{" class=r" if i else ""}>{x}</th>' for i, x in enumerate(heads))
         tr = ''.join('<tr>' + ''.join(f'<td{" class=r" if i else ""}>{x}</td>' for i, x in enumerate(r)) + '</tr>' for r in rows)
-        return f'<div class="dscroll"><table class="dt {cls}"><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>'
+        return f'<div class="dscroll" tabindex="0" role="region" aria-label="Table, scrolls sideways on small screens"><table class="dt {cls}"><thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></div>'
 
     # ---------- graphics for the country profile (static HTML and SVG, no script)
     MAP_BINS = [(15.0, 5, '15% or more'), (5.0, 4, '5 to 15%'), (1.0, 3, '1 to 5%'), (0.1, 2, '0.1 to 1%')]
@@ -140,7 +140,7 @@ class Views:
             out.append(f'<a href="/trade/{p.lower()}">{u}</a>' if p in self.h['CBYISO'] else u)
         if iso and iso in shapes:
             out.append(f'<use href="/assets/worldmap.svg#{iso}" class="me"><title>{e(self.name(iso))}</title></use>')
-        return f'<svg viewBox="0 60 960 400" role="img" aria-label="World map shaded by share of {e(self.name(iso)) + "&#39;s " if iso else ""}{verb}">{"".join(out)}</svg>'
+        return f'<svg viewBox="0 60 960 400" role="group" aria-label="World map shaded by share of {e(self.name(iso)) + "&#39;s " if iso else ""}{verb}">{"".join(out)}</svg>'
 
     def map_block(self, iso, d):
         nm = self.h['esc'](self.name(iso)); k = iso.lower()
@@ -242,7 +242,7 @@ class Views:
             cells.append(f'<a class="tc {size}" href="/trade/product/{self.h["group_slug"](name)}" style="left:{x:.2f}%;top:{y:.2f}%;width:{w:.2f}%;height:{hh:.2f}%" title="{e(tip)}">'
                          f'<span><b>{e(name)}</b><i>{s:.0f}%</i><em>{self.usd(v)}</em></span></a>')
         lst = ''.join(f'<li><a href="/trade/product/{self.h["group_slug"](name)}">{e(name)}</a><span>{self.usd(v)}</span><i>{100.0 * v / total:.1f}%</i></li>' for name, v, _ in gs)
-        return (f'<div class="tm {tone}" role="img" aria-label="{e(who)} {verb} by product group, area in proportion to value">{"".join(cells)}</div>'
+        return (f'<div class="tm {tone}" role="group" aria-label="{e(who)} {verb} by product group, area in proportion to value">{"".join(cells)}</div>'
                 f'<details class="tml"><summary>The same figures as a list</summary><ol>{lst}</ol></details>')
 
     # ---------- latest months (IMF trade by partner: the last complete year and the current year to date)
@@ -493,7 +493,7 @@ class Views:
                    f'<text x="{tx:.1f}" y="{ny + sl / 2.0 + 14:.1f}" text-anchor="{anc}" class="fv">{self.usd(v)} · {self.share(v, total)}</text>')
             out.append(f'<a href="/trade/{p.lower()}">{lab}</a>' if p and p in self.h['CBYISO'] else lab)
             sy += hh; ny += sl + GAP
-        return (f'<svg viewBox="0 0 {W:.0f} {H:.0f}" role="img" aria-label="{e(who)} {verb}: ' + e('; '.join(f'{self.name(p) if p else "all others"} {self.share(v, total)}' for p, v in items)) + f'">{"".join(out)}</svg>')
+        return (f'<svg viewBox="0 0 {W:.0f} {H:.0f}" role="group" aria-label="{e(who)} {verb}: ' + e('; '.join(f'{self.name(p) if p else "all others"} {self.share(v, total)}' for p, v in items)) + f'">{"".join(out)}</svg>')
 
     def flow(self, iso, d, n=5):
         nm = self.h['esc'](self.name(iso)); X, M = d['x'], d['m']
@@ -819,7 +819,8 @@ class Views:
                          + (f'<th class=r>Exports {span}</th>' if span else '') + f'</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
                          f'<p class="fine">{self.EST} Not yet reported by the economy for some or all of {y}; derived by the IMF from its partners&#39; records. Imports include freight and insurance and exports do not, so the two world totals differ.</p></section>'
                          f'<section class="gsec"><h2>More ways in</h2><div class="two"><a class="nepalcard" href="/trade/pairs"><span class="fl">🤝</span><span><b>Country pairs</b> {h["ic"]("right")}</span></a></div>'
-                         f'<h3>By region</h3>{self.region_nav()}<h3>By trade bloc or group</h3>{self.bloc_nav()}<h3>By theme</h3><div class="pairgrid"><a href="/trade/latest">What changed this year</a><a href="/compare">Compare countries</a><a href="/opportunities">Market opportunities</a><a href="/trade/sanctions">Trade under sanctions</a></div><h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
+                         + (f'<h3>Profiles without {y} customs figures</h3><div class="pairgrid">' + ''.join(self.clink(c) for c in sorted(h['CBYISO'], key=self.name) if c not in tot) + '</div>' if any(c not in tot for c in h['CBYISO']) else '')
+                         + f'<h3>By region</h3>{self.region_nav()}<h3>By trade bloc or group</h3>{self.bloc_nav()}<h3>By theme</h3><div class="pairgrid"><a href="/trade/latest">What changed this year</a><a href="/compare">Compare countries</a><a href="/opportunities">Market opportunities</a><a href="/trade/sanctions">Trade under sanctions</a></div><h3>Trade by product group</h3>{h["pgroup_grid"]().replace(" data-nav", "")}</section>'
                          + h['src_box']('Source', f'<p><b>International Monetary Fund</b>, International Trade in Goods by partner country, retrieved {self.IM_DATE}: each economy&#39;s own customs figures in US dollars, '
                                         f'converted at the average exchange rate of each month. Each economy&#39;s page has every year back to 2019. <a href="/about">About the data</a></p>', str(y)) + js)
 
@@ -1386,8 +1387,13 @@ class Views:
         return self.h['clip'](s, n)
 
     def heading_title(self, h4):
-        base = f'{self.heading_name(h4, 30)}: Top Exporters & Importers {self.Y}'
-        return base + f' (HS {h4})' if len(base) + 10 <= 65 else base
+        if getattr(self, '_htitles', None) is None:      # shortened names can collide (several 'Woven fabrics of synthetic…'); those get a shorter name and always the code
+            mk = lambda x: (lambda b: b + f' (HS {x})' if len(b) + 10 <= 65 else b)(f'{self.heading_name(x, 30)}: Top Exporters & Importers {self.Y}')
+            first = {x: mk(x) for x in self.HD if self.heading_ok(x)}; seen = {}
+            for x, v in first.items():
+                seen[v] = seen.get(v, 0) + 1
+            self._htitles = {x: (v if seen[v] == 1 else f'{self.heading_name(x, 22)}: Top Exporters & Importers {self.Y} (HS {x})') for x, v in first.items()}
+        return self._htitles[h4]
 
     def heading_desc(self, h4):
         d = self.HD[h4]; w = d['w'][str(self.Y)]
@@ -1434,7 +1440,13 @@ class Views:
         return '/opportunities/' + self.h['SLUG'][iso]
 
     def opp_title(self, h4):
-        return f'{self.heading_name(h4, 30)}: Growing Import Markets {self.OP["y0"]}–{self.OP["y1"]}'
+        if getattr(self, '_otitles', None) is None:      # shortened names can collide; those always carry the code
+            mk = lambda x: f'{self.heading_name(x, 30)}: Growing Import Markets {self.OP["y0"]}–{self.OP["y1"]}'
+            first = {x: mk(x) for x in self.OP['headings'] if self.opp_ok(x)}; seen = {}
+            for v in first.values():
+                seen[v] = seen.get(v, 0) + 1
+            self._otitles = {x: (v if seen[v] == 1 else f'{self.heading_name(x, 20)}: Growing Import Markets {self.OP["y0"]}–{self.OP["y1"]} (HS {x})') for x, v in first.items()}
+        return self._otitles[h4]
 
     def opp_desc(self, h4):
         d = self.OP['headings'][h4]; g = d['g'][0]
@@ -2073,7 +2085,7 @@ a{text-underline-offset:3px}main a:not([class]):hover{text-decoration:underline}
 footer.sf{background:linear-gradient(180deg,#0C2530,#071A21)}
 footer.sf .sf-logo{font-family:var(--f-head)}footer.sf .sf-logo .mark{display:grid;place-items:center;width:30px;height:30px;background:none}
 footer.sf .sf-logo .mark svg{width:28px;height:28px}
-footer.sf .sf-track button{background:#0E8583}footer.sf a:hover{color:#8FE3DD}
+footer.sf .sf-track button{background:#0C7B79}footer.sf a:hover{color:#8FE3DD}
 h1,h1.h2,h2.h,.statrow .s b,.ph h1,.wcol h2,.wstrip h2{font-family:var(--f-head);letter-spacing:-.015em}
 h1.h2{font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.1;font-weight:800}
 a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-child{white-space:normal}table.bk td:first-child{padding-right:14px}
@@ -2135,7 +2147,7 @@ a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-chil
 .tc{position:absolute;display:block;padding:1px;color:#fff;text-decoration:none;overflow:hidden}
 .tc span{display:flex;flex-direction:column;justify-content:flex-end;height:100%;border-radius:5px;padding:7px 8px;overflow:hidden;background:#0B6E6E}
 .tm.imp .tc span{background:#C2461F}
-.tc b{font-size:.84rem;line-height:1.15;font-weight:700}.tc i{font-style:normal;font-family:var(--f-head);font-weight:800;font-size:1.5rem;line-height:1.05}.tc em{font-style:normal;font-size:.76rem;opacity:.9}
+.tc b{font-size:.84rem;line-height:1.15;font-weight:700}.tc i{font-style:normal;font-family:var(--f-head);font-weight:800;font-size:1.5rem;line-height:1.05}.tc em{font-style:normal;font-size:.76rem;color:#fff}
 .tc.md i{font-size:1.05rem}.tc.md em{display:none}.tc.md b{font-size:.74rem}.tc.sm b,.tc.sm em{display:none}.tc.sm i{font-size:.72rem}.tc.sm span{padding:2px 3px;justify-content:center;align-items:center}
 .tc:hover span,.tc:focus-visible span{filter:brightness(1.15)}.tc:hover{text-decoration:none}
 .tml{margin-top:8px;font-size:.88rem}.tml summary{cursor:pointer;color:var(--accent);font-weight:600}
@@ -2159,6 +2171,7 @@ a.row .d,.dtitle,.crumb{overflow-wrap:anywhere;min-width:0}table.bk td:last-chil
 .yc>span{text-align:center;font-size:.82rem;color:var(--fg-2);padding-top:5px}.rkn{color:var(--muted);font-variant-numeric:tabular-nums}
 .hcs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:var(--s5)}
 .hc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column}
+main p a:not([class]),main a.pl{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 .hc>b{font-family:var(--f-head);font-weight:800;font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1;letter-spacing:-.02em;color:var(--fg)}
 .hc.pos>b{color:var(--free)}.hc.neg>b{color:var(--hi)}
 .hc>p{margin:6px 0 12px;color:var(--fg-2);font-size:.92rem;line-height:1.4;flex:1}
