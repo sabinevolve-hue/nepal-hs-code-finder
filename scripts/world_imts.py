@@ -18,6 +18,10 @@ Stored per economy, values in thousand US dollars:
   pa       {year: {partner: [x, m, est]}} calendar-year totals by partner from 2019, for the year pages: every partner
            with at least $100,000 either way that year
   pn       {year: [number of export markets, number of suppliers]} (partners with at least $1,000 that year)
+  ax, am   {year: total} calendar-year totals for the complete years before 2019, back to 2000 (the long history)
+  axe      years before 2019 in which some of the total was estimated by the IMF
+  ph       {year: {partner: [x, m]}} the fifteen largest markets and suppliers in 2000, 2005, 2010 and 2015.
+           Fetched once and kept: these years do not change.
 Months are only added on refresh; nothing already stored is dropped.
 
 Usage:  python3 scripts/world_imts.py [ISO ...]      (no arguments = every economy on the site)
@@ -30,8 +34,11 @@ API = 'https://api.imf.org/external/sdmx/2.1/data/IMF.STA,IMTS/%s.XG_FOB_USD+MG_
 K = lambda v: int(round(v / 1000.0))
 
 
-def get(iso, counterpart, start, dataonly):
-    url = API % (iso, counterpart, start, '&detail=dataonly' if dataonly else '')
+SNAP = (2000, 2005, 2010, 2015)
+
+
+def get(iso, counterpart, start, dataonly, end=None):
+    url = API % (iso, counterpart, start, ('&detail=dataonly' if dataonly else '') + ('&endPeriod=' + end if end else ''))
     for attempt in range(4):
         try:
             req = urllib.request.Request(url, headers={'Accept': 'application/vnd.sdmx.data+csv', 'User-Agent': 'world.customsnepal.com data build'})
@@ -49,13 +56,19 @@ def month(tp):                          # '2025-M03' -> '2025-03'
 
 
 def build(iso, old):
-    tot = get(iso, 'G001', '2019-01', False)
+    tot = get(iso, 'G001', '2000-01', False)
     if not tot:
         return iso, None
     x = dict(old.get('x', {})); m = dict(old.get('m', {})); xe = set(old.get('xe', [])); me = set(old.get('me', []))
+    hx, hm, he = {}, {}, set()          # months before 2019, only to build the yearly history
     for r in tot:
         p = month(r['TIME_PERIOD'])
         if not p or not r['OBS_VALUE']:
+            continue
+        if p < '2019-01':
+            (hx if r['INDICATOR'] == 'XG_FOB_USD' else hm).setdefault(p[:4], {})[p] = float(r['OBS_VALUE'])
+            if r.get('STATUS'):
+                he.add(p[:4])
             continue
         d, e = (x, xe) if r['INDICATOR'] == 'XG_FOB_USD' else (m, me)
         d[p] = K(float(r['OBS_VALUE'])); (e.add if r.get('STATUS') else e.discard)(p)
@@ -90,7 +103,24 @@ def build(iso, old):
     for y, d in sorted(A.items()):
         pa[str(y)] = {c: [K(d[c][0]), K(d[c][1]), d[c][2]] for c in sorted(d) if max(d[c][:2]) >= 100000}
         pn[str(y)] = [sum(1 for v in d.values() if v[0] >= 1000), sum(1 for v in d.values() if v[1] >= 1000)]
-    return iso, dict(x=dict(sorted(x.items())), m=dict(sorted(m.items())), xe=sorted(xe), me=sorted(me), p=p_out, full=full, cur=cur, upto=lm if cur else 12, pa=pa, pn=pn)
+    ax = {y: K(sum(d.values())) for y, d in sorted(hx.items()) if len(d) == 12 and len(hm.get(y, {})) == 12}
+    am = {y: K(sum(hm[y].values())) for y in ax}
+    ph = dict(old.get('ph', {}))
+    for y in SNAP:
+        if str(y) in ph or str(y) not in ax:
+            continue
+        rr = get(iso, '', '%d-01' % y, True, '%d-12' % y)
+        if rr is None:
+            continue
+        d = {}
+        for r in rr:
+            c = r['COUNTERPART_COUNTRY']
+            if len(c) == 3 and r['OBS_VALUE']:
+                d.setdefault(c, [0.0, 0.0])[0 if r['INDICATOR'] == 'XG_FOB_USD' else 1] += float(r['OBS_VALUE'])
+        keep = set(sorted(d, key=lambda c: -d[c][0])[:15]) | set(sorted(d, key=lambda c: -d[c][1])[:15])
+        ph[str(y)] = {c: [K(d[c][0]), K(d[c][1])] for c in sorted(keep) if max(d[c]) >= 100000}
+    return iso, dict(x=dict(sorted(x.items())), m=dict(sorted(m.items())), xe=sorted(xe), me=sorted(me), p=p_out, full=full, cur=cur, upto=lm if cur else 12, pa=pa, pn=pn,
+                     ax=ax, am=am, axe=sorted(y for y in he if y in ax), ph=ph)
 
 
 if __name__ == '__main__':
