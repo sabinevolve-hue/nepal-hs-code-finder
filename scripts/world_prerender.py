@@ -831,12 +831,20 @@ OTHER_SITES = ('<p style="margin:0 0 6px"><b style="color:var(--fg-2)">Our other
                '<a href="https://www.customsnepal.com/">Nepal HS codes, customs tariff 2083/84 &amp; import-duty calculator — customsnepal.com</a> · '
                '<a href="https://nepalpublicdata.com/">Nepal public statistics: population, budget, trade &amp; places — nepalpublicdata.com</a></p>')
 
-GTAG = ('<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1FQWWL2VV"></script>'
-        "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());if(location.hostname==='world.customsnepal.com')gtag('config','G-T1FQWWL2VV',{send_page_view:false});</script>")
+# world.customsnepal.com has its own GA4 property since 15 Nov 2026 ("world.customsnepal.com", property 564366260,
+# stream 16342942965), separate from the main site's G-T1FQWWL2VV.
+# This property's Google tag sends a page view by itself on every page load and on every in-app history change, and it
+# ignores send_page_view:false and extra config parameters (tested 15 Nov 2026). So the site sends no page view of its
+# own (that would count app pages twice) and cannot attach a section label; use page path in GA for sections.
+# The tag is only loaded on the live hostname, so previews and test runs add no visits.
+GA_ID = 'G-E2HLC62N88'
+GTAG = ("<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+        "if(location.hostname==='world.customsnepal.com'){var g=document.createElement('script');g.async=true;"
+        "g.src='https://www.googletagmanager.com/gtag/js?id=%s';document.head.appendChild(g);gtag('js',new Date());gtag('config','%s');}</script>" % (GA_ID, GA_ID))
 
 def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-image-preview:large'):
     js = f'<script src="{js_href}" defer></script>' if js_href else ''
-    gtag = GTAG if js_href else GTAG.replace('{send_page_view:false}', '{}')      # static pages have no app script: let gtag send the page view
+    gtag = GTAG
     return (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f'<!--seo-->\n{seo_head}\n<!--/seo-->\n<meta name="robots" content="{robots}">\n<meta name="theme-color" content="#0C2530">\n'
             f'<link rel="icon" href="/favicon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">\n'
