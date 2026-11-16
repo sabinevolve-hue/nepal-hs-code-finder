@@ -42,6 +42,7 @@ GROUPS = [
         (WORLD_SITE + '/', 'World trade ↗', 'Global HS codes and flows', ''),
     ]),
     ('move', 'Move', '🚢', 'Shipping and exporting', [
+        ('/import-rules', 'Import permits', 'Which authority to ask, by HS code', ''),
         ('/shipping', 'Shipping routes', 'Ports, dry ports and transit', ''),
         ('/shipping/track', 'Track a shipment', 'Container, air waybill, courier', ''),
         ('/the-border', 'The Border', 'Every customs gate, west to east', ''),

@@ -260,6 +260,7 @@ Customs Nepal is an independent, privately operated reference tool. It is NOT a 
 - [Ask AI — HS code classifier](__SITE__/ask-ai): Describe a product in plain words and get ranked HS code suggestions with reasoning.
 - [Nepal's trade partners](__SITE__/trade-partners): Nepal's imports, exports and balance with each trading partner country (Department of Customs), with a page per country at __SITE__/trade-partner/<country> (for example __SITE__/trade-partner/india, __SITE__/trade-partner/china): top products, customs revenue collected, competing suppliers and how goods move.
 - [Import duty by product name](__SITE__/import-duty): Plain-name pages (air conditioner, laptop, solar panel, gold, car…) at __SITE__/import-duty/<name> that group every HS line for that product with its general and SAARC duty, 13% VAT and a worked landed-cost example; plus one page per 8-digit tariff line.
+- [Import permits by HS code](__SITE__/import-rules): Which Nepali authority to ask before importing a product (plant quarantine, animal quarantine, DFTQC, DDA, NTA, NBSM), with the law or report each rule was read from. A reference, not the authority; it does not cover every product.
 - [Imports](__SITE__/imports): Nepal import data and duty by product category and partner country.
 - [Exports](__SITE__/exports): Nepal export data by product category and destination.
 - [Export guides](__SITE__/export): Step-by-step guides to exporting from Nepal — procedures, documents, EXIM code, certificate of origin and product-specific notes.
