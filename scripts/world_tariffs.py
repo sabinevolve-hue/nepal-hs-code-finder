@@ -8,6 +8,12 @@ non-commercial use only and require WTO permission to re-publish (checked 16 Nov
   United Kingdom  UK Global Tariff via the GOV.UK Trade Tariff API (HMRC). Open Government Licence v3.0.
   European Union  EU third-country duties (Common Customs Tariff) via the same service's EU tariff for Northern Ireland
                   (/xi/), which applies the EU tariff. EU content: CC BY 4.0 (Commission Decision 2011/833/EU).
+  Australia       Customs Tariff Act 1995 Schedule 3 (general rates), Australian Border Force. Department of Home Affairs
+                  website content: Creative Commons Attribution 3.0 Australia.
+  Japan           Japan's Tariff Schedule (Japan Customs, English reference edition). Public Data License 1.0.
+                  The rate shown is the one Japan Customs says applies to WTO members: the lower of the WTO rate and the
+                  statutory rate (Temporary where set, otherwise General). Where they cannot be compared (per-unit or
+                  mixed rates), the three are shown as printed.
 
 Output per country:
   meta   source, edition, release date, licence, links
@@ -16,7 +22,7 @@ Output per country:
 
 Run: python3 scripts/world_tariffs.py   (needs network; ~13 MB download). Standard library only.
 """
-import json, pathlib, re, subprocess, datetime, sys, time
+import json, pathlib, re, subprocess, datetime, sys, time, html
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'data' / 'world' / 'tariffs'
@@ -156,10 +162,138 @@ def uk(region='uk'):
     return {'meta': meta, 'lines': lines}
 
 
+AUBASE = 'https://www.abf.gov.au'
+AUS3 = '/importing-exporting-and-manufacturing/tariff-classification/current-tariff/schedule-3'
+
+
+def aus():
+    """General rate for every 8-digit line in Schedule 3, chapter page by chapter page (about 100 requests)."""
+    txt = lambda x: re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', x))).replace('\u200b', '').strip()
+    links = lambda page, part: sorted(set(re.findall(r'href="(%s/%s[^"#]*)"' % (re.escape(AUS3), part), page)))
+    lines = []
+    for sec in links(get(AUBASE + AUS3).decode('utf-8', 'replace'), 'section-[ivx]+'):
+        if sec.count('/') != AUS3.count('/') + 1:
+            continue
+        for chp in links(get(AUBASE + sec).decode('utf-8', 'replace'), sec.rsplit('/', 1)[1] + '/chapter-\\d+'):
+            page = get(AUBASE + chp).decode('utf-8', 'replace')
+            head, levels = '', {}
+            for row in re.findall(r'<tr[^>]*>(.*?)</tr>', page, re.S):
+                th = [txt(x) for x in re.findall(r'<th[^>]*>(.*?)</th>', row, re.S)]
+                td = [txt(x) for x in re.findall(r'<td[^>]*>(.*?)</td>', row, re.S)]
+                if not th or len(td) < 4 or not re.match(r'^\d{4}', th[0]):
+                    continue
+                code = re.sub(r'\D', '', th[0]); goods, rate_ = td[2], td[3]
+                if len(code) == 4:
+                    head = goods.rstrip(':').strip(); head = head[:1] + head[1:].lower(); levels = {}
+                    continue
+                m = re.match(r'^(-+)\s*(.*)$', goods)
+                lvl, desc = (len(m.group(1)), m.group(2)) if m else (1, goods)
+                desc = desc.rstrip(':').strip()
+                levels[lvl] = desc
+                for k in [k for k in levels if k > lvl]:
+                    del levels[k]
+                if len(code) == 8 and rate_:
+                    notes = []
+                    if re.search(r'From\s*\d{1,2} \w+ \d{4}', rate_):     # a phased rate: keep the step now in force
+                        steps = re.split(r'From\s*(\d{1,2} \w+ \d{4}):?\s*', rate_)
+                        cur = steps[0].strip()
+                        for k in range(1, len(steps) - 1, 2):
+                            if datetime.datetime.strptime(steps[k], '%d %B %Y').date() <= datetime.date.today():
+                                cur = steps[k + 1].strip()
+                        notes = ['Phased rate in the schedule: ' + re.sub(r'\s*From\s*', '; From ', rate_).strip('; ')]
+                        rate_ = cur
+                    # the cell holds the general rate, then rates for listed origins ("5% DCS:4% CA:Free")
+                    m2 = re.search(r'(?:[A-Z]{2,4}/)*[A-Z]{2,4}:', rate_)
+                    gen, pref = (rate_[:m2.start()].strip(), rate_[m2.start():]) if m2 else (rate_, '')
+                    pref = re.sub(r'\s*((?:[A-Z]{2,4}/)*[A-Z]{2,4}:)\s*', r' \1', pref).strip()
+                    lines.append([code, ' › '.join([head] + [levels[k] for k in sorted(levels)]), gen or rate_, pref, '', notes])
+            time.sleep(0.3)
+        print('  AU', sec.rsplit('/', 1)[1], len(lines), file=sys.stderr)
+    lines.sort()
+    meta = {'iso': 'AUS', 'name': 'Australia', 'source': 'Customs Tariff Act 1995, Schedule 3', 'publisher': 'Australian Border Force',
+            'edition': 'as at ' + datetime.date.today().strftime('%-d %B %Y'), 'release': datetime.date.today().isoformat(),
+            'file': AUBASE + AUS3, 'licence': 'Content from the Department of Home Affairs website, licensed under Creative Commons Attribution 3.0 Australia',
+            'licence_url': 'https://creativecommons.org/licenses/by/3.0/au/', 'search': AUBASE + AUS3, 'read': datetime.date.today().isoformat()}
+    return {'meta': meta, 'lines': lines}
+
+
+JPBASE = 'https://www.customs.go.jp/english/tariff/'
+
+
+def _jp_num(t):
+    t = (t or '').strip().strip('()').strip()
+    if t.lower() == 'free':
+        return 0.0
+    m = re.fullmatch(r'(\d+(?:\.\d+)?)%', t)
+    return float(m.group(1)) if m else None
+
+
+def jpn():
+    """Japan's tariff, chapter page by chapter page (97 requests), from the newest edition listed on the index."""
+    idx = get(JPBASE + 'index.htm').decode('utf-8', 'replace')
+    eds = sorted(set(re.findall(r'/english/tariff/(\d{4}_\d{2}_\d{2})/index\.htm', idx)))
+    today = datetime.date.today().strftime('%Y_%m_%d')
+    ed = [x for x in eds if x <= today][-1]
+    txt = lambda x: re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', x))).strip()
+    lines = []
+    for ch in range(1, 98):
+        if ch == 77:
+            continue
+        try:
+            raw = get(JPBASE + '%s/data/e_%02d.htm' % (ed, ch))
+            cs_ = re.search(rb'charset=["\']?([\w-]+)', raw[:3000])
+            page = raw.decode(cs_.group(1).decode() if cs_ else 'utf-8', 'replace').replace('\uff08', '(').replace('\uff09', ')')
+        except subprocess.CalledProcessError:
+            continue
+        head, sub6, levels = '', '', {}
+        for r in re.findall(r'<tr[^>]*>(.*?)</tr>', page, re.S):
+            tds = [txt(x) for x in re.findall(r'<td[^>]*>(.*?)</td>', r, re.S)]
+            cs = re.search(r'class="shell_var1_CSTNO"[^>]*>(.*?)</td>', r, re.S)
+            it = re.search(r'class="shell_var1_ITEM_NAME"[^>]*padding-left:([\d.]+)em[^>]*>(.*?)</td>', r, re.S)
+            if not cs:
+                if tds and re.fullmatch(r'\d\d\.\d\d', tds[0]) and len(tds) > 2:
+                    head = next((t for t in tds[1:4] if len(t) > 3), '').rstrip('.').strip(); levels = {}
+                continue
+            c6 = re.sub(r'\D', '', txt(cs.group(1)))
+            if len(c6) == 6:
+                sub6 = c6
+            hs = re.search(r'class="shell_var1_HSCODE"[^>]*>(.*?)</td>', r, re.S)
+            stat = re.sub(r'\D', '', txt(hs.group(1))) if hs else ''
+            if it:
+                lvl = float(it.group(1)); desc = re.sub(r'^\d+\s+', '', txt(it.group(2))).rstrip(':').strip()
+                levels[lvl] = desc
+                for k in [k for k in levels if k > lvl]:
+                    del levels[k]
+            if not sub6 or len(tds) < 6 or (len(stat) != 3 and len(c6) != 6):
+                continue                          # a rate sits on a statistical line, or on a 6-digit line that has none
+            gen, tmp, wto = tds[3], tds[4], tds[5]
+            if not (gen or tmp or wto):
+                continue
+            stat_ = tmp or gen
+            a, b = _jp_num(wto), _jp_num(stat_)
+            if a is not None and b is not None:
+                main = wto.strip('()') if a < b else stat_
+            else:
+                main = ''                         # not comparable: the page shows all three
+            lines.append([sub6 + stat if len(stat) == 3 else sub6, ' › '.join([head] + [levels[k] for k in sorted(levels)]), main or 'Lower of the rates shown',
+                          'General: %s · Temporary: %s · WTO: %s' % (gen or '–', tmp or '–', wto or '–'), '',
+                          [] if main else ['WTO and statutory rates are not directly comparable here; the lower one applies (Japan Customs).']])
+        time.sleep(0.3)
+        if ch % 10 == 0:
+            print('  JP chapter', ch, len(lines), file=sys.stderr)
+    d = datetime.datetime.strptime(ed, '%Y_%m_%d').date()
+    meta = {'iso': 'JPN', 'name': 'Japan', 'source': "Japan's Tariff Schedule", 'publisher': 'Japan Customs (Ministry of Finance)',
+            'edition': 'as of ' + d.strftime('%-d %B %Y'), 'release': d.isoformat(), 'file': JPBASE + ed + '/index.htm',
+            'licence': 'Public Data License 1.0 (Ministry of Finance, Japan Customs website); English edition published for reference only',
+            'licence_url': 'https://www.digital.go.jp/en/resources/open_data/public_data_license_v1.0',
+            'search': JPBASE + ed + '/index.htm', 'read': datetime.date.today().isoformat()}
+    return {'meta': meta, 'lines': lines}
+
+
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)
-    which = sys.argv[1:] or ['usa', 'gbr', 'euu']
-    for k, fn in (('usa', usa), ('gbr', uk), ('euu', lambda: uk('xi'))):
+    which = sys.argv[1:] or ['usa', 'gbr', 'euu', 'aus', 'jpn']
+    for k, fn in (('usa', usa), ('gbr', uk), ('euu', lambda: uk('xi')), ('aus', aus), ('jpn', jpn)):
         if k not in which:
             continue
         d = fn()

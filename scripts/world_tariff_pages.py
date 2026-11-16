@@ -11,7 +11,7 @@ The lookup reads one small file per chapter (/data/tariffs/<iso>/<chapter>.json)
 import json, pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SLUGS = {'USA': 'united-states', 'GBR': 'united-kingdom', 'EUU': 'european-union'}
+SLUGS = {'USA': 'united-states', 'GBR': 'united-kingdom', 'EUU': 'european-union', 'AUS': 'australia', 'JPN': 'japan'}
 # What each schedule's main rate is called, what the page must say it leaves out, and whether lines carry the extra US columns.
 PROFILE = {
     'USA': {'rate': 'General rate', 'ext': True,
@@ -33,6 +33,21 @@ PROFILE = {
                                     f'<a style="text-decoration:underline" href="{e(d["meta"]["search"])}" target="_blank" rel="noopener">Check a code in TARIC, the EU&#39;s official database</a>. '
                                     'Member states and trade: <a style="text-decoration:underline" href="/trade/bloc/european-union">European Union</a>.'),
             'sub': 'Third-country duty, before quotas, trade remedies or preferences.'},
+    'AUS': {'rate': 'General rate', 'ext': 'aus',
+            'notice': lambda d, e: ('These are the <b>general rates</b> in Schedule 3 of Australia&#39;s Customs Tariff Act 1995. '
+                                    'Where Schedule 3 itself prints a different rate for some origins, the lookup shows it with the schedule&#39;s own codes. '
+                                    'Rates under Australia&#39;s free trade agreements are set in separate schedules of the same Act and are not shown; '
+                                    'tariff concession orders can remove duty on particular goods, anti-dumping duties can apply, and import GST and other taxes are charged on top. '
+                                    f'<a style="text-decoration:underline" href="{e(d["meta"]["search"])}" target="_blank" rel="noopener">See Schedule 3 on the official site</a>.'),
+            'sub': 'General rate, before free trade agreements, concessions or trade remedies.'},
+    'JPN': {'rate': 'Rate for WTO members', 'ext': 'jpn',
+            'notice': lambda d, e: ('Japan&#39;s schedule prints a <b>General</b> rate, sometimes a <b>Temporary</b> rate that replaces it, and a <b>WTO</b> rate. '
+                                    'Japan Customs explains that goods from WTO members pay the lower of the WTO rate and the General (or Temporary) rate; that is the rate shown here. '
+                                    'Where the rates are per unit or mixed and cannot be compared, all three are shown as printed. '
+                                    'Rates under Japan&#39;s economic partnership agreements and its preference scheme for developing countries are not included, and consumption tax is charged on top. '
+                                    'The English edition is published for reference; the Japanese legal texts are authoritative. '
+                                    f'<a style="text-decoration:underline" href="{e(d["meta"]["search"])}" target="_blank" rel="noopener">See the schedule on the Japan Customs site</a>.'),
+            'sub': 'Lower of the WTO and statutory rates, before partnership agreements or preferences.'},
 }
 _PCT = re.compile(r'^(\d+(?:\.\d+)?)%$')
 
@@ -186,10 +201,22 @@ class Tariffs:
 
     def _script(self, iso):
         P = PROFILE[iso]; ext = P['ext']
-        cols = ('<th>Lower rates under agreements and programmes</th><th class=r>Column 2</th>' if ext else '')
-        cells = ('+"<td class=\\"tfn\\">"+esc(l[3]||"–")+"</td><td class=r>"+esc(l[4]||"–")+"</td>"' if ext else '')
-        foot = ('Column 2 applies only to the countries named in general note 3(b) of the schedule. Letters in the agreements column are the schedule&#39;s own programme codes, explained in its general notes.' if ext
-                else 'Rates as printed by the official service. Where a line shows two rates joined by &#34;or&#34;, the schedule sets more than one rate for that code; check the official entry.')
+        if ext == 'jpn':
+            cols = '<th>Rates as printed</th>'
+            cells = '+"<td class=\\"tfn\\">"+esc(l[3]||"–")+"</td>"'
+            foot = 'A WTO rate in brackets is printed that way in the schedule. Japan Customs: the lower of the WTO rate and the General (or Temporary) rate applies to goods from WTO members.'
+        elif ext == 'aus':
+            cols = '<th>Rates printed for some origins</th>'
+            cells = '+"<td class=\\"tfn\\">"+esc(l[3]||"–")+"</td>"'
+            foot = ('Letters before a colon are the schedule&#39;s own codes for origins, explained in the Customs Tariff Act. '
+                    'Where the schedule phases a rate down over time, the step now in force is shown and the full timetable is in the note.')
+        elif ext:
+            cols = '<th>Lower rates under agreements and programmes</th><th class=r>Column 2</th>'
+            cells = '+"<td class=\\"tfn\\">"+esc(l[3]||"–")+"</td><td class=r>"+esc(l[4]||"–")+"</td>"'
+            foot = 'Column 2 applies only to the countries named in general note 3(b) of the schedule. Letters in the agreements column are the schedule&#39;s own programme codes, explained in its general notes.'
+        else:
+            cols = cells = ''
+            foot = 'Rates as printed by the official service. Where a line shows two rates joined by &#34;or&#34;, the schedule sets more than one rate for that code; check the official entry.'
         return ('<style>.tfl{margin:0 0 10px}.tfrow{display:flex;gap:8px;flex-wrap:wrap}.tfrow input{flex:1 1 220px;min-width:0;height:46px;padding:0 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--card);color:var(--fg);font-size:1rem}'
                 '.tfrow button{height:46px;padding:0 18px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;cursor:pointer}'
                 '.tfc{font-family:var(--mono,monospace);white-space:nowrap}.tfd small{display:block;color:var(--muted)}.tfn{font-size:.8rem;color:var(--muted)}</style>'
