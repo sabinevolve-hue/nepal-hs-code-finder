@@ -196,6 +196,7 @@ function renderHome(){
       <a class="xcard" href="/import-duty"><span class="ic" style="background:#C2410C">${ic('i-tag')}</span><span class="xt"><b>Import duty by product</b><small>Customs duty &amp; landed cost, product by product</small></span></a>
       <button class="xcard" data-go="imports"><span class="ic" style="background:#1D81A2">${ic('i-down')}</span><span class="xt"><b>Imports</b><small>What Nepal buys, by product &amp; country</small></span></button>
       <button class="xcard" data-go="exports"><span class="ic" style="background:#2E9E6B">${ic('i-up')}</span><span class="xt"><b>Exports</b><small>What Nepal sells, by product &amp; country</small></span></button>
+      <a class="xcard" href="/import-rules"><span class="ic" style="background:#6D4FC2">${ic('i-shield')}</span><span class="xt"><b>Import permits</b><small>Which authority to ask, by HS code</small></span></a>
       <a class="xcard" href="/export"><span class="ic" style="background:#0EA5A0">${ic('i-doc')}</span><span class="xt"><b>Export guides</b><small>How to export carpets, cardamom, tea…</small></span></a>
       <a class="xcard" href="/safta"><span class="ic" style="background:#E0A33E">${ic('i-tag')}</span><span class="xt"><b>SAFTA duty</b><small>Lower duty from South Asia</small></span></a>
       <a class="xcard" href="/shipping"><span class="ic" style="background:#EE8A4B">${ic('i-ship')}</span><span class="xt"><b>Shipping to Nepal</b><small>Gateway ports, routes &amp; transit</small></span></a>
