@@ -90,7 +90,7 @@ CHAPTERS = sorted(by_ch.keys())
 # ---- shared stylesheet ----
 CSS = """
 :root{--bg:#F8FAFC;--card:#fff;--fg:#0B1220;--fg2:#334155;--muted:#5B6878;--border:#E2E8F0;
---navy:#1B2A45;--accent:#5470C6;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
+--navy:#1B2A45;--accent:#4A66BF;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
 --mid:#A15C07;--mid-bg:#FEF3C7;--hi:#B91C1C;--hi-bg:#FEE2E2;--spec:#475569;--spec-bg:#EEF2F6;
 --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
 --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace}
@@ -101,6 +101,7 @@ CSS = """
 html,body{overflow-x:hidden;overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.5;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+p a:not([class]),.fineprint a,.note a{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 .wrap{max-width:760px;margin:0 auto;padding:0 16px}
 header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:40}
 @media(prefers-color-scheme:dark){header.top{background:#0B1428}}

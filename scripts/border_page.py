@@ -117,7 +117,7 @@ out.append('</div><section class="cphero"><div class="wrap" style="display:block
            % (len(gates), FY, india / timp * 100, china / timp * 100, air / timp * 100))
 out.append('<figure class="vzfig" data-title="Nepal’s customs gates by trade handled, FY %s" data-src="%s"><figcaption><b>Every gate, sized by the trade it clears</b>'
            '<span class="vzleg"><i class="bdk in"></i>India border<i class="bdk cn"></i>China border<i class="bdk air"></i>Airport / dry port</span>'
-           '<span class="vzbtns"><button type="button" data-act="png">Save image</button></span></figcaption><div class="vzwrap">%s</div></figure>' % (FY, esc(SRC), MAP))
+           '<span class="vzbtns"><button type="button" data-act="png">Save image</button></span></figcaption><div class="vzwrap" tabindex="0" role="region" aria-label="Chart, scrolls sideways on small screens">%s</div></figure>' % (FY, esc(SRC), MAP))
 out.append('<p class="fineprint">Tap a circle to open that customs office. Circle area follows imports plus exports. Positions are schematic: each gate is placed by its '
            'approximate longitude along the border, not surveyed coordinates.</p>')
 out.append('<h2 class="sec">Walk the border, west to east</h2><div class="bdwalk">')

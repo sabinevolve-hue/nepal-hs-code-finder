@@ -353,7 +353,7 @@ def _money(th):
 _tc = sorted(CH_IMP, key=lambda c: -CH_IMP[c])[:14]
 _tm, _ = _story.treemap([(CHSHORT.get(c, '') or 'Chapter %d' % c, _viz.chap_icon('%02d' % c), CH_IMP[c], _story.CLS[i % 5] if i < 5 else 'cg') for i, c in enumerate(_tc)],
                         _money, 'Nepal imports by HS chapter', whole=TOT_IMP)
-_cat_top = ('<figure class="vzfig"><figcaption><b>What Nepal imports — the 14 largest chapters, %.0f%% of the total (FY %s)</b></figcaption><div class="vzwrap">%s</div></figure>'
+_cat_top = ('<figure class="vzfig"><figcaption><b>What Nepal imports — the 14 largest chapters, %.0f%% of the total (FY %s)</b></figcaption><div class="vzwrap" tabindex="0" role="region" aria-label="Chart, scrolls sideways on small screens">%s</div></figure>'
             '<p class="xlink">Prefer industries to chapters? See <a href="/sectors">Nepal&rsquo;s trade by sector</a>.</p>'
             % (sum(CH_IMP[c] for c in _tc) / TOT_IMP * 100 if TOT_IMP else 0, esc(FY), _tm))
 index_page('/trade/categories', 'Nepal trade by category %s — every HS chapter | Customs Nepal' % FY,

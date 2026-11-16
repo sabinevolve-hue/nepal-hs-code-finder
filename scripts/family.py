@@ -233,7 +233,7 @@ CSS = """
 .fam:not(.all):not(.filt) .fam-x{display:none}.famt tr.fam-off{display:none!important}.fam.filt .fam-more{display:none}
 .fam-stairs{display:flex;align-items:flex-end;gap:5px;margin:.4em 0 0;padding-top:22px;border-bottom:2px solid var(--border)}
 .fam-step{position:relative;flex:1 1 0;min-width:0;border:0;border-radius:9px 9px 0 0;font:inherit;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:6px 2px 0;line-height:1.15;transition:filter .15s,transform .15s}
-.fam-step b{font-size:.95rem}.fam-step small{font-size:.68rem;opacity:.85;white-space:nowrap}
+.fam-step b{font-size:.95rem}.fam-step small{font-size:.68rem;white-space:nowrap}
 .fam-step.t-free{background:var(--free-bg);color:var(--free)}.fam-step.t-low{background:var(--low-bg);color:var(--low)}
 .fam-step.t-mid{background:var(--mid-bg);color:var(--mid)}.fam-step.t-hi{background:var(--hi-bg);color:var(--hi)}.fam-step.t-spec{background:var(--spec-bg);color:var(--spec)}
 .fam-step:hover{filter:brightness(.96)}.fam-step:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

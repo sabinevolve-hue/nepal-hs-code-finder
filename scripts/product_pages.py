@@ -417,6 +417,25 @@ sm = sm_path.read_text(encoding='utf-8')
 rows_xml = ['  <url><loc>%s/import-duty</loc><lastmod>%s</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>' % (SITE, TODAY)]
 for p in paths:
     rows_xml.append('  <url><loc>%s%s</loc><lastmod>%s</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>' % (SITE, p, TODAY))
+# Every product page gets a link from its tariff chapter page: the description of a tariff line that has a duty page links to it.
+# (Before this, 171 product pages were reachable only through the sitemap.)
+_by_code = {p.rsplit('-', 1)[1]: p for p in paths}
+_row = re.compile(r'(<td class="code"><a href="/#hs-(\d{4})\.(\d\d)\.(\d\d)">[^<]*</a></td><td>)(.*?)(</td>)', re.S)
+_linked = 0
+for _f in sorted((pub / 'tariff').glob('[0-9][0-9].html')):
+    _t = _f.read_text(encoding='utf-8')
+    def _sub(m):
+        global _linked
+        p = _by_code.get(m[2] + m[3] + m[4])
+        if not p or '<a ' in m[5]:
+            return m[0]
+        _linked += 1
+        return '%s<a href="%s" title="Duty, taxes and a worked landed cost">%s</a>%s' % (m[1], p, m[5], m[6])
+    _u = _row.sub(_sub, _t)
+    if _u != _t:
+        _f.write_text(_u, encoding='utf-8')
+print('product_pages: %d tariff lines now link to their duty page' % _linked)
+
 if '</urlset>' in sm:
     sm = sm.replace('</urlset>', '\n'.join(rows_xml) + '\n</urlset>')
     sm_path.write_text(sm, encoding='utf-8')

@@ -520,7 +520,7 @@ for iso in order:
                        [(viz.chap_icon(str(a)[:2]), b_, money(v)) for a, b_, v in te[:4]], rank, len(order))
     out.append('<h2 class="sec">Share it</h2><div class="cpshare">'
                '<figure class="vzfig" data-title="Nepal %s trade poster" data-src="" data-bare="1" data-pad="0">'
-               '<div class="vzwrap">%s</div></figure>'
+               '<div class="vzwrap" tabindex="0" role="region" aria-label="Chart, scrolls sideways on small screens">%s</div></figure>'
                '<div><h3>One image, the whole story</h3><p>A ready-made portrait poster of Nepal–%s trade — sized for Instagram, '
                'Facebook, LinkedIn or a slide. Figures are the official FY %s numbers.</p>'
                '<span class="vzbtns" style="margin:0"><button type="button" data-act="pngsib">Download poster (PNG)</button>'

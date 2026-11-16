@@ -178,7 +178,7 @@ def figure(title, svg, tsv, source, bare=False, legend=''):
     return ('<figure class="vzfig" data-title="%s" data-src="%s"%s><figcaption><b>%s</b>%s'
             '<span class="vzbtns"><button type="button" data-act="copy">Copy data</button>'
             '<button type="button" data-act="png">Save image</button></span></figcaption>'
-            '<div class="vzwrap">%s</div><textarea class="vztsv" hidden>%s</textarea></figure>'
+            '<div class="vzwrap" tabindex="0" role="region" aria-label="Chart, scrolls sideways on small screens">%s</div><textarea class="vztsv" hidden>%s</textarea></figure>'
             % (esc(title), esc(source), ' data-bare="1"' if bare else '', esc(title), legend, svg, esc(tsv)))
 
 LEGEND_IE = ('<span class="vzleg"><i class="k1"></i>Imports<i class="k2"></i>Exports</span>')
