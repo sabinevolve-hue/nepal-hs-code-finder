@@ -1597,7 +1597,10 @@ function go(t, hist){
   ['search','ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].forEach(x => { var el = $('#v-' + x); if (el) el.hidden = x !== t; });
   if (t === 'stats') renderStats(); else if (t === 'exports') renderExports(); else if (t === 'imports') renderImports(); else ecClear();
   if (t === 'ai') initAI();
-  $$('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+  $$('[data-tab]').forEach(b => { const on = b.dataset.tab === t;      // aria-selected is only valid on tabs: the header button uses aria-current, the logo carries no state
+    if (b.classList.contains('logo')) b.removeAttribute('aria-selected');
+    else if (b.classList.contains('hdrbtn')){ b.removeAttribute('aria-selected'); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); }
+    else b.setAttribute('aria-selected', on); });
   try { $$('[data-toolt]').forEach(b => b.setAttribute('aria-selected', b.dataset.toolt === t)); if (t === 'invoice') $$('[data-tab="calc"]').forEach(b => b.setAttribute('aria-selected', 'true')); } catch(e){}
   if (t === 'browse') renderBrowse(); if (t === 'saved') renderSaved(); if (t === 'calc'){ calcTracked = false; calc(); } if (t === 'invoice') initInvoice();
   try { var _p = TABPATH[t] || '/', _u = 'https://www.customsnepal.com' + _p;

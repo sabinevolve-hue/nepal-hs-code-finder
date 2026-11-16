@@ -37,7 +37,7 @@ DESC = {re.sub(r'\D', '', str(r[0])): ' '.join(str(r[1]).split()) for r in TAR['
 def fig(title, svg, legend=''):
     """Chart frame with 'Save image' only — these pages are summaries, so no data-copy button."""
     return ('<figure class="vzfig" data-title="%s" data-src="%s"><figcaption><b>%s</b>%s<span class="vzbtns">'
-            '<button type="button" data-act="png">Save image</button></span></figcaption><div class="vzwrap">%s</div></figure>'
+            '<button type="button" data-act="png">Save image</button></span></figcaption><div class="vzwrap" tabindex="0" role="region" aria-label="Chart, scrolls sideways on small screens">%s</div></figure>'
             % (esc(title), esc(SRC), esc(title), legend, svg))
 
 

@@ -286,7 +286,7 @@ def worldmap(shapes, total, href, label, money):
         b.append('<rect x="%d" y="462" width="16" height="12" rx="3" class="wm%d"/><text x="%d" y="472" class="m" font-size="11">%s</text>'
                  % (x, i + 1, x + 21, esc(lab)))
         x += 30 + len(lab) * 6
-    return ('<svg class="vz wmap" viewBox="0 0 960 500" role="img" aria-label="World map shaded by each country’s trade with Nepal" '
+    return ('<svg class="vz wmap" viewBox="0 0 960 500" role="group" aria-label="World map shaded by each country’s trade with Nepal" '
             'xmlns="http://www.w3.org/2000/svg">%s</svg>' % ''.join(b))
 
 

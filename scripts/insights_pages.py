@@ -280,7 +280,7 @@ def a_markets():
             takeaways(['Nepal runs a surplus with only %d of these 15 markets.' % sum(1 for c in top if c[2] > c[1]),
                        'A market’s profile page lists exactly which lines it buys.'])]
     return art('top-export-markets-of-nepal', 'big', 'Where Nepal exports: top 15 markets, FY %s' % FY, 'Who buys from Nepal: the top 15 markets',
-               '%s took %s of Nepal’s exports in FY %s.' % (top[0][0], pct(top[0][2], TOT_E), FY), body,
+               '%s took %s of Nepal’s exports in FY %s. The 15 largest markets, what each bought and its share, from Department of Customs figures.' % (top[0][0], pct(top[0][2], TOT_E), FY), body,
                more=['top-exports-of-nepal', 'nepal-export-concentration', 'top-suppliers-to-nepal'])
 
 
@@ -531,7 +531,7 @@ def a_highest():
             takeaways(['Customs duty is only the first layer. Vehicles, alcohol and tobacco also pay excise, and VAT is charged on top of both. The <a href="/calculator">calculator</a> stacks them in order.',
                        'A high-duty line often has a lower-duty neighbour for a different build or size. Each product page shows the whole family.'])]
     return art('highest-duty-goods-in-nepal', 'tar', 'Highest customs duty in Nepal: goods taxed at 40%% to %g%%' % mx, 'The goods Nepal taxes hardest at the border',
-               '%d tariff lines carry a customs duty of 40%% or more, up to %g%%.' % (len(L), mx), body,
+               '%d tariff lines carry a customs duty of 40%% or more, up to %g%%. The full list by product and rate, from the current Nepal Customs Tariff.' % (len(L), mx), body,
                more=['imports-by-duty-rate', 'goods-that-pay-the-most-tax', 'high-duty-goods-nepal-still-imports'])
 
 
@@ -973,7 +973,7 @@ CSS = ('<style>'
        '.th-series svg{display:block;width:100%;height:100%}.th-series .ar{fill:rgba(220,20,60,.16)}.th-series .ln{fill:none;stroke:#DC143C;stroke-width:2;vector-effect:non-scaling-stroke}.th-series circle{display:none}'
        '.th-share i{position:absolute;inset:0 auto 0 0;background:#DC143C;border-radius:8px 0 0 8px}'
        '.th-ratio{display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--spec-bg)}.th-ratio i{display:block;height:9px;border-radius:3px;background:#1F4FBF}.th-ratio i.b{background:#DC143C}'
-       '.th-fig{display:flex;align-items:center;padding:0 12px;font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:1.05rem;color:#DC143C;white-space:nowrap}'
+       '.th-fig{display:flex;align-items:center;padding:0 12px;font-family:"Bricolage Grotesque",var(--f);font-weight:800;font-size:1.05rem;color:#C8102E;white-space:nowrap}'
        '.ins-sec{display:flex;align-items:baseline;gap:10px;margin:2.2em 0 .2em}.ins-sec h2{font-family:"Bricolage Grotesque",var(--f);font-size:1.5rem;letter-spacing:-.02em;margin:0;border:0;padding:0}'
        '.ins-sec span{color:var(--muted);font-size:.85rem}'
        '.ins-hub{max-width:1060px}'

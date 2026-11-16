@@ -90,7 +90,7 @@ CHAPTERS = sorted(by_ch.keys())
 # ---- shared stylesheet ----
 CSS = """
 :root{--bg:#F8FAFC;--card:#fff;--fg:#0B1220;--fg2:#334155;--muted:#5B6878;--border:#E2E8F0;
---navy:#1B2A45;--accent:#5470C6;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
+--navy:#1B2A45;--accent:#4A66BF;--accent-bg:#E8EDFA;--free:#15803D;--free-bg:#DCFCE7;--low:#0369A1;--low-bg:#E0F0FA;
 --mid:#A15C07;--mid-bg:#FEF3C7;--hi:#B91C1C;--hi-bg:#FEE2E2;--spec:#475569;--spec-bg:#EEF2F6;
 --f:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
 --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace}
@@ -101,6 +101,7 @@ CSS = """
 html,body{overflow-x:hidden;overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.5;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+p a:not([class]),.fineprint a,.note a{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 .wrap{max-width:760px;margin:0 auto;padding:0 16px}
 header.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:40}
 @media(prefers-color-scheme:dark){header.top{background:#0B1428}}
@@ -285,7 +286,7 @@ for idx, ch in enumerate(CHAPTERS):
     (pub / 'tariff' / (nn + '.html')).write_text(''.join(out), encoding='utf-8')
 
 # ---- tariff index ----
-title = 'Nepal Customs Tariff %s (%s) — All HS Codes & Duty Rates' % (FY_BS, YEAR)
+title = 'Nepal Customs Tariff %s (%s): Bhansar Rate List' % (FY_BS, YEAR)      # wording follows Search Console queries, Nov 2026
 desc = ('Nepal customs tariff %s (%s) by chapter: every HS code with its general and SAARC import duty '
         '(bhansar rate) — %d chapters, %s tariff lines, from the Department of Customs. Free search and calculator.'
         % (FY_BS, YEAR, len(CHAPTERS), format(len(D['rows']), ',')))
@@ -295,6 +296,7 @@ out.append('<h1>Nepal Customs Tariff %s (%s) — all chapters</h1>' % (FY_BS, YE
 out.append('<p class="lede">Every chapter of the Nepal Customs Tariff %s (%s, HS 2022), with %s HS code lines and '
            'their general and SAARC import duty (bhansar rate). Pick a chapter, or search any product on the '
            '<a href="/">home page</a>.</p>' % (FY_BS, YEAR, format(len(D['rows']), ',')))
+out.append('<h2>Customs Tariff %s PDF</h2>' % FY_BS)
 out.append('<p>Need the official document? The Department of Customs publishes the '
            '<a href="https://customs.gov.np/content/50/customs-tarrif/" target="_blank" rel="noopener noreferrer">Customs Tariff %s PDF '
            '(FY %s)</a> on customs.gov.np. Every line on this site is transcribed from it, with the source page noted in each '

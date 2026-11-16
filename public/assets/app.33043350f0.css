@@ -3,7 +3,7 @@
    full-height detail sheet with sticky action bar. Understand -> trust -> act on every code. */
 :root{
   --bg:#F8FAFC; --card:#FFFFFF; --muted-bg:#EEF2F6; --fg:#0B1220; --fg-2:#334155; --muted:#5B6878; --border:#E2E8F0;
-  --primary:#293C55; --on-primary:#FFFFFF; --accent:#5470C6; --accent-bg:#E8EDFA; --brand:#EE6666; --hero1:#1B2A45; --hero2:#2F4E7A; --hero3:#5470C6;
+  --primary:#293C55; --on-primary:#FFFFFF; --accent:#4A66BF; --accent-bg:#E8EDFA; --brand:#EE6666; --hero1:#1B2A45; --hero2:#2F4E7A; --hero3:#5470C6;
   --free:#15803D; --free-bg:#DCFCE7; --low:#0369A1; --low-bg:#E0F0FA; --mid:#A15C07; --mid-bg:#FEF3C7; --hi:#B91C1C; --hi-bg:#FEE2E2;
   --seg-goods:#94A3B8; --seg-duty:#0369A1; --seg-excise:#A15C07; --seg-vat:#7C3AED; --seg-other:#475569;
   --imp:#5470C6; --exp:#EE8A4B; --rev:#5FB365; --track:#EEF2F6; --grid:#E5E9EE;
@@ -683,7 +683,8 @@ button.br:hover{background:var(--muted-bg)}
 .pillrow button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
 .hdrbtn{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:rgba(255,255,255,.8);transition:background var(--t)}
 .hdrbtn:hover{background:rgba(255,255,255,.1)}
-.hdrbtn[aria-selected="true"]{background:var(--hero3);color:#fff}
+#v-search #results:empty{min-height:100vh}
+.hdrbtn[aria-current="page"]{background:var(--hero3);color:#fff}
 
 .ech{width:100%;height:280px;min-width:0}
 .ech.tall{height:360px}

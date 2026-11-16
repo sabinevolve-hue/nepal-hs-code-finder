@@ -812,8 +812,8 @@ def routes():
                 if DV.copp_ok(c3):
                     yield (DV.copp_href(c3), 'opps', DV.copp_title(c3), DV.copp_desc(c3), DV.copp(c3), 'WebPage', [], 'opportunities')
         yield ('/tenders', 'opps', 'Open Tenders: World Bank-Financed Projects by Country',
-               'Invitations to bid and requests for expressions of interest from World Bank-financed projects, loaded live. Filter by country, category or keyword; each notice links to the World Bank.',
-               DV.tenders_page() + '<script>' + (SRC / 'tenders.js').read_text(encoding='utf-8').replace('</', '<\\/') + '</script>', 'WebPage', [], 'opportunities')
+               'Where to find invitations to bid and requests for expressions of interest from World Bank-financed projects: one link per country to the World Bank procurement notices, newest first.',
+               DV.tenders_page(), 'WebPage', [], 'opportunities')
         for h4 in sorted(HEADINGS):
             if DV.heading_ok(h4):
                 yield (f'/hs/heading/{h4}', 'hs', DV.heading_title(h4), DV.heading_desc(h4), DV.heading(h4), 'WebPage', [], 'hs-headings')
@@ -900,7 +900,7 @@ def _doors():
         ('opps', 'Markets', '📈', 'Where import demand is growing', [
             ('/opportunities', 'Market opportunities', '200 products and 122 exporting countries'),
             ('/opportunities/product/8703', 'Cars', 'Markets that bought more'), ('/opportunities/product/8542', 'Integrated circuits', 'Markets that bought more'),
-            ('/tenders', 'Open tenders', 'World Bank-financed projects, live'),
+            ('/tenders', 'Open tenders', 'World Bank-financed projects, by country'),
             (f"/opportunities/{world_urls.SLUG['CHN']}", 'China', 'Growing markets for its exports'), (f"/opportunities/{world_urls.SLUG['IND']}", 'India', 'Growing markets for its exports')] if (DV and DV.OP) else []),
     ]
 
@@ -980,6 +980,21 @@ def document(seo_head, k, app_html, css_href, js_href, robots='index,follow,max-
             f'<link rel="icon" href="/favicon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="https://www.customsnepal.com/icon-180.png">\n'
             f'<link rel="preload" href="/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/archivo-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>\n'
             f'<link rel="stylesheet" href="{css_href}">\n{gtag}\n{js}\n</head>\n<body>\n{header(k)}\n<div id="app"><!--app-->{app_html}<!--/app--></div>\n{site_footer()}\n</body>\n</html>\n')
+
+NO_CITE = {'/', '/about', '/compare', '/tenders', '/opportunities', '/trade/blocs'}
+
+def cite_box(p, p2, title, lm):
+    """A ready-made citation for every data page, and for country profiles an image card to embed. Both carry a link back, which is how the site earns references without asking for them."""
+    url = B + p2; img = og_image(p); t = esc(title)
+    when = datetime.date.fromisoformat(lm).strftime('%-d %B %Y') if re.fullmatch(r'\d{4}-\d\d-\d\d', str(lm)) else str(lm)
+    embed = ''
+    if '/og/world.jpg' not in img and img.startswith(B):
+        code = f'<a href="{url}"><img src="{img}" alt="{t}" width="600" style="max-width:100%;height:auto"></a><br>Source: <a href="{url}">World Trade Data</a>'
+        embed = f'<p class="gk">Embed this card on your site</p><textarea readonly rows="4" aria-label="HTML code to embed this card" onfocus="this.select()">{esc(code)}</textarea>'
+    return (f'<details class="cite"><summary>Cite or embed this page</summary><p class="gk">Citation</p>'
+            f'<p class="citet">World Trade Data. &ldquo;{t}.&rdquo; {url} (updated {when}).</p>{embed}'
+            f'<p class="fine">You may quote these figures and use this card with a link to this page. The data comes from the sources named above; please credit them as well.</p></details>')
+
 
 def og_image(p):
     """Each country profile (and its year pages) has its own share image; everything else uses the site card."""
@@ -1067,8 +1082,6 @@ def write_vercel_json():
     cfg = {
         'git': {'deploymentEnabled': {'**': False, 'main': True}},      # only merges to main deploy (the free plan limits deployments per day)
         'cleanUrls': True, 'trailingSlash': False,
-        # the tenders page reads the World Bank's public notices API through this path (that API sends no cross-origin header)
-        'rewrites': [{'source': '/api/wb-notices', 'destination': 'https://search.worldbank.org/api/v2/procnotices'}],
         'redirects': redirects + [{'source': f'/nepal/exports/guide/{s}', 'destination': f'{MAIN}/export/{s}', 'permanent': True} for s in sorted(EXGUIDES) if s in MAIN_GUIDES] + ([{'source': f'/trade/{k.split("-")[1].lower()}/{k.split("-")[0].lower()}',
                                     'destination': f'/trade/{k.split("-")[0].lower()}/{k.split("-")[1].lower()}', 'permanent': True} for k in DV.pair_keys() if all(x in DV.D['pairset'] for x in k.split('-'))] if DV else [])
                      # country pages moved from ISO codes to country names; pairs (/trade/chn/usa) are untouched
@@ -1145,6 +1158,8 @@ def main_build():
         prev = lastmod.get(p2) or lastmod.get(p)
         lm = prev[1] if prev and prev[0] == h else TODAY
         new_lastmod[p2] = [h, lm]
+        if (part in STATIC_PARTS or p in STATIC_PATHS) and p not in NO_CITE and body.rstrip().endswith('</main>'):
+            body = body.rstrip()[:-len('</main>')] + cite_box(p, p2, title, lm) + '</main>'
         doc = document(seo_head(p, title, desc, ptype, extra_ld, lm), k, body, assets['css'], None if (part in STATIC_PARTS or p in STATIC_PATHS) else assets['js'])
         doc = cross_site.new_tab(world_urls.nice_html(doc), cross_site.MAIN_RX)      # customsnepal.com is a separate site: its links open in a new tab
         f = out_path(p2); f.parent.mkdir(parents=True, exist_ok=True)
