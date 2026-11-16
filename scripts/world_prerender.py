@@ -401,7 +401,7 @@ def v_code(code):
 <table class="bk"><tbody><tr><td>Six-digit HS code</td><td>{fmt_code(code)} <span class="fine">({code})</span></td></tr><tr><td>Heading</td><td>{(f'<a href="/hs/heading/{head}">{head[:2]}.{head[2:]}: exporters and importers of the whole heading</a>' if (DV and DV.heading_ok(head)) else head)}</td></tr>
 <tr><td>Chapter</td><td>{ch} — {esc(cn[1])}</td></tr><tr><td>Section</td><td>{cn[2]}</td></tr></tbody></table>
 <p class="crumb" style="margin-top:14px"><b>Heading {head[:2]}.{head[2:]}:</b> {esc(HEADINGS.get(head, ""))}</p>
-{prod_block(code)}{landed_block(code)}'''
+{prod_block(code)}{landed_block(code)}{TF.code_block(code) if TF else ''}'''
         + src_box('International standard', f'<p>This is the global 6-digit Harmonized System code ({HS["edition"]}), identical across 200+ countries. Each country adds its own 8–10 digit extension and duty rates. <a href="https://www.wcoomd.org/en/topics/nomenclature/overview.aspx" target="_blank" rel="noopener">About the HS ↗</a></p>')
         + f'{gcard}<h3 class="h">Other codes in heading {head[:2]}.{head[2:]}</h3>{sib}')
 
@@ -656,6 +656,10 @@ def crumbs_for(p):
         cr += [('Trade', '/trade'), ('Regions and blocs', p)]
     elif (m := re.match(r'^/trade/bloc/([a-z0-9-]+)$', p)):
         cr += [('Trade', '/trade'), ('Regions and blocs', '/trade/blocs'), (world_deep.Views.BLOCS[m[1]][0], p)]
+    elif p == '/tariffs':
+        cr.append(('Import tariffs', p))
+    elif p.startswith('/tariffs/'):
+        cr += [('Import tariffs', '/tariffs'), (next(TF.C[i]['meta']['name'] for i in TF.C if TF.href(i) == p), p)]
     elif p == '/tenders':
         cr += [('Market opportunities', '/opportunities'), ('Open tenders', p)]
     elif p == '/opportunities':
@@ -710,13 +714,16 @@ def main_partner(name):
 
 DV = None      # set in main_build once helpers exist; v_trade checks it
 
+TF = None
 def init_deep():
-    global DV
+    global DV, TF
+    import world_tariff_pages
+    TF = world_tariff_pages.Tariffs(dict(esc=esc, main=main, back=back, src_box=src_box, ic=ic, CH=CH, SEC=SEC))
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
                                    ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href, SLUG=world_urls.SLUG, HEADINGS=HEADINGS, CHNAME=lambda ch: CH[ch][1]))
 
-STATIC_PARTS = {'opportunities', 'countries', 'country-years', 'topics', 'hs-headings', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
+STATIC_PARTS = {'tariffs', 'opportunities', 'countries', 'country-years', 'topics', 'hs-headings', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/', '/about', '/trade', '/compare', '/trade/latest'}
 
 # ---------------------------------------------------------------- route table
@@ -814,6 +821,12 @@ def routes():
         yield ('/tenders', 'opps', 'Open Tenders: World Bank-Financed Projects by Country',
                'Where to find invitations to bid and requests for expressions of interest from World Bank-financed projects: one link per country to the World Bank procurement notices, newest first.',
                DV.tenders_page(), 'WebPage', [], 'opportunities')
+    if TF and TF.C:
+        yield ('/tariffs', 'trade', 'Import Tariffs by Country: Official Duty Rates by Product',
+               'Import duty rates product by product, from the official tariff schedule each country publishes, with a code lookup and averages by product section. More countries are added as their licences allow.',
+               TF.hub(), 'CollectionPage', [], 'tariffs')
+        for iso in TF.C:
+            yield (TF.href(iso), 'trade', TF.title(iso), TF.desc(iso), TF.country(iso), 'WebPage', [], 'tariffs')
         for h4 in sorted(HEADINGS):
             if DV.heading_ok(h4):
                 yield (f'/hs/heading/{h4}', 'hs', DV.heading_title(h4), DV.heading_desc(h4), DV.heading(h4), 'WebPage', [], 'hs-headings')
@@ -881,7 +894,8 @@ def _doors():
             ('/compare', 'Compare countries', 'Two or three side by side, since 2000'),
             ('/trade/latest', 'What changed this year', 'Biggest rises and falls so far'),
             ('/trade/chn', 'China', 'Largest exporter'), ('/trade/usa', 'United States', 'Largest importer'),
-            ('/trade/sanctions', 'Trade under sanctions', 'Russia, Iran, Venezuela and others')] if DV else [('/trade', 'World rankings', f'All {len(COUNTRIES)} economies')]),
+            ('/trade/sanctions', 'Trade under sanctions', 'Russia, Iran, Venezuela and others'),
+            ('/tariffs', 'Import tariffs', 'Official duty rates, product by product')] if DV else [('/trade', 'World rankings', f'All {len(COUNTRIES)} economies')]),
         ('blocs', 'Regions', '🗺️', 'Regions and trade blocs', [
             ('/trade/blocs', 'All regions and blocs', 'Compared side by side'),
             ('/trade/bloc/european-union', 'European Union', '27 members'), ('/trade/bloc/brics', 'BRICS', 'Members and trade between them'),
@@ -1115,7 +1129,7 @@ def write_vercel_json():
     (W / 'vercel.json').write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     return len(redirects)
 
-SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'opportunities', 'hs-headings', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
+SITEMAP_PARTS = ['hubs', 'regions', 'topics', 'tariffs', 'opportunities', 'hs-headings', 'product-groups', 'hs-chapters', 'countries', 'country-years', 'pairs', 'exports-by-product', 'nepal-exports', 'hs-codes']
 
 def write_sitemaps(entries):
     for f in W.glob('sitemap*.xml'): f.unlink()
@@ -1141,7 +1155,7 @@ def main_build():
     if (SRC / 'api').is_dir():
         shutil.copytree(SRC / 'api', W / 'api')
     # generated route files are rebuilt from scratch each run (stale routes must disappear → 404)
-    for d in ('hs', 'trade', 'nepal'):
+    for d in ('hs', 'trade', 'nepal', 'tariffs', 'data/tariffs'):
         shutil.rmtree(W / d, ignore_errors=True)
         (W / (d + '.html')).unlink(missing_ok=True)
     try:
@@ -1186,6 +1200,8 @@ def main_build():
         (W / 'data' / 'compare.json').write_text(json.dumps(DV.compare_data(), ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     # product names for the home page search (loaded only when someone types)
     (W / 'data').mkdir(exist_ok=True)
+    if TF:
+        TF.write_lookup(W / 'data' / 'tariffs')
     (W / 'data' / 'psearch.json').write_text(json.dumps([[k, clip(hs_desc(k), 72)] for k in sorted(SUB) if DV and DV.has_product(k)], ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     LASTMOD_FILE.write_text(json.dumps(new_lastmod, separators=(',', ':'), sort_keys=True) + '\n', encoding='utf-8')
     counts = write_sitemaps(entries)
