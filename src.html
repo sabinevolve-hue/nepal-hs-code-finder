@@ -2681,8 +2681,35 @@ window.addEventListener('popstate', function(e){
   if (t === curTab && (t === 'browse' || t === 'stats')){ applyView(s.cnv); return; }                                               // Back/Forward between a list and what was opened from it
   if (t) go(t, false);
 });
+// #hs-<code> links: accept the dotted tariff code (8450.20.00) and the plain 8 digits (84502000) that many of our own pages use;
+// anything else after #hs- (a heading, a subheading, a mistyped code) becomes a search, so the link never lands on a blank home page.
+function codeFromHash(raw){
+  if (BY[raw]) return raw;
+  const d = raw.replace(/\D/g, '');
+  if (d.length === 8){ const c = d.slice(0,4) + '.' + d.slice(4,6) + '.' + d.slice(6); if (BY[c]) return c; }
+  return null;
+}
+function openFromHash(){
+  const hh = (location.hash || '').slice(1);
+  if (!hh.startsWith('hs-')) return false;
+  const raw = decodeURIComponent(hh.slice(3)).trim(), c = codeFromHash(raw);
+  if (c){
+    if (raw !== c){ try { history.replaceState(history.state, '', '#hs-' + c); } catch(e){} }   // one spelling per entry, so Back doesn't reopen it
+    openDetail(c); return true;
+  }
+  const q = raw.replace(/[^0-9.]/g, '');
+  if (q){ if (curTab !== 'search') go('search'); $('#q').value = q; shown = 40; renderResults(); }
+  return true;
+}
+window.addEventListener('hashchange', function(){                // a #hs- link followed on this page, or a hash typed in the address bar
+  const hh = location.hash || '';
+  if (!hh.startsWith('#hs-')) return;
+  const c = codeFromHash(decodeURIComponent(hh.slice(4)).trim());
+  if (c && c === curDetail && !$('#sheet').hidden) return;          // already showing it (Back/Forward also fire popstate)
+  detailFromHistory = true; try { openFromHash(); } finally { detailFromHistory = false; }
+});
 const h = (location.hash || '').slice(1);
-if (h.startsWith('hs-') && BY[h.slice(3)]) openDetail(h.slice(3));
+if (openFromHash()) {}
 else if (!_pt && ['ai','stats','exports','imports','browse','calc','invoice','saved','about','privacy'].includes(h)) go(h);
 // expose a minimal API for the account module (below)
 try { window.CN = { invData, applyExtracted, go, openDetail, BY }; } catch(e){}
