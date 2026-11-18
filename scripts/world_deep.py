@@ -780,6 +780,7 @@ class Views:
                              + (f'<p class="pdfl"><a href="{self.brief_href(iso)}" download>Download the {nm} trade brief (PDF)</a> <span>Key figures, partners, products and history on a few pages, free to share.</span></p>' if iso in self.C else '')
                              + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
                              + (f'<p class="fine" style="margin-top:10px"><a href="{cmp_[0]}">Compare {nm} with {e(cmp_[1][0])} and {e(cmp_[1][1])}</a></p>' if cmp_ else '')
+                             + (f'<p class="fine">From Nepal: <a href="/nepal/exports/{iso.lower()}">what Nepal exports to {nm}</a>, product by product.</p>' if iso in h.get('NEP_MARKETS', ()) else '')
                              + (f'<p class="fine"><a href="{self.copp_href(iso)}">Export markets with rising demand for {nm}</a></p>' if self.copp_ok(iso) else '')
                              + self.tpo_line(iso) + self.standout(iso)
                              + self.latest(iso) + self.flow(iso, d) + sec_bal + sec_map + self.latest_products(iso) + prod + sec_time + sec_pairs + (self.peers(c) if iso in self.C else '') + src)
@@ -1788,6 +1789,7 @@ class Views:
                          + lead + tiles + self.highlights(iso, d)
                          + f'<p class="pdfl"><a href="{self.brief_href(iso)}" download>Download the {nm} trade brief (PDF)</a> <span>Key figures, partners, products and history on a few pages, free to share.</span></p>'
                          + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
+                         + (f'<p class="fine">From Nepal: <a href="/nepal/exports/{iso.lower()}">what Nepal exports to {nm}</a>, product by product.</p>' if iso in h.get('NEP_MARKETS', ()) else '')
                          + self.latest(iso) + self.latest_products(iso) + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
                          + f'<section class="gsec"><h2>{nm}&#39;s partners on the map</h2>' + self.map_block(iso, d) + sec_all + '</section>' + peers + src)
 

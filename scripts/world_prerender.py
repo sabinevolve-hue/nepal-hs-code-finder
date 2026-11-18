@@ -736,7 +736,8 @@ def init_deep():
     TF = world_tariff_pages.Tariffs(dict(esc=esc, main=main, back=back, src_box=src_box, ic=ic, CH=CH, SEC=SEC))
     if world_deep.DEEP_FILE.exists():
         DV = world_deep.Views(dict(esc=esc, money=money, iso_meta=iso_meta, hs_desc=hs_desc, code_href=code_href, fmt_code=fmt_code, clip=clip,
-                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href, SLUG=world_urls.SLUG, HEADINGS=HEADINGS, CHNAME=lambda ch: CH[ch][1]))
+                                   ic=ic, main=main, back=back, src_box=src_box, trend_svg=trend_svg, CBYISO=CBYISO, main_partner=main_partner, has_code=lambda c: c in SUB, PGROUPS=PGROUPS, group_slug=group_slug, MAPIDS=set(WMAP), MARK=MARK, TODAY=TODAY, pgroup_grid=pgroup_grid, chref=world_urls.href, SLUG=world_urls.SLUG, HEADINGS=HEADINGS, CHNAME=lambda ch: CH[ch][1],
+                                   NEP_MARKETS={i for i in NEPEXP['order'] if NEPEXP['cc'][i] > 0}))
 
 STATIC_PARTS = {'tariffs', 'opportunities', 'countries', 'country-years', 'topics', 'hs-headings', 'pairs', 'regions', 'exports-by-product', 'hs-codes'}      # pages that ship without the SPA script
 STATIC_PATHS = {'/', '/about', '/trade', '/compare', '/trade/latest'}
