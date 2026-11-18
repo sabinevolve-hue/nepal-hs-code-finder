@@ -141,9 +141,14 @@ class T:
 
     @staticmethod
     def code(code, desc):
-        b = f'HS Code {code} ({fmt_code(code)}) — {clip(desc, 48)}'
+        # The product name goes in whole words up to 65 characters. WCO texts put a generic noun before the first ';'
+        # ('Machinery; for working rubber…'); textfit.hs_name joins the next clause on, so the title never ends at
+        # 'Machinery' (fit_title would cut there). Short names get a suffix if it still fits.
+        b = f'HS Code {code} ({fmt_code(code)}): '
+        b += textfit.hs_name(desc, 65 - len(b))
         has_trade = bool((PROD.get(code) or {}).get('x'))
-        return b + (' — World Trade & Prices' if has_trade else ' — HS 2022 Code') if len(b) <= 58 else b
+        sfx = ' — World Trade & Prices' if has_trade else ' — HS 2022 Code'
+        return b + sfx if len(b) + len(sfx) <= 65 else b
 
     @staticmethod
     def country(c):
@@ -396,7 +401,7 @@ def v_code(code):
     grp = chapter_group(ch)
     gcard = card(f'/trade/product/{group_slug(grp[0])}', ic('globe'), f'<b>Global trade in {esc(grp[0])}</b> — see the world\'s top exporters &amp; importers') if grp else ''
     sib = ''.join(row_html(x, current=code) for x in SUBS if x[0].startswith(head))
-    return main(back(f'/hs/chapter/{ch}', f'Chapter {ch}') + f'''<h1 class="dcode">{fmt_code(code)}</h1><p class="dtitle">{esc(s[1])}</p>
+    return main(back(f'/hs/chapter/{ch}', f'Chapter {ch}') + f'''<h1 class="dh"><span class="dcode">{fmt_code(code)}</span><span class="dtitle">{esc(s[1])}</span></h1>
 <p class="crumb">Section {cn[2]} · <b>{esc(sec[1])}</b></p>{nepal}
 <table class="bk"><tbody><tr><td>Six-digit HS code</td><td>{fmt_code(code)} <span class="fine">({code})</span></td></tr><tr><td>Heading</td><td>{(f'<a href="/hs/heading/{head}">{head[:2]}.{head[2:]}: exporters and importers of the whole heading</a>' if (DV and DV.heading_ok(head)) else head)}</td></tr>
 <tr><td>Chapter</td><td>{ch} — {esc(cn[1])}</td></tr><tr><td>Section</td><td>{cn[2]}</td></tr></tbody></table>
@@ -623,6 +628,16 @@ def v_guide(slug):
                 + src_box('Sources', f'<p>Trade figures: <b>BACI</b> (CEPII / UN Comtrade), 2024. Export procedure: {g["sources"]} Incentive rates and GSP eligibility change yearly — confirm current terms with the official source before relying on them.</p>'))
 
 # ---------------------------------------------------------------- per-route descriptions + breadcrumbs + JSON-LD
+def chapter_desc(ch, name, n, nh):
+    """Chapter meta description that fits 160 characters whole: the chapter name takes what the rest leaves."""
+    tail = f' {n} six-digit codes in {nh} headings ({HS["edition"]}), each with world trade and top exporters.'
+    head = f'HS Chapter {ch}: '
+    full = ' '.join(name.replace(';', ',').split()); room = 160 - len(head) - len(tail) - 1
+    nm = textfit.clip_words(full, room)
+    if nm != full and nm.rfind(', ') >= room * 0.4:      # cut: end at the last whole item, not mid-phrase
+        nm = nm[:nm.rfind(', ')]
+    return head + nm + '.' + tail
+
 def top_names(lst, n=3):
     return ', '.join(iso_name(x[0]) for x in lst[:n])
 
@@ -767,7 +782,7 @@ def routes():
         ch = c[0]; n = sum(1 for s in SUBS if s[0].startswith(ch))
         heads = sorted({s[2] for s in SUBS if s[0].startswith(ch)})
         yield (f'/hs/chapter/{ch}', 'hs', T.chapter(ch, c[1]),
-               f'All {n} six-digit HS codes in Chapter {ch} — {clip(c[1], 70)} ({HS["edition"]}), across {len(heads)} headings, each with world trade and top exporters.',
+               chapter_desc(ch, c[1], n, len(heads)),
                v_chapter(ch), 'CollectionPage',
                [{'@type': 'DefinedTermSet', 'name': f'HS Chapter {ch} — {c[1]} ({HS["edition"]})', 'url': url(f'/hs/chapter/{ch}')}], 'hs-chapters')
     for c in COUNTRIES:
@@ -866,12 +881,19 @@ def routes():
         yield (f'/nepal/exports/{iso.lower()}', 'exports', T.nepMkt(name), d, v_nep_market(iso), 'WebPage', [], 'nepal-exports')
     for s in SUBS:
         code = s[0]; p = PROD.get(code)
+        # Built to fit 160 characters whole, so the snippet never ends in '…': the product name takes what the
+        # figures leave.
+        head = f'HS code {code} ({fmt_code(code)}): '
         if p and p.get('x'):
-            d = (f'HS code {code} ({fmt_code(code)}): {stop(clip(s[1], 64))} World trade {money(p["w"] * 1e6)} (2024); top exporters {top_names(p["x"])}'
-                 + (f'; world price ${p["u"]}/kg.' if p.get('u') else '.'))
+            tail = (f' World trade {money(p["w"] * 1e6)} in 2024; top exporters {top_names(p["x"])}'
+                    + (f'; world price ${p["u"]}/kg.' if p.get('u') else '.'))
+            if len(head) + 40 + len(tail) > 160:      # long exporter names: drop the price, then keep two exporters
+                tail = f' World trade {money(p["w"] * 1e6)} in 2024; top exporters {top_names(p["x"])}.'
+            if len(head) + 40 + len(tail) > 160:
+                tail = f' World trade {money(p["w"] * 1e6)} in 2024; top exporters {top_names(p["x"][:2])}.'
         else:
-            d = (f'HS code {code} ({fmt_code(code)}): {stop(clip(s[1], 90))} Six-digit {HS["edition"]} code in heading {code[:4]}, '
-                 f'chapter {code[:2]} — {stop(clip(CH[code[:2]][1], 50))}')
+            tail = f' Six-digit {HS["edition"]} code in heading {code[:4]}, chapter {code[:2]}.'
+        d = head + textfit.hs_name(s[1], max(40, 160 - len(head) - len(tail) - 1)) + '.' + tail
         yield (f'/hs/code/{code}', 'hs', T.code(code, s[1]), d, v_code(code), 'WebPage',
                [{'@type': 'DefinedTerm', '@id': url(f'/hs/code/{code}') + '#term', 'termCode': code, 'name': s[1],
                  'inDefinedTermSet': {'@type': 'DefinedTermSet', 'name': 'Harmonized System (' + HS['edition'] + ')', 'url': 'https://www.wcoomd.org/en/topics/nomenclature/overview.aspx'}}], 'hs-codes')
@@ -1055,7 +1077,7 @@ def page_404(css_href):
 def write_assets():
     (W / 'assets').mkdir(exist_ok=True)
     css = (SRC / 'app.css').read_text(encoding='utf-8')
-    css += '\n/* prerender: semantic headings styled like the SPA\'s h2 */\nh1.h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}\nh1.dcode{margin:0}\na.row,a.sec,a.lbrow,a.nepalcard,a.back{text-decoration:none}\n'
+    css += '\n/* prerender: semantic headings styled like the SPA\'s h2 */\nh1.h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;font-weight:800}\nh1.dcode{margin:0}\nh1.dh{margin:0;font:inherit}\nh1.dh .dcode,h1.dh .dtitle{display:block}\na.row,a.sec,a.lbrow,a.nepalcard,a.back{text-decoration:none}\n'
     import nav as _nav, footer as _footer
     css += world_deep.CSS + _nav.NAV_CSS + _footer.FOOTER_CSS + world_deep.SHELL_CSS
     js = (SRC / 'app.js').read_text(encoding='utf-8')

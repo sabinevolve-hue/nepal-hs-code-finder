@@ -111,11 +111,19 @@ function setNav(k){ if(k==='exports') k='trade'; document.querySelectorAll('deta
 
 /* ---------------- Page titles — mirrored 1:1 in scripts/world_prerender.py (keep in sync) ---------------- */
 const clip=(s,n)=>{ s=String(s); if(s.length<=n) return s; const c=s.slice(0,n), i=c.lastIndexOf(' '); return (i>n*0.6?c.slice(0,i):c).replace(/[;,:\s]+$/,'')+'…'; };
+/* textfit.hs_name in Python: WCO text -> readable product name in whole words ('Machinery; for working rubber…' -> 'Machinery for working rubber') */
+const HS_JOIN=new Set(['for','of','with','used','in','on','from','containing','having','whether','not','n.e.c.','excluding','including','by','to','designed','suitable','made','put','as']);
+const HS_SMALL=new Set(['of','and','or','the','a','an','for','with','in','on','to','by','not','nes','etc','whether','than','but','other','their','its','such','these','this','that','which']);
+const clipWords=(s,n)=>{ s=String(s).split(/\s+/).filter(Boolean).join(' '); if(s.length<=n) return s; let c=s.slice(0,n+1); c=c.includes(' ')?c.slice(0,c.lastIndexOf(' ')):s.slice(0,n); const w=c.split(' ');
+  while(w.length>1&&(HS_SMALL.has(w[w.length-1].toLowerCase().replace(/[,.;:]/g,''))||w[w.length-1].replace(/[,.;:]/g,'').length<=1)) w.pop();
+  let o=w.join(' ').replace(/[\s,;:(\-–—/&]+$/,''); if((o.match(/\(/g)||[]).length>(o.match(/\)/g)||[]).length) o=o.slice(0,o.lastIndexOf('(')).replace(/[\s,;:(\-–—/&]+$/,''); return o; };
+const hsPhrase=d=>{ const p=String(d).split(/\s+/).join(' ').split(';').map(x=>x.trim()).filter(Boolean); if(!p.length) return ''; let o=p[0]; for(const x of p.slice(1)) o+=(HS_JOIN.has(x.split(' ')[0].toLowerCase())?' ':', ')+x; return o; };
+const hsName=(d,n)=>{ const f=hsPhrase(d); let o=clipWords(f,n); if(o!==f){ o=o.replace(/(\s+(of a kind|of a|a kind)(\s+used)?(\s+primarily|\s+solely|\s+principally)?|\s+used(\s+primarily|\s+solely)?|\s+with(\s+a|\s+an)?)$/i,'').replace(/[\s,;:(\-–—/&]+$/,'')||o; const i=o.lastIndexOf(', '); if(i>=n*0.6) o=o.slice(0,i); } return o; };
 const PT={
   home:()=>'World Trade Data: Exports and Imports by Country and Product',
   hs:()=>`World HS Code Finder — Search ${SUBS.length.toLocaleString('en-US')} HS 2022 Codes`,
   chapter:(ch,name)=>`HS Chapter ${ch}: ${clip(name,60)} — HS Codes List`,
-  code:(code,desc)=>{ const b=`HS Code ${code} (${fmtCode(code)}) — ${clip(desc,48)}`; return b.length<=58?b+(PROD&&PROD[code]&&PROD[code].x&&PROD[code].x.length?' — World Trade & Prices':' — HS 2022 Code'):b; },
+  code:(code,desc)=>{ const b=`HS Code ${code} (${fmtCode(code)}): `+hsName(desc,65-26), sfx=(PROD&&PROD[code]&&PROD[code].x&&PROD[code].x.length?' — World Trade & Prices':' — HS 2022 Code'); return b.length+sfx.length<=65?b+sfx:b; },
   trade:()=>`Global Trade Data — World Rankings & ${TRADE.countries.length} Country Profiles`,
   country:c=>`${c.name} Trade Profile${c.expYear?' '+c.expYear:''} — Exports, Imports${c.deep?', Partners & Products':' & Trade Balance'}`,
   group:label=>`Global Trade in ${label} — Top Exporters & Importers`,
@@ -272,7 +280,7 @@ function hsDetail(code){
   }else if(np){ nepal=`<div class="outcome">${ic(I.info)}<div>Nepal lists this code (${np.n} line${np.n>1?'s':''}). <a href="https://customsnepal.com/?q=${code}" target="_blank" rel="noopener">See Nepal duty &amp; taxes ↗</a></div></div>`; }
   app.innerHTML=`<main><div class="wrap">
     <a class="back" href="${BASE}/hs/chapter/${ch}" data-nav>${ic(I.left)}Chapter ${ch}</a>
-    <h1 class="dcode">${fmtCode(code)}</h1><p class="dtitle">${esc(s[1])}</p>
+    <h1 class="dh"><span class="dcode">${fmtCode(code)}</span><span class="dtitle">${esc(s[1])}</span></h1>
     <p class="crumb">Section ${cn[2]} · <b>${esc(sec[1])}</b></p>
     ${nepal}
     <table class="bk"><tbody>

@@ -261,6 +261,10 @@ What it writes (all committed):
   `<lastmod>` is honest: `scripts/world_lastmod.json` stores each URL's content hash and the date it last changed.
 - `world/vercel.json` (generated): cleanUrls, no trailing slash, redirects for codes the data links to that HS 2022 lacks.
 
+HS code page titles and descriptions use `textfit.hs_name` (mirrored as `hsName` in app.js): WCO texts put a generic
+noun before the first ';' ("Machinery; for working rubber…"), so the next clause is joined on and the name is cut in
+whole words; titles stay within 65 characters and descriptions within 160, so neither ends in '…'.
+
 Rules: page titles exist twice (`PT` in app.js and `T` in world_prerender.py) and view markup is mirrored in Python —
 change both. On first load the SPA keeps the server-rendered `<head>` (`<meta name="cn-route">`) and waits for the
 per-product JSON before rendering, so there is no flash or layout shift. World pages must not target "hs code nepal"

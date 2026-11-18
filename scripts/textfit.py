@@ -3,7 +3,7 @@ cutting words in half. Used by product_pages.py (at the template) and meta_pass.
 import re
 
 _TAIL = re.compile(r'[\s,;:(\-–—/&]+$')
-_SMALL = {'of', 'and', 'or', 'the', 'a', 'an', 'for', 'with', 'in', 'on', 'to', 'by', 'not', 'nes', 'etc', 'whether', 'than', 'but', 'other'}
+_SMALL = {'of', 'and', 'or', 'the', 'a', 'an', 'for', 'with', 'in', 'on', 'to', 'by', 'not', 'nes', 'etc', 'whether', 'than', 'but', 'other', 'their', 'its', 'such', 'these', 'this', 'that', 'which'}
 
 
 def clip_words(s, limit):
@@ -51,3 +51,39 @@ def fit_desc(d, limit=160):
     if i >= 90:
         return d[:i + 1]
     return clip_words(d, limit - 1) + '…'
+
+
+_HS_JOIN = {'for', 'of', 'with', 'used', 'in', 'on', 'from', 'containing', 'having', 'whether', 'not', 'n.e.c.', 'excluding',
+            'including', 'by', 'to', 'designed', 'suitable', 'made', 'put', 'as'}
+
+
+def hs_phrase(desc):
+    """Readable product phrase from a WCO description ('Machinery; for working rubber or plastics…' ->
+    'Machinery for working rubber or plastics…'). The text before the first ';' is often a single generic word
+    (Machinery, Vehicles, Boilers), so the next clause is joined on: with a space when it starts with a preposition,
+    otherwise with a comma. Later ';' become commas."""
+    parts = [p.strip() for p in ' '.join(str(desc).split()).split(';') if p.strip()]
+    if not parts:
+        return ''
+    out = parts[0]
+    for p in parts[1:]:
+        first = p.split()[0].lower()
+        out += (' ' if first in _HS_JOIN else ', ') + p
+    return out
+
+
+_HS_DANGLING = re.compile(r'(\s+(of a kind|of a|a kind)(\s+used)?(\s+primarily|\s+solely|\s+principally)?|\s+used(\s+primarily|\s+solely)?|\s+with(\s+a|\s+an)?)$', re.I)
+
+
+def hs_name(desc, limit):
+    """hs_phrase clipped to `limit` characters at a word boundary (no dangling connectors, no ellipsis). When the
+    phrase had to be cut, a half-finished trailing clause is dropped back to the last comma if most of the room
+    stays used."""
+    full = hs_phrase(desc)
+    out = clip_words(full, limit)
+    if out != full:
+        out = _TAIL.sub('', _HS_DANGLING.sub('', out)) or out
+        i = out.rfind(', ')
+        if i >= limit * 0.6:
+            out = out[:i]
+    return out

@@ -7,6 +7,8 @@ Every number is a BACI figure or a ratio of two BACI figures. Sentences state wh
 """
 import urllib.parse
 import json, pathlib, re
+from textfit import clip_words
+HS_JOIN = {'for', 'of', 'with', 'used', 'containing', 'designed', 'suitable', 'made'}      # clauses worth joining onto a one-word heading name
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PRODC_FILE = ROOT / 'data' / 'world' / 'prodc.json'
@@ -1428,10 +1430,13 @@ class Views:
         d = self.HD.get(h4); return bool(d and d['w'].get(str(self.Y), 0) >= 100000 and d['x'])
 
     def heading_name(self, h4, n=60):
-        s = self.h['HEADINGS'].get(h4, h4); s = s.split(';')[0].split(' (')[0].strip()
+        full = self.h['HEADINGS'].get(h4, h4); parts = full.split(';'); s = parts[0].split(' (')[0].strip()
+        # 'Machinery; for working rubber or plastics…' would leave just 'Machinery': join the qualifying clause on
+        if len(s.split()) == 1 and len(parts) > 1 and parts[1].split() and parts[1].split()[0].lower() in HS_JOIN:
+            s = s + ' ' + parts[1].split(' (')[0].strip()
         if ',' in s and len(s.split(',')[0]) >= 4:
             s = s.split(',')[0].strip()
-        return self.h['clip'](s, n)
+        return clip_words(s, n)      # whole words, no '…' (it lands mid-title and mid-sentence)
 
     def heading_title(self, h4):
         if getattr(self, '_htitles', None) is None:      # shortened names can collide (several 'Woven fabrics of synthetic…'); those get a shorter name and always the code
