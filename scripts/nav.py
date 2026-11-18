@@ -47,6 +47,7 @@ GROUPS = [
         ('/shipping/track', 'Track a shipment', 'Container, air waybill, courier', ''),
         ('/the-border', 'The Border', 'Every customs gate, west to east', ''),
         ('/export', 'Export guides', 'How to sell abroad, product by product', ''),
+        ('/export-markets', 'Export markets', 'Who buys what Nepal exports, and the duty', ''),
     ]),
 ]
 # kept for anything that still wants the flat list
@@ -55,7 +56,7 @@ NAV = [(h, l) for _, _, _, _, items in GROUPS for h, l, _, _ in items]
 # which door lights up for a path that is not itself a menu item
 _GROUP_PREFIX = [('/tariff/2083-84-changes', 'cost'), ('/tariff', 'find'), ('/import-duty', 'find'), ('/faq', 'find'),
                  ('/insights', 'trade'), ('/safta', 'cost'), ('/duty-free', 'cost'), ('/trade-partner', 'trade'), ('/sector', 'trade'), ('/customs-office', 'trade'),
-                 ('/compare', 'trade'), ('/trade', 'trade'), ('/shipping', 'move'), ('/export', 'move'), ('/the-border', 'move')]
+                 ('/compare', 'trade'), ('/trade', 'trade'), ('/shipping', 'move'), ('/export', 'move'), ('/export-markets', 'move'), ('/the-border', 'move')]
 
 
 def group_of(path):
