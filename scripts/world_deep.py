@@ -7,6 +7,8 @@ Every number is a BACI figure or a ratio of two BACI figures. Sentences state wh
 """
 import urllib.parse
 import json, pathlib, re
+from textfit import clip_words
+HS_JOIN = {'for', 'of', 'with', 'used', 'containing', 'designed', 'suitable', 'made'}      # clauses worth joining onto a one-word heading name
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PRODC_FILE = ROOT / 'data' / 'world' / 'prodc.json'
@@ -778,6 +780,7 @@ class Views:
                              + (f'<p class="pdfl"><a href="{self.brief_href(iso)}" download>Download the {nm} trade brief (PDF)</a> <span>Key figures, partners, products and history on a few pages, free to share.</span></p>' if iso in self.C else '')
                              + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
                              + (f'<p class="fine" style="margin-top:10px"><a href="{cmp_[0]}">Compare {nm} with {e(cmp_[1][0])} and {e(cmp_[1][1])}</a></p>' if cmp_ else '')
+                             + (f'<p class="fine">From Nepal: <a href="/nepal/exports/{iso.lower()}">what Nepal exports to {nm}</a>, product by product.</p>' if iso in h.get('NEP_MARKETS', ()) else '')
                              + (f'<p class="fine"><a href="{self.copp_href(iso)}">Export markets with rising demand for {nm}</a></p>' if self.copp_ok(iso) else '')
                              + self.tpo_line(iso) + self.standout(iso)
                              + self.latest(iso) + self.flow(iso, d) + sec_bal + sec_map + self.latest_products(iso) + prod + sec_time + sec_pairs + (self.peers(c) if iso in self.C else '') + src)
@@ -1428,10 +1431,13 @@ class Views:
         d = self.HD.get(h4); return bool(d and d['w'].get(str(self.Y), 0) >= 100000 and d['x'])
 
     def heading_name(self, h4, n=60):
-        s = self.h['HEADINGS'].get(h4, h4); s = s.split(';')[0].split(' (')[0].strip()
+        full = self.h['HEADINGS'].get(h4, h4); parts = full.split(';'); s = parts[0].split(' (')[0].strip()
+        # 'Machinery; for working rubber or plastics…' would leave just 'Machinery': join the qualifying clause on
+        if len(s.split()) == 1 and len(parts) > 1 and parts[1].split() and parts[1].split()[0].lower() in HS_JOIN:
+            s = s + ' ' + parts[1].split(' (')[0].strip()
         if ',' in s and len(s.split(',')[0]) >= 4:
             s = s.split(',')[0].strip()
-        return self.h['clip'](s, n)
+        return clip_words(s, n)      # whole words, no '…' (it lands mid-title and mid-sentence)
 
     def heading_title(self, h4):
         if getattr(self, '_htitles', None) is None:      # shortened names can collide (several 'Woven fabrics of synthetic…'); those get a shorter name and always the code
@@ -1783,6 +1789,7 @@ class Views:
                          + lead + tiles + self.highlights(iso, d)
                          + f'<p class="pdfl"><a href="{self.brief_href(iso)}" download>Download the {nm} trade brief (PDF)</a> <span>Key figures, partners, products and history on a few pages, free to share.</span></p>'
                          + (self.nepal_official() + '<p class="fine">More on Nepal: <a href="/nepal/exports">export explorer by market</a> and <a href="/nepal">world prices against what Nepal pays</a>.</p>' if iso == 'NPL' else '')
+                         + (f'<p class="fine">From Nepal: <a href="/nepal/exports/{iso.lower()}">what Nepal exports to {nm}</a>, product by product.</p>' if iso in h.get('NEP_MARKETS', ()) else '')
                          + self.latest(iso) + self.latest_products(iso) + self.flow(iso, d) + sec_x + sec_m + sec_bal + sec_time + prod_sec + sec_pairs
                          + f'<section class="gsec"><h2>{nm}&#39;s partners on the map</h2>' + self.map_block(iso, d) + sec_all + '</section>' + peers + src)
 

@@ -39,8 +39,8 @@ SITE = 'https://www.customsnepal.com'
 # Head terms from Search Console: "hs code nepal", "nepal customs tariff", "custom tariff nepal",
 # "nepal bhansar rate". Tariff = Customs Tariff 2026/27 published by the Department of Customs = FY 2083/84 BS.
 TITLE = 'HS Code Nepal & Nepal Customs Tariff 2083/84 | Customs Nepal'
-DESC = ('Search any HS code in the official Nepal Customs Tariff 2083/84 (2026/27): import duty (bhansar rate), '
-        'SAARC rate, 13% VAT and landed cost for all 6,340 tariff lines. Free calculator and AI HS classifier.')
+DESC = ('HS code search for the official Nepal Customs Tariff 2083/84 (2026/27): import duty (bhansar rate), SAARC rate, '
+        '13% VAT and landed cost for all 6,340 lines.')      # <= 160 characters: shown whole in results
 OGIMG = SITE + '/og.png'
 TODAY = datetime.date.today().isoformat()
 # Google Search Console HTML-tag verification (optional fallback; GA4 verification needs none).
