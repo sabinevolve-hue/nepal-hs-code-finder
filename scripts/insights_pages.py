@@ -25,6 +25,14 @@ FY, FYP = S['fy'], S['fy_prev']
 H = S['history']; Y = H['years']
 IMP, EXP = S['imports'], S['exports']
 TODAY = datetime.date.today().isoformat()
+# dateModified = when the figures last changed (the last commit touching data/stats.json or data/tariff.json), not the build day,
+# so a rebuild with the same data produces the same pages
+import subprocess
+try:
+    DATA_DATE = subprocess.run(['git', 'log', '-1', '--format=%cs', '--', 'data/stats.json', 'data/tariff.json'],
+                               cwd=root, capture_output=True, text=True, check=True).stdout.strip() or TODAY
+except Exception:
+    DATA_DATE = TODAY
 TOT_I, TOT_E = S['overview']['imports'][1], S['overview']['exports'][1]
 PRV_I, PRV_E = S['overview']['imports'][0], S['overview']['exports'][0]
 TROW = {re.sub(r'\D', '', r[0]): r for r in T['rows']}
@@ -1008,7 +1016,7 @@ def build():
         path = '/insights/' + a['slug']
         bc = [('Home', '/'), ('Insights', '/insights'), (a['h1'], '')]
         ld = {"@context": "https://schema.org", "@type": "Article", "headline": a['h1'], "description": a['dek'],
-              "datePublished": "2026-11-12", "dateModified": TODAY, "mainEntityOfPage": k.SITE + path,
+              "datePublished": "2026-11-12", "dateModified": DATA_DATE, "mainEntityOfPage": k.SITE + path,
               "author": {"@type": "Organization", "name": "Customs Nepal", "url": k.SITE},
               "publisher": {"@type": "Organization", "name": "Customs Nepal", "url": k.SITE},
               "isBasedOn": "https://www.customs.gov.np"}

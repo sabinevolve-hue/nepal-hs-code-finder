@@ -54,7 +54,7 @@ for y in YEARS:
 out = {'source': 'CEPII BACI, HS 2022 edition', 'licence': 'Etalab Open Licence 2.0', 'years': YEARS, 'unit': 'thousand USD', 'products': []}
 for k in top:
     imp = wm[k]
-    ranked = sorted(imp, key=lambda c: -imp[c].get(LAST, 0))[:TOP_IMPORTERS]
+    ranked = sorted(imp, key=lambda c: (-imp[c].get(LAST, 0), c))[:TOP_IMPORTERS]
     world = {y: round(sum(imp[c].get(y, 0) for c in imp)) for y in YEARS}
     out['products'].append({
         'hs6': k, 'desc': desc.get(k, ''),
