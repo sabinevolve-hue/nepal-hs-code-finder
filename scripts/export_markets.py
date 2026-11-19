@@ -115,7 +115,7 @@ for p in D['products']:
     path = '/export-markets/' + slug
     nep = p['nepal']; tot = {y: sum(nep[y].values()) for y in YEARS}
     world = p['world']; share = 100.0 * tot[LAST] / world[LAST] if world[LAST] else 0
-    dest = sorted(set().union(*[nep[y].keys() for y in YEARS]), key=lambda c: -nep[LAST].get(c, 0))
+    dest = sorted(set().union(*[nep[y].keys() for y in YEARS]), key=lambda c: (-nep[LAST].get(c, 0), -sum(nep[y].get(c, 0) for y in YEARS), c))   # stable order
     top_dest = [c for c in dest if nep[LAST].get(c)][:3]
     cards.append((tot[LAST], hs6, nm, path, top_dest))
 
