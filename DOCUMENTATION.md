@@ -329,3 +329,29 @@ git add scripts/indexnow_state.json && git commit -m "chore: IndexNow state"
 ---
 
 *Prepared for Evolve Tech / Audio Visual Solutions Pvt. Ltd. Duty and trade data © Department of Customs, Government of Nepal.*
+
+## Cloudflare hosting (moving from Vercel, Nov 2026)
+
+Vercel's free plan allows 1M requests a month and the Vercel sites passed 2M a month (Nov 2026). Both sites in this
+repo can run as Cloudflare Workers static assets, where requests for static files are free and unlimited.
+
+- `wrangler.jsonc` (customsnepal.com, Worker `customsnepal`): assets `public/`, `html_handling: drop-trailing-slash`
+  (= Vercel cleanUrls + trailingSlash false), script `cf/worker.js`.
+- `world/wrangler.jsonc` (world.customsnepal.com, Worker `customsnepal-world`, Workers Builds root directory
+  `world`): assets `world/` minus `world/.assetsignore`, script `world/_cf/worker.js`.
+- `scripts/cf_config.py` writes `public/_redirects`, `public/_headers`, `cf/routes.js`, `world/_redirects`,
+  `world/_headers` and `world/_cf/routes.js` from the two `vercel.json` files, which stay the source of truth. It runs
+  in `npm run build` and at the end of `world_prerender.py`. Plain and `:path*` redirects go to `_redirects`;
+  redirects with a regular expression (the old three-letter country addresses) go to `routes.js`; rewrites become
+  `200` rules only for routes without their own page (Cloudflare applies `_redirects` before files, Vercel after).
+- The Worker scripts run only for requests that matched no file, so normal traffic never invokes them. The main one
+  serves `/api/classify` and `/api/track` through a small Vercel-style adapter (`cf/lib.js`), so `api/*.js` is
+  unchanged; their keys (`DEEPSEEK_API_KEY`, `ANTHROPIC_API_KEY`, `MAERSK_CONSUMER_KEY`, `AI_PROVIDER`, …) are Worker
+  secrets set in the Cloudflare dashboard. `/_vercel/*` (Vercel's analytics script) answers 204.
+- Differences from Vercel: `/page.html` and `/page/` redirect with 307 instead of 308.
+- Local test: `npx wrangler dev` (repo root) and `cd world && npx wrangler dev --port 8788`.
+- Build settings (Cloudflare > Workers & Pages > import repo): build command empty, deploy command
+  `npx wrangler deploy`; root directory `/` for customsnepal, `world` for world.
+- Domains: customsnepal.com's DNS moves to Cloudflare first (copy the mail records: MX `mail.customsnepal.com`
+  and the cPanel mail/webmail records stay DNS-only), then add the custom domains to the Workers, then remove them
+  from Vercel.

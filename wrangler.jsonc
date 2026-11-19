@@ -1,0 +1,19 @@
+// Cloudflare Workers hosting for customsnepal.com. Static files in public/ are served directly (free, unlimited);
+// cf/worker.js runs only for requests no file matched (the AI and tracking APIs, regex redirects, 404s).
+// _redirects and _headers in public/ are generated from vercel.json by scripts/cf_config.py.
+// See DOCUMENTATION.md "Cloudflare hosting".
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "customsnepal",
+  "main": "cf/worker.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    // Vercel's cleanUrls + trailingSlash:false: /page serves page.html, /page.html and /page/ redirect to /page
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "observability": { "enabled": false }
+}

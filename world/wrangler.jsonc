@@ -1,0 +1,15 @@
+// Cloudflare Workers hosting for world.customsnepal.com (Workers Builds root directory: world).
+// Static files are served directly (free, unlimited); _cf/worker.js runs only for requests no file matched.
+// _redirects and _headers here are generated from vercel.json by scripts/cf_config.py.
+{
+  "name": "customsnepal-world",
+  "main": "_cf/worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "observability": { "enabled": false }
+}

@@ -1,0 +1,6 @@
+_cf
+wrangler.jsonc
+vercel.json
+.assetsignore
+.wrangler
+node_modules

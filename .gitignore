@@ -16,3 +16,6 @@ node_modules/
 *.aab
 scripts/__pycache__/
 build/
+
+# Cloudflare wrangler local state
+.wrangler/
