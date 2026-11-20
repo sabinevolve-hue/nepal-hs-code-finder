@@ -1229,6 +1229,7 @@ def main_build():
     LASTMOD_FILE.write_text(json.dumps(new_lastmod, separators=(',', ':'), sort_keys=True) + '\n', encoding='utf-8')
     counts = write_sitemaps(entries)
     nred = write_vercel_json()
+    import cf_config; cf_config.main()      # Cloudflare _redirects/_headers/_cf/routes.js from vercel.json
     files = [x for x in W.rglob('*') if x.is_file()]
     out_bytes = sum(x.stat().st_size for x in files)
     print(f'world prerender: {n:,} pages ({total_bytes / 1e6:.1f} MB HTML, avg {total_bytes / n / 1024:.1f} KB) + 404.html; '
