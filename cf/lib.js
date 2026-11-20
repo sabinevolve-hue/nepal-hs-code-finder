@@ -18,7 +18,7 @@ export async function notFound(env, url) {
 }
 
 // Runs a Vercel Node handler (req, res) and returns a fetch Response. Covers what api/*.js use: method, headers
-// (lower-case), query, parsed JSON body, res.status/setHeader/getHeader/json/send/end.
+// (lower-case), query, parsed JSON body, res.status/statusCode/setHeader/getHeader/json/send/end.
 export async function runVercel(handler, request) {
   const url = new URL(request.url);
   const headers = {};
@@ -34,6 +34,8 @@ export async function runVercel(handler, request) {
   let status = 200, payload = null;
   const out = new Headers();
   const res = {
+    get statusCode() { return status; },
+    set statusCode(c) { status = c; },
     status(c) { status = c; return res; },
     setHeader(k, v) { out.set(k, String(v)); return res; },
     getHeader(k) { return out.get(k); },

@@ -4,3 +4,5 @@ vercel.json
 .assetsignore
 .wrangler
 node_modules
+# server code (run by _cf/worker.js), never served as a file
+api
