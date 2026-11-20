@@ -5,6 +5,8 @@
   "name": "customsnepal-world",
   "main": "_cf/worker.js",
   "compatibility_date": "2026-11-01",
+  // process.env for the API secret (CENSUS_API_KEY), as on Vercel
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
